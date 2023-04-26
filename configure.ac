@@ -4,10 +4,10 @@ AC_INIT([x48],[VERSION_NUMBER],[x48-bugs@gam3.net])
 AC_COPYRIGHT([Copyright (c) 2006-2010 G. Allen Morris III])
 AC_CANONICAL_TARGET
 
-AC_PREREQ(2.59)
+AC_PREREQ([2.71])
 
 AC_CONFIG_SRCDIR([config.h.in])
-AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
 AC_PROG_CC
@@ -80,14 +80,13 @@ fi
 AC_CHECK_LIB([GL], [XCloseDisplay])
 
 # Checks for header files.
-AC_HEADER_STDC
 AC_CHECK_HEADERS([fcntl.h memory.h stdlib.h string.h sys/ioctl.h sys/time.h termios.h unistd.h stdint.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_C_INLINE
 AC_TYPE_SIZE_T
-AC_HEADER_TIME
+
 AC_STRUCT_TM
 
 AC_DEFINE([VERSION_MAJOR], _VERSION_MAJOR, [The major version number])
@@ -107,8 +106,7 @@ AC_CHECK_FUNCS([bzero gethostname gettimeofday memset mkdir select strdup strrch
 
 PKG_CHECK_MODULES(APPDEFS, xt)
 AC_ARG_WITH([appdefaultdir],
-    [AC_HELP_STRING([--with-appdefaultdir=DIR],
-        [Xt app-defaults directory (default: from pkg-config)])],
+    [AS_HELP_STRING([--with-appdefaultdir=DIR],[Xt app-defaults directory (default: from pkg-config)])],
      [appdefaultdir="$withval"],
      [appdefaultdir=`$PKG_CONFIG --variable=appdefaultdir xt`])
 AC_SUBST(appdefaultdir)

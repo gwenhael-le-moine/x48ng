@@ -1,4 +1,3 @@
-
 ## Process this file with automake to produce Makefile.in
 
 bin_PROGRAMS = x48 dump2rom mkcard checkrom
@@ -48,7 +47,7 @@ x48_SOURCES = actions.c debugger.c device.c \
               device.h disasm.h errors.h global.h hp48char.h hp48_emu.h \
               hp48.h hp.h icon.h mmu.h options.h resources.h romio.h rpl.h \
               small.h timer.h version.h X48.ad.h x48_x11.h \
-	      $(BITMAPS)
+              $(BITMAPS)
 
 
 dump2rom_SOURCES = dump2rom.c
@@ -61,8 +60,6 @@ man1_MANS = x48.man
 
 EXTRA_DIST = $(man1_MANS) X48.ad
 
-INCLUDES = $(X_CFLAGS)
+AM_CPPFLAGS = $(X_CFLAGS)
 
 x48_LDADD = $(X_LIBS)
-
-
