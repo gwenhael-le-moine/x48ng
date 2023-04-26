@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Terminal=false
+Exec=$PREFIX/bin/x48
+Name=x48
+Icon=/usr/share/x48/hplogo.png

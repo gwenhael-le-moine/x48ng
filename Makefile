@@ -30,3 +30,25 @@ clean-all: clean
 # Formatting
 pretty-code:
 	clang-format -i src/*.c src/*.h
+
+# Installing
+PREFIX = /usr
+DOCDIR = $(PREFIX)/doc/x48
+install: all
+	install -m 755 -d -- $(DESTDIR)$(PREFIX)/bin
+	install -c -m 755 x48 $(DESTDIR)$(PREFIX)/bin/x48
+
+	install -m 755 -d -- $(DESTDIR)$(PREFIX)/share/x48
+	install -c -m 755 mkcard $(DESTDIR)$(PREFIX)/share/x48/mkcard
+	install -c -m 755 dump2rom $(DESTDIR)$(PREFIX)/share/x48/dump2rom
+	install -c -m 755 checkrom $(DESTDIR)$(PREFIX)/share/x48/checkrom
+	install -c -m 644 hplogo.png $(DESTDIR)$(PREFIX)/share/x48/hplogo.png
+	cp -R ROMs/ $(DESTDIR)$(PREFIX)/share/x48/
+	find $(DESTDIR)$(PREFIX)/share/x48/ROMs/ -name "*.bz2" -exec bunzip2 {} \;
+	install -c -m 755 setup-home.sh $(DESTDIR)$(PREFIX)/share/x48/setup-x48-home.sh
+
+	install -m 755 -d -- $(DESTDIR)$(DOCDIR)
+	cp -R AUTHORS COPYING ChangeLog INSTALL LICENSE README doc/ romdump/ $(DESTDIR)$(DOCDIR)
+
+	install -m 755 -d -- $(DESTDIR)$(PREFIX)/share/applications
+	install -c -m 644 x48.desktop $(DESTDIR)$(PREFIX)/share/applications/x48.desktop
