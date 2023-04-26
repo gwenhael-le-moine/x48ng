@@ -1,6 +1,0 @@
-
-m4_define(_VERSION_MAJOR, [0])
-m4_define(_VERSION_MINOR, [6])
-m4_define(_PATCHLEVEL, [4])
-
-m4_define(VERSION_NUMBER, [_VERSION_MAJOR._VERSION_MINOR._PATCHLEVEL])
