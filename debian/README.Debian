@@ -1,9 +1,0 @@
-x48 for Debian
---------------
-
-This program requires you to create a .hp48 directory in your home
-directory, and put a rom dump into that directory.
-
-Rom dumps are available from http://developer.berlios.de/projects/x48/
-
- -- G. Allen Morris III <gam3@gam3.net>, Wed,  5 Jan 2005 14:54:21 -0500
