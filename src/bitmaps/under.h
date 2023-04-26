@@ -1,5 +1,0 @@
-#define under_width 6
-#define under_height 7
-static unsigned char under_bits[] = {
-   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3f};
-

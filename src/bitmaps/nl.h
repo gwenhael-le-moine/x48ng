@@ -1,5 +1,0 @@
-#define nl_width 8
-#define nl_height 7
-static unsigned char nl_bits[] = {
-   0x00, 0x84, 0x86, 0xff, 0x06, 0x04, 0x00};
-

@@ -1,5 +1,0 @@
-#define rbracket_width 3
-#define rbracket_height 7
-static unsigned char rbracket_bits[] = {
-   0x07, 0x04, 0x04, 0x04, 0x04, 0x04, 0x07};
-
