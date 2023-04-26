@@ -60,16 +60,3 @@ doc/INSTALLING
 doc/TODO
 doc/CARDS.doc
 doc/ROMDump.doc
-rpm/x48.spec.in
-rpm/x48.spec
-debian/README.Debian
-debian/changelog
-debian/compat
-debian/control
-debian/copyright
-debian/dirs
-debian/docs
-debian/menu
-debian/quit
-debian/rules
-debian/watch

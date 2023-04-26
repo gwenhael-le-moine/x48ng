@@ -1,4 +1,3 @@
-
 m4_include([version.m4])
 AC_INIT([x48],[VERSION_NUMBER],[x48-bugs@gam3.net])
 
@@ -19,7 +18,7 @@ AC_PROG_CPP
 AC_PATH_XTRA
 if test x"$no_x" = xyes ; then
   AC_MSG_ERROR([X development libraries not found])
-fi 
+fi
 X_LIBS="$X_LIBS -lX11"
 AC_SUBST(X_LIBS)
 
@@ -41,8 +40,8 @@ AH_TEMPLATE([HAVE_READLINE],[Define if Readline is used.])
 if test x"$with_readline" != xno; then
   AC_CHECK_LIB(readline, readline,
                with_readline=yes;
-	       LIBS="$LIBS -lreadline";
-	       AC_DEFINE(HAVE_READLINE),
+               LIBS="$LIBS -lreadline";
+               AC_DEFINE(HAVE_READLINE),
                with_readline=no;
                problem_readline=": Can't detect readline library.",
                [])
@@ -119,7 +118,6 @@ AM_INIT_AUTOMAKE
 AC_CONFIG_FILES([Makefile
                  romdump/Makefile
                  src/x48.man
-		 rpm/x48.spec
                  src/Makefile])
 AC_OUTPUT
 
@@ -135,4 +133,3 @@ X48 Configuration:
   With Shared memory for XImage?  $with_shm$problem_shm
 
 # See INSTALL for the description of what this may mean."
-
