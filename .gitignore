@@ -75,3 +75,9 @@ src/x48
 src/x48.man
 src/x48_x11.o
 stamp-h1
+
+
+checkrom
+dump2rom
+mkcard
+x48
