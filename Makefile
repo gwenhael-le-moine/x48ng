@@ -34,6 +34,7 @@ pretty-code:
 # Installing
 PREFIX = /usr
 DOCDIR = $(PREFIX)/doc/x48
+MANDIR = $(PREFIX)/man/man1
 install: all
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/bin
 	install -c -m 755 x48 $(DESTDIR)$(PREFIX)/bin/x48
@@ -47,8 +48,15 @@ install: all
 	find $(DESTDIR)$(PREFIX)/share/x48/ROMs/ -name "*.bz2" -exec bunzip2 {} \;
 	install -c -m 755 setup-home.sh $(DESTDIR)$(PREFIX)/share/x48/setup-x48-home.sh
 
+	install -m 755 -d -- $(DESTDIR)$(MANDIR)
+	install -c -m 644 src/x48.man.1 $(DESTDIR)$(MANDIR)/x48.1
+	gzip -9  $(DESTDIR)$(MANDIR)/x48.1
+
 	install -m 755 -d -- $(DESTDIR)$(DOCDIR)
 	cp -R AUTHORS COPYING ChangeLog INSTALL LICENSE README doc/ romdump/ $(DESTDIR)$(DOCDIR)
 
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/share/applications
 	install -c -m 644 x48.desktop $(DESTDIR)$(PREFIX)/share/applications/x48.desktop
+
+	install 0m 755 -d -- $(DESTDIR)/etc/X11/app-defaults
+	install -c -m 644 src/X48.ad $(DESTDIR)/etc/X11/app-defaults/X48
