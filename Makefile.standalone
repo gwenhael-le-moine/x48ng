@@ -1,0 +1,87 @@
+# Makefile to build x48 without autotools
+
+CC = gcc
+
+CFLAGS = -g -O2 -Wall
+LIBS = -lm -lX11 -lXext -lhistory -lreadline
+
+all: mkcard checkrom dump2rom x48
+
+# Binaries
+mkcard: src/mkcard.c
+        $(CC) $(CFLAGS) $(LIBS) $^ -o $@
+
+dump2rom: src/dump2rom.c
+        $(CC) $(CFLAGS) $(LIBS) $^ -o $@
+
+checkrom: src/checkrom.c src/romio.o
+        $(CC) $(CFLAGS) $(LIBS) $^ -o $@
+
+x48: src/main.o src/actions.o src/debugger.o src/device.o src/disasm.o src/emulate.o src/errors.o src/init.o src/lcd.o src/memory.o src/register.o src/resources.o src/romio.o src/rpl.o src/serial.o src/timer.o src/x48_x11.o src/options.o src/resources.o
+        $(CC) $(CFLAGS) $(LIBS) $^ -o $@
+
+# Cleaning
+clean:
+        rm -f src/*.o
+
+clean-all: clean
+        rm -f x48 mkcard checkrom dump2rom
+
+# Formatting
+pretty-code:
+        clang-format -i src/*.c src/*.h
+
+# Objects
+# %.o: %.c %.d
+#	$(CC) $(CFLAGS) -c -o $@ $^
+
+# src/main.o: src/main.c src/x48_x11.h src/global.h src/config.h src/hp48.h src/mmu.h src/debugger.h src/resources.h
+#	$(CC) $(CFLAGS) -c $< -o $@
+
+# src/actions.o: src/actions.c src/global.h src/config.h src/hp48.h src/mmu.h src/hp48_emu.h src/device.h src/x48_x11.h src/timer.h src/debugger.h src/romio.h
+#	$(CC) $(CFLAGS) -c $< -o $@
+
+# src/debugger.o: src/debugger.c src/global.h src/config.h src/hp48.h src/mmu.h src/device.h src/timer.h src/x48_x11.h src/debugger.h src/disasm.h src/rpl.h src/romio.h src/resources.h
+#	$(CC) $(CFLAGS) -c $< -o $@
+
+# src/device.o: src/device.c src/global.h src/config.h src/hp48.h src/mmu.h src/hp48_emu.h src/device.h src/timer.h src/x48_x11.h
+#	$(CC) $(CFLAGS) -c $< -o $@
+
+# src/disasm.o: src/disasm.c src/global.h src/config.h src/hp48.h src/mmu.h src/disasm.h
+#	$(CC) $(CFLAGS) -c $< -o $@
+
+# src/emulate.o: src/emulate.c src/global.h src/config.h src/hp48.h src/mmu.h src/hp48_emu.h src/device.h src/timer.h src/x48_x11.h src/debugger.h
+#	$(CC) $(CFLAGS) -c $< -o $@
+
+# src/errors.o: src/errors.c src/global.h src/config.h src/resources.h
+#	$(CC) $(CFLAGS) -c $< -o $@
+
+# src/init.o: src/init.c src/hp48.h src/global.h src/config.h src/mmu.h src/hp48_emu.h src/device.h src/resources.h src/romio.h
+#	$(CC) $(CFLAGS) -c $< -o $@
+
+# src/lcd.o: src/lcd.c src/global.h src/config.h src/hp48.h src/mmu.h src/hp48_emu.h src/x48_x11.h src/annunc.h src/device.h
+#	$(CC) $(CFLAGS) -c $< -o $@
+
+# src/memory.o: src/memory.c src/global.h src/config.h src/hp48.h src/mmu.h src/device.h src/hp48_emu.h src/x48_x11.h src/romio.h src/resources.h
+#	$(CC) $(CFLAGS) -c $< -o $@
+
+# src/register.o: src/register.c src/global.h src/config.h src/hp48.h src/mmu.h src/hp48_emu.h
+#	$(CC) $(CFLAGS) -c $< -o $@
+
+# src/resources.o: src/resources.c src/global.h src/config.h src/resources.h src/disasm.h src/hp48.h src/mmu.h src/errors.h
+#	$(CC) $(CFLAGS) -c $< -o $@
+
+# src/romio.o: src/romio.c src/global.h src/config.h src/resources.h src/romio.h
+#	$(CC) $(CFLAGS) -c $< -o $@
+
+# src/rpl.o: src/rpl.c src/global.h src/config.h src/hp48.h src/mmu.h src/hp48_emu.h src/rpl.h src/debugger.h src/append.h src/disasm.h src/romio.h src/hp48char.h
+#	$(CC) $(CFLAGS) -c $< -o $@
+
+# src/serial.o: src/serial.c src/global.h src/config.h src/x48_x11.h src/hp48.h src/mmu.h src/device.h src/hp48_emu.h src/resources.h
+#	$(CC) $(CFLAGS) -c $< -o $@
+
+# src/timer.o: src/timer.c src/global.h src/config.h src/timer.h src/hp48.h src/mmu.h src/debugger.h src/romio.h
+#	$(CC) $(CFLAGS) -c $< -o $@
+
+# src/x48_x11.o: src/x48_x11.c src/global.h src/config.h src/x48_x11.h src/small.h src/buttons.h src/hp.h src/hp48.h src/mmu.h src/device.h src/constants.h src/options.h src/resources.h src/errors.h src/romio.h
+#	$(CC) $(CFLAGS) -c $< -o $@
