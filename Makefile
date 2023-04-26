@@ -46,7 +46,8 @@ install: all
 	install -c -m 644 hplogo.png $(DESTDIR)$(PREFIX)/share/x48/hplogo.png
 	cp -R ROMs/ $(DESTDIR)$(PREFIX)/share/x48/
 	find $(DESTDIR)$(PREFIX)/share/x48/ROMs/ -name "*.bz2" -exec bunzip2 {} \;
-	install -c -m 755 setup-home.sh $(DESTDIR)$(PREFIX)/share/x48/setup-x48-home.sh
+	sed "s|PREFIX|$(PREFIX)|g" setup-home.sh > $(DESTDIR)$(PREFIX)/share/x48/setup-x48-home.sh
+	chmod 755 $(DESTDIR)$(PREFIX)/share/x48/setup-x48-home.sh
 
 	install -m 755 -d -- $(DESTDIR)$(MANDIR)
 	install -c -m 644 src/x48.man.1 $(DESTDIR)$(MANDIR)/x48.1
@@ -56,7 +57,7 @@ install: all
 	cp -R AUTHORS COPYING ChangeLog INSTALL LICENSE README doc/ romdump/ $(DESTDIR)$(DOCDIR)
 
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/share/applications
-	install -c -m 644 x48.desktop $(DESTDIR)$(PREFIX)/share/applications/x48.desktop
+	sed "s|PREFIX|$(PREFIX)|g" x48.desktop > $(DESTDIR)$(PREFIX)/share/applications/x48.desktop
 
 	install 0m 755 -d -- $(DESTDIR)/etc/X11/app-defaults
 	install -c -m 644 src/X48.ad $(DESTDIR)/etc/X11/app-defaults/X48
