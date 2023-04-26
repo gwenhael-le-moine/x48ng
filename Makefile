@@ -8,13 +8,13 @@ LIBS = -lm -lX11 -lXext -lhistory -lreadline
 all: mkcard checkrom dump2rom x48
 
 # Binaries
-mkcard: src/mkcard.c
+mkcard: src/mkcard.o
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
-dump2rom: src/dump2rom.c
+dump2rom: src/dump2rom.o
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
-checkrom: src/checkrom.c src/romio.o
+checkrom: src/checkrom.o src/romio.o
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
 x48: src/main.o src/actions.o src/debugger.o src/device.o src/disasm.o src/emulate.o src/errors.o src/init.o src/lcd.o src/memory.o src/register.o src/resources.o src/romio.o src/rpl.o src/serial.o src/timer.o src/x48_x11.o src/options.o src/resources.o
