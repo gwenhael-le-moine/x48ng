@@ -1,0 +1,18 @@
+﻿---
+IndentCaseLabels: 'true'
+IndentPPDirectives: None
+IndentWidth: '4'
+PointerAlignment: Left
+SortIncludes: 'false'
+SpaceAfterTemplateKeyword: 'false'
+SpaceBeforeAssignmentOperators: 'true'
+SpaceBeforeParens: ControlStatements
+SpaceBeforeRangeBasedForLoopColon: 'true'
+SpaceInEmptyParentheses: 'false'
+SpacesInAngles: 'true'
+SpacesInCStyleCastParentheses: 'true'
+SpacesInContainerLiterals: 'true'
+SpacesInParentheses: 'true'
+SpacesInSquareBrackets: 'true'
+
+...

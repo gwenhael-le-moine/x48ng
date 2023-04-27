@@ -1,39 +1,3 @@
-/*
- *  This file is part of x48, an emulator of the HP-48sx Calculator.
- *  Copyright (C) 1994  Eddie C. Dost  (ecd@dressler.de)
- *
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/* $Log: rpl.h,v $
- * Revision 1.3  1995/01/11  18:20:01  ecd
- * major update to support HP48 G/GX
- *
- * Revision 1.2  1994/12/07  20:16:41  ecd
- * more functions added
- *
- * Revision 1.2  1994/12/07  20:16:41  ecd
- * more functions added
- *
- * Revision 1.1  1994/12/07  10:16:15  ecd
- * Initial revision
- *
- *
- * $Id: rpl.h,v 1.3 1995/01/11 18:20:01 ecd Exp ecd $
- */
-
 #ifndef _RPL_H
 #define _RPL_H 1
 
@@ -93,40 +57,39 @@
 #define UM_END 0x10b86 /* Unit Operator _	*/
 
 typedef struct hp_real {
-  word_20 x;
-  word_32 ml;
-  word_32 mh;
-  word_4 m;
-  word_1 s;
+    word_20 x;
+    word_32 ml;
+    word_32 mh;
+    word_4 m;
+    word_1 s;
 } hp_real;
 
-extern char *decode_rpl_obj __ProtoType__((word_20 addr, char *buf));
-extern void decode_rpl_obj_2 __ProtoType__((word_20 addr, char *typ,
-                                            char *dat));
+extern char* decode_rpl_obj( word_20 addr, char* buf );
+extern void decode_rpl_obj_2( word_20 addr, char* typ, char* dat );
 
-extern char *skip_ob __ProtoType__((word_20 * addr, char *string));
-extern char *dec_rpl_obj __ProtoType__((word_20 * addr, char *string));
-extern char *dec_bin_int __ProtoType__((word_20 * addr, char *string));
-extern char *dec_real __ProtoType__((word_20 * addr, char *string));
-extern char *dec_long_real __ProtoType__((word_20 * addr, char *string));
-extern char *dec_complex __ProtoType__((word_20 * addr, char *string));
-extern char *dec_long_complex __ProtoType__((word_20 * addr, char *string));
-extern char *dec_char __ProtoType__((word_20 * addr, char *string));
-extern char *dec_array __ProtoType__((word_20 * addr, char *string));
-extern char *dec_lnk_array __ProtoType__((word_20 * addr, char *string));
-extern char *dec_string __ProtoType__((word_20 * addr, char *string));
-extern char *dec_hex_string __ProtoType__((word_20 * addr, char *string));
-extern char *dec_list __ProtoType__((word_20 * addr, char *string));
-extern char *dec_symb __ProtoType__((word_20 * addr, char *string));
-extern char *dec_unit __ProtoType__((word_20 * addr, char *string));
-extern char *dec_library __ProtoType__((word_20 * addr, char *string));
-extern char *dec_library_data __ProtoType__((word_20 * addr, char *string));
-extern char *dec_acptr __ProtoType__((word_20 * addr, char *string));
-extern char *dec_prog __ProtoType__((word_20 * addr, char *string));
-extern char *dec_code __ProtoType__((word_20 * addr, char *string));
-extern char *dec_global_ident __ProtoType__((word_20 * addr, char *string));
-extern char *dec_local_ident __ProtoType__((word_20 * addr, char *string));
-extern char *dec_xlib_name __ProtoType__((word_20 * addr, char *string));
-extern char *dec_unit_op __ProtoType__((word_20 * addr, char *string));
+extern char* skip_ob( word_20* addr, char* string );
+extern char* dec_rpl_obj( word_20* addr, char* string );
+extern char* dec_bin_int( word_20* addr, char* string );
+extern char* dec_real( word_20* addr, char* string );
+extern char* dec_long_real( word_20* addr, char* string );
+extern char* dec_complex( word_20* addr, char* string );
+extern char* dec_long_complex( word_20* addr, char* string );
+extern char* dec_char( word_20* addr, char* string );
+extern char* dec_array( word_20* addr, char* string );
+extern char* dec_lnk_array( word_20* addr, char* string );
+extern char* dec_string( word_20* addr, char* string );
+extern char* dec_hex_string( word_20* addr, char* string );
+extern char* dec_list( word_20* addr, char* string );
+extern char* dec_symb( word_20* addr, char* string );
+extern char* dec_unit( word_20* addr, char* string );
+extern char* dec_library( word_20* addr, char* string );
+extern char* dec_library_data( word_20* addr, char* string );
+extern char* dec_acptr( word_20* addr, char* string );
+extern char* dec_prog( word_20* addr, char* string );
+extern char* dec_code( word_20* addr, char* string );
+extern char* dec_global_ident( word_20* addr, char* string );
+extern char* dec_local_ident( word_20* addr, char* string );
+extern char* dec_xlib_name( word_20* addr, char* string );
+extern char* dec_unit_op( word_20* addr, char* string );
 
 #endif /* !_RPL_H */
