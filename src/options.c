@@ -57,10 +57,8 @@ where options include:\n\
 
 void show_version( void ) {
     fprintf( stdout, "\n\
-%s Version %d.%d.%d, x48 is Copyright (c) 1994-2005 by Eddie C. Dost <ecd@dressler.de>.\n\
-Compiled on %s #%d\n\n",
-             progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, COMPILE_TIME,
-             COMPILE_VERSION );
+%s Version %d.%d.%d, x48 is Copyright (c) 1994-2005 by Eddie C. Dost <ecd@dressler.de>.\n\n",
+             progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
 }
 
 void show_copyright( void ) {

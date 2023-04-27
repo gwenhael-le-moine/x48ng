@@ -28,7 +28,7 @@ static long systime_offset = 0;
 /*
  * Ticks for THU 01.01.1970 00:00:00
  */
-word_64 unix_0_time = 0x1CF2E8F800000L;
+word_64 unix_0_time = 0x1CF2E8F800000LL;
 word_64 ticks_10_min = 0x00b40000L;
 
 /*

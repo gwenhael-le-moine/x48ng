@@ -2,9 +2,9 @@
 
 #include <stdlib.h>
 
-#include "device.h"
 #include "hp48.h"
 #include "hp48_emu.h"
+#include "device.h"
 #include "timer.h"
 #include "x48_gui.h"
 

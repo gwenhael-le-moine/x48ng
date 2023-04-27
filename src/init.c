@@ -2,10 +2,10 @@
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <unistd.h>
+#include <sys/stat.h>
+#include <string.h>
+#include <sys/types.h>
 
 #include "device.h"
 #include "hp48.h"
@@ -215,270 +215,270 @@ void init_saturn( void ) {
     dev_memory_init();
 }
 
-void copy_old_saturn( old_saturn_t* old, saturn_t* new ) {
+void copy_old_saturn( old_saturn_t* old, saturn_t* newt ) {
     int i;
 
-    memcpy( &( new->A[ 0 ] ), &( old->A[ 0 ] ), 16 );
-    memcpy( &( new->B[ 0 ] ), &( old->B[ 0 ] ), 16 );
-    memcpy( &( new->C[ 0 ] ), &( old->C[ 0 ] ), 16 );
-    memcpy( &( new->D[ 0 ] ), &( old->D[ 0 ] ), 16 );
-    new->d[ 0 ] = old->d[ 0 ];
-    new->d[ 1 ] = old->d[ 1 ];
-    new->P = old->P;
-    new->PC = old->PC;
-    memcpy( &( new->R0[ 0 ] ), &( old->R0[ 0 ] ), 16 );
-    memcpy( &( new->R1[ 0 ] ), &( old->R1[ 0 ] ), 16 );
-    memcpy( &( new->R2[ 0 ] ), &( old->R2[ 0 ] ), 16 );
-    memcpy( &( new->R3[ 0 ] ), &( old->R3[ 0 ] ), 16 );
-    memcpy( &( new->R4[ 0 ] ), &( old->R4[ 0 ] ), 16 );
-    memcpy( &( new->IN[ 0 ] ), &( old->IN[ 0 ] ), 4 );
-    memcpy( &( new->OUT[ 0 ] ), &( old->OUT[ 0 ] ), 3 );
-    new->CARRY = old->CARRY;
-    memcpy( &( new->PSTAT[ 0 ] ), &( old->PSTAT[ 0 ] ), NR_PSTAT );
-    new->XM = old->XM;
-    new->SB = old->SB;
-    new->SR = old->SR;
-    new->MP = old->MP;
-    new->hexmode = old->hexmode;
-    memcpy( &( new->rstk[ 0 ] ), &( old->rstk[ 0 ] ),
+    memcpy( &( newt->A[ 0 ] ), &( old->A[ 0 ] ), 16 );
+    memcpy( &( newt->B[ 0 ] ), &( old->B[ 0 ] ), 16 );
+    memcpy( &( newt->C[ 0 ] ), &( old->C[ 0 ] ), 16 );
+    memcpy( &( newt->D[ 0 ] ), &( old->D[ 0 ] ), 16 );
+    newt->d[ 0 ] = old->d[ 0 ];
+    newt->d[ 1 ] = old->d[ 1 ];
+    newt->P = old->P;
+    newt->PC = old->PC;
+    memcpy( &( newt->R0[ 0 ] ), &( old->R0[ 0 ] ), 16 );
+    memcpy( &( newt->R1[ 0 ] ), &( old->R1[ 0 ] ), 16 );
+    memcpy( &( newt->R2[ 0 ] ), &( old->R2[ 0 ] ), 16 );
+    memcpy( &( newt->R3[ 0 ] ), &( old->R3[ 0 ] ), 16 );
+    memcpy( &( newt->R4[ 0 ] ), &( old->R4[ 0 ] ), 16 );
+    memcpy( &( newt->IN[ 0 ] ), &( old->IN[ 0 ] ), 4 );
+    memcpy( &( newt->OUT[ 0 ] ), &( old->OUT[ 0 ] ), 3 );
+    newt->CARRY = old->CARRY;
+    memcpy( &( newt->PSTAT[ 0 ] ), &( old->PSTAT[ 0 ] ), NR_PSTAT );
+    newt->XM = old->XM;
+    newt->SB = old->SB;
+    newt->SR = old->SR;
+    newt->MP = old->MP;
+    newt->hexmode = old->hexmode;
+    memcpy( &( newt->rstk[ 0 ] ), &( old->rstk[ 0 ] ),
             NR_RSTK * sizeof( word_20 ) );
-    new->rstkp = old->rstkp;
+    newt->rstkp = old->rstkp;
     for ( i = 0; i < 9; i++ ) {
-        new->keybuf.rows[ i ] = old->keybuf.rows[ i ];
+        newt->keybuf.rows[ i ] = old->keybuf.rows[ i ];
     }
-    new->intenable = old->intenable;
-    new->int_pending = old->int_pending;
-    new->kbd_ien = old->kbd_ien;
-    new->disp_io = old->disp_io;
-    new->contrast_ctrl = old->contrast_ctrl;
-    new->disp_test = old->disp_test;
-    new->crc = old->crc;
-    new->power_status = old->power_status;
-    new->power_ctrl = old->power_ctrl;
-    new->mode = old->mode;
-    new->annunc = old->annunc;
-    new->baud = old->baud;
-    new->card_ctrl = old->card_ctrl;
-    new->card_status = old->card_status;
-    new->io_ctrl = old->io_ctrl;
-    new->rcs = old->rcs;
-    new->tcs = old->tcs;
-    new->rbr = old->rbr;
-    new->tbr = old->tbr;
-    new->sreq = old->sreq;
-    new->ir_ctrl = old->ir_ctrl;
-    new->base_off = old->base_off;
-    new->lcr = old->lcr;
-    new->lbr = old->lbr;
-    new->scratch = old->scratch;
-    new->base_nibble = old->base_nibble;
-    new->disp_addr = old->disp_addr;
-    new->line_offset = old->line_offset;
-    new->line_count = old->line_count;
-    new->unknown = old->unknown;
-    new->t1_ctrl = old->t1_ctrl;
-    new->t2_ctrl = old->t2_ctrl;
-    new->menu_addr = old->menu_addr;
-    new->unknown2 = old->unknown2;
-    new->timer1 = old->timer1;
-    new->timer2 = old->timer2;
-    new->t1_instr = old->t1_instr;
-    new->t2_instr = old->t2_instr;
-    new->bank_switch = 0;
+    newt->intenable = old->intenable;
+    newt->int_pending = old->int_pending;
+    newt->kbd_ien = old->kbd_ien;
+    newt->disp_io = old->disp_io;
+    newt->contrast_ctrl = old->contrast_ctrl;
+    newt->disp_test = old->disp_test;
+    newt->crc = old->crc;
+    newt->power_status = old->power_status;
+    newt->power_ctrl = old->power_ctrl;
+    newt->mode = old->mode;
+    newt->annunc = old->annunc;
+    newt->baud = old->baud;
+    newt->card_ctrl = old->card_ctrl;
+    newt->card_status = old->card_status;
+    newt->io_ctrl = old->io_ctrl;
+    newt->rcs = old->rcs;
+    newt->tcs = old->tcs;
+    newt->rbr = old->rbr;
+    newt->tbr = old->tbr;
+    newt->sreq = old->sreq;
+    newt->ir_ctrl = old->ir_ctrl;
+    newt->base_off = old->base_off;
+    newt->lcr = old->lcr;
+    newt->lbr = old->lbr;
+    newt->scratch = old->scratch;
+    newt->base_nibble = old->base_nibble;
+    newt->disp_addr = old->disp_addr;
+    newt->line_offset = old->line_offset;
+    newt->line_count = old->line_count;
+    newt->unknown = old->unknown;
+    newt->t1_ctrl = old->t1_ctrl;
+    newt->t2_ctrl = old->t2_ctrl;
+    newt->menu_addr = old->menu_addr;
+    newt->unknown2 = old->unknown2;
+    newt->timer1 = old->timer1;
+    newt->timer2 = old->timer2;
+    newt->t1_instr = old->t1_instr;
+    newt->t2_instr = old->t2_instr;
+    newt->bank_switch = 0;
     if ( opt_gx ) {
-        new->mem_cntl[ 0 ].unconfigured = 0;
-        new->mem_cntl[ 0 ].config[ 0 ] = 0x00100;
-        new->mem_cntl[ 1 ].unconfigured = 0;
-        new->mem_cntl[ 1 ].config[ 0 ] = 0x80000;
-        new->mem_cntl[ 1 ].config[ 1 ] = 0xc0000;
-        new->mem_cntl[ 2 ].unconfigured = 0;
-        new->mem_cntl[ 2 ].config[ 0 ] = 0x7f000;
-        new->mem_cntl[ 2 ].config[ 1 ] = 0xff000;
-        new->mem_cntl[ 3 ].unconfigured = 0;
-        new->mem_cntl[ 3 ].config[ 0 ] = 0xc0000;
-        new->mem_cntl[ 3 ].config[ 1 ] = 0xc0000;
-        new->mem_cntl[ 4 ].unconfigured = 0;
-        new->mem_cntl[ 4 ].config[ 0 ] = 0xc0000;
-        new->mem_cntl[ 4 ].config[ 1 ] = 0xc0000;
-        new->mem_cntl[ 5 ].unconfigured = 0;
-        new->mem_cntl[ 5 ].config[ 0 ] = 0x00000;
-        new->mem_cntl[ 5 ].config[ 1 ] = 0x00000;
+        newt->mem_cntl[ 0 ].unconfigured = 0;
+        newt->mem_cntl[ 0 ].config[ 0 ] = 0x00100;
+        newt->mem_cntl[ 1 ].unconfigured = 0;
+        newt->mem_cntl[ 1 ].config[ 0 ] = 0x80000;
+        newt->mem_cntl[ 1 ].config[ 1 ] = 0xc0000;
+        newt->mem_cntl[ 2 ].unconfigured = 0;
+        newt->mem_cntl[ 2 ].config[ 0 ] = 0x7f000;
+        newt->mem_cntl[ 2 ].config[ 1 ] = 0xff000;
+        newt->mem_cntl[ 3 ].unconfigured = 0;
+        newt->mem_cntl[ 3 ].config[ 0 ] = 0xc0000;
+        newt->mem_cntl[ 3 ].config[ 1 ] = 0xc0000;
+        newt->mem_cntl[ 4 ].unconfigured = 0;
+        newt->mem_cntl[ 4 ].config[ 0 ] = 0xc0000;
+        newt->mem_cntl[ 4 ].config[ 1 ] = 0xc0000;
+        newt->mem_cntl[ 5 ].unconfigured = 0;
+        newt->mem_cntl[ 5 ].config[ 0 ] = 0x00000;
+        newt->mem_cntl[ 5 ].config[ 1 ] = 0x00000;
     } else {
         if ( old->devices == 0x100 ) {
-            new->mem_cntl[ 0 ].unconfigured = 0;
-            new->mem_cntl[ 0 ].config[ 0 ] = old->devices;
+            newt->mem_cntl[ 0 ].unconfigured = 0;
+            newt->mem_cntl[ 0 ].config[ 0 ] = old->devices;
         } else {
-            new->mem_cntl[ 0 ].unconfigured = 1;
-            new->mem_cntl[ 0 ].config[ 0 ] = 0x00000;
+            newt->mem_cntl[ 0 ].unconfigured = 1;
+            newt->mem_cntl[ 0 ].config[ 0 ] = 0x00000;
         }
         if ( old->ram32k == 0x70000 ) {
-            new->mem_cntl[ 1 ].unconfigured = 0;
-            new->mem_cntl[ 1 ].config[ 0 ] = 0x70000;
-            new->mem_cntl[ 1 ].config[ 1 ] = 0xf0000;
+            newt->mem_cntl[ 1 ].unconfigured = 0;
+            newt->mem_cntl[ 1 ].config[ 0 ] = 0x70000;
+            newt->mem_cntl[ 1 ].config[ 1 ] = 0xf0000;
         } else if ( old->ram32k == 0xf0000 ) {
-            new->mem_cntl[ 1 ].unconfigured = 0;
-            new->mem_cntl[ 1 ].config[ 0 ] = 0xf0000;
-            new->mem_cntl[ 1 ].config[ 1 ] = 0xf0000;
+            newt->mem_cntl[ 1 ].unconfigured = 0;
+            newt->mem_cntl[ 1 ].config[ 0 ] = 0xf0000;
+            newt->mem_cntl[ 1 ].config[ 1 ] = 0xf0000;
         } else if ( old->ram32k == 0xfc000 ) {
-            new->mem_cntl[ 1 ].unconfigured = 0;
-            new->mem_cntl[ 1 ].config[ 0 ] = 0x70000;
-            new->mem_cntl[ 1 ].config[ 1 ] = 0xfc000;
+            newt->mem_cntl[ 1 ].unconfigured = 0;
+            newt->mem_cntl[ 1 ].config[ 0 ] = 0x70000;
+            newt->mem_cntl[ 1 ].config[ 1 ] = 0xfc000;
         } else if ( old->ram32k == 0xfe000 ) {
-            new->mem_cntl[ 1 ].unconfigured = 0;
-            new->mem_cntl[ 1 ].config[ 0 ] = 0x70000;
-            new->mem_cntl[ 1 ].config[ 1 ] = 0xfe000;
+            newt->mem_cntl[ 1 ].unconfigured = 0;
+            newt->mem_cntl[ 1 ].config[ 0 ] = 0x70000;
+            newt->mem_cntl[ 1 ].config[ 1 ] = 0xfe000;
         } else {
-            new->mem_cntl[ 1 ].unconfigured = 2;
-            new->mem_cntl[ 1 ].config[ 0 ] = 0x00000;
-            new->mem_cntl[ 1 ].config[ 1 ] = 0x00000;
+            newt->mem_cntl[ 1 ].unconfigured = 2;
+            newt->mem_cntl[ 1 ].config[ 0 ] = 0x00000;
+            newt->mem_cntl[ 1 ].config[ 1 ] = 0x00000;
         }
-        new->mem_cntl[ 2 ].unconfigured = 0;
-        new->mem_cntl[ 2 ].config[ 0 ] = 0x80000;
-        new->mem_cntl[ 2 ].config[ 1 ] = 0xc0000;
-        new->mem_cntl[ 3 ].unconfigured = 0;
-        new->mem_cntl[ 3 ].config[ 0 ] = 0xc0000;
-        new->mem_cntl[ 3 ].config[ 1 ] = 0xc0000;
-        new->mem_cntl[ 4 ].unconfigured = 0;
-        new->mem_cntl[ 4 ].config[ 0 ] = 0xd0000;
-        new->mem_cntl[ 4 ].config[ 1 ] = 0xff000;
-        new->mem_cntl[ 5 ].unconfigured = 0;
-        new->mem_cntl[ 5 ].config[ 0 ] = 0x00000;
-        new->mem_cntl[ 5 ].config[ 1 ] = 0x80000;
+        newt->mem_cntl[ 2 ].unconfigured = 0;
+        newt->mem_cntl[ 2 ].config[ 0 ] = 0x80000;
+        newt->mem_cntl[ 2 ].config[ 1 ] = 0xc0000;
+        newt->mem_cntl[ 3 ].unconfigured = 0;
+        newt->mem_cntl[ 3 ].config[ 0 ] = 0xc0000;
+        newt->mem_cntl[ 3 ].config[ 1 ] = 0xc0000;
+        newt->mem_cntl[ 4 ].unconfigured = 0;
+        newt->mem_cntl[ 4 ].config[ 0 ] = 0xd0000;
+        newt->mem_cntl[ 4 ].config[ 1 ] = 0xff000;
+        newt->mem_cntl[ 5 ].unconfigured = 0;
+        newt->mem_cntl[ 5 ].config[ 0 ] = 0x00000;
+        newt->mem_cntl[ 5 ].config[ 1 ] = 0x80000;
     }
 }
 
-void copy_0_3_0_saturn( saturn_0_3_0_t* old, saturn_t* new ) {
+void copy_0_3_0_saturn( saturn_0_3_0_t* old, saturn_t* newt ) {
     int i;
 
-    memcpy( &( new->A[ 0 ] ), &( old->A[ 0 ] ), 16 );
-    memcpy( &( new->B[ 0 ] ), &( old->B[ 0 ] ), 16 );
-    memcpy( &( new->C[ 0 ] ), &( old->C[ 0 ] ), 16 );
-    memcpy( &( new->D[ 0 ] ), &( old->D[ 0 ] ), 16 );
-    new->d[ 0 ] = old->d[ 0 ];
-    new->d[ 1 ] = old->d[ 1 ];
-    new->P = old->P;
-    new->PC = old->PC;
-    memcpy( &( new->R0[ 0 ] ), &( old->R0[ 0 ] ), 16 );
-    memcpy( &( new->R1[ 0 ] ), &( old->R1[ 0 ] ), 16 );
-    memcpy( &( new->R2[ 0 ] ), &( old->R2[ 0 ] ), 16 );
-    memcpy( &( new->R3[ 0 ] ), &( old->R3[ 0 ] ), 16 );
-    memcpy( &( new->R4[ 0 ] ), &( old->R4[ 0 ] ), 16 );
-    memcpy( &( new->IN[ 0 ] ), &( old->IN[ 0 ] ), 4 );
-    memcpy( &( new->OUT[ 0 ] ), &( old->OUT[ 0 ] ), 3 );
-    new->CARRY = old->CARRY;
-    memcpy( &( new->PSTAT[ 0 ] ), &( old->PSTAT[ 0 ] ), NR_PSTAT );
-    new->XM = old->XM;
-    new->SB = old->SB;
-    new->SR = old->SR;
-    new->MP = old->MP;
-    new->hexmode = old->hexmode;
-    memcpy( &( new->rstk[ 0 ] ), &( old->rstk[ 0 ] ),
+    memcpy( &( newt->A[ 0 ] ), &( old->A[ 0 ] ), 16 );
+    memcpy( &( newt->B[ 0 ] ), &( old->B[ 0 ] ), 16 );
+    memcpy( &( newt->C[ 0 ] ), &( old->C[ 0 ] ), 16 );
+    memcpy( &( newt->D[ 0 ] ), &( old->D[ 0 ] ), 16 );
+    newt->d[ 0 ] = old->d[ 0 ];
+    newt->d[ 1 ] = old->d[ 1 ];
+    newt->P = old->P;
+    newt->PC = old->PC;
+    memcpy( &( newt->R0[ 0 ] ), &( old->R0[ 0 ] ), 16 );
+    memcpy( &( newt->R1[ 0 ] ), &( old->R1[ 0 ] ), 16 );
+    memcpy( &( newt->R2[ 0 ] ), &( old->R2[ 0 ] ), 16 );
+    memcpy( &( newt->R3[ 0 ] ), &( old->R3[ 0 ] ), 16 );
+    memcpy( &( newt->R4[ 0 ] ), &( old->R4[ 0 ] ), 16 );
+    memcpy( &( newt->IN[ 0 ] ), &( old->IN[ 0 ] ), 4 );
+    memcpy( &( newt->OUT[ 0 ] ), &( old->OUT[ 0 ] ), 3 );
+    newt->CARRY = old->CARRY;
+    memcpy( &( newt->PSTAT[ 0 ] ), &( old->PSTAT[ 0 ] ), NR_PSTAT );
+    newt->XM = old->XM;
+    newt->SB = old->SB;
+    newt->SR = old->SR;
+    newt->MP = old->MP;
+    newt->hexmode = old->hexmode;
+    memcpy( &( newt->rstk[ 0 ] ), &( old->rstk[ 0 ] ),
             NR_RSTK * sizeof( word_20 ) );
-    new->rstkp = old->rstkp;
+    newt->rstkp = old->rstkp;
     for ( i = 0; i < 9; i++ ) {
-        new->keybuf.rows[ i ] = old->keybuf.rows[ i ];
+        newt->keybuf.rows[ i ] = old->keybuf.rows[ i ];
     }
-    new->intenable = old->intenable;
-    new->int_pending = old->int_pending;
-    new->kbd_ien = old->kbd_ien;
-    new->disp_io = old->disp_io;
-    new->contrast_ctrl = old->contrast_ctrl;
-    new->disp_test = old->disp_test;
-    new->crc = old->crc;
-    new->power_status = old->power_status;
-    new->power_ctrl = old->power_ctrl;
-    new->mode = old->mode;
-    new->annunc = old->annunc;
-    new->baud = old->baud;
-    new->card_ctrl = old->card_ctrl;
-    new->card_status = old->card_status;
-    new->io_ctrl = old->io_ctrl;
-    new->rcs = old->rcs;
-    new->tcs = old->tcs;
-    new->rbr = old->rbr;
-    new->tbr = old->tbr;
-    new->sreq = old->sreq;
-    new->ir_ctrl = old->ir_ctrl;
-    new->base_off = old->base_off;
-    new->lcr = old->lcr;
-    new->lbr = old->lbr;
-    new->scratch = old->scratch;
-    new->base_nibble = old->base_nibble;
-    new->disp_addr = old->disp_addr;
-    new->line_offset = old->line_offset;
-    new->line_count = old->line_count;
-    new->unknown = old->unknown;
-    new->t1_ctrl = old->t1_ctrl;
-    new->t2_ctrl = old->t2_ctrl;
-    new->menu_addr = old->menu_addr;
-    new->unknown2 = old->unknown2;
-    new->timer1 = old->timer1;
-    new->timer2 = old->timer2;
-    new->t1_instr = old->t1_instr;
-    new->t2_instr = old->t2_instr;
-    new->t1_tick = old->t1_tick;
-    new->t2_tick = old->t2_tick;
-    new->i_per_s = old->i_per_s;
-    new->bank_switch = 0;
+    newt->intenable = old->intenable;
+    newt->int_pending = old->int_pending;
+    newt->kbd_ien = old->kbd_ien;
+    newt->disp_io = old->disp_io;
+    newt->contrast_ctrl = old->contrast_ctrl;
+    newt->disp_test = old->disp_test;
+    newt->crc = old->crc;
+    newt->power_status = old->power_status;
+    newt->power_ctrl = old->power_ctrl;
+    newt->mode = old->mode;
+    newt->annunc = old->annunc;
+    newt->baud = old->baud;
+    newt->card_ctrl = old->card_ctrl;
+    newt->card_status = old->card_status;
+    newt->io_ctrl = old->io_ctrl;
+    newt->rcs = old->rcs;
+    newt->tcs = old->tcs;
+    newt->rbr = old->rbr;
+    newt->tbr = old->tbr;
+    newt->sreq = old->sreq;
+    newt->ir_ctrl = old->ir_ctrl;
+    newt->base_off = old->base_off;
+    newt->lcr = old->lcr;
+    newt->lbr = old->lbr;
+    newt->scratch = old->scratch;
+    newt->base_nibble = old->base_nibble;
+    newt->disp_addr = old->disp_addr;
+    newt->line_offset = old->line_offset;
+    newt->line_count = old->line_count;
+    newt->unknown = old->unknown;
+    newt->t1_ctrl = old->t1_ctrl;
+    newt->t2_ctrl = old->t2_ctrl;
+    newt->menu_addr = old->menu_addr;
+    newt->unknown2 = old->unknown2;
+    newt->timer1 = old->timer1;
+    newt->timer2 = old->timer2;
+    newt->t1_instr = old->t1_instr;
+    newt->t2_instr = old->t2_instr;
+    newt->t1_tick = old->t1_tick;
+    newt->t2_tick = old->t2_tick;
+    newt->i_per_s = old->i_per_s;
+    newt->bank_switch = 0;
     if ( opt_gx ) {
-        new->mem_cntl[ 0 ].unconfigured = 0;
-        new->mem_cntl[ 0 ].config[ 0 ] = 0x00100;
-        new->mem_cntl[ 1 ].unconfigured = 0;
-        new->mem_cntl[ 1 ].config[ 0 ] = 0x80000;
-        new->mem_cntl[ 1 ].config[ 1 ] = 0xc0000;
-        new->mem_cntl[ 2 ].unconfigured = 0;
-        new->mem_cntl[ 2 ].config[ 0 ] = 0x7f000;
-        new->mem_cntl[ 2 ].config[ 1 ] = 0xff000;
-        new->mem_cntl[ 3 ].unconfigured = 0;
-        new->mem_cntl[ 3 ].config[ 0 ] = 0xc0000;
-        new->mem_cntl[ 3 ].config[ 1 ] = 0xc0000;
-        new->mem_cntl[ 4 ].unconfigured = 0;
-        new->mem_cntl[ 4 ].config[ 0 ] = 0xc0000;
-        new->mem_cntl[ 4 ].config[ 1 ] = 0xc0000;
-        new->mem_cntl[ 5 ].unconfigured = 0;
-        new->mem_cntl[ 5 ].config[ 0 ] = 0x00000;
-        new->mem_cntl[ 5 ].config[ 1 ] = 0x00000;
+        newt->mem_cntl[ 0 ].unconfigured = 0;
+        newt->mem_cntl[ 0 ].config[ 0 ] = 0x00100;
+        newt->mem_cntl[ 1 ].unconfigured = 0;
+        newt->mem_cntl[ 1 ].config[ 0 ] = 0x80000;
+        newt->mem_cntl[ 1 ].config[ 1 ] = 0xc0000;
+        newt->mem_cntl[ 2 ].unconfigured = 0;
+        newt->mem_cntl[ 2 ].config[ 0 ] = 0x7f000;
+        newt->mem_cntl[ 2 ].config[ 1 ] = 0xff000;
+        newt->mem_cntl[ 3 ].unconfigured = 0;
+        newt->mem_cntl[ 3 ].config[ 0 ] = 0xc0000;
+        newt->mem_cntl[ 3 ].config[ 1 ] = 0xc0000;
+        newt->mem_cntl[ 4 ].unconfigured = 0;
+        newt->mem_cntl[ 4 ].config[ 0 ] = 0xc0000;
+        newt->mem_cntl[ 4 ].config[ 1 ] = 0xc0000;
+        newt->mem_cntl[ 5 ].unconfigured = 0;
+        newt->mem_cntl[ 5 ].config[ 0 ] = 0x00000;
+        newt->mem_cntl[ 5 ].config[ 1 ] = 0x00000;
     } else {
         if ( old->devices == 0x100 ) {
-            new->mem_cntl[ 0 ].unconfigured = 0;
-            new->mem_cntl[ 0 ].config[ 0 ] = old->devices;
+            newt->mem_cntl[ 0 ].unconfigured = 0;
+            newt->mem_cntl[ 0 ].config[ 0 ] = old->devices;
         } else {
-            new->mem_cntl[ 0 ].unconfigured = 1;
-            new->mem_cntl[ 0 ].config[ 0 ] = 0x00000;
+            newt->mem_cntl[ 0 ].unconfigured = 1;
+            newt->mem_cntl[ 0 ].config[ 0 ] = 0x00000;
         }
         if ( old->ram32k == 0x70000 ) {
-            new->mem_cntl[ 1 ].unconfigured = 0;
-            new->mem_cntl[ 1 ].config[ 0 ] = 0x70000;
-            new->mem_cntl[ 1 ].config[ 1 ] = 0xf0000;
+            newt->mem_cntl[ 1 ].unconfigured = 0;
+            newt->mem_cntl[ 1 ].config[ 0 ] = 0x70000;
+            newt->mem_cntl[ 1 ].config[ 1 ] = 0xf0000;
         } else if ( old->ram32k == 0xf0000 ) {
-            new->mem_cntl[ 1 ].unconfigured = 0;
-            new->mem_cntl[ 1 ].config[ 0 ] = 0xf0000;
-            new->mem_cntl[ 1 ].config[ 1 ] = 0xf0000;
+            newt->mem_cntl[ 1 ].unconfigured = 0;
+            newt->mem_cntl[ 1 ].config[ 0 ] = 0xf0000;
+            newt->mem_cntl[ 1 ].config[ 1 ] = 0xf0000;
         } else if ( old->ram32k == 0xfc000 ) {
-            new->mem_cntl[ 1 ].unconfigured = 0;
-            new->mem_cntl[ 1 ].config[ 0 ] = 0x70000;
-            new->mem_cntl[ 1 ].config[ 1 ] = 0xfc000;
+            newt->mem_cntl[ 1 ].unconfigured = 0;
+            newt->mem_cntl[ 1 ].config[ 0 ] = 0x70000;
+            newt->mem_cntl[ 1 ].config[ 1 ] = 0xfc000;
         } else if ( old->ram32k == 0xfe000 ) {
-            new->mem_cntl[ 1 ].unconfigured = 0;
-            new->mem_cntl[ 1 ].config[ 0 ] = 0x70000;
-            new->mem_cntl[ 1 ].config[ 1 ] = 0xfe000;
+            newt->mem_cntl[ 1 ].unconfigured = 0;
+            newt->mem_cntl[ 1 ].config[ 0 ] = 0x70000;
+            newt->mem_cntl[ 1 ].config[ 1 ] = 0xfe000;
         } else {
-            new->mem_cntl[ 1 ].unconfigured = 2;
-            new->mem_cntl[ 1 ].config[ 0 ] = 0x00000;
-            new->mem_cntl[ 1 ].config[ 1 ] = 0x00000;
+            newt->mem_cntl[ 1 ].unconfigured = 2;
+            newt->mem_cntl[ 1 ].config[ 0 ] = 0x00000;
+            newt->mem_cntl[ 1 ].config[ 1 ] = 0x00000;
         }
-        new->mem_cntl[ 2 ].unconfigured = 0;
-        new->mem_cntl[ 2 ].config[ 0 ] = 0x80000;
-        new->mem_cntl[ 2 ].config[ 1 ] = 0xc0000;
-        new->mem_cntl[ 3 ].unconfigured = 0;
-        new->mem_cntl[ 3 ].config[ 0 ] = 0xc0000;
-        new->mem_cntl[ 3 ].config[ 1 ] = 0xc0000;
-        new->mem_cntl[ 4 ].unconfigured = 0;
-        new->mem_cntl[ 4 ].config[ 0 ] = 0xd0000;
-        new->mem_cntl[ 4 ].config[ 1 ] = 0xff000;
-        new->mem_cntl[ 5 ].unconfigured = 0;
-        new->mem_cntl[ 5 ].config[ 0 ] = 0x00000;
-        new->mem_cntl[ 5 ].config[ 1 ] = 0x80000;
+        newt->mem_cntl[ 2 ].unconfigured = 0;
+        newt->mem_cntl[ 2 ].config[ 0 ] = 0x80000;
+        newt->mem_cntl[ 2 ].config[ 1 ] = 0xc0000;
+        newt->mem_cntl[ 3 ].unconfigured = 0;
+        newt->mem_cntl[ 3 ].config[ 0 ] = 0xc0000;
+        newt->mem_cntl[ 3 ].config[ 1 ] = 0xc0000;
+        newt->mem_cntl[ 4 ].unconfigured = 0;
+        newt->mem_cntl[ 4 ].config[ 0 ] = 0xd0000;
+        newt->mem_cntl[ 4 ].config[ 1 ] = 0xff000;
+        newt->mem_cntl[ 5 ].unconfigured = 0;
+        newt->mem_cntl[ 5 ].config[ 0 ] = 0x00000;
+        newt->mem_cntl[ 5 ].config[ 1 ] = 0x80000;
     }
 }
 
