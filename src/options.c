@@ -50,8 +50,8 @@
 #include "constants.h"
 #include "resources.h"
 
-void usage(void) {
-  fprintf(stdout, "\n\
+void usage( void ) {
+    fprintf( stdout, "\n\
 x48 Version %d.%d.%d, Copyright (c) 1994-2005 by Eddie C. Dost <ecd@dressler.de>.\n\
 \n\
 usage:\n\t%s [-options ...]\n\
@@ -91,22 +91,22 @@ where options include:\n\
     -/+throttle			 turn off/on speed emulation\n\
     -/+netbook			 turn off/on netbook layout\n\
 \n",
-          VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname);
+             VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname );
 
-  fflush(stdout);
-  exit(1);
+    fflush( stdout );
+    exit( 1 );
 }
 
-void show_version(void) {
-  fprintf(stdout, "\n\
+void show_version( void ) {
+    fprintf( stdout, "\n\
 %s Version %d.%d.%d, x48 is Copyright (c) 1994-2005 by Eddie C. Dost <ecd@dressler.de>.\n\
 Compiled on %s #%d\n\n",
-          progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, COMPILE_TIME,
-          COMPILE_VERSION);
+             progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, COMPILE_TIME,
+             COMPILE_VERSION );
 }
 
-void show_copyright(void) {
-  fprintf(stdout, "\n\
+void show_copyright( void ) {
+    fprintf( stdout, "\n\
                                COPYRIGHT\n\
 \n\
 X48 is an Emulator/Debugger for the HP-48 Handheld Calculator.\n\
@@ -124,11 +124,11 @@ GNU General Public License for more details.\n\
 \n\
 You should have received a copy of the GNU General Public License\n\
 along with this program; if not, write to the Free Software\n\
-Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.\n\n");
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.\n\n" );
 }
 
-void show_warranty(void) {
-  fprintf(stdout, "\n\
+void show_warranty( void ) {
+    fprintf( stdout, "\n\
                               NO WARRANTY\n\
 \n\
       BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY\n\
@@ -149,5 +149,5 @@ OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED\n\
 TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY\n\
 YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER\n\
 PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE\n\
-POSSIBILITY OF SUCH DAMAGES.\n\n");
+POSSIBILITY OF SUCH DAMAGES.\n\n" );
 }

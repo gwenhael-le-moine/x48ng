@@ -40,12 +40,12 @@
 #include "global.h"
 #include "hp48.h"
 
-#define HP_MNEMONICS            0
-#define CLASS_MNEMONICS		1
+#define HP_MNEMONICS 0
+#define CLASS_MNEMONICS 1
 
 extern int disassembler_mode;
-extern char *mode_name[];
+extern char* mode_name[];
 
-extern word_20 disassemble __ProtoType__((word_20 addr, char *out));
+extern word_20 disassemble __ProtoType__( ( word_20 addr, char* out ) );
 
 #endif /* !_DISASM_H */

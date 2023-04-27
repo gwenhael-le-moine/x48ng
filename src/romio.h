@@ -36,8 +36,7 @@
 extern unsigned int opt_gx;
 extern unsigned int rom_size;
 
-extern int read_rom_file __ProtoType__((char *name,
-                                        unsigned char **mem,
-                                        int *size));
+extern int read_rom_file __ProtoType__( ( char* name, unsigned char** mem,
+                                          int* size ) );
 
 #endif /* !_ROMIO_H */

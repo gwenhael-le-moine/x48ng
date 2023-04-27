@@ -57,10 +57,10 @@ extern int enter_debugger;
 extern int in_debugger;
 extern int exec_flags;
 
-extern void init_debugger __ProtoType__((void));
-extern int debug __ProtoType__((void));
-extern int emulate_debug __ProtoType__((void));
+extern void init_debugger __ProtoType__( ( void ));
+extern int debug __ProtoType__( ( void ));
+extern int emulate_debug __ProtoType__( ( void ));
 
-extern char *str_nibbles __ProtoType__((word_20 addr, int n));
+extern char* str_nibbles __ProtoType__( ( word_20 addr, int n ) );
 
 #endif /* !_DEBUGGER_H */

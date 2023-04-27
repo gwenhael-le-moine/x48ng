@@ -29,9 +29,9 @@
 
 #include "global.h"
 
-extern char errbuf[1024];
-extern char fixbuf[1024];
+extern char errbuf[ 1024 ];
+extern char fixbuf[ 1024 ];
 
-extern void fatal_exit __ProtoType__((void));
+extern void fatal_exit __ProtoType__( ( void ));
 
 #endif /* !_ERRORS_H */

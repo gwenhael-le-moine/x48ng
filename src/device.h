@@ -64,69 +64,69 @@
 
 typedef struct device_t {
 
-  int display_touched;
+    int display_touched;
 
-  char contrast_touched;
+    char contrast_touched;
 
-  char disp_test_touched;
+    char disp_test_touched;
 
-  char crc_touched;
+    char crc_touched;
 
-  char power_status_touched;
-  char power_ctrl_touched;
+    char power_status_touched;
+    char power_ctrl_touched;
 
-  char mode_touched;
+    char mode_touched;
 
-  char ann_touched;
+    char ann_touched;
 
-  char baud_touched;
+    char baud_touched;
 
-  char card_ctrl_touched;
-  char card_status_touched;
+    char card_ctrl_touched;
+    char card_status_touched;
 
-  char ioc_touched;
+    char ioc_touched;
 
-  char tcs_touched;
-  char rcs_touched;
+    char tcs_touched;
+    char rcs_touched;
 
-  char rbr_touched;
-  char tbr_touched;
+    char rbr_touched;
+    char tbr_touched;
 
-  char sreq_touched;
+    char sreq_touched;
 
-  char ir_ctrl_touched;
+    char ir_ctrl_touched;
 
-  char base_off_touched;
+    char base_off_touched;
 
-  char lcr_touched;
-  char lbr_touched;
+    char lcr_touched;
+    char lbr_touched;
 
-  char scratch_touched;
-  char base_nibble_touched;
+    char scratch_touched;
+    char base_nibble_touched;
 
-  char unknown_touched;
+    char unknown_touched;
 
-  char t1_ctrl_touched;
-  char t2_ctrl_touched;
+    char t1_ctrl_touched;
+    char t2_ctrl_touched;
 
-  char unknown2_touched;
+    char unknown2_touched;
 
-  char t1_touched;
-  char t2_touched;
+    char t1_touched;
+    char t2_touched;
 
 } device_t;
 
 extern device_t device;
-extern void check_devices __ProtoType__((void));
+extern void check_devices __ProtoType__( ( void ));
 #if 0
 extern void	check_out_register __ProtoType__((void));
 #endif
 
-extern void update_display __ProtoType__((void));
-extern void redraw_display __ProtoType__((void));
-extern void disp_draw_nibble __ProtoType__((word_20 addr, word_4 val));
-extern void menu_draw_nibble __ProtoType__((word_20 addr, word_4 val));
-extern void draw_annunc __ProtoType__((void));
-extern void redraw_annunc __ProtoType__((void));
+extern void update_display __ProtoType__( ( void ));
+extern void redraw_display __ProtoType__( ( void ));
+extern void disp_draw_nibble __ProtoType__( ( word_20 addr, word_4 val ) );
+extern void menu_draw_nibble __ProtoType__( ( word_20 addr, word_4 val ) );
+extern void draw_annunc __ProtoType__( ( void ));
+extern void redraw_annunc __ProtoType__( ( void ));
 
 #endif /* !_DEVICE_H */

@@ -45,11 +45,11 @@
 
 #include "config.h"
 
-#define __ProtoType__(x) x
+#define __ProtoType__( x ) x
 
-#if !defined(__GNUC__) || defined(__STRICT_ANSI__)
+#if !defined( __GNUC__ ) || defined( __STRICT_ANSI__ )
 #define inline
-#if !defined(__STDC__)
+#if !defined( __STDC__ )
 #define const
 #endif
 #endif
@@ -57,7 +57,7 @@
 /*
  * If we are running Linux, `linux' will be defined by gcc.
  */
-#if defined(linux)
+#if defined( linux )
 
 #ifndef LINUX
 #define LINUX 1
@@ -67,9 +67,9 @@
 
 #else /* Not Linux */
 
-#if defined(sun) && defined(unix)
+#if defined( sun ) && defined( unix )
 
-#if defined(__svr4__) || defined(SVR4) || defined(SYSV)
+#if defined( __svr4__ ) || defined( SVR4 ) || defined( SYSV )
 
 #ifndef SOLARIS
 #define SOLARIS 1
@@ -79,7 +79,7 @@
 
 #else /* Not Solaris */
 
-#if defined(hpux)
+#if defined( hpux )
 
 #ifndef HPUX
 #define HPUX 1
@@ -108,28 +108,28 @@
 #include <stdio.h>
 #include <sys/time.h>
 #include <sys/types.h>
-extern int printf __ProtoType__((char *, ...));
-extern int fprintf __ProtoType__((FILE *, char *, ...));
-extern int sscanf __ProtoType__((char *, char *, ...));
-extern void fflush __ProtoType__((FILE *));
-extern int fseek __ProtoType__((FILE *, long, int));
-extern int fread __ProtoType__((void *, int, int, FILE *));
-extern int fwrite __ProtoType__((void *, int, int, FILE *));
-extern void fclose __ProtoType__((FILE *));
-extern int fgetc __ProtoType__((FILE *));
-extern void bzero __ProtoType__((void *, int));
-extern time_t time __ProtoType__((time_t *));
-extern int select __ProtoType__((int, fd_set *, fd_set *, fd_set *,
-                                 struct timeval *));
-extern int setitimer __ProtoType__((int, struct itimerval *,
-                                    struct itimerval *));
-extern int gethostname __ProtoType__((char *, int));
+extern int printf __ProtoType__( ( char*, ... ) );
+extern int fprintf __ProtoType__( ( FILE*, char*, ... ) );
+extern int sscanf __ProtoType__( ( char*, char*, ... ) );
+extern void fflush __ProtoType__( ( FILE* ));
+extern int fseek __ProtoType__( ( FILE*, long, int ));
+extern int fread __ProtoType__( ( void*, int, int, FILE* ));
+extern int fwrite __ProtoType__( ( void*, int, int, FILE* ));
+extern void fclose __ProtoType__( ( FILE* ));
+extern int fgetc __ProtoType__( ( FILE* ));
+extern void bzero __ProtoType__( ( void*, int ));
+extern time_t time __ProtoType__( ( time_t* ));
+extern int select __ProtoType__( ( int, fd_set*, fd_set*, fd_set*,
+                                   struct timeval* ));
+extern int setitimer __ProtoType__( ( int, struct itimerval*,
+                                      struct itimerval* ));
+extern int gethostname __ProtoType__( ( char*, int ));
 #ifdef HAVE_XSHM
 #include <sys/ipc.h>
 #include <sys/shm.h>
-extern int shmget __ProtoType__((key_t, int, int));
-extern int shmat __ProtoType__((int, void *, int));
-extern int shmctl __ProtoType__((int, int, struct shmid_ds *));
+extern int shmget __ProtoType__( ( key_t, int, int ));
+extern int shmat __ProtoType__( ( int, void*, int ));
+extern int shmctl __ProtoType__( ( int, int, struct shmid_ds* ));
 #endif
 #endif
 

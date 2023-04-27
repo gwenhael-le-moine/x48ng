@@ -93,40 +93,40 @@
 #define UM_END 0x10b86 /* Unit Operator _	*/
 
 typedef struct hp_real {
-  word_20 x;
-  word_32 ml;
-  word_32 mh;
-  word_4 m;
-  word_1 s;
+    word_20 x;
+    word_32 ml;
+    word_32 mh;
+    word_4 m;
+    word_1 s;
 } hp_real;
 
-extern char *decode_rpl_obj __ProtoType__((word_20 addr, char *buf));
-extern void decode_rpl_obj_2 __ProtoType__((word_20 addr, char *typ,
-                                            char *dat));
+extern char* decode_rpl_obj __ProtoType__( ( word_20 addr, char* buf ) );
+extern void decode_rpl_obj_2 __ProtoType__( ( word_20 addr, char* typ,
+                                              char* dat ) );
 
-extern char *skip_ob __ProtoType__((word_20 * addr, char *string));
-extern char *dec_rpl_obj __ProtoType__((word_20 * addr, char *string));
-extern char *dec_bin_int __ProtoType__((word_20 * addr, char *string));
-extern char *dec_real __ProtoType__((word_20 * addr, char *string));
-extern char *dec_long_real __ProtoType__((word_20 * addr, char *string));
-extern char *dec_complex __ProtoType__((word_20 * addr, char *string));
-extern char *dec_long_complex __ProtoType__((word_20 * addr, char *string));
-extern char *dec_char __ProtoType__((word_20 * addr, char *string));
-extern char *dec_array __ProtoType__((word_20 * addr, char *string));
-extern char *dec_lnk_array __ProtoType__((word_20 * addr, char *string));
-extern char *dec_string __ProtoType__((word_20 * addr, char *string));
-extern char *dec_hex_string __ProtoType__((word_20 * addr, char *string));
-extern char *dec_list __ProtoType__((word_20 * addr, char *string));
-extern char *dec_symb __ProtoType__((word_20 * addr, char *string));
-extern char *dec_unit __ProtoType__((word_20 * addr, char *string));
-extern char *dec_library __ProtoType__((word_20 * addr, char *string));
-extern char *dec_library_data __ProtoType__((word_20 * addr, char *string));
-extern char *dec_acptr __ProtoType__((word_20 * addr, char *string));
-extern char *dec_prog __ProtoType__((word_20 * addr, char *string));
-extern char *dec_code __ProtoType__((word_20 * addr, char *string));
-extern char *dec_global_ident __ProtoType__((word_20 * addr, char *string));
-extern char *dec_local_ident __ProtoType__((word_20 * addr, char *string));
-extern char *dec_xlib_name __ProtoType__((word_20 * addr, char *string));
-extern char *dec_unit_op __ProtoType__((word_20 * addr, char *string));
+extern char* skip_ob __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_rpl_obj __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_bin_int __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_real __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_long_real __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_complex __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_long_complex __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_char __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_array __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_lnk_array __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_string __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_hex_string __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_list __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_symb __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_unit __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_library __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_library_data __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_acptr __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_prog __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_code __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_global_ident __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_local_ident __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_xlib_name __ProtoType__( ( word_20 * addr, char* string ) );
+extern char* dec_unit_op __ProtoType__( ( word_20 * addr, char* string ) );
 
 #endif /* !_RPL_H */
