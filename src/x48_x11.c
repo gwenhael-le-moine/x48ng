@@ -2257,8 +2257,8 @@ void CreateKeypad( unsigned int w, unsigned int h, unsigned int offset_y,
 void CreateBezel( unsigned int width, unsigned int height,
                   unsigned int offset_y, unsigned int offset_x,
                   keypad_t* keypad ) {
-    int i, x, y;
-    Pixmap pix;
+                  int i; //, x, y;
+    // Pixmap pix;
     int display_height = DISPLAY_HEIGHT;
     int display_width = DISPLAY_WIDTH;
 
@@ -2388,10 +2388,10 @@ void CreateBezel( unsigned int width, unsigned int height,
 void DrawMore( unsigned int w, unsigned int h, unsigned int offset_y,
                unsigned int offset_x, keypad_t* keypad ) {
     Pixmap pix;
-    int cut;
+    int cut = 0;
     int x, y;
 
-    int display_height = DISPLAY_HEIGHT;
+    // int display_height = DISPLAY_HEIGHT;
     int display_width = DISPLAY_WIDTH;
     /*
      * lower the whole thing
@@ -3469,7 +3469,7 @@ static int button_release_all( void ) {
 int key_event( int b, XEvent* xev ) {
     int code;
     int i, r, c;
-    int all_up;
+    // int all_up;
 
     code = buttons[ b ].code;
     if ( xev->type == KeyPress ) {
@@ -3986,8 +3986,8 @@ int GetEvent( void ) {
     int i, wake, bufs = 2;
     char buf[ 2 ];
     KeySym sym;
-    int button_expose;
-    static int button_leave = -1;
+    // int button_expose;
+    // static int button_leave = -1;
     static int release_pending = 0;
     static XKeyEvent release_event;
     static Time last_release_time = 0;

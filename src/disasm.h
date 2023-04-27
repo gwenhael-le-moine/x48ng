@@ -44,7 +44,7 @@
 #define CLASS_MNEMONICS 1
 
 extern int disassembler_mode;
-extern char* mode_name[];
+extern const char* mode_name[];
 
 extern word_20 disassemble( word_20 addr, char* out );
 

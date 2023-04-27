@@ -57,39 +57,39 @@ struct objfunc {
     short length;
     word_20 prolog;
     char* ( *func )( word_20* addr, char* string );
-} objects[] = { { "System Binary", 0, DOBINT, dec_bin_int },
-                { "Real", 0, DOREAL, dec_real },
-                { "Long Real", 0, DOEREL, dec_long_real },
-                { "Complex", 0, DOCMP, dec_complex },
-                { "Long Complex", 0, DOECMP, dec_long_complex },
-                { "Character", 0, DOCHAR, dec_char },
-                { "Array", 0, DOARRY, dec_array },
-                { "Linked Array", 0, DOLNKARRY, dec_lnk_array },
-                { "String", 2, DOCSTR, dec_string },
-                { "Hex String", 1, DOHSTR, dec_hex_string },
-                { "List", 0, DOLIST, dec_list },
-                { "Directory", 0, DORRP, skip_ob },
-                { "Symbolic", 0, DOSYMB, dec_symb },
-                { "Unit", 0, DOEXT, dec_unit },
-                { "Tagged", 0, DOTAG, skip_ob },
-                { "Graphic", 0, DOGROB, skip_ob },
-                { "Library", 0, DOLIB, dec_library },
-                { "Backup", 0, DOBAK, skip_ob },
-                { "Library Data", 0, DOEXT0, dec_library_data },
-                { "ACPTR", 0, DOACPTR, dec_acptr },
-                { "External 2", 0, DOEXT2, skip_ob },
-                { "External 3", 0, DOEXT3, skip_ob },
-                { "External 4", 0, DOEXT4, skip_ob },
-                { "Program", 0, DOCOL, dec_prog },
-                { "Code", 1, DOCODE, dec_code },
-                { "Global Ident", 0, DOIDNT, dec_global_ident },
-                { "Local Ident", 0, DOLAM, dec_local_ident },
-                { "XLib Name", 0, DOROMP, dec_xlib_name },
-                { "*", 0, UM_MUL, dec_unit_op },
-                { "/", 0, UM_DIV, dec_unit_op },
-                { "^", 0, UM_POW, dec_unit_op },
-                { " ", 0, UM_PRE, dec_unit_op },
-                { "_", 0, UM_END, dec_unit_op },
+} objects[] = { { ( char* )"System Binary", 0, DOBINT, dec_bin_int },
+                { ( char* )"Real", 0, DOREAL, dec_real },
+                { ( char* )"Long Real", 0, DOEREL, dec_long_real },
+                { ( char* )"Complex", 0, DOCMP, dec_complex },
+                { ( char* )"Long Complex", 0, DOECMP, dec_long_complex },
+                { ( char* )"Character", 0, DOCHAR, dec_char },
+                { ( char* )"Array", 0, DOARRY, dec_array },
+                { ( char* )"Linked Array", 0, DOLNKARRY, dec_lnk_array },
+                { ( char* )"String", 2, DOCSTR, dec_string },
+                { ( char* )"Hex String", 1, DOHSTR, dec_hex_string },
+                { ( char* )"List", 0, DOLIST, dec_list },
+                { ( char* )"Directory", 0, DORRP, skip_ob },
+                { ( char* )"Symbolic", 0, DOSYMB, dec_symb },
+                { ( char* )"Unit", 0, DOEXT, dec_unit },
+                { ( char* )"Tagged", 0, DOTAG, skip_ob },
+                { ( char* )"Graphic", 0, DOGROB, skip_ob },
+                { ( char* )"Library", 0, DOLIB, dec_library },
+                { ( char* )"Backup", 0, DOBAK, skip_ob },
+                { ( char* )"Library Data", 0, DOEXT0, dec_library_data },
+                { ( char* )"ACPTR", 0, DOACPTR, dec_acptr },
+                { ( char* )"External 2", 0, DOEXT2, skip_ob },
+                { ( char* )"External 3", 0, DOEXT3, skip_ob },
+                { ( char* )"External 4", 0, DOEXT4, skip_ob },
+                { ( char* )"Program", 0, DOCOL, dec_prog },
+                { ( char* )"Code", 1, DOCODE, dec_code },
+                { ( char* )"Global Ident", 0, DOIDNT, dec_global_ident },
+                { ( char* )"Local Ident", 0, DOLAM, dec_local_ident },
+                { ( char* )"XLib Name", 0, DOROMP, dec_xlib_name },
+                { ( char* )"*", 0, UM_MUL, dec_unit_op },
+                { ( char* )"/", 0, UM_DIV, dec_unit_op },
+                { ( char* )"^", 0, UM_POW, dec_unit_op },
+                { ( char* )" (char*)", 0, UM_PRE, dec_unit_op },
+                { ( char* )"_", 0, UM_END, dec_unit_op },
                 { 0, 0, 0 } };
 
 char* skip_ob( word_20* addr, char* string ) {
@@ -141,7 +141,7 @@ char* real_number( word_20* addr, char* string, int ml, int xl ) {
     hp_real r;
     long re, xs;
     int i;
-    char fmt[ 20 ];
+    char fmt[ 26 ];
     char m[ 16 ];
     char* p = string;
 
@@ -320,11 +320,12 @@ char* dec_hex_string( word_20* addr, char* string ) {
         lead = 1;
         for ( i = len - 1; i >= 0; i-- ) {
             *p = hex[ read_nibble( *addr + i ) ];
-            if ( lead )
+            if ( lead ) {
                 if ( ( i != 0 ) && ( *p == '0' ) )
                     p--;
                 else
                     lead = 0;
+            }
             p++;
         }
 

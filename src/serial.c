@@ -106,7 +106,7 @@ void update_connection_display( void ) {
 }
 
 int serial_init( void ) {
-    char* p;
+    //char* p;
     int c;
     int n;
     char tty_dev_name[ 128 ];

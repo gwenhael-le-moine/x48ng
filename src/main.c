@@ -122,7 +122,7 @@ void save_options( int argc, char** argv ) {
 }
 
 int main( int argc, char** argv ) {
-    char* name;
+    // char* name;
     sigset_t set;
     struct sigaction sa;
     long flags;
@@ -130,7 +130,7 @@ int main( int argc, char** argv ) {
 
     setlocale( LC_ALL, "C" );
 
-    name = ( char* )0;
+    // name = ( char* )0;
     /*
      *  Get the name we are called.
      */

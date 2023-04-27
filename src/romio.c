@@ -37,7 +37,7 @@
 unsigned int opt_gx = 0;
 unsigned int rom_size = 0;
 
-int read_rom_file( char* name, unsigned char** mem, int* size ) {
+int read_rom_file( char* name, unsigned char** mem, unsigned int* size ) {
     struct stat st;
     FILE* fp;
     unsigned char* tmp_mem;
@@ -70,11 +70,11 @@ int read_rom_file( char* name, unsigned char** mem, int* size ) {
     } else if ( four[ 0 ] == 0x32 && four[ 1 ] == 0x96 && four[ 2 ] == 0x1b &&
                 four[ 3 ] == 0x80 ) {
         *size = 2 * st.st_size;
-    } else if ( four[ 1 ] = 0x49 ) {
+    } else if ( four[ 1 ] == 0x49 ) {
         fprintf( stderr, "%s is an HP49 ROM\n", name );
         *size = 2 * st.st_size;
     } else if ( four[ 0 ] ) {
-        printf( "%d\n", st.st_size );
+        printf( "%ld\n", st.st_size );
         *size = st.st_size;
     } else {
         fprintf( stderr, "%s is not a HP48 ROM\n", name );

@@ -61,6 +61,7 @@ extern void init_debugger( void );
 extern int debug( void );
 extern int emulate_debug( void );
 
+extern int step_instruction( void );
 extern char* str_nibbles( word_20 addr, int n );
 
 #endif /* !_DEBUGGER_H */

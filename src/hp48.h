@@ -237,7 +237,7 @@ typedef struct saturn_t {
     short t2_tick;
     long i_per_s;
 
-    short bank_switch;
+    word_16 bank_switch;
     mem_cntl_t mem_cntl[ NR_MCTL ];
 
     unsigned char* rom;

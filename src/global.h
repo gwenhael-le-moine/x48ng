@@ -43,6 +43,8 @@
 #ifndef _GLOBAL_H
 #define _GLOBAL_H 1
 
+// #define _XOPEN_SOURCE
+
 #include "config.h"
 
 #if !defined( __GNUC__ ) || defined( __STRICT_ANSI__ )

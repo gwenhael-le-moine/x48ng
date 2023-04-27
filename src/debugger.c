@@ -134,9 +134,9 @@ static void do_reset( int, char** );
 static void do_rstk( int, char** );
 
 struct cmd {
-    char* name;
+    const char* name;
     void ( *func )( int, char** );
-    char* help;
+    const char* help;
 }
 
 cmd_tbl[] = {
@@ -763,10 +763,11 @@ static void dump_hst( void ) {
             saturn.XM ? "XM" : "--" );
 }
 
-static char* mctl_str_gx[] = { "MMIO       ", "SysRAM     ", "Bank Switch",
-                               "Port 1     ", "Port 2     ", "SysROM     " };
+static const char* mctl_str_gx[] = { "MMIO       ", "SysRAM     ",
+                                     "Bank Switch", "Port 1     ",
+                                     "Port 2     ", "SysROM     " };
 
-static char* mctl_str_sx[] = { "MMIO  ", "SysRAM", "Port 1",
+static const char* mctl_str_sx[] = { "MMIO  ", "SysRAM", "Port 1",
                                "Port 2", "Extra ", "SysROM" };
 
 static void do_ram( int argc, char** argv ) {
@@ -1006,7 +1007,7 @@ char* get_stack( void ) {
     word_20 ram_base, ram_mask;
     char dat[ 65536 ];
     char typ[ 256 ];
-    int i, n;
+    int i = 0, n;
 
     ram_base = saturn.mem_cntl[ 1 ].config[ 0 ];
     ram_mask = saturn.mem_cntl[ 1 ].config[ 1 ];
@@ -1034,19 +1035,19 @@ char* get_stack( void ) {
     if ( n ) {
         load_addr( &ent, sp, 5 );
         decode_rpl_obj_2( ent, typ, dat );
-        printf( "%d %p -> [%s] %s\n", i, ent, typ, dat );
+        printf( "%d %ld -> [%s] %s\n", i, ent, typ, dat );
     }
 
     for ( i = 0; i < n; i++ ) {
         load_addr( &ent, sp + ( 5 * i ), 5 );
         decode_rpl_obj_2( ent, typ, dat );
-        printf( "%d %p -> [%s] %s\n", i, ent, typ, dat );
+        printf( "%d %ld -> [%s] %s\n", i, ent, typ, dat );
     }
 
     saturn.mem_cntl[ 1 ].config[ 0 ] = ram_base;
     saturn.mem_cntl[ 1 ].config[ 1 ] = ram_mask;
 
-    return;
+    return 0;
 }
 
 static void do_stack( int argc, char** argv ) {

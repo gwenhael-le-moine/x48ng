@@ -38,7 +38,7 @@
 
 #include "global.h"
 
-extern char* append_str( char* buf, char* string );
+extern char* append_str( char* buf, const char* string );
 extern char* append_tab( char* buf );
 extern char* append_tab_16( char* buf );
 

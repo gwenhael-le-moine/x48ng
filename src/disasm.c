@@ -56,89 +56,101 @@
 
 int disassembler_mode = CLASS_MNEMONICS;
 
-char* mode_name[] = { "HP", "class" };
+const char* mode_name[] = { ( char* )"HP", ( char* )"class" };
 
 static char* hex[] = {
-    "0123456789ABCDEF",
-    "0123456789abcdef",
+    ( char* )"0123456789ABCDEF",
+    ( char* )"0123456789abcdef",
 };
 
 static char* opcode_0_tbl[ 32 ] = {
     /*
      * HP Mnemonics
      */
-    "RTNSXM", "RTN", "RTNSC", "RTNCC", "SETHEX", "SETDEC", "RSTK=C", "C=RSTK",
-    "CLRST", "C=ST", "ST=C", "CSTEX", "P=P+1", "P=P-1", "(NULL)", "RTI",
+    ( char* )"RTNSXM", ( char* )"RTN", ( char* )"RTNSC", ( char* )"RTNCC",
+    ( char* )"SETHEX", ( char* )"SETDEC", ( char* )"RSTK=C", ( char* )"C=RSTK",
+    ( char* )"CLRST", ( char* )"C=ST", ( char* )"ST=C", ( char* )"CSTEX",
+    ( char* )"P=P+1", ( char* )"P=P-1", ( char* )"(NULL)", ( char* )"RTI",
     /*
      * Class Mnemonics
      */
-    "rtnsxm", "rtn", "rtnsc", "rtncc", "sethex", "setdec", "push", "pop",
-    "clr.3   st", "move.3  st, c", "move.3  c, st", "exg.3   c, st",
-    "inc.1   p", "dec.1   p", "(null)", "rti" };
+    ( char* )"rtnsxm", ( char* )"rtn", ( char* )"rtnsc", ( char* )"rtncc",
+    ( char* )"sethex", ( char* )"setdec", ( char* )"push", ( char* )"pop",
+    ( char* )"clr.3   st", ( char* )"move.3  st, c", ( char* )"move.3  c, st",
+    ( char* )"exg.3   c, st", ( char* )"inc.1   p", ( char* )"dec.1   p",
+    ( char* )"(null)", ( char* )"rti" };
 
 static char* op_str_0[ 16 ] = {
     /*
      * HP Mnemonics
      */
-    "A=A%cB", "B=B%cC", "C=C%cA", "D=D%cC", "B=B%cA", "C=C%cB", "A=A%cC",
-    "C=C%cD",
+    ( char* )"A=A%cB", ( char* )"B=B%cC", ( char* )"C=C%cA", ( char* )"D=D%cC",
+    ( char* )"B=B%cA", ( char* )"C=C%cB", ( char* )"A=A%cC", ( char* )"C=C%cD",
     /*
      * Class Mnemonics
      */
-    "b, a", "c, b", "a, c", "c, d", "a, b", "b, c", "c, a", "d, c" };
+    ( char* )"b, a", ( char* )"c, b", ( char* )"a, c", ( char* )"c, d",
+    ( char* )"a, b", ( char* )"b, c", ( char* )"c, a", ( char* )"d, c" };
 
 static char* op_str_1[ 16 ] = {
     /*
      * HP Mnemonics
      */
-    "DAT0=A", "DAT1=A", "A=DAT0", "A=DAT1", "DAT0=C", "DAT1=C", "C=DAT0",
-    "C=DAT1",
+    ( char* )"DAT0=A", ( char* )"DAT1=A", ( char* )"A=DAT0", ( char* )"A=DAT1",
+    ( char* )"DAT0=C", ( char* )"DAT1=C", ( char* )"C=DAT0", ( char* )"C=DAT1",
     /*
      * Class Mnemonics
      */
-    "a, (d0)", "a, (d1)", "(d0), a", "(d1), a", "c, (d0)", "c, (d1)", "(d0), c",
-    "(d1), c" };
+    ( char* )"a, (d0)", ( char* )"a, (d1)", ( char* )"(d0), a",
+    ( char* )"(d1), a", ( char* )"c, (d0)", ( char* )"c, (d1)",
+    ( char* )"(d0), c", ( char* )"(d1), c" };
 
 static char* in_str_80[ 32 ] = {
     /*
      * HP Mnemonics
      */
-    "OUT=CS", "OUT=C", "A=IN", "C=IN", "UNCNFG", "CONFIG", "C=ID", "SHUTDN",
-    NULL, "C+P+1", "RESET", "BUSCC", NULL, NULL, "SREQ?", NULL,
+    ( char* )"OUT=CS", ( char* )"OUT=C", ( char* )"A=IN", ( char* )"C=IN",
+    ( char* )"UNCNFG", ( char* )"CONFIG", ( char* )"C=ID", ( char* )"SHUTDN",
+    NULL, ( char* )"C+P+1", ( char* )"RESET", ( char* )"BUSCC", NULL, NULL,
+    ( char* )"SREQ?", NULL,
     /*
      * Class Mnemonics
      */
-    "move.s  c, out", "move.3  c, out", "move.4  in, a", "move.4  in, c",
-    "uncnfg", "config", "c=id", "shutdn", NULL, "add.a   p+1, c", "reset",
-    "buscc", NULL, NULL, "sreq?", NULL };
+    ( char* )"move.s  c, out", ( char* )"move.3  c, out",
+    ( char* )"move.4  in, a", ( char* )"move.4  in, c", ( char* )"uncnfg",
+    ( char* )"config", ( char* )"c=id", ( char* )"shutdn", NULL,
+    ( char* )"add.a   p+1, c", ( char* )"reset", ( char* )"buscc", NULL, NULL,
+    ( char* )"sreq?", NULL };
 
 static char* in_str_808[ 32 ] = {
     /*
      * HP Mnemonics
      */
-    "INTON", NULL, NULL, "BUSCB", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, "PC=(A)", "BUSCD", "PC=(C)", "INTOFF",
+    ( char* )"INTON", NULL, NULL, ( char* )"BUSCB", NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, ( char* )"PC=(A)", ( char* )"BUSCD",
+    ( char* )"PC=(C)", ( char* )"INTOFF",
     /*
      * Class Mnemonics
      */
-    "inton", NULL, NULL, "buscb", NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-    NULL, "jmp     (a)", "buscd", "jmp     (c)", "intoff" };
+    ( char* )"inton", NULL, NULL, ( char* )"buscb", NULL, NULL, NULL, NULL,
+    NULL, NULL, NULL, NULL, ( char* )"jmp     (a)", ( char* )"buscd",
+    ( char* )"jmp     (c)", ( char* )"intoff" };
 
 static char* op_str_81[ 8 ] = {
     /*
      * HP Mnemonics
      */
-    "A",
-    "B",
-    "C",
-    "D",
+    ( char* )"A",
+    ( char* )"B",
+    ( char* )"C",
+    ( char* )"D",
     /*
      * Class Mnemonics
      */
-    "a",
-    "b",
-    "c",
-    "d",
+    ( char* )"a",
+    ( char* )"b",
+    ( char* )"c",
+    ( char* )"d",
 };
 
 static char* in_str_81b[ 32 ] = {
@@ -147,12 +159,12 @@ static char* in_str_81b[ 32 ] = {
      */
     NULL,
     NULL,
-    "PC=A",
-    "PC=C",
-    "A=PC",
-    "C=PC",
-    "APCEX",
-    "CPCEX",
+    ( char* )"PC=A",
+    ( char* )"PC=C",
+    ( char* )"A=PC",
+    ( char* )"C=PC",
+    ( char* )"APCEX",
+    ( char* )"CPCEX",
     NULL,
     NULL,
     NULL,
@@ -166,12 +178,12 @@ static char* in_str_81b[ 32 ] = {
      */
     NULL,
     NULL,
-    "jmp     a",
-    "jmp     c",
-    "move.a  pc, a",
-    "move.a  pc, c",
-    "exg.a   a, pc",
-    "exg.a   c, pc",
+    ( char* )"jmp     a",
+    ( char* )"jmp     c",
+    ( char* )"move.a  pc, a",
+    ( char* )"move.a  pc, c",
+    ( char* )"exg.a   a, pc",
+    ( char* )"exg.a   c, pc",
     NULL,
     NULL,
     NULL,
@@ -186,34 +198,41 @@ static char* in_str_9[ 16 ] = {
     /*
      * HP Mnemonics
      */
-    "=", "#", "=", "#", ">", "<", ">=", "<=",
+    ( char* )"=", ( char* )"#", ( char* )"=", ( char* )"#", ( char* )">",
+    ( char* )"<", ( char* )">=", ( char* )"<=",
     /*
      * Class Mnemonics
      */
-    "eq", "ne", "eq", "ne", "gt", "lt", "ge", "le" };
+    ( char* )"eq", ( char* )"ne", ( char* )"eq", ( char* )"ne", ( char* )"gt",
+    ( char* )"lt", ( char* )"ge", ( char* )"le" };
 
 static char* op_str_9[ 16 ] = {
     /*
      * HP Mnemonics
      */
-    "?A%sB", "?B%sC", "?C%sA", "?D%sC", "?A%s0", "?B%s0", "?C%s0", "?D%s0",
+    ( char* )"?A%sB", ( char* )"?B%sC", ( char* )"?C%sA", ( char* )"?D%sC",
+    ( char* )"?A%s0", ( char* )"?B%s0", ( char* )"?C%s0", ( char* )"?D%s0",
     /*
      * Class Mnemonics
      */
-    "a, b", "b, c", "c, a", "d, c", "a, 0", "b, 0", "c, 0", "d, 0" };
+    ( char* )"a, b", ( char* )"b, c", ( char* )"c, a", ( char* )"d, c",
+    ( char* )"a, 0", ( char* )"b, 0", ( char* )"c, 0", ( char* )"d, 0" };
 
 static char* op_str_af[ 32 ] = {
     /*
      * HP Mnemonics
      */
-    "A=A%sB", "B=B%sC", "C=C%sA", "D=D%sC", "A=A%sA", "B=B%sB", "C=C%sC",
-    "D=D%sD", "B=B%sA", "C=C%sB", "A=A%sC", "C=C%sD", "A=B%sA", "B=C%sB",
-    "C=A%sC", "D=C%sD",
+    ( char* )"A=A%sB", ( char* )"B=B%sC", ( char* )"C=C%sA", ( char* )"D=D%sC",
+    ( char* )"A=A%sA", ( char* )"B=B%sB", ( char* )"C=C%sC", ( char* )"D=D%sD",
+    ( char* )"B=B%sA", ( char* )"C=C%sB", ( char* )"A=A%sC", ( char* )"C=C%sD",
+    ( char* )"A=B%sA", ( char* )"B=C%sB", ( char* )"C=A%sC", ( char* )"D=C%sD",
     /*
      * Class Mnemonics
      */
-    "b, a", "c, b", "a, c", "c, d", "a, a", "b, b", "c, c", "d, d", "a, b",
-    "b, c", "c, a", "d, c", "b, a", "c, b", "a, c", "c, d" };
+    ( char* )"b, a", ( char* )"c, b", ( char* )"a, c", ( char* )"c, d",
+    ( char* )"a, a", ( char* )"b, b", ( char* )"c, c", ( char* )"d, d",
+    ( char* )"a, b", ( char* )"b, c", ( char* )"c, a", ( char* )"d, c",
+    ( char* )"b, a", ( char* )"c, b", ( char* )"a, c", ( char* )"c, d" };
 
 static char hp_reg_1_af[] = "ABCDABCDBCACABAC";
 static char hp_reg_2_af[] = "0000BCACABCDBCCD";
@@ -222,58 +241,58 @@ static char* field_tbl[ 32 ] = {
     /*
      * HP Mnemonics
      */
-    "P",
-    "WP",
-    "XS",
-    "X",
-    "S",
-    "M",
-    "B",
-    "W",
-    "P",
-    "WP",
-    "XS",
-    "X",
-    "S",
-    "M",
-    "B",
-    "A",
+    ( char* )"P",
+    ( char* )"WP",
+    ( char* )"XS",
+    ( char* )"X",
+    ( char* )"S",
+    ( char* )"M",
+    ( char* )"B",
+    ( char* )"W",
+    ( char* )"P",
+    ( char* )"WP",
+    ( char* )"XS",
+    ( char* )"X",
+    ( char* )"S",
+    ( char* )"M",
+    ( char* )"B",
+    ( char* )"A",
     /*
      * Class Mnemonics
      */
-    ".p",
-    ".wp",
-    ".xs",
-    ".x",
-    ".s",
-    ".m",
-    ".b",
-    ".w",
-    ".p",
-    ".wp",
-    ".xs",
-    ".x",
-    ".s",
-    ".m",
-    ".b",
-    ".a",
+    ( char* )".p",
+    ( char* )".wp",
+    ( char* )".xs",
+    ( char* )".x",
+    ( char* )".s",
+    ( char* )".m",
+    ( char* )".b",
+    ( char* )".w",
+    ( char* )".p",
+    ( char* )".wp",
+    ( char* )".xs",
+    ( char* )".x",
+    ( char* )".s",
+    ( char* )".m",
+    ( char* )".b",
+    ( char* )".a",
 };
 
 static char* hst_bits[ 8 ] = {
     /*
      * HP Mnemonics
      */
-    "XM",
-    "SB",
-    "SR",
-    "MP",
+    ( char* )"XM",
+    ( char* )"SB",
+    ( char* )"SR",
+    ( char* )"MP",
     /*
      * Class Mnemonics
      */
-    "xm",
-    "sb",
-    "sr",
-    "mp",
+    ( char* )"xm",
+    ( char* )"sb",
+    ( char* )"sr",
+    ( char* )"mp",
 };
 
 int read_int( word_20* addr, int n ) {
@@ -284,7 +303,7 @@ int read_int( word_20* addr, int n ) {
     return t;
 }
 
-char* append_str( char* buf, char* str ) {
+char* append_str( char* buf, const char* str ) {
     while ( ( *buf = *str++ ) )
         buf++;
     return buf;
@@ -336,7 +355,7 @@ char* append_imm_nibble( char* buf, word_20* addr, int n ) {
         }
         *buf = '\0';
     } else {
-        sprintf( t, "%d", read_nibble( ( *addr )++ ) );
+        sprintf( t, ( char* )"%d", read_nibble( ( *addr )++ ) );
         buf = append_str( buf, t );
     }
     return buf;
@@ -366,26 +385,26 @@ char* append_r_addr( char* buf, word_20* pc, long disp, int n, int offset ) {
     switch ( disassembler_mode ) {
         case HP_MNEMONICS:
             if ( disp < 0 ) {
-                buf = append_str( buf, "-" );
+                buf = append_str( buf, ( char* )"-" );
                 disp = -disp - offset;
             } else {
-                buf = append_str( buf, "+" );
+                buf = append_str( buf, ( char* )"+" );
                 disp += offset;
             }
             buf = append_addr( buf, disp );
             break;
         case CLASS_MNEMONICS:
             if ( disp < 0 ) {
-                buf = append_str( buf, "-" );
+                buf = append_str( buf, ( char* )"-" );
                 disp = -disp - offset;
             } else {
-                buf = append_str( buf, "+" );
+                buf = append_str( buf, ( char* )"+" );
                 disp += offset;
             }
             buf = append_addr( buf, disp );
             break;
         default:
-            buf = append_str( buf, "Unknown disassembler mode" );
+            buf = append_str( buf, ( char* )"Unknown disassembler mode" );
             break;
     }
     return buf;
@@ -399,15 +418,15 @@ char* append_pc_comment( char* buf, word_20 pc ) {
 
     switch ( disassembler_mode ) {
         case HP_MNEMONICS:
-            p = append_str( p, "# Address: " );
+            p = append_str( p, ( char* )"# Address: (char*)" );
             p = append_addr( p, pc );
             break;
         case CLASS_MNEMONICS:
-            p = append_str( p, "; address: " );
+            p = append_str( p, ( char* )"; address: (char*)" );
             p = append_addr( p, pc );
             break;
         default:
-            p = append_str( p, "Unknown disassembler mode" );
+            p = append_str( p, ( char* )"Unknown disassembler mode" );
             break;
     }
     return p;
@@ -422,7 +441,7 @@ char* append_hst_bits( char* buf, int n ) {
             for ( i = 0; i < 4; i++ )
                 if ( n & ( 1 << i ) ) {
                     if ( p != buf )
-                        p = append_str( p, "=" );
+                        p = append_str( p, ( char* )"=" );
                     p = append_str( p, hst_bits[ i + 4 * disassembler_mode ] );
                 }
             break;
@@ -431,18 +450,18 @@ char* append_hst_bits( char* buf, int n ) {
             while ( strlen( buf ) < 4 * TAB_SKIP )
                 p = append_tab( buf );
             p = &buf[ strlen( buf ) ];
-            p = append_str( p, "; hst bits: " );
+            p = append_str( p, ( char* )"; hst bits: (char*)" );
 
             for ( buf = p, i = 0; i < 4; i++ )
                 if ( n & ( 1 << i ) ) {
                     if ( p != buf )
-                        p = append_str( p, ", " );
+                        p = append_str( p, ( char* )", (char*)" );
                     p = append_str( p, hst_bits[ i + 4 * disassembler_mode ] );
                 }
             break;
 
         default:
-            p = append_str( p, "Unknown disassembler mode" );
+            p = append_str( p, ( char* )"Unknown disassembler mode" );
             break;
     }
 
@@ -468,23 +487,23 @@ char* disasm_1( word_20* addr, char* out ) {
                 case HP_MNEMONICS:
                     c = ( char )( ( fn < 8 ) ? 'A' : 'C' );
                     if ( n == 0 )
-                        sprintf( buf, "R%d=%c", fn, c );
+                        sprintf( buf, ( char* )"R%d=%c", fn, c );
                     else
-                        sprintf( buf, "%c=R%d", c, fn );
+                        sprintf( buf, ( char* )"%c=R%d", c, fn );
                     p = append_str( out, buf );
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, "move.w" );
+                    p = append_str( out, ( char* )"move.w" );
                     p = append_tab( out );
                     c = ( char )( ( fn < 8 ) ? 'a' : 'c' );
                     if ( n == 0 )
-                        sprintf( buf, "%c, r%d", c, fn );
+                        sprintf( buf, ( char* )"%c, r%d", c, fn );
                     else
-                        sprintf( buf, "r%d, %c", fn, c );
+                        sprintf( buf, ( char* )"r%d, %c", fn, c );
                     p = append_str( p, buf );
                     break;
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -497,18 +516,18 @@ char* disasm_1( word_20* addr, char* out ) {
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
                     c = ( char )( ( fn < 8 ) ? 'A' : 'C' );
-                    sprintf( buf, "%cR%dEX", c, fn );
+                    sprintf( buf, ( char* )"%cR%dEX", c, fn );
                     p = append_str( out, buf );
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, "exg.w" );
+                    p = append_str( out, ( char* )"exg.w" );
                     p = append_tab( out );
                     c = ( char )( ( fn < 8 ) ? 'a' : 'c' );
-                    sprintf( buf, "%c, r%d", c, fn );
+                    sprintf( buf, ( char* )"%c, r%d", c, fn );
                     p = append_str( p, buf );
                     break;
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -520,29 +539,31 @@ char* disasm_1( word_20* addr, char* out ) {
                     c = ( n & 4 ) ? 'C' : 'A';
                     if ( n & 2 ) {
                         if ( n < 8 ) {
-                            sprintf( buf, "%cD%dEX", c, ( n & 1 ) );
+                            sprintf( buf, ( char* )"%cD%dEX", c, ( n & 1 ) );
                         } else {
-                            sprintf( buf, "%cD%dXS", c, ( n & 1 ) );
+                            sprintf( buf, ( char* )"%cD%dXS", c, ( n & 1 ) );
                         }
                     } else {
                         if ( n < 8 ) {
-                            sprintf( buf, "D%d=%c", ( n & 1 ), c );
+                            sprintf( buf, ( char* )"D%d=%c", ( n & 1 ), c );
                         } else {
-                            sprintf( buf, "D%d=%cS", ( n & 1 ), c );
+                            sprintf( buf, ( char* )"D%d=%cS", ( n & 1 ), c );
                         }
                     }
                     p = append_str( out, buf );
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, ( n & 2 ) ? "exg." : "move." );
-                    p = append_str( p, ( n < 8 ) ? "a" : "4" );
+                    p = append_str( out, ( n & 2 ) ? ( char* )"exg."
+                                                   : ( char* )"move." );
+                    p = append_str( p,
+                                    ( n < 8 ) ? ( char* )"a" : ( char* )"4" );
                     p = append_tab( out );
                     c = ( n & 4 ) ? 'c' : 'a';
-                    sprintf( buf, "%c, d%d", c, ( n & 1 ) );
+                    sprintf( buf, ( char* )"%c, d%d", c, ( n & 1 ) );
                     p = append_str( p, buf );
                     break;
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -556,28 +577,30 @@ char* disasm_1( word_20* addr, char* out ) {
                         out, op_str_1[ ( fn & 7 ) + 8 * disassembler_mode ] );
                     p = append_tab( out );
                     if ( n == 4 ) {
-                        p = append_str( p, ( fn < 8 ) ? "A" : "B" );
+                        p = append_str( p, ( fn < 8 ) ? ( char* )"A"
+                                                      : ( char* )"B" );
                     } else {
                         n = read_nibble( ( *addr )++ );
                         if ( fn < 8 ) {
                             p = append_field( p, n );
                         } else {
-                            sprintf( buf, "%d", n + 1 );
+                            sprintf( buf, ( char* )"%d", n + 1 );
                             p = append_str( p, buf );
                         }
                     }
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, "move" );
+                    p = append_str( out, ( char* )"move" );
                     if ( n == 4 ) {
-                        p = append_str( p, "." );
-                        p = append_str( p, ( fn < 8 ) ? "a" : "b" );
+                        p = append_str( p, ( char* )"." );
+                        p = append_str( p, ( fn < 8 ) ? ( char* )"a"
+                                                      : ( char* )"b" );
                     } else {
                         n = read_nibble( ( *addr )++ );
                         if ( fn < 8 ) {
                             p = append_field( p, n );
                         } else {
-                            sprintf( buf, ".%d", n + 1 );
+                            sprintf( buf, ( char* )".%d", n + 1 );
                             p = append_str( p, buf );
                         }
                     }
@@ -586,7 +609,7 @@ char* disasm_1( word_20* addr, char* out ) {
                         p, op_str_1[ ( fn & 7 ) + 8 * disassembler_mode ] );
                     break;
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -599,32 +622,32 @@ char* disasm_1( word_20* addr, char* out ) {
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
                     if ( n == 6 || n == 8 )
-                        p = append_str( out, "D0=D0" );
+                        p = append_str( out, ( char* )"D0=D0" );
                     else
-                        p = append_str( out, "D1=D1" );
+                        p = append_str( out, ( char* )"D1=D1" );
                     if ( n < 8 )
-                        p = append_str( p, "+" );
+                        p = append_str( p, ( char* )"+" );
                     else
-                        p = append_str( p, "-" );
+                        p = append_str( p, ( char* )"-" );
                     p = append_tab( out );
-                    sprintf( buf, "%d", fn + 1 );
+                    sprintf( buf, ( char* )"%d", fn + 1 );
                     p = append_str( p, buf );
                     break;
                 case CLASS_MNEMONICS:
                     if ( n < 8 )
-                        p = append_str( out, "add.a" );
+                        p = append_str( out, ( char* )"add.a" );
                     else
-                        p = append_str( out, "sub.a" );
+                        p = append_str( out, ( char* )"sub.a" );
                     p = append_tab( out );
-                    sprintf( buf, "#%d, ", fn + 1 );
+                    sprintf( buf, ( char* )"#%d, (char*)", fn + 1 );
                     p = append_str( p, buf );
                     if ( n == 6 || n == 8 )
-                        p = append_str( p, "d0" );
+                        p = append_str( p, ( char* )"d0" );
                     else
-                        p = append_str( p, "d1" );
+                        p = append_str( p, ( char* )"d1" );
                     break;
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -649,27 +672,27 @@ char* disasm_1( word_20* addr, char* out ) {
             }
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
-                    sprintf( buf, "D%c=(%d)", c, n );
+                    sprintf( buf, ( char* )"D%c=(%d)", c, n );
                     p = append_str( out, buf );
                     p = append_tab( out );
                     p = append_imm_nibble( p, addr, n );
                     break;
                 case CLASS_MNEMONICS:
                     if ( n == 5 ) {
-                        sprintf( buf, "move.a" );
+                        sprintf( buf, ( char* )"move.a" );
                     } else if ( n == 4 ) {
-                        sprintf( buf, "move.as" );
+                        sprintf( buf, ( char* )"move.as" );
                     } else {
-                        sprintf( buf, "move.b" );
+                        sprintf( buf, ( char* )"move.b" );
                     }
                     p = append_str( out, buf );
                     p = append_tab( out );
                     p = append_imm_nibble( p, addr, n );
-                    sprintf( buf, ", d%c", c );
+                    sprintf( buf, ( char* )", d%c", c );
                     p = append_str( p, buf );
                     break;
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -692,7 +715,8 @@ char* disasm_8( word_20* addr, char* out ) {
     switch ( fn ) {
         case 0:
             n = read_nibble( ( *addr )++ );
-            if ( NULL != ( p = in_str_80[ n + 16 * disassembler_mode ] ) ) {
+            if ( NULL !=
+                 ( p = ( char* )in_str_80[ n + 16 * disassembler_mode ] ) ) {
                 p = append_str( out, p );
                 return p;
             }
@@ -700,7 +724,8 @@ char* disasm_8( word_20* addr, char* out ) {
                 case 8:
                     fn = read_nibble( ( *addr )++ );
                     if ( NULL !=
-                         ( p = in_str_808[ fn + 16 * disassembler_mode ] ) ) {
+                         ( p = ( char* )
+                               in_str_808[ fn + 16 * disassembler_mode ] ) ) {
                         p = append_str( out, p );
                         return p;
                     }
@@ -710,14 +735,15 @@ char* disasm_8( word_20* addr, char* out ) {
                             if ( n == 0 ) {
                                 switch ( disassembler_mode ) {
                                     case HP_MNEMONICS:
-                                        p = append_str( out, "RSI" );
+                                        p = append_str( out, ( char* )"RSI" );
                                         break;
                                     case CLASS_MNEMONICS:
-                                        p = append_str( out, "rsi" );
+                                        p = append_str( out, ( char* )"rsi" );
                                         break;
                                     default:
                                         p = append_str(
-                                            out, "Unknown disassembler mode" );
+                                            out, ( char* )"Unknown "
+                                                          "disassembler mode" );
                                         break;
                                 }
                             }
@@ -727,25 +753,27 @@ char* disasm_8( word_20* addr, char* out ) {
                             switch ( disassembler_mode ) {
                                 case HP_MNEMONICS:
                                     if ( n < 5 ) {
-                                        sprintf( buf, "LA(%d)", n + 1 );
+                                        sprintf( buf, ( char* )"LA(%d)",
+                                                 n + 1 );
                                     } else {
-                                        sprintf( buf, "LAHEX" );
+                                        sprintf( buf, ( char* )"LAHEX" );
                                     }
                                     p = append_str( out, buf );
                                     p = append_tab( out );
                                     p = append_imm_nibble( p, addr, n + 1 );
                                     break;
                                 case CLASS_MNEMONICS:
-                                    sprintf( buf, "move.%d", n + 1 );
+                                    sprintf( buf, ( char* )"move.%d", n + 1 );
                                     p = append_str( out, buf );
                                     p = append_tab( out );
                                     p = append_imm_nibble( p, addr, n + 1 );
-                                    sprintf( buf, ", a.p" );
+                                    sprintf( buf, ( char* )", a.p" );
                                     p = append_str( p, buf );
                                     break;
                                 default:
                                     p = append_str(
-                                        out, "Unknown disassembler mode" );
+                                        out,
+                                        ( char* )"Unknown disassembler mode" );
                                     break;
                             }
                             break;
@@ -757,7 +785,7 @@ char* disasm_8( word_20* addr, char* out ) {
 
                             switch ( disassembler_mode ) {
                                 case HP_MNEMONICS:
-                                    sprintf( buf, "%cBIT=%d",
+                                    sprintf( buf, ( char* )"%cBIT=%d",
                                              ( fn & 8 ) ? 'C' : 'A',
                                              ( fn & 1 ) ? 1 : 0 );
                                     p = append_str( out, buf );
@@ -765,16 +793,19 @@ char* disasm_8( word_20* addr, char* out ) {
                                     p = append_imm_nibble( p, addr, 1 );
                                     break;
                                 case CLASS_MNEMONICS:
-                                    p = append_str( out, ( fn & 1 ) ? "bset"
-                                                                    : "bclr" );
+                                    p = append_str(
+                                        out, ( fn & 1 ) ? ( char* )"bset"
+                                                        : ( char* )"bclr" );
                                     p = append_tab( out );
                                     p = append_imm_nibble( p, addr, 1 );
-                                    p = append_str( p, ( fn & 8 ) ? ", c"
-                                                                  : ", a" );
+                                    p = append_str( p, ( fn & 8 )
+                                                           ? ( char* )", c"
+                                                           : ( char* )", a" );
                                     break;
                                 default:
                                     p = append_str(
-                                        out, "Unknown disassembler mode" );
+                                        out,
+                                        ( char* )"Unknown disassembler mode" );
                                     break;
                             }
                             break;
@@ -791,37 +822,43 @@ char* disasm_8( word_20* addr, char* out ) {
                             switch ( disassembler_mode ) {
                                 case HP_MNEMONICS:
                                     c = ( char )( ( fn < 0xa ) ? 'A' : 'C' );
-                                    sprintf( buf, "?%cBIT=%d", c,
+                                    sprintf( buf, ( char* )"?%cBIT=%d", c,
                                              ( fn & 1 ) ? 1 : 0 );
                                     p = append_str( out, buf );
                                     p = append_tab( out );
-                                    sprintf( buf, "%d", n );
+                                    sprintf( buf, ( char* )"%d", n );
                                     p = append_str( p, buf );
                                     if ( disp != 0 ) {
-                                        p = append_str( p, ", GOYES " );
+                                        p = append_str(
+                                            p, ( char* )", GOYES (char*)" );
                                         p = append_r_addr( p, &pc, disp, 2, 5 );
                                         p = append_pc_comment( out, pc );
                                     } else
-                                        p = append_str( p, ", RTNYES" );
+                                        p = append_str( p,
+                                                        ( char* )", RTNYES" );
                                     break;
                                 case CLASS_MNEMONICS:
                                     c = ( char )( ( fn < 0xa ) ? 'a' : 'c' );
-                                    p = append_str( out, ( disp == 0 ) ? "rt"
-                                                                       : "b" );
-                                    p = append_str( p,
-                                                    ( fn & 1 ) ? "bs" : "bc" );
+                                    p = append_str( out, ( disp == 0 )
+                                                             ? ( char* )"rt"
+                                                             : ( char* )"b" );
+                                    p = append_str( p, ( fn & 1 )
+                                                           ? ( char* )"bs"
+                                                           : ( char* )"bc" );
                                     p = append_tab( out );
-                                    sprintf( buf, "#%d, %c", n, c );
+                                    sprintf( buf, ( char* )"#%d, %c", n, c );
                                     p = append_str( p, buf );
                                     if ( disp != 0 ) {
-                                        p = append_str( p, ", " );
+                                        p = append_str( p,
+                                                        ( char* )", (char*)" );
                                         p = append_r_addr( p, &pc, disp, 2, 5 );
                                         p = append_pc_comment( out, pc );
                                     }
                                     break;
                                 default:
                                     p = append_str(
-                                        out, "Unknown disassembler mode" );
+                                        out,
+                                        ( char* )"Unknown disassembler mode" );
                                     break;
                             }
                             break;
@@ -837,24 +874,30 @@ char* disasm_8( word_20* addr, char* out ) {
                     fn = read_nibble( ( *addr )++ );
                     switch ( disassembler_mode ) {
                         case HP_MNEMONICS:
-                            sprintf( buf, ( n == 0xf ) ? "%c%cEX" : "%c=%c",
+                            sprintf( buf,
+                                     ( n == 0xf ) ? ( char* )"%c%cEX"
+                                                  : ( char* )"%c=%c",
                                      ( n == 0xd ) ? 'P' : 'C',
                                      ( n == 0xd ) ? 'C' : 'P' );
                             p = append_str( out, buf );
                             p = append_tab( out );
-                            sprintf( buf, "%d", fn );
+                            sprintf( buf, ( char* )"%d", fn );
                             p = append_str( p, buf );
                             break;
                         case CLASS_MNEMONICS:
-                            p = append_str( out,
-                                            ( n == 0xf ) ? "exg.1" : "move.1" );
+                            p = append_str( out, ( n == 0xf )
+                                                     ? ( char* )"exg.1"
+                                                     : ( char* )"move.1" );
                             p = append_tab( out );
-                            sprintf( buf, ( n == 0xd ) ? "p, c.%d" : "c.%d, p",
+                            sprintf( buf,
+                                     ( n == 0xd ) ? ( char* )"p, c.%d"
+                                                  : ( char* )"c.%d, p",
                                      fn );
                             p = append_str( p, buf );
                             break;
                         default:
-                            p = append_str( out, "Unknown disassembler mode" );
+                            p = append_str(
+                                out, ( char* )"Unknown disassembler mode" );
                             break;
                     }
                     break;
@@ -872,21 +915,22 @@ char* disasm_8( word_20* addr, char* out ) {
                 case 3:
                     switch ( disassembler_mode ) {
                         case HP_MNEMONICS:
-                            sprintf( buf, "%sSLC",
+                            sprintf( buf, ( char* )"%sSLC",
                                      op_str_81[ ( n & 3 ) +
                                                 4 * disassembler_mode ] );
                             p = append_str( out, buf );
                             break;
                         case CLASS_MNEMONICS:
-                            p = append_str( out, "rol.w" );
+                            p = append_str( out, ( char* )"rol.w" );
                             p = append_tab( out );
-                            p = append_str( p, "#4, " );
+                            p = append_str( p, ( char* )"#4, (char*)" );
                             p = append_str(
                                 p, op_str_81[ ( n & 3 ) +
                                               4 * disassembler_mode ] );
                             break;
                         default:
-                            p = append_str( out, "Unknown disassembler mode" );
+                            p = append_str(
+                                out, ( char* )"Unknown disassembler mode" );
                             break;
                     }
                     break;
@@ -897,21 +941,22 @@ char* disasm_8( word_20* addr, char* out ) {
                 case 7:
                     switch ( disassembler_mode ) {
                         case HP_MNEMONICS:
-                            sprintf( buf, "%sSRC",
+                            sprintf( buf, ( char* )"%sSRC",
                                      op_str_81[ ( n & 3 ) +
                                                 4 * disassembler_mode ] );
                             p = append_str( out, buf );
                             break;
                         case CLASS_MNEMONICS:
-                            p = append_str( out, "ror.w" );
+                            p = append_str( out, ( char* )"ror.w" );
                             p = append_tab( out );
-                            p = append_str( p, "#4, " );
+                            p = append_str( p, ( char* )"#4, (char*)" );
                             p = append_str(
                                 p, op_str_81[ ( n & 3 ) +
                                               4 * disassembler_mode ] );
                             break;
                         default:
-                            p = append_str( out, "Unknown disassembler mode" );
+                            p = append_str(
+                                out, ( char* )"Unknown disassembler mode" );
                             break;
                     }
                     break;
@@ -922,7 +967,7 @@ char* disasm_8( word_20* addr, char* out ) {
                     switch ( disassembler_mode ) {
                         case HP_MNEMONICS:
                             sprintf(
-                                buf, "%s=%s%cCON",
+                                buf, ( char* )"%s=%s%cCON",
                                 op_str_81[ ( n & 3 ) + 4 * disassembler_mode ],
                                 op_str_81[ ( n & 3 ) + 4 * disassembler_mode ],
                                 ( n < 8 ) ? '+' : '-' );
@@ -930,22 +975,24 @@ char* disasm_8( word_20* addr, char* out ) {
                             p = append_tab( out );
                             p = append_field( p, fn );
                             fn = read_nibble( ( *addr )++ );
-                            sprintf( buf, ", %d", fn + 1 );
+                            sprintf( buf, ( char* )", %d", fn + 1 );
                             p = append_str( p, buf );
                             break;
                         case CLASS_MNEMONICS:
-                            p = append_str( out, ( n < 8 ) ? "add" : "sub" );
+                            p = append_str( out, ( n < 8 ) ? ( char* )"add"
+                                                           : ( char* )"sub" );
                             p = append_field( p, fn );
                             p = append_tab( out );
                             fn = read_nibble( ( *addr )++ );
-                            sprintf( buf, "#%d, ", fn + 1 );
+                            sprintf( buf, ( char* )"#%d, (char*)", fn + 1 );
                             p = append_str( p, buf );
                             p = append_str(
                                 p, op_str_81[ ( n & 3 ) +
                                               4 * disassembler_mode ] );
                             break;
                         default:
-                            p = append_str( out, "Unknown disassembler mode" );
+                            p = append_str(
+                                out, ( char* )"Unknown disassembler mode" );
                             break;
                     }
                     break;
@@ -953,7 +1000,7 @@ char* disasm_8( word_20* addr, char* out ) {
                 case 9:
                     switch ( disassembler_mode ) {
                         case HP_MNEMONICS:
-                            sprintf( buf, "%sSRB.F",
+                            sprintf( buf, ( char* )"%sSRB.F",
                                      op_str_81[ ( n & 3 ) +
                                                 4 * disassembler_mode ] );
                             p = append_str( out, buf );
@@ -961,16 +1008,17 @@ char* disasm_8( word_20* addr, char* out ) {
                             p = append_field( p, read_nibble( ( *addr )++ ) );
                             break;
                         case CLASS_MNEMONICS:
-                            p = append_str( out, "lsr" );
+                            p = append_str( out, ( char* )"lsr" );
                             p = append_field( p, read_nibble( ( *addr )++ ) );
                             p = append_tab( out );
-                            p = append_str( p, "#1, " );
+                            p = append_str( p, ( char* )"#1, (char*)" );
                             p = append_str(
                                 p, op_str_81[ ( n & 3 ) +
                                               4 * disassembler_mode ] );
                             break;
                         default:
-                            p = append_str( out, "Unknown disassembler mode" );
+                            p = append_str(
+                                out, ( char* )"Unknown disassembler mode" );
                             break;
                     }
                     break;
@@ -986,15 +1034,15 @@ char* disasm_8( word_20* addr, char* out ) {
                     switch ( disassembler_mode ) {
                         case HP_MNEMONICS:
                             if ( n == 2 ) {
-                                sprintf( buf, "%cR%dEX.F",
+                                sprintf( buf, ( char* )"%cR%dEX.F",
                                          ( ( int )c < 8 ) ? 'A' : 'C',
                                          ( int )c & 7 );
                             } else if ( n == 1 ) {
-                                sprintf( buf, "%c=R%d.F",
+                                sprintf( buf, ( char* )"%c=R%d.F",
                                          ( ( int )c < 8 ) ? 'A' : 'C',
                                          ( int )c & 7 );
                             } else {
-                                sprintf( buf, "R%d=%c.F", ( int )c & 7,
+                                sprintf( buf, ( char* )"R%d=%c.F", ( int )c & 7,
                                          ( ( int )c < 8 ) ? 'A' : 'C' );
                             }
                             p = append_str( out, buf );
@@ -1002,26 +1050,30 @@ char* disasm_8( word_20* addr, char* out ) {
                             p = append_field( p, fn );
                             break;
                         case CLASS_MNEMONICS:
-                            p = append_str( out, ( n == 2 ) ? "exg" : "move" );
+                            p = append_str( out, ( n == 2 ) ? ( char* )"exg"
+                                                            : ( char* )"move" );
                             p = append_field( p, fn );
                             p = append_tab( out );
                             if ( n == 1 ) {
-                                sprintf( buf, "r%d", ( int )c & 7 );
+                                sprintf( buf, ( char* )"r%d", ( int )c & 7 );
                                 p = append_str( p, buf );
                             } else
-                                p = append_str( p,
-                                                ( ( int )c < 8 ) ? "a" : "c" );
-                            p = append_str( p, ", " );
+                                p = append_str( p, ( ( int )c < 8 )
+                                                       ? ( char* )"a"
+                                                       : ( char* )"c" );
+                            p = append_str( p, ( char* )", (char*)" );
                             if ( n == 1 )
-                                p = append_str( p,
-                                                ( ( int )c < 8 ) ? "a" : "c" );
+                                p = append_str( p, ( ( int )c < 8 )
+                                                       ? ( char* )"a"
+                                                       : ( char* )"c" );
                             else {
-                                sprintf( buf, "r%d", ( int )c & 7 );
+                                sprintf( buf, ( char* )"r%d", ( int )c & 7 );
                                 p = append_str( p, buf );
                             }
                             break;
                         default:
-                            p = append_str( out, "Unknown disassembler mode" );
+                            p = append_str(
+                                out, ( char* )"Unknown disassembler mode" );
                             break;
                     }
                     break;
@@ -1041,21 +1093,22 @@ char* disasm_8( word_20* addr, char* out ) {
                 case 0xf:
                     switch ( disassembler_mode ) {
                         case HP_MNEMONICS:
-                            sprintf( buf, "%sSRB",
+                            sprintf( buf, ( char* )"%sSRB",
                                      op_str_81[ ( n & 3 ) +
                                                 4 * disassembler_mode ] );
                             p = append_str( out, buf );
                             break;
                         case CLASS_MNEMONICS:
-                            p = append_str( out, "lsr.w" );
+                            p = append_str( out, ( char* )"lsr.w" );
                             p = append_tab( out );
-                            p = append_str( p, "#1, " );
+                            p = append_str( p, ( char* )"#1, (char*)" );
                             p = append_str(
                                 p, op_str_81[ ( n & 3 ) +
                                               4 * disassembler_mode ] );
                             break;
                         default:
-                            p = append_str( out, "Unknown disassembler mode" );
+                            p = append_str(
+                                out, ( char* )"Unknown disassembler mode" );
                             break;
                     }
                     break;
@@ -1070,21 +1123,21 @@ char* disasm_8( word_20* addr, char* out ) {
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
                     if ( n == 0xf ) {
-                        p = append_str( out, "CLRHST" );
+                        p = append_str( out, ( char* )"CLRHST" );
                     } else {
                         p = append_hst_bits( out, n );
-                        p = append_str( p, "=0" );
+                        p = append_str( p, ( char* )"=0" );
                     }
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, "clr.1" );
+                    p = append_str( out, ( char* )"clr.1" );
                     p = append_tab( out );
-                    sprintf( buf, "#%d, hst", n );
+                    sprintf( buf, ( char* )"#%d, hst", n );
                     p = append_str( p, buf );
                     p = append_hst_bits( out, n );
                     break;
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -1095,32 +1148,33 @@ char* disasm_8( word_20* addr, char* out ) {
             disp = read_int( addr, 2 );
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
-                    p = append_str( out, "?" );
+                    p = append_str( out, ( char* )"?" );
                     p = append_hst_bits( p, n );
-                    p = append_str( p, "=0" );
+                    p = append_str( p, ( char* )"=0" );
                     p = append_tab( out );
                     if ( disp != 0 ) {
-                        p = append_str( p, "GOYES " );
+                        p = append_str( p, ( char* )"GOYES (char*)" );
                         p = append_r_addr( p, &pc, disp, 2, 3 );
                         p = append_pc_comment( out, pc );
                     } else
-                        p = append_str( p, "RTNYES" );
+                        p = append_str( p, ( char* )"RTNYES" );
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, ( disp == 0 ) ? "rt" : "b" );
-                    p = append_str( p, "eq.1" );
+                    p = append_str( out, ( disp == 0 ) ? ( char* )"rt"
+                                                       : ( char* )"b" );
+                    p = append_str( p, ( char* )"eq.1" );
                     p = append_tab( out );
-                    sprintf( buf, "#%d, hst", n );
+                    sprintf( buf, ( char* )"#%d, hst", n );
                     p = append_str( p, buf );
                     if ( disp != 0 ) {
-                        p = append_str( p, ", " );
+                        p = append_str( p, ( char* )", (char*)" );
                         p = append_r_addr( p, &pc, disp, 2, 3 );
                         p = append_pc_comment( out, pc );
                     }
                     p = append_hst_bits( out, n );
                     break;
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -1129,19 +1183,20 @@ char* disasm_8( word_20* addr, char* out ) {
         case 5:
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
-                    sprintf( buf, "ST=%d", ( fn == 4 ) ? 0 : 1 );
+                    sprintf( buf, ( char* )"ST=%d", ( fn == 4 ) ? 0 : 1 );
                     p = append_str( out, buf );
                     p = append_tab( out );
                     p = append_imm_nibble( p, addr, 1 );
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, ( fn == 4 ) ? "bclr" : "bset" );
+                    p = append_str( out, ( fn == 4 ) ? ( char* )"bclr"
+                                                     : ( char* )"bset" );
                     p = append_tab( out );
                     p = append_imm_nibble( p, addr, 1 );
-                    p = append_str( p, ", st" );
+                    p = append_str( p, ( char* )", st" );
                     break;
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -1153,32 +1208,34 @@ char* disasm_8( word_20* addr, char* out ) {
             disp = read_int( addr, 2 );
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
-                    sprintf( buf, "?ST=%d", ( fn == 6 ) ? 0 : 1 );
+                    sprintf( buf, ( char* )"?ST=%d", ( fn == 6 ) ? 0 : 1 );
                     p = append_str( out, buf );
                     p = append_tab( out );
-                    sprintf( buf, "%d", n );
+                    sprintf( buf, ( char* )"%d", n );
                     p = append_str( p, buf );
                     if ( disp != 0 ) {
-                        p = append_str( p, ", GOYES " );
+                        p = append_str( p, ( char* )", GOYES (char*)" );
                         p = append_r_addr( p, &pc, disp, 2, 3 );
                         p = append_pc_comment( out, pc );
                     } else
-                        p = append_str( p, ", RTNYES" );
+                        p = append_str( p, ( char* )", RTNYES" );
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, ( disp == 0 ) ? "rt" : "b" );
-                    p = append_str( p, ( fn == 6 ) ? "bc" : "bs" );
+                    p = append_str( out, ( disp == 0 ) ? ( char* )"rt"
+                                                       : ( char* )"b" );
+                    p = append_str( p, ( fn == 6 ) ? ( char* )"bc"
+                                                   : ( char* )"bs" );
                     p = append_tab( out );
-                    sprintf( buf, "#%d, st", n );
+                    sprintf( buf, ( char* )"#%d, st", n );
                     p = append_str( p, buf );
                     if ( disp != 0 ) {
-                        p = append_str( p, ", " );
+                        p = append_str( p, ( char* )", (char*)" );
                         p = append_r_addr( p, &pc, disp, 2, 3 );
                         p = append_pc_comment( out, pc );
                     }
                     break;
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -1190,32 +1247,34 @@ char* disasm_8( word_20* addr, char* out ) {
             disp = read_int( addr, 2 );
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
-                    sprintf( buf, "?P%c", ( fn == 8 ) ? '#' : '=' );
+                    sprintf( buf, ( char* )"?P%c", ( fn == 8 ) ? '#' : '=' );
                     p = append_str( out, buf );
                     p = append_tab( out );
-                    sprintf( buf, "%d", n );
+                    sprintf( buf, ( char* )"%d", n );
                     p = append_str( p, buf );
                     if ( disp != 0 ) {
-                        p = append_str( p, ", GOYES " );
+                        p = append_str( p, ( char* )", GOYES (char*)" );
                         p = append_r_addr( p, &pc, disp, 2, 3 );
                         p = append_pc_comment( out, pc );
                     } else
-                        p = append_str( p, ", RTNYES" );
+                        p = append_str( p, ( char* )", RTNYES" );
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, ( disp == 0 ) ? "rt" : "b" );
-                    p = append_str( p, ( fn == 8 ) ? "ne.1" : "eq.1" );
+                    p = append_str( out, ( disp == 0 ) ? ( char* )"rt"
+                                                       : ( char* )"b" );
+                    p = append_str( p, ( fn == 8 ) ? ( char* )"ne.1"
+                                                   : ( char* )"eq.1" );
                     p = append_tab( out );
-                    sprintf( buf, "#%d, p", n );
+                    sprintf( buf, ( char* )"#%d, p", n );
                     p = append_str( p, buf );
                     if ( disp != 0 ) {
-                        p = append_str( p, ", " );
+                        p = append_str( p, ( char* )", (char*)" );
                         p = append_r_addr( p, &pc, disp, 2, 3 );
                         p = append_pc_comment( out, pc );
                     }
                     break;
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -1228,19 +1287,21 @@ char* disasm_8( word_20* addr, char* out ) {
             disp = read_int( addr, 4 );
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
-                    p = append_str( out, ( fn == 0xc ) ? "GOLONG" : "GOSUBL" );
+                    p = append_str( out, ( fn == 0xc ) ? ( char* )"GOLONG"
+                                                       : ( char* )"GOSUBL" );
                     p = append_tab( out );
                     p = append_r_addr( p, &pc, disp, 4, ( fn == 0xc ) ? 2 : 6 );
                     p = append_pc_comment( out, pc );
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, ( fn == 0xc ) ? "bra.4" : "bsr.4" );
+                    p = append_str( out, ( fn == 0xc ) ? ( char* )"bra.4"
+                                                       : ( char* )"bsr.4" );
                     p = append_tab( out );
                     p = append_r_addr( p, &pc, disp, 4, ( fn == 0xc ) ? 2 : 6 );
                     p = append_pc_comment( out, pc );
                     break;
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -1250,17 +1311,19 @@ char* disasm_8( word_20* addr, char* out ) {
             pc = read_int( addr, 5 );
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
-                    p = append_str( out, ( fn == 0xc ) ? "GOVLNG" : "GOSBVL" );
+                    p = append_str( out, ( fn == 0xc ) ? ( char* )"GOVLNG"
+                                                       : ( char* )"GOSBVL" );
                     p = append_tab( out );
                     p = append_addr( p, pc );
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, ( fn == 0xc ) ? "jmp" : "jsr" );
+                    p = append_str( out, ( fn == 0xc ) ? ( char* )"jmp"
+                                                       : ( char* )"jsr" );
                     p = append_tab( out );
                     p = append_addr( p, pc );
                     break;
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -1297,14 +1360,15 @@ word_20 disassemble( word_20 addr, char* out ) {
                     p = append_field( p, fn );
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, ( n < 8 ) ? "and" : "or" );
+                    p = append_str( out, ( n < 8 ) ? ( char* )"and"
+                                                   : ( char* )"or" );
                     p = append_field( p, fn );
                     p = append_tab( out );
                     p = append_str(
                         p, op_str_0[ ( n & 7 ) + 8 * CLASS_MNEMONICS ] );
                     break;
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -1317,15 +1381,15 @@ word_20 disassemble( word_20 addr, char* out ) {
             n = read_nibble( addr++ );
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
-                    sprintf( buf, "P=%d", n );
+                    sprintf( buf, ( char* )"P=%d", n );
                     p = append_str( out, buf );
                     break;
                 case CLASS_MNEMONICS:
-                    sprintf( buf, "move.1  #%d, p", n );
+                    sprintf( buf, ( char* )"move.1  #%d, p", n );
                     p = append_str( out, buf );
                     break;
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -1335,24 +1399,24 @@ word_20 disassemble( word_20 addr, char* out ) {
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
                     if ( fn < 5 ) {
-                        sprintf( buf, "LC(%d)", fn + 1 );
+                        sprintf( buf, ( char* )"LC(%d)", fn + 1 );
                     } else {
-                        sprintf( buf, "LCHEX" );
+                        sprintf( buf, ( char* )"LCHEX" );
                     }
                     p = append_str( out, buf );
                     p = append_tab( out );
                     p = append_imm_nibble( p, &addr, fn + 1 );
                     break;
                 case CLASS_MNEMONICS:
-                    sprintf( buf, "move.%d", fn + 1 );
+                    sprintf( buf, ( char* )"move.%d", fn + 1 );
                     p = append_str( out, buf );
                     p = append_tab( out );
                     p = append_imm_nibble( p, &addr, fn + 1 );
-                    sprintf( buf, ", c.p" );
+                    sprintf( buf, ( char* )", c.p" );
                     p = append_str( p, buf );
                     break;
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -1364,11 +1428,13 @@ word_20 disassemble( word_20 addr, char* out ) {
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
                     if ( disp == 2 ) {
-                        p = append_str( out, "NOP3" );
+                        p = append_str( out, ( char* )"NOP3" );
                         break;
                     }
-                    sprintf( buf, ( disp == 0 ) ? "RTN%sC" : "GO%sC",
-                             ( n == 4 ) ? "" : "N" );
+                    sprintf( buf,
+                             ( disp == 0 ) ? ( char* )"RTN%sC"
+                                           : ( char* )"GO%sC",
+                             ( n == 4 ) ? ( char* )"" : ( char* )"N" );
                     p = append_str( out, buf );
                     if ( disp != 0 ) {
                         p = append_tab( out );
@@ -1379,11 +1445,13 @@ word_20 disassemble( word_20 addr, char* out ) {
 
                 case CLASS_MNEMONICS:
                     if ( disp == 2 ) {
-                        p = append_str( out, "nop3" );
+                        p = append_str( out, ( char* )"nop3" );
                         break;
                     }
-                    p = append_str( out, ( disp == 0 ) ? "rtc" : "bc" );
-                    p = append_str( p, ( n == 4 ) ? "s" : "c" );
+                    p = append_str( out, ( disp == 0 ) ? ( char* )"rtc"
+                                                       : ( char* )"bc" );
+                    p = append_str( p,
+                                    ( n == 4 ) ? ( char* )"s" : ( char* )"c" );
                     if ( disp != 0 ) {
                         p = append_tab( out );
                         p = append_r_addr( p, &pc, disp, 2, 1 );
@@ -1392,7 +1460,7 @@ word_20 disassemble( word_20 addr, char* out ) {
                     break;
 
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -1403,14 +1471,14 @@ word_20 disassemble( word_20 addr, char* out ) {
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
                     if ( disp == 3 ) {
-                        p = append_str( out, "NOP4" );
+                        p = append_str( out, ( char* )"NOP4" );
                         break;
                     }
                     if ( disp == 4 ) {
-                        p = append_str( out, "NOP5" );
+                        p = append_str( out, ( char* )"NOP5" );
                         break;
                     }
-                    p = append_str( out, "GOTO" );
+                    p = append_str( out, ( char* )"GOTO" );
                     p = append_tab( out );
                     p = append_r_addr( p, &pc, disp, 3, 1 );
                     p = append_pc_comment( out, pc );
@@ -1418,21 +1486,21 @@ word_20 disassemble( word_20 addr, char* out ) {
 
                 case CLASS_MNEMONICS:
                     if ( disp == 3 ) {
-                        p = append_str( out, "nop4" );
+                        p = append_str( out, ( char* )"nop4" );
                         break;
                     }
                     if ( disp == 4 ) {
-                        p = append_str( out, "nop5" );
+                        p = append_str( out, ( char* )"nop5" );
                         break;
                     }
-                    p = append_str( out, "bra.3" );
+                    p = append_str( out, ( char* )"bra.3" );
                     p = append_tab( out );
                     p = append_r_addr( p, &pc, disp, 3, 1 );
                     p = append_pc_comment( out, pc );
                     break;
 
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -1442,21 +1510,21 @@ word_20 disassemble( word_20 addr, char* out ) {
             disp = read_int( &addr, 3 );
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
-                    p = append_str( out, "GOSUB" );
+                    p = append_str( out, ( char* )"GOSUB" );
                     p = append_tab( out );
                     p = append_r_addr( p, &pc, disp, 3, 4 );
                     p = append_pc_comment( out, pc );
                     break;
 
                 case CLASS_MNEMONICS:
-                    p = append_str( out, "bsr.3" );
+                    p = append_str( out, ( char* )"bsr.3" );
                     p = append_tab( out );
                     p = append_r_addr( p, &pc, disp, 3, 4 );
                     p = append_pc_comment( out, pc );
                     break;
 
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -1497,8 +1565,10 @@ word_20 disassemble( word_20 addr, char* out ) {
                     p = append_str( out, buf );
                     p = append_tab( out );
                     p = append_field( p, fn );
-                    p = append_str( p, ", " );
-                    p = append_str( p, ( disp == 0 ) ? "RTNYES" : "GOYES " );
+                    p = append_str( p, ( char* )", (char*)" );
+                    p = append_str( p, ( disp == 0 )
+                                           ? ( char* )"RTNYES"
+                                           : ( char* )"GOYES (char*)" );
                     if ( disp != 0 ) {
                         p = append_r_addr( p, &pc, disp, 2, 3 );
                         p = append_pc_comment( out, pc );
@@ -1506,7 +1576,8 @@ word_20 disassemble( word_20 addr, char* out ) {
                     break;
 
                 case CLASS_MNEMONICS:
-                    p = append_str( out, ( disp == 0 ) ? "rt" : "b" );
+                    p = append_str( out, ( disp == 0 ) ? ( char* )"rt"
+                                                       : ( char* )"b" );
                     p = append_str( p, in_str_9[ ( ( n >> 2 ) & 3 ) + 4 * c +
                                                  8 * CLASS_MNEMONICS ] );
                     p = append_field( p, fn );
@@ -1519,14 +1590,14 @@ word_20 disassemble( word_20 addr, char* out ) {
                         p = append_str(
                             p, op_str_9[ ( n & 3 ) + 8 * CLASS_MNEMONICS ] );
                     if ( disp != 0 ) {
-                        p = append_str( p, ", " );
+                        p = append_str( p, ( char* )", (char*)" );
                         p = append_r_addr( p, &pc, disp, 2, 3 );
                         p = append_pc_comment( out, pc );
                     }
                     break;
 
                 default:
-                    p = append_str( out, "Unknown disassembler mode" );
+                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                     break;
             }
             break;
@@ -1573,20 +1644,20 @@ word_20 disassemble( word_20 addr, char* out ) {
                         case HP_MNEMONICS:
                             if ( c == 0 ) {
                                 if ( n < 0xc ) {
-                                    p = "+";
+                                    p = ( char* )"+";
                                 } else {
-                                    p = "%c=%c-1";
+                                    p = ( char* )"%c=%c-1";
                                     pc = 2;
                                 }
                             } else {
                                 if ( n < 4 ) {
-                                    p = "%c=0";
+                                    p = ( char* )"%c=0";
                                     pc = 1;
                                 } else if ( n >= 0xc ) {
-                                    p = "%c%cEX";
+                                    p = ( char* )"%c%cEX";
                                     pc = 3;
                                 } else {
-                                    p = "%c=%c";
+                                    p = ( char* )"%c=%c";
                                     pc = 3;
                                 }
                             }
@@ -1595,19 +1666,19 @@ word_20 disassemble( word_20 addr, char* out ) {
                         case CLASS_MNEMONICS:
                             if ( c == 0 ) {
                                 if ( n < 0xc ) {
-                                    p = "add";
+                                    p = ( char* )"add";
                                 } else {
-                                    p = "dec";
+                                    p = ( char* )"dec";
                                     pc = 1;
                                 }
                             } else {
                                 if ( n < 4 ) {
-                                    p = "clr";
+                                    p = ( char* )"clr";
                                     pc = 1;
                                 } else if ( n >= 0xc ) {
-                                    p = "exg";
+                                    p = ( char* )"exg";
                                 } else {
-                                    p = "move";
+                                    p = ( char* )"move";
                                     if ( n < 8 )
                                         n -= 4;
                                 }
@@ -1615,7 +1686,8 @@ word_20 disassemble( word_20 addr, char* out ) {
                             break;
 
                         default:
-                            p = append_str( out, "Unknown disassembler mode" );
+                            p = append_str(
+                                out, ( char* )"Unknown disassembler mode" );
                             return addr;
                     }
                     break;
@@ -1625,26 +1697,26 @@ word_20 disassemble( word_20 addr, char* out ) {
                         case HP_MNEMONICS:
                             if ( c == 0 ) {
                                 if ( n >= 0xc ) {
-                                    p = "-";
+                                    p = ( char* )"-";
                                 } else if ( ( n >= 4 ) && ( n <= 7 ) ) {
-                                    p = "%c=%c+1";
+                                    p = ( char* )"%c=%c+1";
                                     pc = 2;
                                     n -= 4;
                                 } else {
-                                    p = "-";
+                                    p = ( char* )"-";
                                 }
                             } else {
                                 if ( n < 4 ) {
-                                    p = "%cSL";
+                                    p = ( char* )"%cSL";
                                     pc = 1;
                                 } else if ( n < 8 ) {
-                                    p = "%cSR";
+                                    p = ( char* )"%cSR";
                                     pc = 1;
                                 } else if ( n < 0xc ) {
-                                    p = "%c=%c-1";
+                                    p = ( char* )"%c=%c-1";
                                     pc = 2;
                                 } else {
-                                    p = "%c=-%c-1";
+                                    p = ( char* )"%c=-%c-1";
                                     pc = 2;
                                 }
                             }
@@ -1653,30 +1725,31 @@ word_20 disassemble( word_20 addr, char* out ) {
                         case CLASS_MNEMONICS:
                             if ( c == 0 ) {
                                 if ( n >= 0xc ) {
-                                    p = "subr";
+                                    p = ( char* )"subr";
                                 } else if ( ( n >= 4 ) && ( n <= 7 ) ) {
-                                    p = "inc";
+                                    p = ( char* )"inc";
                                     pc = 1;
                                     n -= 4;
                                 } else {
-                                    p = "sub";
+                                    p = ( char* )"sub";
                                 }
                             } else {
                                 pc = 1;
                                 if ( n < 4 ) {
-                                    p = "lsl";
+                                    p = ( char* )"lsl";
                                 } else if ( n < 8 ) {
-                                    p = "lsr";
+                                    p = ( char* )"lsr";
                                 } else if ( n < 0xc ) {
-                                    p = "neg";
+                                    p = ( char* )"neg";
                                 } else {
-                                    p = "not";
+                                    p = ( char* )"not";
                                 }
                             }
                             break;
 
                         default:
-                            p = append_str( out, "Unknown disassembler mode" );
+                            p = append_str(
+                                out, ( char* )"Unknown disassembler mode" );
                             return addr;
                     }
                     break;
@@ -1705,7 +1778,7 @@ word_20 disassemble( word_20 addr, char* out ) {
                     p = append_field( p, fn );
                     p = append_tab( out );
                     if ( pc == 1 ) {
-                        sprintf( buf, "%c", ( n & 3 ) + 'a' );
+                        sprintf( buf, ( char* )"%c", ( n & 3 ) + 'a' );
                         p = append_str( p, buf );
                     } else {
                         p = append_str( p,
@@ -1714,7 +1787,7 @@ word_20 disassemble( word_20 addr, char* out ) {
                     break;
 
                 default:
-                    p = append_str( p, "Unknown disassembler mode" );
+                    p = append_str( p, ( char* )"Unknown disassembler mode" );
                     break;
             }
 

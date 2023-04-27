@@ -36,6 +36,6 @@
 extern unsigned int opt_gx;
 extern unsigned int rom_size;
 
-extern int read_rom_file( char* name, unsigned char** mem, int* size );
+extern int read_rom_file( char* name, unsigned char** mem, unsigned int* size );
 
 #endif /* !_ROMIO_H */
