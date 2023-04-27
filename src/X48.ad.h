@@ -10,6 +10,5 @@
     "*printWarranty:		False", "*useTerminal:		True",
     "*useSerial:		False", "*serialLine:		/dev/ttyS0",
     "*completeInitialize:	False", "*resetOnStartup:	False",
-    "*romFileName:		rom.dump",
-    "*homeDirectory:		.hp48", "*useDebugger:		True",
-    "*disassemblerMnemonics:	class",
+    "*romFileName:		rom.dump", "*homeDirectory:		.hp48",
+    "*useDebugger:		True", "*disassemblerMnemonics:	class",

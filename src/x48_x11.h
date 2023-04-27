@@ -131,19 +131,19 @@ extern int shm_flag;
 extern Display* dpy;
 extern int screen;
 
-extern int InitDisplay __ProtoType__( ( int argc, char** argv ) );
-extern int CreateWindows __ProtoType__( ( int argc, char** argv ) );
-extern int GetEvent __ProtoType__( ( void ));
+extern int InitDisplay( int argc, char** argv );
+extern int CreateWindows( int argc, char** argv );
+extern int GetEvent( void );
 
-extern void adjust_contrast __ProtoType__( ( int contrast ) );
-extern void refresh_icon __ProtoType__( ( void ));
+extern void adjust_contrast( int contrast );
+extern void refresh_icon( void );
 
-extern void ShowConnections __ProtoType__( ( char* w, char* i ) );
+extern void ShowConnections( char* w, char* i );
 
-extern void exit_x48 __ProtoType__( ( int tell_x11 ) );
+extern void exit_x48( int tell_x11 );
 
 #ifdef HAVE_XSHM
-extern void refresh_display __ProtoType__( ( void ));
+extern void refresh_display( void );
 #endif
 
 #endif /* !_X48_X11_H */

@@ -56,7 +56,7 @@ struct objfunc {
     char* name;
     short length;
     word_20 prolog;
-    char*( *func )__ProtoType__( ( word_20 * addr, char* string ) );
+    char* ( *func )( word_20* addr, char* string );
 } objects[] = { { "System Binary", 0, DOBINT, dec_bin_int },
                 { "Real", 0, DOREAL, dec_real },
                 { "Long Real", 0, DOEREL, dec_long_real },

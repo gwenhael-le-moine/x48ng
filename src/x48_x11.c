@@ -109,8 +109,8 @@ static char* defaults[] = {
     0 };
 
 #ifdef HAVE_XSHM
-extern int XShmQueryExtension __ProtoType__( ( Display* ));
-extern int XShmGetEventBase __ProtoType__( ( Display* ));
+extern int XShmQueryExtension( Display* );
+extern int XShmGetEventBase( Display* );
 static int CompletionType = -1;
 #endif
 

@@ -105,9 +105,9 @@ long nibble_masks[ 16 ] = { 0x0000000f, 0x000000f0, 0x00000f00, 0x0000f000,
                             0x0000000f, 0x000000f0, 0x00000f00, 0x0000f000,
                             0x000f0000, 0x00f00000, 0x0f000000, 0xf0000000 };
 
-void( *write_nibble ) __ProtoType__( ( long addr, int val ) );
-int( *read_nibble ) __ProtoType__( ( long addr ) );
-int( *read_nibble_crc ) __ProtoType__( ( long addr ) );
+void ( *write_nibble )( long addr, int val );
+int ( *read_nibble )( long addr );
+int ( *read_nibble_crc )( long addr );
 
 static int line_counter = -1;
 

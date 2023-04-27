@@ -46,6 +46,6 @@
 extern int disassembler_mode;
 extern char* mode_name[];
 
-extern word_20 disassemble __ProtoType__( ( word_20 addr, char* out ) );
+extern word_20 disassemble( word_20 addr, char* out );
 
 #endif /* !_DISASM_H */

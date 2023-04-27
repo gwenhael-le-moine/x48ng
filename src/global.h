@@ -45,8 +45,6 @@
 
 #include "config.h"
 
-#define __ProtoType__( x ) x
-
 #if !defined( __GNUC__ ) || defined( __STRICT_ANSI__ )
 #define inline
 #if !defined( __STDC__ )
@@ -108,28 +106,26 @@
 #include <stdio.h>
 #include <sys/time.h>
 #include <sys/types.h>
-extern int printf __ProtoType__( ( char*, ... ) );
-extern int fprintf __ProtoType__( ( FILE*, char*, ... ) );
-extern int sscanf __ProtoType__( ( char*, char*, ... ) );
-extern void fflush __ProtoType__( ( FILE* ));
-extern int fseek __ProtoType__( ( FILE*, long, int ));
-extern int fread __ProtoType__( ( void*, int, int, FILE* ));
-extern int fwrite __ProtoType__( ( void*, int, int, FILE* ));
-extern void fclose __ProtoType__( ( FILE* ));
-extern int fgetc __ProtoType__( ( FILE* ));
-extern void bzero __ProtoType__( ( void*, int ));
-extern time_t time __ProtoType__( ( time_t* ));
-extern int select __ProtoType__( ( int, fd_set*, fd_set*, fd_set*,
-                                   struct timeval* ));
-extern int setitimer __ProtoType__( ( int, struct itimerval*,
-                                      struct itimerval* ));
-extern int gethostname __ProtoType__( ( char*, int ));
+extern int printf( char*, ... );
+extern int fprintf( FILE*, char*, ... );
+extern int sscanf( char*, char*, ... );
+extern void fflush( FILE* );
+extern int fseek( FILE*, long, int );
+extern int fread( void*, int, int, FILE* );
+extern int fwrite( void*, int, int, FILE* );
+extern void fclose( FILE* );
+extern int fgetc( FILE* );
+extern void bzero( void*, int );
+extern time_t time( time_t* );
+extern int select( int, fd_set*, fd_set*, fd_set*, struct timeval* );
+extern int setitimer( int, struct itimerval*, struct itimerval* );
+extern int gethostname( char*, int );
 #ifdef HAVE_XSHM
 #include <sys/ipc.h>
 #include <sys/shm.h>
-extern int shmget __ProtoType__( ( key_t, int, int ));
-extern int shmat __ProtoType__( ( int, void*, int ));
-extern int shmctl __ProtoType__( ( int, int, struct shmid_ds* ));
+extern int shmget( key_t, int, int );
+extern int shmat( int, void*, int );
+extern int shmctl( int, int, struct shmid_ds* );
 #endif
 #endif
 

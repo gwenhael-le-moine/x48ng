@@ -115,27 +115,27 @@ bkpt_tbl[ MAX_BREAKPOINTS + 1 ];
 /*
  * command functions
  */
-static void do_break __ProtoType__( ( int, char** ));
-static void do_continue __ProtoType__( ( int, char** ));
-static void do_delete __ProtoType__( ( int, char** ));
-static void do_exit __ProtoType__( ( int, char** ));
-static void do_go __ProtoType__( ( int, char** ));
-static void do_help __ProtoType__( ( int, char** ));
-static void do_load __ProtoType__( ( int, char** ));
-static void do_mode __ProtoType__( ( int, char** ));
-static void do_quit __ProtoType__( ( int, char** ));
-static void do_regs __ProtoType__( ( int, char** ));
-static void do_save __ProtoType__( ( int, char** ));
-static void do_stack __ProtoType__( ( int, char** ));
-static void do_stat __ProtoType__( ( int, char** ));
-static void do_step __ProtoType__( ( int, char** ));
-static void do_ram __ProtoType__( ( int, char** ));
-static void do_reset __ProtoType__( ( int, char** ));
-static void do_rstk __ProtoType__( ( int, char** ));
+static void do_break( int, char** );
+static void do_continue( int, char** );
+static void do_delete( int, char** );
+static void do_exit( int, char** );
+static void do_go( int, char** );
+static void do_help( int, char** );
+static void do_load( int, char** );
+static void do_mode( int, char** );
+static void do_quit( int, char** );
+static void do_regs( int, char** );
+static void do_save( int, char** );
+static void do_stack( int, char** );
+static void do_stat( int, char** );
+static void do_step( int, char** );
+static void do_ram( int, char** );
+static void do_reset( int, char** );
+static void do_rstk( int, char** );
 
 struct cmd {
     char* name;
-    void( *func ) __ProtoType__( ( int, char** ));
+    void ( *func )( int, char** );
     char* help;
 }
 

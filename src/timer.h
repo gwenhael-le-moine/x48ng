@@ -49,14 +49,14 @@ typedef struct t1_t2_ticks {
     unsigned long t2_ticks;
 } t1_t2_ticks;
 
-extern void reset_timer __ProtoType__( ( int timer ) );
-extern void start_timer __ProtoType__( ( int timer ) );
-extern void restart_timer __ProtoType__( ( int timer ) );
-extern void stop_timer __ProtoType__( ( int timer ) );
-extern word_64 get_timer __ProtoType__( ( int timer ) );
-extern long diff_timer __ProtoType__( ( word_64 * t1, word_64* t2 ) );
+extern void reset_timer( int timer );
+extern void start_timer( int timer );
+extern void restart_timer( int timer );
+extern void stop_timer( int timer );
+extern word_64 get_timer( int timer );
+extern long diff_timer( word_64* t1, word_64* t2 );
 
-extern t1_t2_ticks get_t1_t2 __ProtoType__( ( void ));
-extern void set_accesstime __ProtoType__( ( void ));
+extern t1_t2_ticks get_t1_t2( void );
+extern void set_accesstime( void );
 
 #endif /* !_TIMER_H */

@@ -38,8 +38,8 @@
 
 #include "global.h"
 
-extern char* append_str __ProtoType__( ( char* buf, char* string ) );
-extern char* append_tab __ProtoType__( ( char* buf ) );
-extern char* append_tab_16 __ProtoType__( ( char* buf ) );
+extern char* append_str( char* buf, char* string );
+extern char* append_tab( char* buf );
+extern char* append_tab_16( char* buf );
 
 #endif /* !_APPEND_H */

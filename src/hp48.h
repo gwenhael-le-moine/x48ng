@@ -260,33 +260,33 @@ extern long sched_adjtime;
 extern long schedule_event;
 
 extern display_t display;
-extern void init_display __ProtoType__( ( void ));
+extern void init_display( void );
 
 extern saturn_t saturn;
 
-extern int exit_emulator __ProtoType__( ( void ));
-extern int init_emulator __ProtoType__( ( void ));
-extern void init_active_stuff __ProtoType__( ( void ));
+extern int exit_emulator( void );
+extern int init_emulator( void );
+extern void init_active_stuff( void );
 
-extern int serial_init __ProtoType__( ( void ));
-extern void serial_baud __ProtoType__( ( int baud ) );
-extern void transmit_char __ProtoType__( ( void ));
-extern void receive_char __ProtoType__( ( void ));
+extern int serial_init( void );
+extern void serial_baud( int baud );
+extern void transmit_char( void );
+extern void receive_char( void );
 
-extern void do_kbd_int __ProtoType__( ( void ));
-extern void do_interupt __ProtoType__( ( void ));
+extern void do_kbd_int( void );
+extern void do_interupt( void );
 
-extern void( *write_nibble ) __ProtoType__( ( long addr, int val ) );
-extern int( *read_nibble ) __ProtoType__( ( long addr ) );
-extern int( *read_nibble_crc ) __ProtoType__( ( long addr ) );
+extern void ( *write_nibble )( long addr, int val );
+extern int ( *read_nibble )( long addr );
+extern int ( *read_nibble_crc )( long addr );
 
-extern int emulate __ProtoType__( ( void ));
-extern int step_instruction __ProtoType__( ( void ));
-extern void schedule __ProtoType__( ( void ));
+extern int emulate( void );
+extern int step_instruction( void );
+extern void schedule( void );
 
-extern int read_rom __ProtoType__( ( const char* fname ) );
-extern int read_files __ProtoType__( ( void ));
-extern int write_files __ProtoType__( ( void ));
+extern int read_rom( const char* fname );
+extern int read_files( void );
+extern int write_files( void );
 
-extern void load_addr __ProtoType__( ( word_20 * dat, long addr, int n ) );
+extern void load_addr( word_20* dat, long addr, int n );
 #endif /* !_HP48_H */
