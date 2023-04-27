@@ -2496,9 +2496,7 @@ inline void schedule( void ) {
 int emulate( void ) {
     struct timeval tv;
     struct timeval tv2;
-#ifndef SOLARIS
     struct timezone tz;
-#endif
 
     reset_timer( T1_TIMER );
     reset_timer( RUN_TIMER );
@@ -2519,8 +2517,7 @@ int emulate( void ) {
 
         {
             int i;
-            for ( i = 0; i < sizeof( saturn.keybuf.rows ) /
-                                 sizeof( saturn.keybuf.rows[ 0 ] );
+            for ( i = 0; i < (int)( sizeof( saturn.keybuf.rows ) / sizeof( saturn.keybuf.rows[ 0 ] ) );
                   i++ ) {
                 if ( saturn.keybuf.rows[ i ] || throttle ) {
                     gettimeofday( &tv, &tz );

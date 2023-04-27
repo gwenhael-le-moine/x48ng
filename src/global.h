@@ -43,71 +43,40 @@
 #ifndef _GLOBAL_H
 #define _GLOBAL_H 1
 
-// #define _XOPEN_SOURCE
+#define _GNU_SOURCE
 
 #include "config.h"
 
 #if !defined( __GNUC__ ) || defined( __STRICT_ANSI__ )
-#define inline
-#if !defined( __STDC__ )
-#define const
-#endif
+#  define inline
+#  if !defined( __STDC__ )
+#    define const
+#  endif
 #endif
 
 /*
  * If we are running Linux, `linux' will be defined by gcc.
  */
 #if defined( linux )
+#  ifndef LINUX
+#    define LINUX 1
+#  endif
 
-#ifndef LINUX
-#define LINUX 1
-#endif
-
-#define SYSV_TIME 1
-
-#else /* Not Linux */
-
-#if defined( sun ) && defined( unix )
-
-#if defined( __svr4__ ) || defined( SVR4 ) || defined( SYSV )
-
-#ifndef SOLARIS
-#define SOLARIS 1
-#endif
-
-#define SYSV_TIME 1
-
-#else /* Not Solaris */
-
-#if defined( hpux )
-
-#ifndef HPUX
-#define HPUX 1
-#endif
-
-#else /* Not HP-UX */
-
-#ifndef SUNOS
-#define SUNOS 1
-#endif
-
-#endif /* Not HP-UX */
-#endif /* Not Solaris */
-#endif /* Sun && Unix */
+#  define SYSV_TIME 1
 #endif /* Not Linux */
 
 #ifdef SYSV
-#ifndef SYSV_TIME
-#define SYSV_TIME 1
-#endif
+#  ifndef SYSV_TIME
+#    define SYSV_TIME 1
+#  endif
 #endif
 
 #define HAVE_STDIO 1
 
 #ifndef HAVE_STDIO
-#include <stdio.h>
-#include <sys/time.h>
-#include <sys/types.h>
+#  include <stdio.h>
+#  include <sys/time.h>
+#  include <sys/types.h>
 extern int printf( char*, ... );
 extern int fprintf( FILE*, char*, ... );
 extern int sscanf( char*, char*, ... );
@@ -122,13 +91,13 @@ extern time_t time( time_t* );
 extern int select( int, fd_set*, fd_set*, fd_set*, struct timeval* );
 extern int setitimer( int, struct itimerval*, struct itimerval* );
 extern int gethostname( char*, int );
-#ifdef HAVE_XSHM
-#include <sys/ipc.h>
-#include <sys/shm.h>
+#  ifdef HAVE_XSHM
+#    include <sys/ipc.h>
+#    include <sys/shm.h>
 extern int shmget( key_t, int, int );
 extern int shmat( int, void*, int );
 extern int shmctl( int, int, struct shmid_ds* );
-#endif
+#  endif
 #endif
 
 #endif /* !_GLOBAL_H */
