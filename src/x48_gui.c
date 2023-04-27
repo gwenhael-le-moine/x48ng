@@ -21,7 +21,7 @@
 #include "hp.h"
 #include "icon.h"
 #include "small.h"
-#include "x48_x11.h"
+#include "x48_gui.h"
 
 #include "constants.h"
 #include "device.h"

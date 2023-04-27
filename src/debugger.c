@@ -20,7 +20,7 @@
 #include "romio.h"
 #include "rpl.h"
 #include "timer.h"
-#include "x48_x11.h"
+#include "x48_gui.h"
 
 #define MAX_ARGS 16
 

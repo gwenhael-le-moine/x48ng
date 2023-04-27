@@ -1,5 +1,5 @@
-#ifndef _X48_X11_H
-#define _X48_X11_H 1
+#ifndef _X48_GUI_H
+#define _X48_GUI_H 1
 
 #include "global.h"
 
@@ -86,4 +86,4 @@ extern void exit_x48( int tell_x11 );
 extern void refresh_display( void );
 #endif
 
-#endif /* !_X48_X11_H */
+#endif /* !_X48_GUI_H */

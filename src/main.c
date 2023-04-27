@@ -9,7 +9,7 @@
 
 #include "debugger.h"
 #include "hp48.h"
-#include "x48_x11.h"
+#include "x48_gui.h"
 
 #include <langinfo.h>
 #include <locale.h>

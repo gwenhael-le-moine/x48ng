@@ -17,7 +17,7 @@ dump2rom: src/dump2rom.o
 checkrom: src/checkrom.o src/romio.o
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
-x48: src/main.o src/actions.o src/debugger.o src/device.o src/disasm.o src/emulate.o src/errors.o src/init.o src/lcd.o src/memory.o src/register.o src/resources.o src/romio.o src/rpl.o src/serial.o src/timer.o src/x48_x11.o src/options.o src/resources.o
+x48: src/main.o src/actions.o src/debugger.o src/device.o src/disasm.o src/emulate.o src/errors.o src/init.o src/lcd.o src/memory.o src/register.o src/resources.o src/romio.o src/rpl.o src/serial.o src/timer.o src/x48_gui.o src/options.o src/resources.o
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
 # Cleaning

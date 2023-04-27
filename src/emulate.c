@@ -7,7 +7,7 @@
 #include "hp48.h"
 #include "hp48_emu.h"
 #include "timer.h"
-#include "x48_x11.h"
+#include "x48_gui.h"
 
 extern int throttle;
 

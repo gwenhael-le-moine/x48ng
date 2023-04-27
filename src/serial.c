@@ -16,7 +16,7 @@
 #include "hp48.h"
 #include "hp48_emu.h"
 #include "resources.h"
-#include "x48_x11.h"
+#include "x48_gui.h"
 
 static int wire_fd;
 static int ir_fd;

@@ -10,7 +10,7 @@
 #include "device.h"
 #include "hp48.h"
 #include "hp48_emu.h"
-#include "x48_x11.h"
+#include "x48_gui.h"
 
 static int last_annunc_state = -1;
 
