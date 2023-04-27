@@ -50,7 +50,7 @@ install: all
 	chmod 755 $(DESTDIR)$(PREFIX)/share/x48/setup-x48-home.sh
 
 	install -m 755 -d -- $(DESTDIR)$(MANDIR)
-	install -c -m 644 src/x48.man.1 $(DESTDIR)$(MANDIR)/x48.1
+	install -c -m 644 x48.man.1 $(DESTDIR)$(MANDIR)/x48.1
 	gzip -9  $(DESTDIR)$(MANDIR)/x48.1
 
 	install -m 755 -d -- $(DESTDIR)$(DOCDIR)
@@ -60,4 +60,4 @@ install: all
 	sed "s|PREFIX|$(PREFIX)|g" x48.desktop > $(DESTDIR)$(PREFIX)/share/applications/x48.desktop
 
 	install 0m 755 -d -- $(DESTDIR)/etc/X11/app-defaults
-	install -c -m 644 src/X48.ad $(DESTDIR)/etc/X11/app-defaults/X48
+	install -c -m 644 X48.ad $(DESTDIR)/etc/X11/app-defaults/X48
