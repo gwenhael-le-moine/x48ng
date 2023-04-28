@@ -1,7 +1,7 @@
 #ifndef _RESOURCES_H
 #define _RESOURCES_H 1
 
-#include "global.h"
+#include "config.h"
 
 #include <X11/Xlib.h>
 #include <X11/Xresource.h>

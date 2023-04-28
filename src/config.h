@@ -1,11 +1,8 @@
-/* config.h.  Generated from config.h.in by configure.  */
-/* config.h.in.  Generated from configure.ac by autoheader.  */
+#define _GNU_SOURCE
 
-/* Date program was compiled */
-#define COMPILE_TIME "Wed Apr 26 16:25:06 CEST 2023"
-
-/* description */
-#define COMPILE_VERSION 0
+#if defined( linux )
+#  define LINUX 1
+#endif
 
 /* Define to 1 if you have the `bzero' function. */
 #define HAVE_BZERO 1
@@ -21,9 +18,6 @@
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
-
-/* Define to 1 if you have the `GL' library (-lGL). */
-/* #undef HAVE_LIBGL */
 
 /* Define to 1 if you have the `history' library (-lhistory). */
 #define HAVE_LIBHISTORY 1
@@ -52,10 +46,6 @@
 
 /* Define to 1 if you have the `select' function. */
 #define HAVE_SELECT 1
-
-/* Define to 1 if `stat' has the bug that it succeeds when given the
-   zero-length file name argument. */
-/* #undef HAVE_STAT_EMPTY_STRING_BUG */
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
@@ -112,49 +102,13 @@
    slash. */
 #define LSTAT_FOLLOWS_SLASHED_SYMLINK 1
 
-/* Name of package */
-#define PACKAGE "x48"
-
-/* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "x48-bugs@gam3.net"
-
-/* Define to the full name of this package. */
-#define PACKAGE_NAME "x48"
-
-/* Define to the full name and version of this package. */
-#define PACKAGE_STRING "x48 0.6.4"
-
-/* Define to the one symbol short name of this package. */
-#define PACKAGE_TARNAME "x48"
-
-/* Define to the home page for this package. */
-#define PACKAGE_URL ""
-
-/* Define to the version of this package. */
-#define PACKAGE_VERSION "0.6.4"
-
-/* The patch level */
-#define PATCHLEVEL 4
-
-/* Define to the type of arg 1 for `select'. */
-#define SELECT_TYPE_ARG1 int
-
-/* Define to the type of args 2, 3 and 4 for `select'. */
-#define SELECT_TYPE_ARG234 ( fd_set* )
-
-/* Define to the type of arg 5 for `select'. */
-#define SELECT_TYPE_ARG5 ( struct timeval* )
-
 /* Define to 1 if all of the C90 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for
    backward compatibility; new code need not use it. */
 #define STDC_HEADERS 1
 
-/* Define to 1 if your <sys/time.h> declares `struct tm'. */
-/* #undef TM_IN_SYS_TIME */
-
-/* Version number of package */
-#define VERSION "0.6.4"
+// /* Version number of package */
+// #define VERSION "0.6.4"
 
 /* The major version number */
 #define VERSION_MAJOR 0
@@ -162,20 +116,5 @@
 /* The minor version number */
 #define VERSION_MINOR 6
 
-/* Define to 1 if the X Window System is missing or not being used. */
-/* #undef X_DISPLAY_MISSING */
-
-/* Define to empty if `const' does not conform to ANSI C. */
-/* #undef const */
-
-/* Define to `__inline__' or `__inline' if that's what the C compiler
-   calls it, or to nothing if 'inline' is not supported under any name.  */
-#ifndef __cplusplus
-/* #undef inline */
-#endif
-
-/* Define to rpl_malloc if the replacement function should be used. */
-/* #undef malloc */
-
-/* Define to `unsigned int' if <sys/types.h> does not define. */
-/* #undef size_t */
+/* The patch level */
+#define PATCHLEVEL 4

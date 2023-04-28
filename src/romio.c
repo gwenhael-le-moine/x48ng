@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-#include "global.h"
+#include "config.h"
 #include "resources.h"
 #include "romio.h"
 

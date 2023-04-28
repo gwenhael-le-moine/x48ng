@@ -1,7 +1,7 @@
 #ifndef _DEBUGGER_H
 #define _DEBUGGER_H 1
 
-#include "global.h"
+#include "config.h"
 #include "hp48.h"
 
 #define USER_INTERRUPT 1

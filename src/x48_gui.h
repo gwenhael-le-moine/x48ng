@@ -1,7 +1,7 @@
 #ifndef _X48_GUI_H
 #define _X48_GUI_H 1
 
-#include "global.h"
+#include "config.h"
 
 #include <X11/Xlib.h>
 #ifdef HAVE_XSHM

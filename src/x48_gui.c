@@ -1,4 +1,4 @@
-#include "global.h"
+#include "config.h"
 
 #include <fcntl.h>
 #include <pwd.h>

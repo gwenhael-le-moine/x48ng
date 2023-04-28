@@ -1,7 +1,7 @@
 #ifndef _ROMIO_H
 #define _ROMIO_H 1
 
-#include "global.h"
+#include "config.h"
 
 #define ROM_SIZE_SX 0x080000
 #define ROM_SIZE_GX 0x100000

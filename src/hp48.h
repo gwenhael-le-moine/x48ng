@@ -1,7 +1,7 @@
 #ifndef _HP48_H
 #define _HP48_H 1
 
-#include "global.h"
+#include "config.h"
 
 #include <sys/time.h>
 

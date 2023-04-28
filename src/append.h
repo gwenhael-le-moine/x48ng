@@ -1,7 +1,7 @@
 #ifndef _APPEND_H
 #define _APPEND_H 1
 
-#include "global.h"
+#include "config.h"
 
 extern char* append_str( char* buf, const char* string );
 extern char* append_tab( char* buf );

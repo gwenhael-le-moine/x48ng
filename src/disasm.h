@@ -1,7 +1,7 @@
 #ifndef _DISASM_H
 #define _DISASM_H 1
 
-#include "global.h"
+#include "config.h"
 #include "hp48.h"
 
 #define HP_MNEMONICS 0

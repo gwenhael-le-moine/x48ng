@@ -170,7 +170,7 @@ void saturn_config_init( void ) {
     saturn.version[ 0 ] = VERSION_MAJOR;
     saturn.version[ 1 ] = VERSION_MINOR;
     saturn.version[ 2 ] = PATCHLEVEL;
-    saturn.version[ 3 ] = COMPILE_VERSION;
+    // saturn.version[ 3 ] = COMPILE_VERSION;
     memset( &device, 0, sizeof( device ) );
     device.display_touched = 1;
     device.contrast_touched = 1;
@@ -193,7 +193,7 @@ void init_saturn( void ) {
     saturn.version[ 0 ] = VERSION_MAJOR;
     saturn.version[ 1 ] = VERSION_MINOR;
     saturn.version[ 2 ] = PATCHLEVEL;
-    saturn.version[ 3 ] = COMPILE_VERSION;
+    // saturn.version[ 3 ] = COMPILE_VERSION;
     saturn.hexmode = HEX;
     saturn.rstkp = -1;
     saturn.intenable = 1;
@@ -1077,7 +1077,7 @@ int read_files( void ) {
             saturn.version[ 0 ] = VERSION_MAJOR;
             saturn.version[ 1 ] = VERSION_MINOR;
             saturn.version[ 2 ] = PATCHLEVEL;
-            saturn.version[ 3 ] = COMPILE_VERSION;
+            // saturn.version[ 3 ] = COMPILE_VERSION;
         } else {
             /*
              * no, initialize
@@ -1107,7 +1107,7 @@ int read_files( void ) {
             v2 = ( ( int )VERSION_MAJOR & 0xff ) << 24;
             v2 |= ( ( int )VERSION_MINOR & 0xff ) << 16;
             v2 |= ( ( int )PATCHLEVEL & 0xff ) << 8;
-            v2 |= ( ( int )COMPILE_VERSION & 0xff );
+            // v2 |= ( ( int )COMPILE_VERSION & 0xff );
 
             if ( ( v1 & 0xffffff00 ) < ( v2 & 0xffffff00 ) ) {
                 if ( !quiet )

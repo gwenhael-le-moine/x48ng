@@ -4,7 +4,7 @@
 /* #define DEBUG_CONFIG 1 */
 /* #define DEBUG_ID 1 */
 
-#include "global.h"
+#include "config.h"
 
 #include <stdio.h>
 #include <stdlib.h>

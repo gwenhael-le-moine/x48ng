@@ -1,7 +1,7 @@
 #ifndef _TIMER_H
 #define _TIMER_H 1
 
-#include "global.h"
+#include "config.h"
 #include "hp48.h"
 
 #define NR_TIMERS 4

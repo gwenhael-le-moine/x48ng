@@ -1,7 +1,7 @@
 #ifndef _HP48_EMU_H
 #define _HP48_EMU_H 1
 
-#include "global.h"
+#include "config.h"
 
 #include <X11/Xlib.h>
 
