@@ -2,7 +2,7 @@
 
 CC = gcc
 
-CFLAGS = -g -O2 -Wall
+CFLAGS = -g -O2 -Wall -Wextra -Wno-unused-parameter -Wno-unused-function
 LIBS = -lm -lX11 -lXext -lhistory -lreadline
 
 all: mkcard checkrom dump2rom x48
