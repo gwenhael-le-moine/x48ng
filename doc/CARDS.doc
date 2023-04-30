@@ -6,11 +6,10 @@ A: Well, I guess you would have to use some sort of Card copying
    You should convert it into an x48 rom-file. Look at dump2rom.c.
    There should be changes for the size of the Card!!!
 
-   Then you should copy this to "$HOME/.hp48/port1" or "$HOME/.hp48/port2".
+   Then you should copy this to "$HOME/.x48ng/port1" or "$HOME/.x48ng/port2".
 
-   Change the file to read only, use 'chmod 444 $HOME/.hp48/port1'.
+   Change the file to read only, use 'chmod 444 $HOME/.x48ng/port1'.
    The emulator will notice, this is a ROM.
 
    You are mainly on your own here, I don't have such a card, so I can't
    try, but I hope it helps.
-

@@ -10,5 +10,5 @@
     "*printWarranty:		False", "*useTerminal:		True",
     "*useSerial:		False", "*serialLine:		/dev/ttyS0",
     "*completeInitialize:	False", "*resetOnStartup:	False",
-    "*romFileName:		rom.dump", "*homeDirectory:		.hp48",
+    "*romFileName:		rom.dump", "*homeDirectory:		.x48ng",
     "*useDebugger:		True", "*disassemblerMnemonics:	class",

@@ -33,7 +33,7 @@
 
 #ifdef GUI_IS_X11
 static char* defaults[] = {
-#include "X48.ad.h"
+#include "X48NG.ad.h"
     0 };
 
 #ifdef HAVE_XSHM
@@ -7222,7 +7222,7 @@ void SDLShowInformation() {
                                 "  port1: card 1 memory",
                                 "  port2: card 2 memory",
                                 "",
-                                "These files must be in ~/.hp48",
+                                "These files must be in ~/.x48ng",
                                 "",
                                 0 };
     SDLMessageBox( 310, 280, info_title, info_text, 0xf0c0c0e0, 0xff000000, 0 );
@@ -7244,4 +7244,3 @@ void SDLShowInformation() {
                    0 );
 }
 #endif
-

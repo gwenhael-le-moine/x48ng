@@ -326,7 +326,7 @@ void get_resources(
     // homeDirectory
 
     // Have homeDirectory in the user's home
-    strcpy( homeDirectory, ".hp48" ); // live files are stored in ~/.hp48
+    strcpy( homeDirectory, ".x48ng" ); // live files are stored in ~/.x48ng
 
     // As a fallback, assume that a ROM will be available at the same location
     // as the executable We assume that the rom file is in the same
@@ -357,4 +357,3 @@ void get_resources(
     throttle = 0;
 }
 #endif
-

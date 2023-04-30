@@ -2,10 +2,10 @@
 #define VERSION_MAJOR 0
 
 /* The minor version number */
-#define VERSION_MINOR 6
+#define VERSION_MINOR 9
 
 /* The patch level */
-#define PATCHLEVEL 4
+#define PATCHLEVEL 9
 
 /* description */
 #define COMPILE_VERSION 0

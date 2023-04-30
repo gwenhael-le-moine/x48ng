@@ -1,9 +1,0 @@
-
-You will only need readline support if you are planning to use the
-x48 debugger.  So ignore
-
-  With ReadLine sup. in Debuger?  no
-
-unless you want readline support in the x48 debugger.
-
-

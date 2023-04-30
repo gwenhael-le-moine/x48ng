@@ -37,7 +37,7 @@
 *completeInitialize:	False
 *resetOnStartup:	False
 *romFileName:		rom.dump
-*homeDirectory:		.hp48
+*homeDirectory:		.x48ng
 
 !
 ! resources controlling the debugger

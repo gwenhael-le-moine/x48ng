@@ -10,7 +10,7 @@
 
 void usage( void ) {
     fprintf( stdout, "\n\
-x48 Version %d.%d.%d, Copyright (c) 1994-2005 by Eddie C. Dost <ecd@dressler.de>.\n\
+%s Version %d.%d.%d\n\
 \n\
 usage:\n\t%s [-options ...]\n\
 \n\
@@ -42,14 +42,14 @@ where options include:\n\
     -/+debug                     turn on/off debugger\n\
     -disasm     <string>         use <string> (\'HP\' or \'class\') mnemonics\n\
     -reset                       perform a reset (PC = 0) on startup\n\
-    -initialize                  force initialization x48 from ROM-dump\n\
+    -initialize                  force initialization x48ng from ROM-dump\n\
     -rom        <filename>       if initializing, read ROM from <filename>\n\
-    -home       <directory>      use directory ~/<directory> to save x48 files\n\
+    -home       <directory>      use directory ~/<directory> to save x48ng files\n\
     -xrm        <resource>       set Xresource <resource>\n\
     -/+throttle			 turn off/on speed emulation\n\
     -/+netbook			 turn off/on netbook layout\n\
 \n",
-             VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname );
+            progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname );
 
     fflush( stdout );
     exit( 1 );
@@ -57,7 +57,7 @@ where options include:\n\
 
 void show_version( void ) {
     fprintf( stdout, "\n\
-%s Version %d.%d.%d, x48 is Copyright (c) 1994-2005 by Eddie C. Dost <ecd@dressler.de>.\n\n",
+%s Version %d.%d.%d",
              progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
 }
 
@@ -65,8 +65,7 @@ void show_copyright( void ) {
     fprintf( stdout, "\n\
                                COPYRIGHT\n\
 \n\
-X48 is an Emulator/Debugger for the HP-48 Handheld Calculator.\n\
-Copyright (C) 1994 by Eddie C. Dost <ecd@dressler.de>.\n\
+x48ng is an Emulator/Debugger for the HP-48 Handheld Calculator.\n\
 \n\
 This program is free software; you can redistribute it and/or modify\n\
 it under the terms of the GNU General Public License as published by\n\

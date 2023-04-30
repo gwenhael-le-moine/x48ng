@@ -76,7 +76,7 @@ const char* errinit_text[] = { "",
                                "  ram:   ram file",
                                "  hp48:  HP state file",
                                "",
-                               "These files must be in ~/.hp48",
+                               "These files must be in ~/.x48ng",
                                "",
                                "Install these files and try again.",
                                0 };
@@ -91,7 +91,7 @@ int main( int argc, char** argv ) {
     int rv, i;
     /* unsigned t1, t2; */
 
-    printf( "x48-sdl\n" );
+    printf( "x48ng\n" );
 
     // SDL Initialization
     SDLInit();
