@@ -1,7 +1,11 @@
-mkdir ~/.x48ng
-cp @PREFIX@/share/x48/ROMs/gxrom-r ~/.x48ng/rom
-cp ~/.x48ng/rom ~/.x48ng/rom.dump
+mkdir -p ~/.x48ng
+
+cp @PREFIX@/share/x48ng/ROMs/gxrom-r ~/.x48ng/rom.dump
+cp ~/.x48ng/rom.dump ~/.x48ng/rom
+
 cd ~/.x48ng
-@PREFIX@/share/x48/mkcard 128K port1
-@PREFIX@/share/x48/mkcard 4M port2
-x48 -initialize
+
+@PREFIX@/share/x48ng/mkcard 128K port1
+@PREFIX@/share/x48ng/mkcard 4M port2
+
+@PREFIX@/bin/x48ng -initialize
