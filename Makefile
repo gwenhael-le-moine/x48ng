@@ -2,8 +2,20 @@
 
 CC = gcc
 
+GUI_IS_X11 = 1
+#GUI_IS_SDL1 = 1
+
 CFLAGS = -g -O2 #-Wall -Wextra -Wno-unused-parameter -Wno-unused-function -Wconversion -Wdouble-promotion -Wno-sign-conversion -fsanitize=undefined -fsanitize-trap
-LIBS = -lm -lX11 -lXext -lhistory -lreadline
+LIBS = -lm -lhistory -lreadline
+
+ifdef GUI_IS_X11
+	CFLAGS += -D 'GUI_IS_X11 = 1'
+	LIBS += -lX11 -lXext
+endif
+ifdef GUI_IS_SDL1
+	CFLAGS += $(shell pkg-config --cflags SDL_gfx readline sdl12_compat) -D 'GUI_IS_SDL1 = 1'
+	LIBS += $(shell pkg-config --libs SDL_gfx readline sdl12_compat)
+endif
 
 all: mkcard checkrom dump2rom x48
 

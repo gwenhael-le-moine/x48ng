@@ -10,7 +10,8 @@
 /* description */
 #define COMPILE_VERSION 0
 
-#define GUI_IS_X11
+/* Don't set this here as it's passed as a compilation option in the Makefile */
+//#define GUI_IS_X11
 //#define GUI_IS_SDL1 1
 
 #ifdef GUI_IS_X11
