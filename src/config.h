@@ -5,7 +5,7 @@
 #define VERSION_MINOR 9
 
 /* The patch level */
-#define PATCHLEVEL 9
+#define PATCHLEVEL 10
 
 /* description */
 #define COMPILE_VERSION 0
