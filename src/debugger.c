@@ -1,10 +1,8 @@
 #include "config.h"
 
 #include <stdio.h>
-#ifdef HAVE_READLINE
 #include <readline/history.h>
 #include <readline/readline.h>
-#endif
 #include <errno.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -215,37 +213,6 @@ char* read_str( char* str, int n, int fp ) {
     }
     /* not reached */
 }
-
-#ifndef HAVE_READLINE
-char* readline( char* prompt ) {
-    char rl[ 81 ];
-    char* nrl;
-    if ( prompt ) {
-        printf( "%s", prompt );
-        fflush( stdout );
-    }
-    nrl = read_str( rl, 80, 0 );
-    if ( nrl ) {
-        int len;
-        char* str;
-
-        len = strlen( nrl );
-        str = malloc( len + 1 );
-
-        if ( nrl[ len - 1 ] == '\n' ) {
-            nrl[ len - 1 ] = '\0';
-        }
-        if ( NULL == str ) {
-            fprintf( stderr, "Out of memory\n" );
-            exit( -1 );
-        }
-
-        strcpy( str, nrl );
-        nrl = str;
-    }
-    return nrl;
-}
-#endif
 
 static inline void str_to_upper( char* arg ) {
     int i;
@@ -717,7 +684,7 @@ static const char* mctl_str_gx[] = { "MMIO       ", "SysRAM     ",
                                      "Port 2     ", "SysROM     " };
 
 static const char* mctl_str_sx[] = { "MMIO  ", "SysRAM", "Port 1",
-                               "Port 2", "Extra ", "SysROM" };
+                                     "Port 2", "Extra ", "SysROM" };
 
 static void do_ram( int argc, char** argv ) {
     int i;
@@ -1266,9 +1233,9 @@ int debug( void ) {
             }
             cl = strdup( rl );
             old_line = strdup( rl );
-#ifdef HAVE_READLINE
+
             add_history( rl );
-#endif
+
             free( rl );
             rl = ( char* )0;
         }
