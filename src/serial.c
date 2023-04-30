@@ -6,9 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
-#if defined( HPUX ) || defined( CSRG_BASED )
-#include <sys/ioctl.h>
-#endif
 #include <termios.h>
 #include <unistd.h>
 
@@ -44,7 +41,6 @@ void update_connection_display( void ) {
 }
 
 int serial_init( void ) {
-    //char* p;
     int c;
     int n;
     char tty_dev_name[ 128 ];
@@ -53,40 +49,6 @@ int serial_init( void ) {
     wire_fd = -1;
     ttyp = -1;
     if ( useTerminal ) {
-#if defined( IRIX )
-        if ( ( p = _getpty( &wire_fd, O_RDWR | O_EXCL | O_NDELAY, 0666, 0 ) ) ==
-             NULL ) {
-            wire_fd = -1;
-            ttyp = -1;
-        } else {
-            if ( ( ttyp = open( p, O_RDWR | O_NDELAY, 0666 ) ) < 0 ) {
-                close( wire_fd );
-                wire_fd = -1;
-                ttyp = -1;
-            } else {
-                if ( verbose )
-                    printf( "%s: wire connection on %s\n", progname, p );
-                wire_name = strdup( p );
-            }
-        }
-#elif defined( SOLARIS )
-        if ( ( wire_fd = open( "/dev/ptmx", O_RDWR | O_NONBLOCK, 0666 ) ) >=
-             0 ) {
-            grantpt( wire_fd );
-            unlockpt( wire_fd );
-            p = ptsname( wire_fd );
-            strcpy( tty_dev_name, p );
-            if ( ( ttyp = open( tty_dev_name, O_RDWR | O_NDELAY, 0666 ) ) >=
-                 0 ) {
-                ioctl( ttyp, I_PUSH, "ptem" );
-                ioctl( ttyp, I_PUSH, "ldterm" );
-                if ( verbose )
-                    printf( "%s: wire connection on %s\n", progname,
-                            tty_dev_name );
-                wire_name = strdup( tty_dev_name );
-            }
-        }
-#elif defined( LINUX )
         /* Unix98 PTY (Preferred) */
         if ( ( wire_fd = open( "/dev/ptmx", O_RDWR | O_NONBLOCK, 0666 ) ) >=
              0 ) {
@@ -125,33 +87,6 @@ int serial_init( void ) {
                 c++;
             } while ( ( wire_fd < 0 ) && ( errno != ENOENT ) );
         }
-#else
-        /*
-         * Here we go for SUNOS, HPUX
-         */
-        c = 'p';
-        do {
-            for ( n = 0; n < 16; n++ ) {
-                sprintf( tty_dev_name, "/dev/ptyp%x", n );
-                if ( ( wire_fd = open( tty_dev_name, O_RDWR | O_EXCL | O_NDELAY,
-                                       0666 ) ) >= 0 ) {
-                    sprintf( tty_dev_name, "/dev/tty%c%x", c, n );
-                    if ( ( ttyp = open( tty_dev_name, O_RDWR | O_NDELAY,
-                                        0666 ) ) < 0 ) {
-                        wire_fd = -1;
-                        ttyp = -1;
-                    } else {
-                        if ( verbose )
-                            printf( "%s: wire connection on %s\n", progname,
-                                    tty_dev_name );
-                        wire_name = strdup( tty_dev_name );
-                        break;
-                    }
-                }
-            }
-            c++;
-        } while ( ( wire_fd < 0 ) && ( errno != ENOENT ) );
-#endif
     }
 
     if ( ttyp >= 0 ) {
@@ -478,6 +413,7 @@ void transmit_char( void ) {
         fprintf( stderr, "-> %x\n", saturn.tbr );
     }
 #endif
+
     if ( saturn.ir_ctrl & 0x04 ) {
         if ( write( ir_fd, &saturn.tbr, 1 ) == 1 ) {
             saturn.tcs &= 0x0e;

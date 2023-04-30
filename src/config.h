@@ -1,3 +1,19 @@
+/* The major version number */
+#define VERSION_MAJOR 0
+
+/* The minor version number */
+#define VERSION_MINOR 6
+
+/* The patch level */
+#define PATCHLEVEL 4
+
+/* description */
+#define COMPILE_VERSION 0
+
+#define GUI_IS_X11
+//#define GUI_IS_SDL1 1
+
+#ifdef GUI_IS_X11
 #define _GNU_SOURCE
 
 #if defined( linux )
@@ -106,15 +122,4 @@
    required in a freestanding environment). This macro is provided for
    backward compatibility; new code need not use it. */
 #define STDC_HEADERS 1
-
-// /* Version number of package */
-// #define VERSION "0.6.4"
-
-/* The major version number */
-#define VERSION_MAJOR 0
-
-/* The minor version number */
-#define VERSION_MINOR 6
-
-/* The patch level */
-#define PATCHLEVEL 4
+#endif

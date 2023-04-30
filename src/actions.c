@@ -357,9 +357,11 @@ void do_shutdown( void ) {
     if ( device.display_touched ) {
         device.display_touched = 0;
         update_display();
+#ifdef GUI_IS_X11
 #ifdef HAVE_XSHM
         if ( disp.display_update )
             refresh_display();
+#endif
 #endif
     }
 
@@ -395,9 +397,11 @@ void do_shutdown( void ) {
         if ( got_alarm ) {
             got_alarm = 0;
 
+#ifdef GUI_IS_X11
 #ifdef HAVE_XSHM
             if ( disp.display_update )
                 refresh_display();
+#endif
 #endif
 
             ticks = get_t1_t2();
@@ -408,7 +412,12 @@ void do_shutdown( void ) {
             set_t1 = ticks.t1_ticks;
 
             interrupt_called = 0;
+#ifdef GUI_IS_X11
             if ( GetEvent() ) {
+#endif
+#ifdef GUI_IS_SDL1
+            if ( SDLGetEvent() ) {
+#endif
                 if ( interrupt_called )
                     wake = 1;
             }

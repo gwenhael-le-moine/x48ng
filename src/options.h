@@ -3,6 +3,7 @@
 
 #include "config.h"
 
+#ifdef GUI_IS_X11
 #include <X11/Xlib.h>
 #include <X11/Xresource.h>
 
@@ -75,5 +76,6 @@ static XrmOptionDescRec options[] = {
     { "-reverse", "*reverseVideo", XrmoptionNoArg, ( void* )"True" },
 
 };
+#endif
 
 #endif /* _OPTIONS_H */

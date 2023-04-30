@@ -9,6 +9,10 @@
 #include "timer.h"
 #include "x48_gui.h"
 
+#ifdef GUI_IS_SDL1
+// #include "precisetimer.h"
+#include <unistd.h>
+#endif
 extern int throttle;
 
 #if 0
@@ -2440,18 +2444,25 @@ inline void schedule( void ) {
 
     if ( got_alarm ) {
         got_alarm = 0;
+#ifdef GUI_IS_X11
 #ifdef HAVE_XSHM
         if ( disp.display_update )
             refresh_display();
 #endif
         GetEvent();
+#endif
+#ifdef GUI_IS_SDL1
+        SDLGetEvent();
+#endif
     }
 }
 
 int emulate( void ) {
     struct timeval tv;
+#ifdef GUI_IS_X11
     struct timeval tv2;
     struct timezone tz;
+#endif
 
     reset_timer( T1_TIMER );
     reset_timer( RUN_TIMER );
@@ -2470,6 +2481,7 @@ int emulate( void ) {
     do {
         step_instruction();
 
+#ifdef GUI_IS_X11
         {
             int i;
             for ( i = 0; i < (int)( sizeof( saturn.keybuf.rows ) / sizeof( saturn.keybuf.rows[ 0 ] ) );
@@ -2498,6 +2510,54 @@ int emulate( void ) {
             schedule();
         }
     } while ( !enter_debugger );
+#endif
+#ifdef GUI_IS_SDL1
+        int i;
+        for ( i = 0; i < sizeof( saturn.keybuf.rows ) /
+                             sizeof( saturn.keybuf.rows[ 0 ] );
+              i++ ) {
+            if ( saturn.keybuf.rows[ i ] || throttle ) {
+
+                gettimeofday( &tv, NULL );
+
+                // while ((tv.tv_sec == tv2.tv_sec) && ((tv.tv_usec -
+                // tv2.tv_usec) < 2))
+                /*while ((tv.tv_sec == tv2.tv_sec) && ((tv.tv_usec -
+              tv2.tv_usec) < 1))
+                {
+                  gettimeofday(&tv, &tz);
+              }
+              tv2.tv_usec = tv.tv_usec;
+              tv2.tv_sec = tv.tv_sec;*/
+
+                // usleep(1);
+
+                break;
+            }
+        }
+
+        if ( schedule_event < 0 ) {
+            // puts("bug");
+            //	schedule_event = 0;
+        }
+        if ( schedule_event-- <= 0 ) {
+            schedule();
+        }
+    } while ( !enter_debugger );
+
+    printf( "emulate: returning\n" );
+
+    // Version from android:
+    /*
+     do {
+      step_instruction();
+      if (schedule_event-- == 0)
+        {
+          schedule();
+        }
+    } while (!enter_debugger); // exit_state
+  */
+#endif
 
     return 0;
 }

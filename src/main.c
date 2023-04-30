@@ -10,6 +10,9 @@
 #include "debugger.h"
 #include "hp48.h"
 #include "x48_gui.h"
+#ifdef GUI_IS_SDL1
+#include "resources.h"
+#endif
 
 #include <langinfo.h>
 #include <locale.h>
@@ -39,6 +42,7 @@ void signal_handler( int sig ) {
     }
 }
 
+#ifdef GUI_IS_X11
 void save_options( int argc, char** argv ) {
     int l;
 
@@ -61,17 +65,43 @@ void save_options( int argc, char** argv ) {
         memcpy( saved_argv[ argc ], argv[ argc ], l );
     }
 }
+#endif
+#ifdef GUI_IS_SDL1
+// Some error or information messages
+const char* errinit_title = "Emulator initialization failed";
+const char* errinit_text[] = { "",
+                               "In order to work the emulator needs",
+                               "the following files:",
+                               "  rom:   an HP48 rom dump",
+                               "  ram:   ram file",
+                               "  hp48:  HP state file",
+                               "",
+                               "These files must be in ~/.hp48",
+                               "",
+                               "Install these files and try again.",
+                               0 };
+#endif
 
 int main( int argc, char** argv ) {
-    // char* name;
     sigset_t set;
     struct sigaction sa;
     long flags;
     struct itimerval it;
+#ifdef GUI_IS_SDL1
+    int rv, i;
+    /* unsigned t1, t2; */
+
+    printf( "x48-sdl\n" );
+
+    // SDL Initialization
+    SDLInit();
+
+    // Global parameter initialization
+    get_resources();
+#endif
 
     setlocale( LC_ALL, "C" );
 
-    // name = ( char* )0;
     /*
      *  Get the name we are called.
      */
@@ -81,6 +111,7 @@ int main( int argc, char** argv ) {
     else
         progname++;
 
+#ifdef GUI_IS_X11
     /*
      * save command line options
      */
@@ -105,6 +136,26 @@ int main( int argc, char** argv ) {
         fprintf( stderr, "%s: can\'t create window\n", progname );
         exit( 1 );
     }
+#endif
+#ifdef GUI_IS_SDL1
+    // initialize emulator stuff
+    rv = init_emulator();
+    if ( rv != 0 ) {
+        printf( "%s\n", errinit_title );
+        for ( i = 0; errinit_text[ i ]; i++ )
+            printf( "%s\n", errinit_text[ i ] );
+        SDLMessageBox( 300, 200, errinit_title, errinit_text, 0xf0e0c0c0,
+                       0xff000000, 0 );
+
+        return 0;
+    }
+
+    // Create the HP-48 window
+    SDLCreateHP();
+
+    // Some more initialization
+    printf( "init active stuff\n" );
+#endif
 
     /*
      * can't be done before windows exist
@@ -114,6 +165,7 @@ int main( int argc, char** argv ) {
     /*
      *  install a handler for SIGALRM
      */
+    printf( "SIGALRM\n" );
     sigemptyset( &set );
     sigaddset( &set, SIGALRM );
     sa.sa_handler = signal_handler;
@@ -126,6 +178,7 @@ int main( int argc, char** argv ) {
     /*
      *  install a handler for SIGINT
      */
+    printf( "SIGINT\n" );
     sigemptyset( &set );
     sigaddset( &set, SIGINT );
     sa.sa_handler = signal_handler;
@@ -138,6 +191,7 @@ int main( int argc, char** argv ) {
     /*
      *  install a handler for SIGPIPE
      */
+    printf( "SIGPIPE\n" );
     sigemptyset( &set );
     sigaddset( &set, SIGPIPE );
     sa.sa_handler = signal_handler;
@@ -150,29 +204,31 @@ int main( int argc, char** argv ) {
     /*
      * set the real time interval timer
      */
+    printf( "int timer\n" );
+    int interval = 20000;
     it.it_interval.tv_sec = 0;
-    it.it_interval.tv_usec = 20000;
+    it.it_interval.tv_usec = interval;
     it.it_value.tv_sec = 0;
-    it.it_value.tv_usec = 20000;
+    it.it_value.tv_usec = interval;
     setitimer( ITIMER_REAL, &it, ( struct itimerval* )0 );
 
     /*
      * Set stdin flags to not include O_NDELAY and O_NONBLOCK
      */
+    printf( "stdin flags\n" );
     flags = fcntl( STDIN_FILENO, F_GETFL, 0 );
     flags &= ~O_NDELAY;
     flags &= ~O_NONBLOCK;
     fcntl( STDIN_FILENO, F_SETFL, flags );
 
+    printf( "start emulate\n" );
     do {
-
         if ( !exec_flags )
             emulate();
         else
             emulate_debug();
 
         debug();
-
     } while ( 1 );
 
     return 0;

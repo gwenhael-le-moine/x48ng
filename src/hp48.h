@@ -6,9 +6,7 @@
 #include <sys/time.h>
 
 #include "mmu.h"
-#ifdef HAVE_STDINT_H
 #include <stdint.h>
-#endif
 
 #define RAM_SIZE_SX 0x10000
 #define RAM_SIZE_GX 0x40000
@@ -40,14 +38,8 @@ typedef unsigned short word_16;
 typedef long word_20;
 typedef long word_32;
 
-#ifdef HAVE_STDINT_H
 #define SIMPLE_64
 typedef int64_t word_64;
-#else
-typedef struct word_64 {
-    unsigned long hi, lo;
-} word_64;
-#endif
 
 typedef struct keystate_t {
     short rows[ 9 ];
@@ -186,6 +178,14 @@ typedef struct saturn_t {
 } saturn_t;
 
 #define NIBBLES_PER_ROW 0x22
+
+#ifdef GUI_IS_SDL1
+#define DISP_ROWS 64
+#define NIBS_PER_BUFFER_ROW ( NIBBLES_PER_ROW + 2 )
+
+extern unsigned char disp_buf[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
+extern unsigned char lcd_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
+#endif
 
 extern int got_alarm;
 

@@ -10,6 +10,7 @@
 #include <sys/shm.h>
 #endif
 
+// Colors
 #define WHITE 0
 #define LEFT 1
 #define RIGHT 2

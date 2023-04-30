@@ -3,8 +3,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+
+#ifdef GUI_IS_X11
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#endif
 
 #include "annunc.h"
 #include "device.h"
@@ -16,13 +19,15 @@ static int last_annunc_state = -1;
 
 display_t display;
 
+#ifdef GUI_IS_X11
 #define DISP_ROWS 64
-
 #define NIBS_PER_BUFFER_ROW ( NIBBLES_PER_ROW + 2 )
+#endif
 
 unsigned char disp_buf[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
 unsigned char lcd_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
 
+#ifdef GUI_IS_X11
 Pixmap nibble_maps[ 16 ];
 
 unsigned char nibbles[ 16 ][ 2 ] = {
@@ -93,6 +98,18 @@ void init_nibble_maps( void ) {
     }
 #endif
 }
+#endif
+#ifdef GUI_IS_SDL1
+ann_struct_t ann_tbl[] = {
+    { ANN_LEFT, 16, 4, ann_left_width, ann_left_height, ann_left_bits },
+    { ANN_RIGHT, 61, 4, ann_right_width, ann_right_height, ann_right_bits },
+    { ANN_ALPHA, 106, 4, ann_alpha_width, ann_alpha_height, ann_alpha_bits },
+    { ANN_BATTERY, 151, 4, ann_battery_width, ann_battery_height,
+      ann_battery_bits },
+    { ANN_BUSY, 196, 4, ann_busy_width, ann_busy_height, ann_busy_bits },
+    { ANN_IO, 241, 4, ann_io_width, ann_io_height, ann_io_bits },
+    { 0 } };
+#endif
 
 void init_display( void ) {
     display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
@@ -129,9 +146,12 @@ void init_display( void ) {
     memset( disp_buf, 0xf0, sizeof( disp_buf ) );
     memset( lcd_buffer, 0xf0, sizeof( lcd_buffer ) );
 
+#ifdef GUI_IS_X11
     init_nibble_maps();
+#endif
 }
 
+#ifdef GUI_IS_X11
 static inline void draw_nibble( int c, int r, int val ) {
     int x, y;
 
@@ -146,6 +166,24 @@ static inline void draw_nibble( int c, int r, int val ) {
         lcd_buffer[ r ][ c ] = val;
     }
 }
+#endif
+#ifdef GUI_IS_SDL1
+static inline void draw_nibble( int c, int r, int val ) {
+    int x, y;
+
+    if ( val != lcd_buffer[ r ][ c ] ) {
+        lcd_buffer[ r ][ c ] = val;
+    }
+    ///////////////////////////////////////////////
+    // SDL PORT
+    ///////////////////////////////////////////////
+    x = ( c * 4 ); // x: start in pixels
+    if ( r <= display.lines )
+        x -= disp.offset; // Correct the pixels with display offset
+    y = r;                // y: start in pixels
+    SDLDrawNibble( x, y, val );
+}
+#endif
 
 static inline void draw_row( long addr, int row ) {
     int i, v;
@@ -168,14 +206,18 @@ void update_display( void ) {
     long addr;
     static int old_offset = -1;
     static int old_lines = -1;
+#ifdef GUI_IS_X11
 #ifdef HAVE_XSHM
     int addr_pad;
     int val, line_pad, line_length;
     word_20 data_addr, data_addr_2;
 #endif
+#endif
 
     if ( !disp.mapped ) {
+#ifdef GUI_IS_X11
         refresh_icon();
+#endif
         return;
     }
     if ( display.on ) {
@@ -280,7 +322,9 @@ void update_display( void ) {
 }
 
 void redraw_display( void ) {
+#ifdef GUI_IS_X11
     XClearWindow( dpy, disp.win );
+#endif
     memset( disp_buf, 0, sizeof( disp_buf ) );
     memset( lcd_buffer, 0, sizeof( lcd_buffer ) );
     update_display();
@@ -288,8 +332,10 @@ void redraw_display( void ) {
 
 void disp_draw_nibble( word_20 addr, word_4 val ) {
     long offset;
+#ifdef GUI_IS_X11
 #ifdef HAVE_XSHM
     int shm_addr;
+#endif
 #endif
     int x, y;
 
@@ -362,12 +408,12 @@ void menu_draw_nibble( word_20 addr, word_4 val ) {
         disp.display_update |= UPDATE_MENU;
     } else {
 #endif
-        x = offset % NIBBLES_PER_ROW;
-        y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
-        if ( val != disp_buf[ y ][ x ] ) {
-            disp_buf[ y ][ x ] = val;
-            draw_nibble( x, y, val );
-        }
+    x = offset % NIBBLES_PER_ROW;
+    y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
+    if ( val != disp_buf[ y ][ x ] ) {
+        disp_buf[ y ][ x ] = val;
+        draw_nibble( x, y, val );
+    }
 #ifdef HAVE_XSHM
     }
 #endif
@@ -413,11 +459,6 @@ void draw_annunc( void ) {
     refresh_icon();
 }
 
-void redraw_annunc( void ) {
-    last_annunc_state = -1;
-    draw_annunc();
-}
-
 void init_annunc( void ) {
     int i;
 
@@ -426,4 +467,9 @@ void init_annunc( void ) {
             XCreateBitmapFromData( dpy, disp.win, ( char* )ann_tbl[ i ].bits,
                                    ann_tbl[ i ].width, ann_tbl[ i ].height );
     }
+}
+
+void redraw_annunc( void ) {
+    last_annunc_state = -1;
+    draw_annunc();
 }
