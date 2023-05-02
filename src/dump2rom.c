@@ -10,7 +10,7 @@ unsigned char* core;
 
 #define DEFAULT_ROM_FILE "rom.dump"
 
-int write_mem_file( char* name, unsigned char* mem, int size ) {
+int write_mem_file( char* name, unsigned char* mem, size_t size ) {
     FILE* fp;
     unsigned char* tmp_mem;
     unsigned char byte;
@@ -21,11 +21,10 @@ int write_mem_file( char* name, unsigned char* mem, int size ) {
         return 0;
     }
 
-    if ( NULL ==
-         ( tmp_mem = ( unsigned char* )malloc( ( size_t )size / 2 ) ) ) {
-        for ( i = 0, j = 0; i < size / 2; i++ ) {
+    if ( NULL == ( tmp_mem = ( unsigned char* )malloc( size / 2 ) ) ) {
+        for ( i = 0, j = 0; i < ( int )size / 2; i++ ) {
             byte = ( mem[ j++ ] & 0x0f );
-            byte |= ( mem[ j++ ] << 4 ) & 0xf0;
+            byte |= ( unsigned char )( ( mem[ j++ ] << 4 ) & 0xf0 );
             if ( 1 != fwrite( &byte, 1, 1, fp ) ) {
                 fprintf( stderr, "can\'t write %s\n", name );
                 fclose( fp );
@@ -33,9 +32,9 @@ int write_mem_file( char* name, unsigned char* mem, int size ) {
             }
         }
     } else {
-        for ( i = 0, j = 0; i < size / 2; i++ ) {
+        for ( i = 0, j = 0; i < ( int )size / 2; i++ ) {
             tmp_mem[ i ] = ( mem[ j++ ] & 0x0f );
-            tmp_mem[ i ] |= ( mem[ j++ ] << 4 ) & 0xf0;
+            tmp_mem[ i ] |= ( unsigned char )( ( mem[ j++ ] << 4 ) & 0xf0 );
         }
 
         if ( fwrite( tmp_mem, 1, ( size_t )size / 2, fp ) != size / 2 ) {
@@ -54,7 +53,8 @@ int write_mem_file( char* name, unsigned char* mem, int size ) {
 
 int main( int argc, char** argv ) {
     FILE* dump;
-    long addr, size;
+    long addr;
+    size_t size;
     int ch, i, gx, error;
 
     if ( argc < 2 ) {
@@ -115,9 +115,9 @@ int main( int argc, char** argv ) {
                 break;
             }
             if ( ch >= '0' && ch <= '9' ) {
-                core[ addr++ ] = ch - '0';
+                core[ addr++ ] = ( unsigned char )( ch - '0' );
             } else if ( ch >= 'A' && ch <= 'F' ) {
-                core[ addr++ ] = ch - 'A' + 10;
+                core[ addr++ ] = ( unsigned char )( ch - 'A' + 10 );
             } else {
                 fprintf( stderr, "%s: Illegal char %c at %lx\n", argv[ 0 ], ch,
                          addr );
