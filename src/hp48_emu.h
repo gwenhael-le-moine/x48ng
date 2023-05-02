@@ -4,14 +4,6 @@
 #include "config.h"
 #include "hp48.h"
 
-#ifdef GUI_IS_X11
-#include <X11/Xlib.h>
-
-extern Display* dpy;
-extern Window dispW;
-extern GC gc;
-#endif
-
 extern void push_return_addr( long addr );
 extern long pop_return_addr( void );
 
