@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #include <X11/Xlib.h>
 #include <X11/Xresource.h>
 #include <X11/Xutil.h>
@@ -15,7 +15,7 @@
 #include "disasm.h"
 #include "errors.h"
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 XrmDatabase rdb = ( XrmDatabase )0;
 #endif
 
@@ -29,18 +29,18 @@ int netbook;
 int throttle;
 int initialize;
 int resetOnStartup;
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 char* serialLine;
 char* romFileName;
 char* homeDirectory;
 #endif
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
 char serialLine[ 1024 ];
 char romFileName[ 1024 ];
 char homeDirectory[ 1024 ];
 #endif
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 void get_resources( void ) {
     if ( get_boolean_resource( "printVersion", "PrintVersion" ) )
         show_version();
@@ -293,7 +293,7 @@ XFontStruct* get_font_resource( Display* dpy, char* name, char* class ) {
     return f;
 }
 #endif
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
 void get_resources(
     void ) { /*
            if (get_boolean_resource("printVersion", "PrintVersion"))

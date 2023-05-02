@@ -3,7 +3,7 @@
 
 #include "config.h"
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #include <X11/Xlib.h>
 #include <X11/Xresource.h>
 #endif
@@ -18,12 +18,11 @@ extern int netbook;
 extern int throttle;
 extern int initialize;
 extern int resetOnStartup;
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 extern char* serialLine;
 extern char* romFileName;
 extern char* homeDirectory;
-#endif
-#ifdef GUI_IS_SDL1
+#elif defined( GUI_IS_SDL1 )
 extern char serialLine[];
 extern char romFileName[];
 extern char homeDirectory[];
@@ -33,8 +32,7 @@ extern char* progname;
 extern char* res_name;
 extern char* res_class;
 
-#ifdef GUI_IS_X11
-
+#if defined( GUI_IS_X11 )
 extern XrmDatabase rdb;
 
 extern void usage( void );
@@ -66,7 +64,7 @@ extern XFontStruct* get_font_resource( Display* dpy, char* res_name,
 #endif
 #endif
 
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
 void get_resources();
 #endif
 

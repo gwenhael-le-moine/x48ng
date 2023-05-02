@@ -9,7 +9,7 @@
 #include "timer.h"
 #include "x48_gui.h"
 
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
 // #include "precisetimer.h"
 #include <unistd.h>
 #endif
@@ -2444,14 +2444,14 @@ inline void schedule( void ) {
 
     if ( got_alarm ) {
         got_alarm = 0;
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
         if ( disp.display_update )
             refresh_display();
 #endif
         GetEvent();
 #endif
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
         SDLGetEvent();
 #endif
     }
@@ -2459,7 +2459,7 @@ inline void schedule( void ) {
 
 int emulate( void ) {
     struct timeval tv;
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
     struct timeval tv2;
     struct timezone tz;
 #endif
@@ -2481,7 +2481,7 @@ int emulate( void ) {
     do {
         step_instruction();
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
         {
             int i;
             for ( i = 0; i < ( int )( sizeof( saturn.keybuf.rows ) /
@@ -2512,7 +2512,7 @@ int emulate( void ) {
         }
     } while ( !enter_debugger );
 #endif
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
     int i;
     for ( i = 0;
           i < sizeof( saturn.keybuf.rows ) / sizeof( saturn.keybuf.rows[ 0 ] );

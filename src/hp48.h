@@ -179,7 +179,7 @@ typedef struct saturn_t {
 
 #define NIBBLES_PER_ROW 0x22
 
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
 #define DISP_ROWS 64
 #define NIBS_PER_BUFFER_ROW ( NIBBLES_PER_ROW + 2 )
 

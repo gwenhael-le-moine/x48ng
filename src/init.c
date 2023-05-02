@@ -1575,7 +1575,7 @@ int init_emulator( void ) {
 
 void init_active_stuff( void ) {
     serial_init();
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
     init_annunc();
 #endif
     init_display();

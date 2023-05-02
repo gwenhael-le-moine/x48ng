@@ -478,7 +478,7 @@ static void do_delete( int argc, char** argv ) {
 static void do_exit( int argc, char** argv ) {
     if ( confirm( "Exit the emulator WITHOUT saving its state?" ) ) {
         printf( "Exit.\n" );
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
         XCloseDisplay( dpy );
 #endif
         exit( 0 );
@@ -530,7 +530,7 @@ static void do_load( int argc, char** argv ) {
             }
             init_display();
             update_display();
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
             if ( disp.display_update )
                 refresh_display();
@@ -577,7 +577,7 @@ static void do_quit( int argc, char** argv ) {
     if ( confirm( "Quit the emulator and save its state?" ) ) {
         printf( "Exit.\n" );
         exit_emulator();
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
         XCloseDisplay( dpy );
 #endif
         exit( 0 );
@@ -1178,7 +1178,7 @@ int debug( void ) {
     if ( device.display_touched ) {
         device.display_touched = 0;
         update_display();
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
         if ( disp.display_update )
             refresh_display();

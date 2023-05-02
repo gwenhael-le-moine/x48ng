@@ -14,7 +14,7 @@
 // #define GUI_IS_X11
 // #define GUI_IS_SDL1 1
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #define _GNU_SOURCE
 
 #if defined( linux )

@@ -3,16 +3,14 @@
 
 #include "config.h"
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #include <X11/Xlib.h>
 #ifdef HAVE_XSHM
 #include <X11/extensions/XShm.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #endif
-#endif
-
-#ifdef GUI_IS_SDL1
+#elif defined( GUI_IS_SDL1 )
 #include <SDL/SDL.h>
 #include <SDL/SDL_gfxPrimitives.h>
 #include <SDL/SDL_rotozoom.h>
@@ -101,7 +99,7 @@
 
 #define LAST_BUTTON 48
 
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
 #define UPDATE_MENU 1
 #define UPDATE_DISP 2
 
@@ -127,19 +125,19 @@
 
 #define _KEYBOARD_OFFSET_X SIDE_SKIP
 #define _KEYBOARD_OFFSET_Y ( TOP_SKIP + DISPLAY_HEIGHT + DISP_KBD_SKIP )
-#endif
+#endif //SDL1
 
 typedef struct color_t {
     const char* name;
     int r, g, b;
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
     int mono_rgb;
     int gray_rgb;
     XColor xcolor;
 #endif
 } color_t;
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 extern color_t* colors;
 
 #define COLOR( c ) ( colors[ ( c ) ].xcolor.pixel )
@@ -148,7 +146,7 @@ extern color_t* colors;
 #define UPDATE_DISP 2
 #endif
 
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
 typedef struct keypad_t {
     unsigned int width;
     unsigned int height;
@@ -157,14 +155,14 @@ typedef struct keypad_t {
 
 typedef struct disp_t {
     unsigned int w, h;
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
     Window win;
     GC gc;
 #endif
     short mapped;
     int offset;
     int lines;
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
     int display_update;
     XShmSegmentInfo disp_info;
@@ -175,7 +173,7 @@ typedef struct disp_t {
 #endif
 } disp_t;
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 extern disp_t disp;
 
 #ifdef HAVE_XSHM
@@ -187,11 +185,11 @@ extern int screen;
 #endif
 
 extern int InitDisplay( int argc, char** argv );
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 extern int CreateWindows( int argc, char** argv );
 #endif
 
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
 typedef struct button_t {
     const char* name;
     short pressed;
@@ -257,7 +255,7 @@ extern void SDLCreateHP();
 extern int GetEvent( void );
 
 extern void adjust_contrast( int contrast );
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 extern void refresh_icon( void );
 #endif
 
@@ -265,13 +263,14 @@ extern void ShowConnections( char* w, char* i );
 
 extern void exit_x48( int tell_x11 );
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
+
 #ifdef HAVE_XSHM
 extern void refresh_display( void );
 #endif
-#endif
 
-#ifdef GUI_IS_SDL1
+#elif defined( GUI_IS_SDL1 )
+
 extern unsigned int ARGBColors[ BLACK + 1 ];
 extern int SDLGetEvent();
 
@@ -325,6 +324,7 @@ void SDLMessageBox( int w, int h, const char* title, const char* text[],
                     unsigned color, unsigned colortext, int center );
 void SDLEventWaitClickOrKey();
 void SDLShowInformation();
+
 #endif
 
 #endif /* !_X48_GUI_H */

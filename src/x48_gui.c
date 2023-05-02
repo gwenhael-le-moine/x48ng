@@ -10,7 +10,7 @@
 #include <unistd.h>
 #include <sys/utsname.h>
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #include <X11/Xlib.h>
 #include <X11/Xresource.h>
 #include <X11/Xutil.h>
@@ -31,7 +31,7 @@
 #include "resources.h"
 #include "romio.h"
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 static char* defaults[] = {
 #include "X48NG.ad.h"
     0 };
@@ -56,7 +56,7 @@ Window iconW = 0;
 
 disp_t disp;
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 Atom wm_delete_window, wm_save_yourself, wm_protocols;
 Atom ol_decor_del, ol_decor_icon_name;
 Atom atom_type;
@@ -77,7 +77,7 @@ int does_backing_store;
 int color_mode;
 int icon_color_mode;
 #endif
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
 keypad_t keypad;
 color_t* colors;
 
@@ -96,7 +96,7 @@ unsigned KEYBOARD_HEIGHT, KEYBOARD_WIDTH, TOP_SKIP, SIDE_SKIP, BOTTOM_SKIP,
 #define DEBUG_SHM 1
 #endif
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 typedef struct keypad_t {
     unsigned int width;
     unsigned int height;
@@ -386,7 +386,7 @@ typedef struct button_t {
 } button_t;
 #endif
 
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
 // Control how the screen update is performed: at regular intervals (delayed)
 // or immediatly Note: this is only for the LCD. The annunciators and the
 // buttons are always immediately updated
@@ -930,7 +930,7 @@ button_t buttons_gx[] = {
 
     { 0 } };
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 typedef struct icon_t {
     unsigned int w;
     unsigned int h;
@@ -1455,7 +1455,7 @@ int InitDisplay( int argc, char** argv ) {
     return 0;
 }
 #endif
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
 typedef struct sdltohpkeymap_t {
     SDLKey sdlkey;
     int hpkey;
@@ -1566,7 +1566,7 @@ int SmallTextWidth( const char* string, unsigned int length ) {
     return w;
 }
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 int DrawSmallString( Display* the_dpy, Drawable d, GC the_gc, int x, int y,
                      const char* string, unsigned int length ) {
     int i;
@@ -4659,7 +4659,7 @@ int GetEvent( void ) {
     return wake;
 }
 #endif
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
 void SDLCreateHP() {
     /* int x, y, w, h; */
     unsigned int width, height;
@@ -5503,7 +5503,7 @@ void SDLCreateKeys( void ) {
         SDL_FillRect( buttons[ i ].surfacedown, &rect, ARGBColors[ BUTTON ] );
 
         // draw the released button
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
         // draw edge of button
         lineColor( buttons[ i ].surfaceup, 1, buttons[ i ].h - 2, 1, 1,
                    SDLBGRA2ARGB( ARGBColors[ BUT_TOP ] ) );

@@ -11,7 +11,7 @@
 #include "hp48.h"
 #include "x48_gui.h"
 
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
 #include "resources.h"
 #endif
 
@@ -43,7 +43,7 @@ void signal_handler( int sig ) {
     }
 }
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 void save_options( int argc, char** argv ) {
     int l;
 
@@ -67,7 +67,7 @@ void save_options( int argc, char** argv ) {
     }
 }
 #endif
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
 // Some error or information messages
 const char* errinit_title = "Emulator initialization failed";
 const char* errinit_text[] = { "",
@@ -88,7 +88,7 @@ int main( int argc, char** argv ) {
     struct sigaction sa;
     long flags;
     struct itimerval it;
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
     int rv, i;
 
     // SDL Initialization
@@ -109,7 +109,7 @@ int main( int argc, char** argv ) {
     else
         progname++;
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
     /*
      * save command line options
      */
@@ -135,7 +135,7 @@ int main( int argc, char** argv ) {
         exit( 1 );
     }
 #endif
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
     // initialize emulator stuff
     rv = init_emulator();
     if ( rv != 0 ) {

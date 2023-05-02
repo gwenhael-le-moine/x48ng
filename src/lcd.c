@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #endif
@@ -19,7 +19,7 @@ static int last_annunc_state = -1;
 
 display_t display;
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #define DISP_ROWS 64
 #define NIBS_PER_BUFFER_ROW ( NIBBLES_PER_ROW + 2 )
 #endif
@@ -27,7 +27,7 @@ display_t display;
 unsigned char disp_buf[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
 unsigned char lcd_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 Pixmap nibble_maps[ 16 ];
 
 unsigned char nibbles[ 16 ][ 2 ] = {
@@ -99,7 +99,7 @@ void init_nibble_maps( void ) {
 #endif
 }
 #endif
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
 ann_struct_t ann_tbl[] = {
     { ANN_LEFT, 16, 4, ann_left_width, ann_left_height, ann_left_bits },
     { ANN_RIGHT, 61, 4, ann_right_width, ann_right_height, ann_right_bits },
@@ -146,12 +146,12 @@ void init_display( void ) {
     memset( disp_buf, 0xf0, sizeof( disp_buf ) );
     memset( lcd_buffer, 0xf0, sizeof( lcd_buffer ) );
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
     init_nibble_maps();
 #endif
 }
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 static inline void draw_nibble( int c, int r, int val ) {
     int x, y;
 
@@ -167,7 +167,7 @@ static inline void draw_nibble( int c, int r, int val ) {
     }
 }
 #endif
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
 static inline void draw_nibble( int c, int r, int val ) {
     int x, y;
 
@@ -206,7 +206,7 @@ void update_display( void ) {
     long addr;
     static int old_offset = -1;
     static int old_lines = -1;
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
     int addr_pad;
     int val, line_pad, line_length;
@@ -215,14 +215,14 @@ void update_display( void ) {
 #endif
 
     if ( !disp.mapped ) {
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
         refresh_icon();
 #endif
         return;
     }
     if ( display.on ) {
         addr = display.disp_start;
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
         if ( shm_flag ) {
             data_addr = 0;
@@ -266,14 +266,14 @@ void update_display( void ) {
                 draw_row( addr, i );
                 addr += display.nibs_per_line;
             }
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
         }
 #endif
 #endif
         if ( i < DISP_ROWS ) {
             addr = display.menu_start;
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
             if ( shm_flag ) {
                 data_addr = 0;
@@ -299,14 +299,14 @@ void update_display( void ) {
                     draw_row( addr, i );
                     addr += NIBBLES_PER_ROW;
                 }
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
             }
 #endif
 #endif
         }
     } else {
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
         if ( shm_flag ) {
             memset( disp.disp_image->data, 0,
@@ -325,7 +325,7 @@ void update_display( void ) {
                     draw_nibble( j, i, 0x00 );
                 }
             }
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
         }
 #endif
@@ -334,7 +334,7 @@ void update_display( void ) {
 }
 
 void redraw_display( void ) {
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
     XClearWindow( dpy, disp.win );
 #endif
     memset( disp_buf, 0, sizeof( disp_buf ) );
@@ -344,7 +344,7 @@ void redraw_display( void ) {
 
 void disp_draw_nibble( word_20 addr, word_4 val ) {
     long offset;
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
     int shm_addr;
 #endif
@@ -359,7 +359,7 @@ void disp_draw_nibble( word_20 addr, word_4 val ) {
         y = offset / display.nibs_per_line;
         if ( y < 0 || y > 63 )
             return;
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
         if ( shm_flag ) {
             shm_addr = ( 2 * y * disp.disp_image->bytes_per_line ) + x;
@@ -375,13 +375,13 @@ void disp_draw_nibble( word_20 addr, word_4 val ) {
                 disp_buf[ y ][ x ] = val;
                 draw_nibble( x, y, val );
             }
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
         }
 #endif
 #endif
     } else {
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
         if ( shm_flag ) {
             shm_addr = x;
@@ -401,7 +401,7 @@ void disp_draw_nibble( word_20 addr, word_4 val ) {
                     draw_nibble( x, y, val );
                 }
             }
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
         }
 #endif
@@ -411,7 +411,7 @@ void disp_draw_nibble( word_20 addr, word_4 val ) {
 
 void menu_draw_nibble( word_20 addr, word_4 val ) {
     long offset;
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
     int shm_addr;
 #endif
@@ -419,7 +419,7 @@ void menu_draw_nibble( word_20 addr, word_4 val ) {
     int x, y;
 
     offset = ( addr - display.menu_start );
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
     if ( shm_flag ) {
         shm_addr =
@@ -438,14 +438,14 @@ void menu_draw_nibble( word_20 addr, word_4 val ) {
             disp_buf[ y ][ x ] = val;
             draw_nibble( x, y, val );
         }
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
     }
 #endif
 #endif
 }
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 struct ann_struct {
     int bit;
     int x;
@@ -475,7 +475,7 @@ void draw_annunc( void ) {
         return;
     last_annunc_state = val;
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
     for ( i = 0; ann_tbl[ i ].bit; i++ ) {
         if ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit ) {
             XCopyPlane( dpy, ann_tbl[ i ].pixmap, disp.win, disp.gc, 0, 0,
@@ -488,7 +488,7 @@ void draw_annunc( void ) {
     }
     refresh_icon();
 #endif
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
     char sdl_annuncstate[ 6 ];
     for ( i = 0; ann_tbl[ i ].bit; i++ ) {
         if ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit )
@@ -500,7 +500,7 @@ void draw_annunc( void ) {
 #endif
 }
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
 void init_annunc( void ) {
     int i;
 

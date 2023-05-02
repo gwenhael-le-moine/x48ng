@@ -71,7 +71,7 @@ word_64 time_offset = 0x0;
  */
 void set_accesstime( void ) {
     struct timeval tv;
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
     struct timezone tz;
 #endif
     word_64 ticks, timeout, timer2;
@@ -96,10 +96,9 @@ void set_accesstime( void ) {
     systime_offset = -ltm->tm_gmtoff;
 #endif
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
     gettimeofday( &tv, &tz );
-#endif
-#ifdef GUI_IS_SDL1
+#elif defined( GUI_IS_SDL1 )
     gettimeofday( &tv, NULL );
 #endif
     tv.tv_sec -= systime_offset;
@@ -160,7 +159,7 @@ void set_accesstime( void ) {
 
 void start_timer( int timer ) {
     struct timeval tv;
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
     struct timezone tz;
 #endif
     assert( timer <= NR_TIMERS );
@@ -168,10 +167,10 @@ void start_timer( int timer ) {
     if ( timers[ timer ].run == 1 )
         return;
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
     gettimeofday( &tv, &tz );
 #endif
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
     gettimeofday( &tv, NULL );
 #endif
 
@@ -194,7 +193,7 @@ void start_timer( int timer ) {
 
 void restart_timer( int timer ) {
     struct timeval tv;
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
     struct timezone tz;
 #endif
 
@@ -205,10 +204,10 @@ void restart_timer( int timer ) {
     timers[ timer ].stop = 0;
     timers[ timer ].value = 0;
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
     gettimeofday( &tv, &tz );
 #endif
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
     gettimeofday( &tv, NULL );
 #endif
 
@@ -231,7 +230,7 @@ void restart_timer( int timer ) {
 
 void stop_timer( int timer ) {
     struct timeval tv;
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
     struct timezone tz;
 #endif
 
@@ -241,10 +240,10 @@ void stop_timer( int timer ) {
     if ( timers[ timer ].run == 0 )
         return;
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
     gettimeofday( &tv, &tz );
 #endif
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
     gettimeofday( &tv, NULL );
 #endif
 
@@ -286,7 +285,7 @@ static word_64 zero = 0;
 
 word_64 get_timer( int timer ) {
     struct timeval tv;
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
     struct timezone tz;
 #endif
     word_64 stop;
@@ -296,10 +295,10 @@ word_64 get_timer( int timer ) {
 
     if ( timers[ timer ].run ) {
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
         gettimeofday( &tv, &tz );
 #endif
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
         gettimeofday( &tv, NULL );
 #endif
 
@@ -332,7 +331,7 @@ word_64 get_timer( int timer ) {
 
 t1_t2_ticks get_t1_t2( void ) {
     struct timeval tv;
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
     struct timezone tz;
 #endif
     word_64 stop;
@@ -344,10 +343,10 @@ t1_t2_ticks get_t1_t2( void ) {
     word_20 accesstime_loc;
     int i;
 
-#ifdef GUI_IS_X11
+#if defined( GUI_IS_X11 )
     gettimeofday( &tv, &tz );
 #endif
-#ifdef GUI_IS_SDL1
+#if defined( GUI_IS_SDL1 )
     gettimeofday( &tv, NULL );
 #endif
 
