@@ -8,7 +8,7 @@
 
 unsigned char* mem;
 
-int write_mem_file( char* name, unsigned char* mem, int size ) {
+int write_mem_file( char* name, unsigned char* mem, size_t size ) {
     FILE* fp;
 
     if ( NULL == ( fp = fopen( name, "w" ) ) ) {
@@ -16,7 +16,7 @@ int write_mem_file( char* name, unsigned char* mem, int size ) {
         return 0;
     }
 
-    if ( fwrite( mem, 1, ( size_t )size, fp ) != size ) {
+    if ( fwrite( mem, 1, size, fp ) != size ) {
         fprintf( stderr, "can\'t write %s\n", name );
         fclose( fp );
         return 0;
@@ -27,7 +27,7 @@ int write_mem_file( char* name, unsigned char* mem, int size ) {
 }
 
 int main( int argc, char** argv ) {
-    long size;
+    size_t size;
     char* name;
     char* asize;
     unsigned char* core;
