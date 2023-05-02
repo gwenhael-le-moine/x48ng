@@ -10,6 +10,7 @@
 #include "debugger.h"
 #include "hp48.h"
 #include "x48_gui.h"
+
 #ifdef GUI_IS_SDL1
 #include "resources.h"
 #endif
@@ -89,9 +90,6 @@ int main( int argc, char** argv ) {
     struct itimerval it;
 #ifdef GUI_IS_SDL1
     int rv, i;
-    /* unsigned t1, t2; */
-
-    printf( "x48ng\n" );
 
     // SDL Initialization
     SDLInit();
@@ -152,9 +150,6 @@ int main( int argc, char** argv ) {
 
     // Create the HP-48 window
     SDLCreateHP();
-
-    // Some more initialization
-    printf( "init active stuff\n" );
 #endif
 
     /*
@@ -165,7 +160,6 @@ int main( int argc, char** argv ) {
     /*
      *  install a handler for SIGALRM
      */
-    printf( "SIGALRM\n" );
     sigemptyset( &set );
     sigaddset( &set, SIGALRM );
     sa.sa_handler = signal_handler;
@@ -178,7 +172,6 @@ int main( int argc, char** argv ) {
     /*
      *  install a handler for SIGINT
      */
-    printf( "SIGINT\n" );
     sigemptyset( &set );
     sigaddset( &set, SIGINT );
     sa.sa_handler = signal_handler;
@@ -191,7 +184,6 @@ int main( int argc, char** argv ) {
     /*
      *  install a handler for SIGPIPE
      */
-    printf( "SIGPIPE\n" );
     sigemptyset( &set );
     sigaddset( &set, SIGPIPE );
     sa.sa_handler = signal_handler;
@@ -204,7 +196,6 @@ int main( int argc, char** argv ) {
     /*
      * set the real time interval timer
      */
-    printf( "int timer\n" );
     int interval = 20000;
     it.it_interval.tv_sec = 0;
     it.it_interval.tv_usec = interval;
@@ -215,13 +206,14 @@ int main( int argc, char** argv ) {
     /*
      * Set stdin flags to not include O_NDELAY and O_NONBLOCK
      */
-    printf( "stdin flags\n" );
     flags = fcntl( STDIN_FILENO, F_GETFL, 0 );
     flags &= ~O_NDELAY;
     flags &= ~O_NONBLOCK;
     fcntl( STDIN_FILENO, F_SETFL, flags );
 
-    printf( "start emulate\n" );
+    /************************/
+    /* Start emulation loop */
+    /************************/
     do {
         if ( !exec_flags )
             emulate();
