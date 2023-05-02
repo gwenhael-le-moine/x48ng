@@ -315,13 +315,15 @@ void get_resources(
     // There are two directories that can contain files:
     // homeDirectory:		Directory in which the live files (hp state,
     // ram, but also a copy of the rom) are stored
-    //							homeDirectory is the first directory
-    //in which x48 attempts to load the emulator data It
+    //							homeDirectory is the
+    // first directory in which x48ng attempts to load the emulator data It
     // is also in homeDirectory that state files are saved
     // romFileName:		if loading files from homeDirectory fails, the
     // emulator instead initializes the state and ram from scratch, and attempts
-    //							to load the ROM romFileName. This is
-    //just for bootstrapping: afterwards then the emulator will save the state
+    //							to load the ROM
+    // romFileName. This is just for bootstrapping: afterwards then the emulator
+    // will save the
+    // state
     // to
     // homeDirectory
 

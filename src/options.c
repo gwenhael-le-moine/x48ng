@@ -49,7 +49,7 @@ where options include:\n\
     -/+throttle			 turn off/on speed emulation\n\
     -/+netbook			 turn off/on netbook layout\n\
 \n",
-            progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname );
+             progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname );
 
     fflush( stdout );
     exit( 1 );

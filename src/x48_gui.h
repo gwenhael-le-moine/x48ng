@@ -17,11 +17,6 @@
 #include <SDL/SDL_gfxPrimitives.h>
 #include <SDL/SDL_rotozoom.h>
 #endif
-#ifdef GUI_IS_SDL2
-#include <SDL2/SDL.h>
-#include <SDL2/SDL2_gfxPrimitives.h>
-#include <SDL2/SDL2_rotozoom.h>
-#endif
 
 // Colors
 #define WHITE 0
@@ -280,13 +275,7 @@ extern void refresh_display( void );
 extern unsigned int ARGBColors[ BLACK + 1 ];
 extern int SDLGetEvent();
 
-#ifdef GUI_IS_SDL1
 extern SDL_Surface* sdlwindow;
-#endif
-#ifdef GUI_IS_SDL2
-extern SDL_Window* sdlwindow;
-extern SDL_Renderer* sdlrenderer;
-#endif
 extern SDL_Surface* sdlsurface;
 
 void SDLInit();

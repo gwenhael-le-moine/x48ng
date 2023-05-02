@@ -246,24 +246,26 @@ void update_display( void ) {
         } else {
 #endif
 #endif
-        if ( display.offset != old_offset ) {
-            memset( disp_buf, 0xf0,
+            if ( display.offset != old_offset ) {
+                memset(
+                    disp_buf, 0xf0,
                     ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
-            memset( lcd_buffer, 0xf0,
+                memset(
+                    lcd_buffer, 0xf0,
                     ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
-            old_offset = display.offset;
-        }
-        if ( display.lines != old_lines ) {
-            memset( &disp_buf[ 56 ][ 0 ], 0xf0,
-                    ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
-            memset( &lcd_buffer[ 56 ][ 0 ], 0xf0,
-                    ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
-            old_lines = display.lines;
-        }
-        for ( i = 0; i <= display.lines; i++ ) {
-            draw_row( addr, i );
-            addr += display.nibs_per_line;
-        }
+                old_offset = display.offset;
+            }
+            if ( display.lines != old_lines ) {
+                memset( &disp_buf[ 56 ][ 0 ], 0xf0,
+                        ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
+                memset( &lcd_buffer[ 56 ][ 0 ], 0xf0,
+                        ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
+                old_lines = display.lines;
+            }
+            for ( i = 0; i <= display.lines; i++ ) {
+                draw_row( addr, i );
+                addr += display.nibs_per_line;
+            }
 #ifdef GUI_IS_X11
 #ifdef HAVE_XSHM
         }
@@ -293,10 +295,10 @@ void update_display( void ) {
             } else {
 #endif
 #endif
-            for ( ; i < DISP_ROWS; i++ ) {
-                draw_row( addr, i );
-                addr += NIBBLES_PER_ROW;
-            }
+                for ( ; i < DISP_ROWS; i++ ) {
+                    draw_row( addr, i );
+                    addr += NIBBLES_PER_ROW;
+                }
 #ifdef GUI_IS_X11
 #ifdef HAVE_XSHM
             }
@@ -317,12 +319,12 @@ void update_display( void ) {
         } else {
 #endif
 #endif
-        memset( disp_buf, 0xf0, sizeof( disp_buf ) );
-        for ( i = 0; i < 64; i++ ) {
-            for ( j = 0; j < NIBBLES_PER_ROW; j++ ) {
-                draw_nibble( j, i, 0x00 );
+            memset( disp_buf, 0xf0, sizeof( disp_buf ) );
+            for ( i = 0; i < 64; i++ ) {
+                for ( j = 0; j < NIBBLES_PER_ROW; j++ ) {
+                    draw_nibble( j, i, 0x00 );
+                }
             }
-        }
 #ifdef GUI_IS_X11
 #ifdef HAVE_XSHM
         }
@@ -369,10 +371,10 @@ void disp_draw_nibble( word_20 addr, word_4 val ) {
         } else {
 #endif
 #endif
-        if ( val != disp_buf[ y ][ x ] ) {
-            disp_buf[ y ][ x ] = val;
-            draw_nibble( x, y, val );
-        }
+            if ( val != disp_buf[ y ][ x ] ) {
+                disp_buf[ y ][ x ] = val;
+                draw_nibble( x, y, val );
+            }
 #ifdef GUI_IS_X11
 #ifdef HAVE_XSHM
         }
@@ -430,12 +432,12 @@ void menu_draw_nibble( word_20 addr, word_4 val ) {
     } else {
 #endif
 #endif
-    x = offset % NIBBLES_PER_ROW;
-    y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
-    if ( val != disp_buf[ y ][ x ] ) {
-        disp_buf[ y ][ x ] = val;
-        draw_nibble( x, y, val );
-    }
+        x = offset % NIBBLES_PER_ROW;
+        y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
+        if ( val != disp_buf[ y ][ x ] ) {
+            disp_buf[ y ][ x ] = val;
+            draw_nibble( x, y, val );
+        }
 #ifdef GUI_IS_X11
 #ifdef HAVE_XSHM
     }

@@ -11,14 +11,14 @@
 #define COMPILE_VERSION 0
 
 /* Don't set this here as it's passed as a compilation option in the Makefile */
-//#define GUI_IS_X11
-//#define GUI_IS_SDL1 1
+// #define GUI_IS_X11
+// #define GUI_IS_SDL1 1
 
 #ifdef GUI_IS_X11
 #define _GNU_SOURCE
 
 #if defined( linux )
-#  define LINUX 1
+#define LINUX 1
 #endif
 
 /* Define to 1 if you have the `bzero' function. */

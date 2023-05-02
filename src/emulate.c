@@ -2484,7 +2484,8 @@ int emulate( void ) {
 #ifdef GUI_IS_X11
         {
             int i;
-            for ( i = 0; i < (int)( sizeof( saturn.keybuf.rows ) / sizeof( saturn.keybuf.rows[ 0 ] ) );
+            for ( i = 0; i < ( int )( sizeof( saturn.keybuf.rows ) /
+                                      sizeof( saturn.keybuf.rows[ 0 ] ) );
                   i++ ) {
                 if ( saturn.keybuf.rows[ i ] || throttle ) {
                     gettimeofday( &tv, &tz );
@@ -2512,52 +2513,54 @@ int emulate( void ) {
     } while ( !enter_debugger );
 #endif
 #ifdef GUI_IS_SDL1
-        int i;
-        for ( i = 0; i < sizeof( saturn.keybuf.rows ) /
-                             sizeof( saturn.keybuf.rows[ 0 ] );
-              i++ ) {
-            if ( saturn.keybuf.rows[ i ] || throttle ) {
+    int i;
+    for ( i = 0;
+          i < sizeof( saturn.keybuf.rows ) / sizeof( saturn.keybuf.rows[ 0 ] );
+          i++ ) {
+        if ( saturn.keybuf.rows[ i ] || throttle ) {
 
-                gettimeofday( &tv, NULL );
+            gettimeofday( &tv, NULL );
 
-                // while ((tv.tv_sec == tv2.tv_sec) && ((tv.tv_usec -
-                // tv2.tv_usec) < 2))
-                /*while ((tv.tv_sec == tv2.tv_sec) && ((tv.tv_usec -
-              tv2.tv_usec) < 1))
-                {
-                  gettimeofday(&tv, &tz);
-              }
-              tv2.tv_usec = tv.tv_usec;
-              tv2.tv_sec = tv.tv_sec;*/
+            // while ((tv.tv_sec == tv2.tv_sec) && ((tv.tv_usec -
+            // tv2.tv_usec) < 2))
+            /*while ((tv.tv_sec == tv2.tv_sec) && ((tv.tv_usec -
+          tv2.tv_usec) < 1))
+            {
+              gettimeofday(&tv, &tz);
+          }
+          tv2.tv_usec = tv.tv_usec;
+          tv2.tv_sec = tv.tv_sec;*/
 
-                // usleep(1);
+            // usleep(1);
 
-                break;
-            }
+            break;
         }
+    }
 
-        if ( schedule_event < 0 ) {
-            // puts("bug");
-            //	schedule_event = 0;
-        }
-        if ( schedule_event-- <= 0 ) {
-            schedule();
-        }
-    } while ( !enter_debugger );
+    if ( schedule_event < 0 ) {
+        // puts("bug");
+        //	schedule_event = 0;
+    }
+    if ( schedule_event-- <= 0 ) {
+        schedule();
+    }
+}
+while ( !enter_debugger )
+    ;
 
-    printf( "emulate: returning\n" );
+printf( "emulate: returning\n" );
 
-    // Version from android:
-    /*
-     do {
-      step_instruction();
-      if (schedule_event-- == 0)
-        {
-          schedule();
-        }
-    } while (!enter_debugger); // exit_state
-  */
+// Version from android:
+/*
+ do {
+  step_instruction();
+  if (schedule_event-- == 0)
+    {
+      schedule();
+    }
+} while (!enter_debugger); // exit_state
+*/
 #endif
 
-    return 0;
+return 0;
 }
