@@ -10,9 +10,9 @@
 #include "x48_gui.h"
 
 #if defined( GUI_IS_SDL1 )
-// #include "precisetimer.h"
 #include <unistd.h>
 #endif
+
 extern int throttle;
 
 static long jumpaddr;
