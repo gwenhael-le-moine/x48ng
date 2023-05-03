@@ -3304,59 +3304,6 @@ int CreateWindows( int argc, char** argv ) {
     return 0;
 }
 
-void ShowConnections( char* wire, char* ir ) {
-    int x, y, w, h;
-    int conn_top;
-    XFontStruct* finfo;
-    char name[ 128 ];
-    XGCValues val;
-    unsigned long gc_mask;
-    XCharStruct xchar;
-    int dir, fa, fd;
-    Pixmap pix;
-
-    finfo = get_font_resource( dpy, "connectionFont", "ConnectionFont" );
-    val.font = finfo->fid;
-    gc_mask = GCFont;
-    XChangeGC( dpy, gc, gc_mask, &val );
-
-    conn_top = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 18;
-
-    XTextExtents( finfo, "TEST", ( int )strlen( "TEST" ), &dir, &fa, &fd,
-                  &xchar );
-    w = DISPLAY_WIDTH;
-    h = fa + fd;
-
-    pix = XCreatePixmap( dpy, keypad.pixmap, w, h, depth ); /* FIXME keypad? */
-    XSetForeground( dpy, gc, COLOR( DISP_PAD ) );
-    XFillRectangle( dpy, pix, gc, 0, 0, w, h );
-
-    XSetBackground( dpy, gc, COLOR( DISP_PAD ) );
-    XSetForeground( dpy, gc, COLOR( LABEL ) );
-
-    sprintf( name, "wire: %s", wire ? wire : "none" );
-    XTextExtents( finfo, name, ( int )strlen( name ), &dir, &fa, &fd, &xchar );
-    x = 0;
-    y = fa;
-    XDrawImageString( dpy, pix, gc, x, y, name, ( int )strlen( name ) );
-
-    sprintf( name, "IR: %s", ir ? ir : "none" );
-    XTextExtents( finfo, name, ( int )strlen( name ), &dir, &fa, &fd, &xchar );
-    x = w - xchar.width - 1;
-    y = fa;
-    XDrawImageString( dpy, pix, gc, x, y, name, ( int )strlen( name ) );
-
-    x = DISPLAY_OFFSET_X;
-    y = conn_top;
-    XCopyArea( dpy, pix, keypad.pixmap, gc, 0, 0, w, h, x,
-               y ); /* FIXME keypad? */
-
-    DrawKeypad( &keypad );
-
-    XFreePixmap( dpy, pix );
-    XFreeFont( dpy, finfo );
-}
-
 int button_pressed( int b ) {
     int code;
     int i, r, c;
@@ -3984,60 +3931,6 @@ void SDLCreateHP( void ) {
     SDLDrawKeypad();
 
     SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 );
-}
-
-void ShowConnections( char* wire, char* ir ) {
-    printf( "ShowConnections: Not Implemented\n" );
-    /*
-  int           x, y, w, h;
-  int           conn_top;
-  XFontStruct  *finfo;
-  char          name[128];
-  XGCValues     val;
-  unsigned long gc_mask;
-  XCharStruct   xchar;
-  int           dir, fa, fd;
-  Pixmap        pix;
-
-  finfo = get_font_resource(dpy, "connectionFont", "ConnectionFont");
-  val.font = finfo->fid;
-  gc_mask = GCFont;
-  XChangeGC(dpy, gc, gc_mask, &val);
-
-  conn_top = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 18;
-
-  XTextExtents(finfo, "TEST", (int)strlen("TEST"), &dir, &fa, &fd, &xchar);
-  w = DISPLAY_WIDTH;
-  h = fa + fd;
-
-  pix = XCreatePixmap(dpy, keypad.pixmap, w, h, depth);		// FIXME
-  keypad? XSetForeground(dpy, gc, COLOR(DISP_PAD)); XFillRectangle(dpy, pix, gc,
-  0, 0, w, h);
-
-  XSetBackground(dpy, gc, COLOR(DISP_PAD));
-  XSetForeground(dpy, gc, COLOR(LABEL));
-
-  sprintf(name, "wire: %s", wire ? wire : "none");
-  XTextExtents(finfo, name, (int)strlen(name), &dir, &fa, &fd, &xchar);
-  x = 0;
-  y = fa;
-  XDrawImageString(dpy, pix, gc, x, y, name, (int)strlen(name));
-
-  sprintf(name, "IR: %s", ir ? ir : "none");
-  XTextExtents(finfo, name, (int)strlen(name), &dir, &fa, &fd, &xchar);
-  x = w - xchar.width - 1;
-  y = fa;
-  XDrawImageString(dpy, pix, gc, x, y, name, (int)strlen(name));
-
-  x = DISPLAY_OFFSET_X;
-  y = conn_top;
-  XCopyArea(dpy, pix, keypad.pixmap, gc, 0, 0, w, h, x, y);	// FIXME
-  keypad?
-
-  DrawKeypad(&keypad);
-
-  XFreePixmap(dpy, pix);
-  XFreeFont(dpy, finfo);*/
 }
 
 int button_pressed( int b ) {
@@ -5725,6 +5618,64 @@ void SDLShowInformation( void ) {
                    0 );
 }
 #endif
+
+
+void ShowConnections( char* wire, char* ir ) {
+    char name[ 128 ];
+#if defined( GUI_IS_X11 )
+    int x, y, w, h;
+    int conn_top;
+    XFontStruct* finfo;
+    XGCValues val;
+    unsigned long gc_mask;
+    XCharStruct xchar;
+    int dir, fa, fd;
+    Pixmap pix;
+
+    finfo = get_font_resource( dpy, "connectionFont", "ConnectionFont" );
+    val.font = finfo->fid;
+    gc_mask = GCFont;
+    XChangeGC( dpy, gc, gc_mask, &val );
+
+    conn_top = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 18;
+
+    XTextExtents( finfo, "TEST", ( int )strlen( "TEST" ), &dir, &fa, &fd,
+                  &xchar );
+    w = DISPLAY_WIDTH;
+    h = fa + fd;
+
+    pix = XCreatePixmap( dpy, keypad.pixmap, w, h, depth ); /* FIXME keypad? */
+    XSetForeground( dpy, gc, COLOR( DISP_PAD ) );
+    XFillRectangle( dpy, pix, gc, 0, 0, w, h );
+
+    XSetBackground( dpy, gc, COLOR( DISP_PAD ) );
+    XSetForeground( dpy, gc, COLOR( LABEL ) );
+
+    sprintf( name, "wire: %s", wire ? wire : "none" );
+    XTextExtents( finfo, name, ( int )strlen( name ), &dir, &fa, &fd, &xchar );
+    x = 0;
+    y = fa;
+    XDrawImageString( dpy, pix, gc, x, y, name, ( int )strlen( name ) );
+
+    sprintf( name, "IR: %s", ir ? ir : "none" );
+    XTextExtents( finfo, name, ( int )strlen( name ), &dir, &fa, &fd, &xchar );
+    x = w - xchar.width - 1;
+    y = fa;
+    XDrawImageString( dpy, pix, gc, x, y, name, ( int )strlen( name ) );
+
+    x = DISPLAY_OFFSET_X;
+    y = conn_top;
+    XCopyArea( dpy, pix, keypad.pixmap, gc, 0, 0, w, h, x,
+               y ); /* FIXME keypad? */
+
+    DrawKeypad( &keypad );
+
+    XFreePixmap( dpy, pix );
+    XFreeFont( dpy, finfo );
+#elif defined( GUI_IS_SDL1 )
+    fprintf( stderr, "%s\n", name );
+#endif
+}
 
 int get_ui_event( void ) {
 #if defined( GUI_IS_X11 )
