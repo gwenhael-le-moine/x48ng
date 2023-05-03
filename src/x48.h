@@ -3,6 +3,9 @@
 
 #if defined( GUI_IS_X11 )
 #include <X11/Xlib.h>
+#include <X11/Xresource.h>
+#include <X11/Xutil.h>
+#include <X11/keysym.h>
 #ifdef HAVE_XSHM
 #include <X11/extensions/XShm.h>
 #include <sys/ipc.h>
