@@ -31,21 +31,31 @@
 
 #if defined( GUI_IS_X11 )
 static char* defaults[] = {
-  "*iconic:		False", "*visual:		Default",
-  "*mono:		False", "*gray:			False",
-  "*monoIcon:		False", "*useXShm:		True",
-  "*smallLabelFont:	-*-fixed-bold-r-normal-*-14-*-*-*-*-*-iso8859-1",
-  "*mediumLabelFont:	-*-fixed-bold-r-normal-*-15-*-*-*-*-*-iso8859-1",
-  "*largeLabelFont:	-*-fixed-medium-r-normal-*-20-*-*-*-*-*-iso8859-1",
-  "*connectionFont:	-*-fixed-medium-r-normal-*-12-*-*-*-*-*-iso8859-1",
-  "*verbose:		False", "*quiet:			False",
-  "*printVersion:	False", "*printCopyright:	False",
-  "*printWarranty:	False", "*useTerminal:		True",
-  "*useSerial:		False", "*serialLine:		/dev/ttyS0",
-  "*completeInitialize:	False", "*resetOnStartup:	False",
-  "*romFileName:	rom.dump", "*homeDirectory:		.x48ng",
-  "*useDebugger:	True", "*disassemblerMnemonics:	class",
-  0 };
+    "*iconic:		False",
+    "*visual:		Default",
+    "*mono:		False",
+    "*gray:			False",
+    "*monoIcon:		False",
+    "*useXShm:		True",
+    "*smallLabelFont:	-*-fixed-bold-r-normal-*-14-*-*-*-*-*-iso8859-1",
+    "*mediumLabelFont:	-*-fixed-bold-r-normal-*-15-*-*-*-*-*-iso8859-1",
+    "*largeLabelFont:	-*-fixed-medium-r-normal-*-20-*-*-*-*-*-iso8859-1",
+    "*connectionFont:	-*-fixed-medium-r-normal-*-12-*-*-*-*-*-iso8859-1",
+    "*verbose:		False",
+    "*quiet:			False",
+    "*printVersion:	False",
+    "*printCopyright:	False",
+    "*printWarranty:	False",
+    "*useTerminal:		True",
+    "*useSerial:		False",
+    "*serialLine:		/dev/ttyS0",
+    "*completeInitialize:	False",
+    "*resetOnStartup:	False",
+    "*romFileName:	rom.dump",
+    "*homeDirectory:		.x48ng",
+    "*useDebugger:	True",
+    "*disassemblerMnemonics:	class",
+    0 };
 
 #ifdef HAVE_XSHM
 extern int XShmQueryExtension( Display* );
@@ -5630,7 +5640,6 @@ void SDLShowInformation( void ) {
 }
 #endif
 
-
 void ShowConnections( char* wire, char* ir ) {
     char name[ 128 ];
 #if defined( GUI_IS_X11 )
@@ -6520,5 +6529,5 @@ int get_ui_event( void ) {
     return 1;
 #endif
 
-    return 0;                   /* this is never reached */
+    return 0; /* this is never reached */
 }
