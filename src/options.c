@@ -4,7 +4,6 @@
 #include <unistd.h>
 
 #include "config.h"
-#include "constants.h"
 #include "resources.h"
 
 void usage( void ) {

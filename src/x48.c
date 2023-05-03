@@ -21,7 +21,6 @@
 #include "hp.h"
 #include "small.h"
 #include "x48.h"
-#include "constants.h"
 #include "device.h"
 #include "errors.h"
 #include "hp48.h"
@@ -971,6 +970,10 @@ icon_map_t icon_maps_gx[] = {
 
 #define KEYBOARD_OFFSET_X SIDE_SKIP
 #define KEYBOARD_OFFSET_Y ( TOP_SKIP + DISPLAY_HEIGHT + DISP_KBD_SKIP )
+
+#define COLOR_MODE_MONO 1
+#define COLOR_MODE_GRAY 2
+#define COLOR_MODE_COLOR 3
 
 int AllocColors( void ) {
     int c, error, dyn;
