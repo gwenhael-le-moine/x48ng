@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "config.h"
 #include "resources.h"
 
 char errbuf[ 1024 ] = {

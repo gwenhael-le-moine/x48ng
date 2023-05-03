@@ -1,6 +1,5 @@
-#include "config.h"
-
 #include <stdio.h>
+#include <unistd.h>
 
 #include "debugger.h"
 #include "device.h"
@@ -8,10 +7,6 @@
 #include "hp48_emu.h"
 #include "timer.h"
 #include "x48.h"
-
-#if defined( GUI_IS_SDL1 )
-#include <unistd.h>
-#endif
 
 extern int throttle;
 

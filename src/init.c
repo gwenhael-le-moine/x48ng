@@ -7,6 +7,7 @@
 #include <string.h>
 #include <sys/types.h>
 
+#include "config.h"
 #include "device.h"
 #include "hp48.h"
 #include "hp48_emu.h"
@@ -163,8 +164,6 @@ typedef struct saturn_0_3_0_t {
 } saturn_0_3_0_t;
 
 saturn_0_3_0_t saturn_0_3_0;
-
-#include "config.h"
 
 void saturn_config_init( void ) {
     saturn.version[ 0 ] = VERSION_MAJOR;

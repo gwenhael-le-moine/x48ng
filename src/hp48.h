@@ -1,12 +1,10 @@
 #ifndef _HP48_H
 #define _HP48_H 1
 
-#include "config.h"
-
+#include <stdint.h>
 #include <sys/time.h>
 
 #include "mmu.h"
-#include <stdint.h>
 
 #define RAM_SIZE_SX 0x10000
 #define RAM_SIZE_GX 0x40000

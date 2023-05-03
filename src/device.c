@@ -1,5 +1,3 @@
-#include "config.h"
-
 #include <stdlib.h>
 
 #include "hp48.h"

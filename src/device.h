@@ -1,7 +1,6 @@
 #ifndef _DEVICE_H
 #define _DEVICE_H 1
 
-#include "config.h"
 #include "hp48.h"
 
 #define DISP_INSTR_OFF 0x10

@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-#include "config.h"
 #include "romio.h"
 
 unsigned char* rom;

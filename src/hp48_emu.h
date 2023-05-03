@@ -1,7 +1,6 @@
 #ifndef _HP48_EMU_H
 #define _HP48_EMU_H 1
 
-#include "config.h"
 #include "hp48.h"
 
 extern void push_return_addr( long addr );

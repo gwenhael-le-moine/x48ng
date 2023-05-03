@@ -1,8 +1,6 @@
 #ifndef _X48_GUI_H
 #define _X48_GUI_H 1
 
-#include "config.h"
-
 #if defined( GUI_IS_X11 )
 #include <X11/Xlib.h>
 #ifdef HAVE_XSHM

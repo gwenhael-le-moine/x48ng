@@ -1,7 +1,6 @@
 #ifndef _RPL_H
 #define _RPL_H 1
 
-#include "config.h"
 #include "hp48.h"
 
 /*
