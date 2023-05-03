@@ -19,7 +19,7 @@ endif
 
 FULL_WARNINGS = no
 ifeq ($(FULL_WARNINGS), yes)
-	CFLAGS += -Wall -Wextra -Wno-unused-parameter -Wno-unused-function -Wconversion -Wdouble-promotion -Wno-sign-conversion -fsanitize=undefined -fsanitize-trap
+	CFLAGS += -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-function -Wconversion -Wdouble-promotion -Wno-sign-conversion -fsanitize=undefined -fsanitize-trap
 endif
 
 .PHONY: all clean clean-all pretty-code install
