@@ -11,9 +11,6 @@
 
 #include <assert.h>
 
-/* #define DEBUG_TIMER 1 */
-/* #define DEBUG_TIMER_ADJUST 1 */
-
 typedef struct x48_timer_t {
     word_1 run;
     word_64 start;
@@ -185,10 +182,6 @@ void start_timer( int timer ) {
         timers[ timer ].start <<= 13;
         timers[ timer ].start += ( tv.tv_usec << 7 ) / 15625;
     }
-#ifdef DEBUG_TIMER
-    fprintf( stderr, "Timer%c[%d] start at 0x%lx\n",
-             timer == T1_TIMER ? '*' : ' ', timer, timers[ timer ].start );
-#endif
 }
 
 void restart_timer( int timer ) {
@@ -222,10 +215,6 @@ void restart_timer( int timer ) {
         timers[ timer ].start <<= 13;
         timers[ timer ].start += ( tv.tv_usec << 7 ) / 15625;
     }
-#ifdef DEBUG_TIMER
-    fprintf( stderr, "Timer[%d] restart at 0x%lx\n", timer,
-             timers[ timer ].start );
-#endif
 }
 
 void stop_timer( int timer ) {
@@ -262,11 +251,6 @@ void stop_timer( int timer ) {
     timers[ timer ].value += timers[ timer ].stop - timers[ timer ].start;
     //  add_sub_64(&timers[timer].stop, &timers[timer].start,
     //  &timers[timer].value);
-
-#ifdef DEBUG_TIMER
-    fprintf( stderr, "Timer[%d] stop at 0x%llx, value 0x%llx\n", timer,
-             timers[ timer ].stop, timers[ timer ].value );
-#endif
 }
 
 void reset_timer( int timer ) {
@@ -276,9 +260,6 @@ void reset_timer( int timer ) {
     timers[ timer ].start = 0;
     timers[ timer ].stop = 0;
     timers[ timer ].value = 0;
-#ifdef DEBUG_TIMER
-    fprintf( stderr, "Timer[%d] reset\n", timer );
-#endif
 }
 
 static word_64 zero = 0;
@@ -415,14 +396,6 @@ t1_t2_ticks get_t1_t2( void ) {
         set_0_time += adj_time;
         time_offset += adj_time;
         access_time -= adj_time;
-
-#ifdef DEBUG_TIMER_ADJUST
-        fprintf( stderr, "Time adjusted by " );
-        fprintf( stderr, "%lX", adj_time );
-        fprintf( stderr, " TICKS, Total offset " );
-        fprintf( stderr, "%lX", set_0_time );
-        fprintf( stderr, " TICKS\n" );
-#endif
     }
 
     if ( ( saturn.timer2 >= 0 && ( access_time < 0 ) ) ||

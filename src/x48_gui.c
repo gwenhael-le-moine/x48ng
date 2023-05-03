@@ -88,14 +88,6 @@ unsigned KEYBOARD_HEIGHT, KEYBOARD_WIDTH, TOP_SKIP, SIDE_SKIP, BOTTOM_SKIP,
     KBD_UPLINE;
 #endif
 
-#if 0
-#define DEBUG_XEVENT 1
-#define DEBUG_BUTTONS 1
-#define DEBUG_FOCUS 1
-#define DEBUG_BACKING_STORE 1
-#define DEBUG_SHM 1
-#endif
-
 #if defined( GUI_IS_X11 )
 typedef struct keypad_t {
     unsigned int width;
@@ -1425,10 +1417,6 @@ int InitDisplay( int argc, char** argv ) {
      * Does the Xserver do backing-store?
      */
     does_backing_store = XDoesBackingStore( XScreenOfDisplay( dpy, screen ) );
-#ifdef DEBUG_BACKING_STORE
-    fprintf( stderr, "XServer does%sBackingStore\n",
-             does_backing_store ? " " : " not do " );
-#endif
 
 #ifdef HAVE_XSHM
     /*
@@ -3440,10 +3428,7 @@ int button_pressed( int b ) {
             saturn.keybuf.rows[ r ] |= c;
         }
     }
-#ifdef DEBUG_BUTTONS
-    fprintf( stderr, "Button pressed  %d (%s)\n", buttons[ b ].code,
-             buttons[ b ].name );
-#endif
+
     return 0;
 }
 
@@ -3462,10 +3447,6 @@ int button_released( int b ) {
         c = 1 << ( code & 0xf );
         saturn.keybuf.rows[ r ] &= ~c;
     }
-#ifdef DEBUG_BUTTONS
-    fprintf( stderr, "Button released  %d (%s)\n", buttons[ b ].code,
-             buttons[ b ].name );
-#endif
     return 0;
 }
 
@@ -3473,14 +3454,8 @@ static int button_release_all( void ) {
     int code;
     int b;
 
-#ifdef DEBUG_BUTTONS
-    fprintf( stderr, "Buttons released " );
-#endif
     for ( b = BUTTON_A; b <= LAST_BUTTON; b++ ) {
         if ( buttons[ b ].pressed ) {
-#ifdef DEBUG_BUTTONS
-            fprintf( stderr, "%d (%s) ", buttons[ b ].code, buttons[ b ].name );
-#endif
             code = buttons[ b ].code;
             if ( code == 0x8000 ) {
                 int i;
@@ -3496,9 +3471,7 @@ static int button_release_all( void ) {
             DrawButton( b );
         }
     }
-#ifdef DEBUG_BUTTONS
-    fprintf( stderr, "\n" );
-#endif
+
     return 0;
 }
 
@@ -3525,11 +3498,6 @@ int key_event( int b, XEvent* xev ) {
                 saturn.keybuf.rows[ r ] |= c;
             }
         }
-#ifdef DEBUG_BUTTONS
-        fprintf( stderr, "Key pressed  %d (%s) %x\n", buttons[ b ].code,
-                 buttons[ b ].name ),
-            c;
-#endif
     } else {
         if ( code == 0x8000 ) {
             for ( i = 0; i < 9; i++ )
@@ -3542,11 +3510,8 @@ int key_event( int b, XEvent* xev ) {
         }
         buttons[ b ].pressed = 0;
         DrawButton( b );
-#ifdef DEBUG_BUTTONS
-        fprintf( stderr, "Key released %d (%s)\n", buttons[ b ].code,
-                 buttons[ b ].name );
-#endif
     }
+
     return 0;
 }
 
@@ -4147,18 +4112,10 @@ int button_pressed( int b ) {
             if ( saturn.kbd_ien ) {
                 do_kbd_int();
             }
-#ifdef DEBUG_BUTTONS
-            if ( ( saturn.keybuf.rows[ r ] & c ) ) {
-                fprintf( stderr, "bug\n" );
-            }
-#endif
             saturn.keybuf.rows[ r ] |= c;
         }
     }
-#ifdef DEBUG_BUTTONS
-    fprintf( stderr, "Button pressed  %d (%s)\n", buttons[ b ].code,
-             buttons[ b ].name );
-#endif
+
     return 0;
 }
 
@@ -4181,10 +4138,7 @@ int button_released( int b ) {
         c = 1 << ( code & 0xf );
         saturn.keybuf.rows[ r ] &= ~c;
     }
-#ifdef DEBUG_BUTTONS
-    fprintf( stderr, "Button released  %d (%s)\n", buttons[ b ].code,
-             buttons[ b ].name );
-#endif
+
     return 0;
 }
 
@@ -6626,9 +6580,6 @@ int get_ui_event( void ) {
 
                 default:
 
-#ifdef DEBUG_XEVENT
-                    printf( "Event: %d\n", xev.type );
-#endif
                 case KeymapNotify:
                 case ConfigureNotify:
                 case ReparentNotify:

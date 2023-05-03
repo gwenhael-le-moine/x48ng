@@ -20,17 +20,6 @@ extern long port1_mask;
 extern short port2_is_ram;
 extern long port2_mask;
 
-#define DEBUG_UNKNOWN 1
-/* #define DEBUG_SERIAL 1 */
-/* #define DEBUG_SERIALb 1 */
-/* #define DEBUG_DISPLAY 1 */
-/* #define DEBUG_IR 1 */
-/* #define DEBUG_CONTRAST 1 */
-/* #define DEBUG_CARDS 1 */
-/* #define DEBUG_BAD_MEM 1 */
-/* #define DEBUG_BASE_NIBBLE 1 */
-/* #define DEBUG_BANK_SWITCH 1 */
-
 long nibble_masks[ 16 ] = { 0x0000000f, 0x000000f0, 0x00000f00, 0x0000f000,
                             0x000f0000, 0x00f00000, 0x0f000000, 0xf0000000,
                             0x0000000f, 0x000000f0, 0x00000f00, 0x0000f000,
@@ -71,36 +60,21 @@ void write_dev_mem( long addr, int val ) {
                     ( display.nibs_per_line * ( display.lines + 1 ) );
                 device.display_touched = DISP_INSTR_OFF;
             }
-#ifdef DEBUG_DISPLAY
-            fprintf( stderr, "%.5lx: DISP ON: %x\n", saturn.PC, display.on );
-#endif
             return;
         case 0x101: /* CONTRAST CONTROL */
             saturn.contrast_ctrl = val;
             display.contrast &= ~0x0f;
             display.contrast |= val;
-#ifdef DEBUG_CONTRAST
-            fprintf( stderr, "%.5lx: Contrast: 0x%x\n", saturn.PC,
-                     display.contrast );
-#endif
             device.contrast_touched = 1;
             return;
         case 0x102: /* DISPLAY TEST */
             display.contrast &= ~0xf0;
             display.contrast |= ( ( val & 0x1 ) << 4 );
-#ifdef DEBUG_CONTRAST
-            fprintf( stderr, "%.5lx: Contrast: 0x%x\n", saturn.PC,
-                     display.contrast );
-#endif
             device.contrast_touched = 1;
             /* Fall through */
         case 0x103: /* DISPLAY TEST */
             saturn.disp_test &= ~nibble_masks[ addr - 0x102 ];
             saturn.disp_test |= val << ( ( addr - 0x102 ) * 4 );
-#ifdef DEBUG_DISPLAY
-            fprintf( stderr, "%.5lx: DISP TEST: %x\n", saturn.PC,
-                     saturn.disp_test );
-#endif
             device.disp_test_touched = 1;
             return;
         case 0x104:
@@ -132,10 +106,6 @@ void write_dev_mem( long addr, int val ) {
         case 0x10d: /* BAUD */
             saturn.baud = val;
             device.baud_touched = 1;
-#ifdef DEBUG_SERIALb
-            fprintf( stderr, "%.5lx: BAUD write: %x\n", saturn.PC,
-                     saturn.baud );
-#endif
             return;
         case 0x10e: /* CARD CONTROL */
             saturn.card_ctrl = val;
@@ -144,42 +114,21 @@ void write_dev_mem( long addr, int val ) {
             if ( saturn.card_ctrl & 0x01 )
                 do_interupt();
             device.card_ctrl_touched = 1;
-#ifdef DEBUG_CARDS
-            fprintf( stderr, "%.5lx: CardControl write: %x\n", saturn.PC,
-                     saturn.card_ctrl );
-#endif
             return;
         case 0x10f: /* CARD STATUS */
-#ifdef DEBUG_CARDS
-            fprintf( stderr, "%.5lx: CardStatus write: %x\n", saturn.PC,
-                     saturn.card_status );
-#endif
             return;
         case 0x110: /* IO CONTROL */
             saturn.io_ctrl = val;
             device.ioc_touched = 1;
-#ifdef DEBUG_SERIAL
-            fprintf( stderr, "%.5lx: IOC write: %x\n", saturn.PC,
-                     saturn.io_ctrl );
-#endif
             return;
         case 0x111: /* RCS */
             saturn.rcs = val;
-#ifdef DEBUG_SERIAL
-            fprintf( stderr, "%.5lx: RCS: %x\n", saturn.PC, saturn.rcs );
-#endif
             return;
         case 0x112: /* TCS */
             saturn.tcs = val;
-#ifdef DEBUG_SERIAL
-            fprintf( stderr, "%.5lx: TCS: %x\n", saturn.PC, saturn.tcs );
-#endif
             return;
         case 0x113: /* CRER */
             saturn.rcs &= 0x0b;
-#ifdef DEBUG_SERIAL
-            fprintf( stderr, "%.5lx: CRER, RCS: %x\n", saturn.PC, saturn.rcs );
-#endif
             return;
         case 0x114:
         case 0x115: /* RBR */
@@ -196,18 +145,10 @@ void write_dev_mem( long addr, int val ) {
             saturn.sreq &= ~nibble_masks[ addr - 0x118 ];
             saturn.sreq |= val << ( ( addr - 0x118 ) * 4 );
             device.sreq_touched = 1;
-#ifdef DEBUG_SERIAL
-            fprintf( stderr, "%.5lx: SREQ? write: %x\n", saturn.PC,
-                     saturn.sreq );
-#endif
             return;
         case 0x11a: /* IR CONTROL */
             saturn.ir_ctrl = val;
             device.ir_ctrl_touched = 1;
-#ifdef DEBUG_IR
-            fprintf( stderr, "%.5lx: IRC write: %x\n", saturn.PC,
-                     saturn.ir_ctrl );
-#endif
             return;
         case 0x11b: /* BASE NIB OFFSET */
             saturn.base_off = val;
@@ -216,16 +157,10 @@ void write_dev_mem( long addr, int val ) {
         case 0x11c: /* LED CONTROL */
             saturn.lcr = val;
             device.lcr_touched = 1;
-#ifdef DEBUG_IR
-            fprintf( stderr, "%.5lx: LCR write: %x\n", saturn.PC, saturn.lcr );
-#endif
             return;
         case 0x11d: /* LED BUFFER */
             saturn.lbr = val;
             device.lbr_touched = 1;
-#ifdef DEBUG_IR
-            fprintf( stderr, "%.5lx: LBR write: %x\n", saturn.PC, saturn.lbr );
-#endif
             return;
         case 0x11e: /* SCRATCH PAD */
             saturn.scratch = val;
@@ -234,11 +169,6 @@ void write_dev_mem( long addr, int val ) {
         case 0x11f: /* BASENIBBLE */
             saturn.base_nibble = val;
             device.base_nibble_touched = 1;
-#ifdef DEBUG_BASE_NIBBLE
-            if ( opt_gx )
-                fprintf( stderr, "%.5lx: BASENIB: %x\n", saturn.PC,
-                         saturn.base_nibble );
-#endif
             return;
         case 0x120:
         case 0x121:
@@ -254,12 +184,6 @@ void write_dev_mem( long addr, int val ) {
                     ( display.nibs_per_line * ( display.lines + 1 ) );
                 device.display_touched = DISP_INSTR_OFF;
             }
-#ifdef DEBUG_DISPLAY
-            fprintf( stderr, "%.5lx: DISPLAY: %lx\n", saturn.PC,
-                     display.disp_start );
-            fprintf( stderr, "%.5lx: DISP END: %lx\n", saturn.PC,
-                     display.disp_end );
-#endif
             return;
         case 0x125:
         case 0x126:
@@ -279,12 +203,6 @@ void write_dev_mem( long addr, int val ) {
                     ( display.nibs_per_line * ( display.lines + 1 ) );
                 device.display_touched = DISP_INSTR_OFF;
             }
-#ifdef DEBUG_DISPLAY
-            fprintf( stderr, "%.5lx: DISP LINE SIZE: %x\n", saturn.PC,
-                     display.nibs_per_line );
-            fprintf( stderr, "%.5lx: DISP END: %lx\n", saturn.PC,
-                     display.disp_end );
-#endif
             return;
         case 0x128:
         case 0x129: /* LINE_COUNT */
@@ -301,12 +219,6 @@ void write_dev_mem( long addr, int val ) {
                     ( display.nibs_per_line * ( display.lines + 1 ) );
                 device.display_touched = DISP_INSTR_OFF;
             }
-#ifdef DEBUG_DISPLAY
-            fprintf( stderr, "%.5lx: DISP LINES: %x\n", saturn.PC,
-                     display.lines );
-            fprintf( stderr, "%.5lx: DISP END: %lx\n", saturn.PC,
-                     display.disp_end );
-#endif
             return;
         case 0x12a:
         case 0x12b:
@@ -314,10 +226,6 @@ void write_dev_mem( long addr, int val ) {
         case 0x12d: /* Dont know yet */
             saturn.unknown &= ~nibble_masks[ addr - 0x12a ];
             saturn.unknown |= val << ( ( addr - 0x12a ) * 4 );
-#ifdef DEBUG_UNKNOWN
-            fprintf( stderr, "Unknown device @0x%ld: %.4x\n", addr,
-                     saturn.unknown );
-#endif
             device.unknown_touched = 1;
             return;
         case 0x12e: /* TIMER 1 CONTROL */
@@ -345,10 +253,6 @@ void write_dev_mem( long addr, int val ) {
         case 0x136: /* Dont know yet 2 */
             saturn.unknown2 &= ~nibble_masks[ addr - 0x135 ];
             saturn.unknown2 |= val << ( ( addr - 0x135 ) * 4 );
-#ifdef DEBUG_UNKNOWN
-            fprintf( stderr, "Unknown device @0x%ld: %.2x\n", addr,
-                     saturn.unknown2 );
-#endif
             device.unknown2_touched = 1;
             return;
         case 0x137: /* TIMER1 */
@@ -399,29 +303,16 @@ int read_dev_mem( long addr ) {
         case 0x10c: /* ANNUNC */
             return ( saturn.annunc >> ( ( addr - 0x10b ) * 4 ) ) & 0x0f;
         case 0x10d: /* BAUD */
-#ifdef DEBUG_SERIALb
-            fprintf( stderr, "%.5lx: BAUD read: %x\n", saturn.PC, saturn.baud );
-#endif
             return saturn.baud & 0x0f;
         case 0x10e: /* CARD CONTROL */
             return saturn.card_ctrl & 0x0f;
         case 0x10f: /* CARD STATUS */
             return saturn.card_status & 0x0f;
         case 0x110: /* IO CONTROL */
-#ifdef DEBUG_SERIAL
-            fprintf( stderr, "%.5lx: IOC read: %x\n", saturn.PC,
-                     saturn.io_ctrl );
-#endif
             return saturn.io_ctrl & 0x0f;
         case 0x111: /* RCS */
-#ifdef DEBUG_SERIAL
-            fprintf( stderr, "%.5lx: RCS read: %x\n", saturn.PC, saturn.rcs );
-#endif
             return saturn.rcs & 0x0f;
         case 0x112: /* TCS */
-#ifdef DEBUG_SERIAL
-            fprintf( stderr, "%.5lx: TCS read: %x\n", saturn.PC, saturn.tcs );
-#endif
             return saturn.tcs & 0x0f;
         case 0x113: /* CRER */
             return 0x00;
@@ -437,32 +328,14 @@ int read_dev_mem( long addr ) {
             return 0x00;
         case 0x118:
         case 0x119: /* SERVICE REQ */
-#ifdef DEBUG_SERIAL
-            fprintf( stderr, "%.5lx: SREQ? read: %x\n", saturn.PC,
-                     saturn.sreq );
-#endif
             return ( saturn.sreq >> ( ( addr - 0x118 ) * 4 ) ) & 0x0f;
         case 0x11a: /* IR CONTROL */
-#ifdef DEBUG_IR
-            fprintf( stderr, "%.5lx: IRC read: %x\n", saturn.PC,
-                     saturn.ir_ctrl );
-#endif
             return saturn.ir_ctrl & 0x0f;
         case 0x11b: /* BASE NIB OFFSET */
             return saturn.base_off & 0x0f;
         case 0x11c: /* LED CONTROL */
-#if 0
-#ifdef DEBUG_IR
-      fprintf(stderr, "%.5lx: LCR read: %x\n", saturn.PC, saturn.lcr);
-#endif
-#endif
             return saturn.lcr & 0x0f;
         case 0x11d: /* LED BUFFER */
-#if 0
-#ifdef DEBUG_IR
-      fprintf(stderr, "%.5lx: LBR read: %x\n", saturn.PC, saturn.lbr);
-#endif
-#endif
             return saturn.lbr & 0x0f;
         case 0x11e: /* SCRATCH PAD */
             return saturn.scratch & 0x0f;
@@ -534,10 +407,6 @@ void write_nibble_sx( long addr, int val ) {
                 write_dev_mem( addr, val );
                 return;
             }
-#ifdef DEBUG_BAD_MEM
-            fprintf( stderr, "%.5lx: write to ROM at %.5lx\n", saturn.PC,
-                     addr );
-#endif
             return;
         case 1:
         case 2:
@@ -545,10 +414,6 @@ void write_nibble_sx( long addr, int val ) {
         case 4:
         case 5:
         case 6:
-#ifdef DEBUG_BAD_MEM
-            fprintf( stderr, "%.5lx: write to ROM at %.5lx\n", saturn.PC,
-                     addr );
-#endif
             return;
         case 7:
             if ( saturn.mem_cntl[ MCTL_SysRAM_SX ].config[ 0 ] == 0x70000 ) {
@@ -568,10 +433,6 @@ void write_nibble_sx( long addr, int val ) {
                     break;
                 }
             }
-#ifdef DEBUG_BAD_MEM
-            fprintf( stderr, "%.5lx: write to ROM at %.5lx\n", saturn.PC,
-                     addr );
-#endif
             return;
         case 8:
         case 9:
@@ -587,10 +448,6 @@ void write_nibble_sx( long addr, int val ) {
                     saturn.port2[ ( addr - 0x80000 ) & port2_mask ] = val;
                 return;
             }
-#ifdef DEBUG_BAD_MEM
-            fprintf( stderr, "%.5lx: write to NULL at %.5lx\n", saturn.PC,
-                     addr );
-#endif
             return;
         case 0xc:
         case 0xd:
@@ -605,10 +462,6 @@ void write_nibble_sx( long addr, int val ) {
                     saturn.port2[ ( addr - 0xc0000 ) & port2_mask ] = val;
                 return;
             }
-#ifdef DEBUG_BAD_MEM
-            fprintf( stderr, "%.5lx: write to NULL at %.5lx\n", saturn.PC,
-                     addr );
-#endif
             return;
         case 0xf:
             if ( saturn.mem_cntl[ MCTL_SysRAM_SX ].config[ 0 ] == 0xf0000 ) {
@@ -625,10 +478,6 @@ void write_nibble_sx( long addr, int val ) {
                     saturn.port2[ ( addr - 0xc0000 ) & port2_mask ] = val;
                 return;
             }
-#ifdef DEBUG_BAD_MEM
-            fprintf( stderr, "%.5lx: write to NULL at %.5lx\n", saturn.PC,
-                     addr );
-#endif
             return;
     }
     if ( device.display_touched || !disp.mapped )
@@ -653,60 +502,32 @@ void write_nibble_gx( long addr, int val ) {
                 write_dev_mem( addr, val );
                 return;
             }
-#ifdef DEBUG_BAD_MEM
-            fprintf( stderr, "%.5lx: write to ROM at %.5lx\n", saturn.PC,
-                     addr );
-#endif
             return;
         case 1:
         case 2:
         case 3:
         case 5:
         case 6:
-#ifdef DEBUG_BAD_MEM
-            fprintf( stderr, "%.5lx: BAD WRITE TO ROM AT ADDRESS %.5lx\n",
-                     saturn.PC, addr );
-#endif
             return;
         case 4:
             if ( saturn.mem_cntl[ MCTL_SysRAM_GX ].config[ 0 ] == 0x40000 ) {
                 saturn.ram[ addr - 0x40000 ] = val;
                 break;
             }
-#ifdef DEBUG_BAD_MEM
-            fprintf( stderr, "%.5lx: BAD WRITE TO ROM AT ADDRESS %.5lx\n",
-                     saturn.PC, addr );
-#endif
             return;
         case 7:
             if ( addr >= 0x7f000 &&
                  saturn.mem_cntl[ MCTL_BANK_GX ].config[ 0 ] == 0x7f000 ) {
-#ifdef DEBUG_BANK_SWITCH
-                fprintf( stderr, "%.5lx: write to bank switch at %.5lx\n",
-                         saturn.PC, addr );
-#endif
                 return;
             }
             if ( addr >= 0x7e000 && addr < 0x7f000 &&
                  saturn.mem_cntl[ MCTL_PORT1_GX ].config[ 0 ] == 0x7e000 ) {
-#ifdef DEBUG_PORTS
-                fprintf( stderr, "%.5lx: write to port 1 at %.5lx\n", saturn.PC,
-                         addr );
-#endif
                 return;
             }
             if ( addr >= 0x7e000 && addr < 0x7f000 &&
                  saturn.mem_cntl[ MCTL_PORT2_GX ].config[ 0 ] == 0x7e000 ) {
-#ifdef DEBUG_PORTS
-                fprintf( stderr, "%.5lx: write to port 2 at %.5lx\n", saturn.PC,
-                         addr );
-#endif
                 return;
             }
-#ifdef DEBUG_BAD_MEM
-            fprintf( stderr, "%.5lx: write to ROM at %.5lx\n", saturn.PC,
-                     addr );
-#endif
             return;
         case 8:
             if ( saturn.mem_cntl[ MCTL_SysRAM_GX ].config[ 0 ] == 0x80000 ) {
@@ -731,18 +552,10 @@ void write_nibble_gx( long addr, int val ) {
                     break;
                 }
             }
-#ifdef DEBUG_BAD_MEM
-            fprintf( stderr, "%.5lx: write to ROM at %.5lx\n", saturn.PC,
-                     addr );
-#endif
             return;
         case 9:
             if ( saturn.mem_cntl[ MCTL_BANK_GX ].config[ 0 ] == 0x90000 ) {
                 if ( addr < 0x91000 ) {
-#ifdef DEBUG_BANK_SWITCH
-                    fprintf( stderr, "%.5lx: write to bank switch at %.5lx\n",
-                             saturn.PC, addr );
-#endif
                     return;
                 }
             }
@@ -752,10 +565,6 @@ void write_nibble_gx( long addr, int val ) {
                     saturn.ram[ addr - 0x80000 ] = val;
                     break;
                 }
-#ifdef DEBUG_BAD_MEM
-            fprintf( stderr, "%.5lx: write to ROM at %.5lx\n", saturn.PC,
-                     addr );
-#endif
             return;
         case 0xa:
             if ( saturn.mem_cntl[ MCTL_SysRAM_GX ].config[ 0 ] == 0x80000 )
@@ -769,10 +578,6 @@ void write_nibble_gx( long addr, int val ) {
                     saturn.port1[ ( addr - 0xa0000 ) & port1_mask ] = val;
                 return;
             }
-#ifdef DEBUG_BAD_MEM
-            fprintf( stderr, "%.5lx: write to ROM at %.5lx\n", saturn.PC,
-                     addr );
-#endif
             return;
         case 0xb:
             if ( saturn.mem_cntl[ MCTL_SysRAM_GX ].config[ 0 ] == 0x80000 )
@@ -796,10 +601,6 @@ void write_nibble_gx( long addr, int val ) {
                 */
                 return;
             }
-#ifdef DEBUG_BAD_MEM
-            fprintf( stderr, "%.5lx: write to ROM at %.5lx\n", saturn.PC,
-                     addr );
-#endif
             return;
         case 0xc:
             if ( saturn.mem_cntl[ MCTL_SysRAM_GX ].config[ 0 ] == 0xc0000 ) {
@@ -836,10 +637,6 @@ void write_nibble_gx( long addr, int val ) {
                 */
                 return;
             }
-#ifdef DEBUG_BAD_MEM
-            fprintf( stderr, "%.5lx: write to ROM at %.5lx\n", saturn.PC,
-                     addr );
-#endif
             return;
         case 0xd:
         case 0xe:
@@ -872,10 +669,6 @@ void write_nibble_gx( long addr, int val ) {
                     */
                     return;
                 }
-#ifdef DEBUG_BAD_MEM
-            fprintf( stderr, "%.5lx: write to ROM at %.5lx\n", saturn.PC,
-                     addr );
-#endif
             return;
     }
     if ( device.display_touched || !disp.mapped )
@@ -982,34 +775,18 @@ int read_nibble_gx( long addr ) {
                  saturn.mem_cntl[ MCTL_BANK_GX ].config[ 0 ] == 0x7f000 ) {
                 if ( addr == 0x7f000 ) {
                     saturn.bank_switch = 0;
-#ifdef DEBUG_BANK_SWITCH
-                    fprintf( stderr, "%.5lx: disable bank switch\n",
-                             saturn.PC );
-#endif
                 }
                 if ( addr >= 0x7f040 && addr < 0x7f080 ) {
                     saturn.bank_switch = ( addr - 0x7f040 ) / 2;
-#ifdef DEBUG_BANK_SWITCH
-                    fprintf( stderr, "%.5lx: switch to bank %d\n", saturn.PC,
-                             saturn.bank_switch );
-#endif
                 }
                 return 0x7;
             }
             if ( addr >= 0x7e000 && addr < 0x7f000 &&
                  saturn.mem_cntl[ MCTL_PORT1_GX ].config[ 0 ] == 0x7e000 ) {
-#ifdef DEBUG_PORTS
-                fprintf( stderr, "%.5lx: read from port 1 at %.5lx\n",
-                         saturn.PC, addr );
-#endif
                 return 0x7;
             }
             if ( addr >= 0x7e000 && addr < 0x7f000 &&
                  saturn.mem_cntl[ MCTL_PORT2_GX ].config[ 0 ] == 0x7e000 ) {
-#ifdef DEBUG_PORTS
-                fprintf( stderr, "%.5lx: read from port 2 at %.5lx\n",
-                         saturn.PC, addr );
-#endif
                 return 0x7;
             }
             return saturn.rom[ addr ];
@@ -1032,17 +809,9 @@ int read_nibble_gx( long addr ) {
                 if ( addr < 0x91000 ) {
                     if ( addr == 0x90000 ) {
                         saturn.bank_switch = 0;
-#ifdef DEBUG_BANK_SWITCH
-                        fprintf( stderr, "%.5lx: disable bank switch\n",
-                                 saturn.PC );
-#endif
                     }
                     if ( addr >= 0x90040 && addr < 0x90080 ) {
                         saturn.bank_switch = ( addr - 0x90040 ) / 2;
-#ifdef DEBUG_BANK_SWITCH
-                        fprintf( stderr, "%.5lx: switch to bank %d\n",
-                                 saturn.PC, saturn.bank_switch );
-#endif
                     }
                     return 0x7;
                 }
@@ -1231,34 +1000,18 @@ int read_nibble_crc_gx( long addr ) {
                  saturn.mem_cntl[ MCTL_BANK_GX ].config[ 0 ] == 0x7f000 ) {
                 if ( addr == 0x7f000 ) {
                     saturn.bank_switch = 0;
-#ifdef DEBUG_BANK_SWITCH
-                    fprintf( stderr, "%.5lx: disable bank switch\n",
-                             saturn.PC );
-#endif
                 }
                 if ( addr >= 0x7f040 && addr < 0x7f080 ) {
                     saturn.bank_switch = ( addr - 0x7f040 ) / 2;
-#ifdef DEBUG_BANK_SWITCH
-                    fprintf( stderr, "%.5lx: switch to bank %d\n", saturn.PC,
-                             saturn.bank_switch );
-#endif
                 }
                 return 0x7;
             }
             if ( addr >= 0x7e000 && addr < 0x7f000 &&
                  saturn.mem_cntl[ MCTL_PORT1_GX ].config[ 0 ] == 0x7e000 ) {
-#ifdef DEBUG_PORTS
-                fprintf( stderr, "%.5lx: read from port 1 at %.5lx\n",
-                         saturn.PC, addr );
-#endif
                 return 0x7;
             }
             if ( addr >= 0x7e000 && addr < 0x7f000 &&
                  saturn.mem_cntl[ MCTL_PORT2_GX ].config[ 0 ] == 0x7e000 ) {
-#ifdef DEBUG_PORTS
-                fprintf( stderr, "%.5lx: read from port 2 at %.5lx\n",
-                         saturn.PC, addr );
-#endif
                 return 0x7;
             }
             return calc_crc( saturn.rom[ addr ] );
@@ -1281,17 +1034,9 @@ int read_nibble_crc_gx( long addr ) {
                 if ( addr < 0x91000 ) {
                     if ( addr == 0x90000 ) {
                         saturn.bank_switch = 0;
-#ifdef DEBUG_BANK_SWITCH
-                        fprintf( stderr, "%.5lx: disable bank switch\n",
-                                 saturn.PC );
-#endif
                     }
                     if ( addr >= 0x90040 && addr < 0x90080 ) {
                         saturn.bank_switch = ( addr - 0x90040 ) / 2;
-#ifdef DEBUG_BANK_SWITCH
-                        fprintf( stderr, "%.5lx: switch to bank %d\n",
-                                 saturn.PC, saturn.bank_switch );
-#endif
                     }
                     return 0x7;
                 }

@@ -15,12 +15,6 @@
 #endif
 extern int throttle;
 
-#if 0
-#define DEBUG_TIMER
-#define DEBUG_SCHED 1
-#define DEBUG_DISP_SCHED
-#endif
-
 static long jumpaddr;
 
 unsigned long instructions = 0;
@@ -2249,10 +2243,6 @@ inline void schedule( void ) {
     steps = instructions - old_sched_instr;
     old_sched_instr = instructions;
 
-#ifdef DEBUG_SCHED
-    fprintf( stderr, "schedule called after %ld instructions\n", steps );
-#endif
-
     if ( ( sched_timer2 -= steps ) <= 0 ) {
         if ( !saturn.intenable ) {
             sched_timer2 = SCHED_TIMER2;
@@ -2270,11 +2260,6 @@ inline void schedule( void ) {
     }
     schedule_event = sched_timer2;
 
-#ifdef DEBUG_SCHED
-    fprintf( stderr, "next timer 2 step: %ld, event: %ld\n", sched_timer2,
-             schedule_event );
-#endif
-
     if ( device_check ) {
         device_check = 0;
         if ( ( sched_display -= steps ) <= 0 ) {
@@ -2282,10 +2267,6 @@ inline void schedule( void ) {
                 device.display_touched -= steps;
             if ( device.display_touched < 0 )
                 device.display_touched = 1;
-#ifdef DEBUG_DISP_SCHED
-            fprintf( stderr, "check_device: disp_when %d, disp_touched %d\n",
-                     sched_display, device.display_touched );
-#endif
         }
         check_devices();
         sched_display = SCHED_NEVER;
@@ -2305,11 +2286,6 @@ inline void schedule( void ) {
     }
     if ( sched_receive < schedule_event )
         schedule_event = sched_receive;
-
-#ifdef DEBUG_SCHED
-    fprintf( stderr, "next receive: %ld, event: %ld\n", sched_receive,
-             schedule_event );
-#endif
 
     if ( ( sched_adjtime -= steps ) <= 0 ) {
 
@@ -2348,11 +2324,6 @@ inline void schedule( void ) {
     if ( sched_adjtime < schedule_event )
         schedule_event = sched_adjtime;
 
-#ifdef DEBUG_SCHED
-    fprintf( stderr, "next adjtime: %ld, event: %ld\n", sched_adjtime,
-             schedule_event );
-#endif
-
     if ( ( sched_timer1 -= steps ) <= 0 ) {
         if ( !saturn.intenable ) {
             sched_timer1 = SCHED_TIMER1;
@@ -2368,11 +2339,6 @@ inline void schedule( void ) {
     }
     if ( sched_timer1 < schedule_event )
         schedule_event = sched_timer1;
-
-#ifdef DEBUG_SCHED
-    fprintf( stderr, "next timer 1 step: %ld, event: %ld\n", sched_timer1,
-             schedule_event );
-#endif
 
     if ( ( sched_statistics -= steps ) <= 0 ) {
         sched_statistics = SCHED_STATISTICS;
@@ -2402,27 +2368,9 @@ inline void schedule( void ) {
         saturn.t1_tick = t1_i_per_tick;
         saturn.t2_tick = t2_i_per_tick;
 
-#ifdef DEBUG_TIMER
-        if ( delta_t_1 > 0 ) {
-#if 0
-      fprintf(stderr, "I/s = %ld, T1 I/TICK = %d (%ld), T2 I/TICK = %d (%ld)\n",
-              saturn.i_per_s, saturn.t1_tick, t1_i_per_tick,
-              saturn.t2_tick, t2_i_per_tick);
-#else
-            fprintf(
-                stderr, "I/s = %ld, T1 I/TICK = %d, T2 I/TICK = %d (%ld)\n",
-                saturn.i_per_s, saturn.t1_tick, saturn.t2_tick, t2_i_per_tick );
-#endif
-        }
-#endif
     }
     if ( sched_statistics < schedule_event )
         schedule_event = sched_statistics;
-
-#ifdef DEBUG_SCHED
-    fprintf( stderr, "next statistics: %ld, event: %ld\n", sched_statistics,
-             schedule_event );
-#endif
 
     if ( ( sched_instr_rollover -= steps ) <= 0 ) {
         sched_instr_rollover = SCHED_INSTR_ROLLOVER;
@@ -2434,11 +2382,6 @@ inline void schedule( void ) {
     }
     if ( sched_instr_rollover < schedule_event )
         schedule_event = sched_instr_rollover;
-
-#ifdef DEBUG_SCHED
-    fprintf( stderr, "next instruction rollover: %ld, event: %ld\n",
-             sched_instr_rollover, schedule_event );
-#endif
 
     schedule_event--;
 

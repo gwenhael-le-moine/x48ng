@@ -24,8 +24,6 @@ extern int rece_instr;
 static char* wire_name = ( char* )0;
 static char* ir_name = ( char* )0;
 
-/* #define DEBUG_SERIAL */
-
 void update_connection_display( void ) {
     if ( wire_fd == -1 ) {
         if ( wire_name )
@@ -384,10 +382,6 @@ void serial_baud( int baud ) {
 }
 
 void transmit_char( void ) {
-#ifdef DEBUG_SERIALx
-    fprintf( stderr, "XMT %s\n", ( saturn.ir_ctrl & 0x04 ) ? "IR" : "wire" );
-#endif
-
     if ( saturn.ir_ctrl & 0x04 ) {
         if ( ir_fd == -1 ) {
             saturn.tcs &= 0x0e;
@@ -405,14 +399,6 @@ void transmit_char( void ) {
             return;
         }
     }
-
-#ifdef DEBUG_SERIAL
-    if ( isprint( saturn.tbr ) ) {
-        fprintf( stderr, "-> \'%c\'\n", saturn.tbr );
-    } else {
-        fprintf( stderr, "-> %x\n", saturn.tbr );
-    }
-#endif
 
     if ( saturn.ir_ctrl & 0x04 ) {
         if ( write( ir_fd, &saturn.tbr, 1 ) == 1 ) {
@@ -459,10 +445,6 @@ void receive_char() {
     static unsigned char buf[ NR_BUFFER + 1 ];
     static int nrd = 0, bp = 0;
 
-#ifdef DEBUG_SERIALx
-    fprintf( stderr, "RCV %s\n", ( saturn.ir_ctrl & 0x04 ) ? "IR" : "wire" );
-#endif
-
     rece_instr = 0;
 
     if ( saturn.ir_ctrl & 0x04 ) {
@@ -490,9 +472,6 @@ void receive_char() {
         }
         if ( ( nfd = select( nfd, &rfds, ( fd_set* )0, ( fd_set* )0, &tout ) ) >
              0 ) {
-#ifdef DEBUG_SERIAL
-            fprintf( stderr, "select = %d\n", nfd );
-#endif
             if ( saturn.ir_ctrl & 0x04 ) {
                 if ( FD_ISSET( ir_fd, &rfds ) ) {
                     nrd = read( ir_fd, buf, NR_BUFFER );

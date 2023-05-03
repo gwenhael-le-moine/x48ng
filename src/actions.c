@@ -1,9 +1,3 @@
-/* #define DEBUG_INTERRUPT 1 */
-/* #define DEBUG_KBD_INT 1 */
-/* #define DEBUG_SHUTDOWN 1 */
-/* #define DEBUG_CONFIG 1 */
-/* #define DEBUG_ID 1 */
-
 #include "config.h"
 
 #include <stdio.h>
@@ -40,9 +34,6 @@ void do_in( void ) {
     for ( i = 0; i < 9; i++ )
         if ( out & ( 1 << i ) )
             in |= saturn.keybuf.rows[ i ];
-#ifdef DEBUG_INOUT
-    fprintf( stderr, "saturn.OUT=%.3x, saturn.IN=%.4x\n", out, in );
-#endif
 
     // PATCH
     // http://svn.berlios.de/wsvn/x48?op=comp&compare[]=/trunk@12&compare[]=/trunk@13
@@ -150,19 +141,6 @@ void do_reset( void ) {
         saturn.mem_cntl[ i ].config[ 0 ] = 0x0;
         saturn.mem_cntl[ i ].config[ 1 ] = 0x0;
     }
-
-#ifdef DEBUG_CONFIG
-    fprintf( stderr, "%.5lx: RESET\n", saturn.PC );
-    for ( i = 0; i < 6; i++ ) {
-        if ( saturn.mem_cntl[ i ].unconfigured )
-            fprintf( stderr, "MEMORY CONTROLLER %d is unconfigured\n", i );
-        else
-            fprintf( stderr,
-                     "MEMORY CONTROLLER %d is configured to %.5lx, %.5lx\n", i,
-                     saturn.mem_cntl[ i ].config[ 0 ],
-                     saturn.mem_cntl[ i ].config[ 1 ] );
-    }
-#endif
 }
 
 void do_inton( void ) { saturn.kbd_ien = 1; }
@@ -171,21 +149,11 @@ void do_intoff( void ) { saturn.kbd_ien = 0; }
 
 void do_return_interupt( void ) {
     if ( saturn.int_pending ) {
-#ifdef DEBUG_INTERRUPT
-        fprintf( stderr, "PC = %.5lx: RTI SERVICE PENDING INTERRUPT\n",
-                 saturn.PC );
-#endif
         saturn.int_pending = 0;
         saturn.intenable = 0;
         saturn.PC = 0xf;
     } else {
-#ifdef DEBUG_INTERRUPT
-        fprintf( stderr, "PC = %.5lx: RETURN INTERRUPT to ", saturn.PC );
-#endif
         saturn.PC = pop_return_addr();
-#ifdef DEBUG_INTERRUPT
-        fprintf( stderr, "%.5lx\n", saturn.PC );
-#endif
         saturn.intenable = 1;
 
         if ( adj_time_pending ) {
@@ -198,9 +166,6 @@ void do_return_interupt( void ) {
 void do_interupt( void ) {
     interrupt_called = 1;
     if ( saturn.intenable ) {
-#ifdef DEBUG_INTERRUPT
-        fprintf( stderr, "PC = %.5lx: INTERRUPT\n", saturn.PC );
-#endif
         push_return_addr( saturn.PC );
         saturn.PC = 0xf;
         saturn.intenable = 0;
@@ -210,16 +175,10 @@ void do_interupt( void ) {
 void do_kbd_int( void ) {
     interrupt_called = 1;
     if ( saturn.intenable ) {
-#ifdef DEBUG_KBD_INT
-        fprintf( stderr, "PC = %.5lx: KBD INT\n", saturn.PC );
-#endif
         push_return_addr( saturn.PC );
         saturn.PC = 0xf;
         saturn.intenable = 0;
     } else {
-#ifdef DEBUG_KBD_INT
-        fprintf( stderr, "PC = %.5lx: KBD INT PENDING\n", saturn.PC );
-#endif
         saturn.int_pending = 1;
     }
 }
@@ -261,19 +220,6 @@ void do_unconfigure( void ) {
             break;
         }
     }
-
-#ifdef DEBUG_CONFIG
-    fprintf( stderr, "%.5lx: UNCNFG %.5x:\n", saturn.PC, conf );
-    for ( i = 0; i < 6; i++ ) {
-        if ( saturn.mem_cntl[ i ].unconfigured )
-            fprintf( stderr, "MEMORY CONTROLLER %d is unconfigured\n", i );
-        else
-            fprintf( stderr,
-                     "MEMORY CONTROLLER %d is configured to %.5lx, %.5lx\n", i,
-                     saturn.mem_cntl[ i ].config[ 0 ],
-                     saturn.mem_cntl[ i ].config[ 1 ] );
-    }
-#endif
 }
 
 void do_configure( void ) {
@@ -294,18 +240,6 @@ void do_configure( void ) {
             break;
         }
     }
-
-#ifdef DEBUG_CONFIG
-    fprintf( stderr, "%.5lx: CONFIG %.5lx:\n", saturn.PC, conf );
-    for ( i = 0; i < 6; i++ ) {
-        if ( saturn.mem_cntl[ i ].unconfigured )
-            fprintf( stderr, "MEMORY CONTROLLER %d is unconfigured\n", i );
-        else
-            fprintf( stderr, "MEMORY CONTROLLER %d at %.5lx, %.5lx\n", i,
-                     saturn.mem_cntl[ i ].config[ 0 ],
-                     saturn.mem_cntl[ i ].config[ 1 ] );
-    }
-#endif
 }
 
 int get_identification( void ) {
@@ -322,26 +256,6 @@ int get_identification( void ) {
         id = chip_id[ 2 * i + ( 2 - saturn.mem_cntl[ i ].unconfigured ) ];
     else
         id = 0;
-
-#ifdef DEBUG_ID
-    fprintf( stderr, "%.5lx: C=ID, returning: %x\n", saturn.PC, id );
-    for ( i = 0; i < 6; i++ ) {
-        if ( saturn.mem_cntl[ i ].unconfigured == 2 )
-            fprintf( stderr, "MEMORY CONTROLLER %d is unconfigured\n", i );
-        else if ( saturn.mem_cntl[ i ].unconfigured == 1 ) {
-            if ( i == 0 )
-                fprintf( stderr, "MEMORY CONTROLLER %d unconfigured\n", i );
-            else
-                fprintf( stderr,
-                         "MEMORY CONTROLLER %d configured to ????? %.5lx\n", i,
-                         saturn.mem_cntl[ i ].config[ 1 ] );
-        } else
-            fprintf( stderr,
-                     "MEMORY CONTROLLER %d configured to %.5lx, %.5lx\n", i,
-                     saturn.mem_cntl[ i ].config[ 0 ],
-                     saturn.mem_cntl[ i ].config[ 1 ] );
-    }
-#endif
 
     for ( i = 0; i < 3; i++ ) {
         saturn.C[ i ] = id & 0x0f;
@@ -369,19 +283,9 @@ void do_shutdown( void ) {
     start_timer( IDLE_TIMER );
 
     if ( is_zero_register( saturn.OUT, OUT_FIELD ) ) {
-#ifdef DEBUG_SHUTDOWN
-        fprintf( stderr, "%.5lx: SHUTDN: PC = 0\n", saturn.PC );
-#endif
         saturn.intenable = 1;
         saturn.int_pending = 0;
     }
-
-#ifdef DEBUG_SHUTDOWN
-    fprintf( stderr, "%.5lx:\tSHUTDN: Timer 1 Control = %x, Timer 1 = %d\n",
-             saturn.PC, saturn.t1_ctrl, saturn.timer1 );
-    fprintf( stderr, "%.5lx:\tSHUTDN: Timer 2 Control = %x, Timer 2 = %ld\n",
-             saturn.PC, saturn.t2_ctrl, saturn.timer2 );
-#endif
 
     if ( in_debugger )
         wake = 1;
@@ -512,24 +416,9 @@ void push_return_addr( long addr ) {
         saturn.rstkp--;
     }
     saturn.rstk[ saturn.rstkp ] = addr;
-#ifdef DEBUG_RSTK
-    fprintf( stderr, "PUSH %.5x:\n", addr );
-    for ( i = saturn.rstkp; i >= 0; i-- ) {
-        fprintf( stderr, "RSTK[%d] %.5x\n", i, saturn.rstk[ i ] );
-    }
-#endif
 }
 
 long pop_return_addr( void ) {
-#ifdef DEBUG_RSTK
-    int i;
-
-    for ( i = saturn.rstkp; i >= 0; i-- ) {
-        fprintf( stderr, "RSTK[%d] %.5x\n", i, saturn.rstk[ i ] );
-    }
-    fprintf( stderr, "POP %.5x:\n",
-             ( saturn.rstkp >= 0 ) ? saturn.rstk[ saturn.rstkp ] : 0 );
-#endif
     if ( saturn.rstkp < 0 )
         return 0;
     return saturn.rstk[ saturn.rstkp-- ];
