@@ -9,7 +9,7 @@ LIBS = -lm -lhistory -lreadline
 GUI = x11
 
 ifeq ($(GUI), x11)
-	CFLAGS += $(shell pkg-config --cflags x11 xext readline) -D_GNU_SOURCE=1 -DGUI_IS_X11=1 -DHAVE_XSHM=1
+	CFLAGS += $(shell pkg-config --cflags x11 xext readline) -D_GNU_SOURCE=1 -DGUI_IS_X11=1
 	LIBS += $(shell pkg-config --libs x11 xext readline)
 endif
 ifeq ($(GUI), sdl1)
