@@ -529,10 +529,8 @@ static void do_load( int argc, char** argv ) {
             init_display();
             update_display();
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
             if ( disp.display_update )
                 refresh_display();
-#endif
 #endif
         } else {
             printf( "Loading emulator-state from files failed.\n" );
@@ -1177,10 +1175,8 @@ int debug( void ) {
         device.display_touched = 0;
         update_display();
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
         if ( disp.display_update )
             refresh_display();
-#endif
 #endif
     }
 

@@ -51,11 +51,9 @@ static char* defaults[] = {
     "*disassemblerMnemonics:	class",
     0 };
 
-#ifdef HAVE_XSHM
 extern int XShmQueryExtension( Display* );
 extern int XShmGetEventBase( Display* );
 static int CompletionType = -1;
-#endif
 
 extern int saved_argc;
 extern char** saved_argv;
@@ -71,6 +69,9 @@ Window iconW = 0;
 
 disp_t disp;
 
+keypad_t keypad;
+color_t* colors;
+
 #if defined( GUI_IS_X11 )
 Atom wm_delete_window, wm_save_yourself, wm_protocols;
 Atom ol_decor_del, ol_decor_icon_name;
@@ -81,21 +82,15 @@ Pixmap icon_text_pix;
 Pixmap icon_disp_pix;
 static int last_icon_state = -1;
 
-#ifdef HAVE_XSHM
 int shm_flag;
 int xerror_flag;
-#endif
 
 int dynamic_color;
 int direct_color;
 int does_backing_store;
 int color_mode;
 int icon_color_mode;
-#endif
-#if defined( GUI_IS_SDL1 )
-keypad_t keypad;
-color_t* colors;
-
+#elif defined( GUI_IS_SDL1 )
 // This will take the value of the defines, but can be run-time modified
 unsigned KEYBOARD_HEIGHT, KEYBOARD_WIDTH, TOP_SKIP, SIDE_SKIP, BOTTOM_SKIP,
     DISP_KBD_SKIP, DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_OFFSET_X,
@@ -103,267 +98,451 @@ unsigned KEYBOARD_HEIGHT, KEYBOARD_WIDTH, TOP_SKIP, SIDE_SKIP, BOTTOM_SKIP,
     KBD_UPLINE;
 #endif
 
+color_t colors_sx[] = { { "white",
+                          255,
+                          255,
+                          255
 #if defined( GUI_IS_X11 )
-typedef struct keypad_t {
-    unsigned int width;
-    unsigned int height;
-    Pixmap pixmap;
-} keypad_t;
+                          ,
+                          255,
+                          255,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "left",
+                          255,
+                          166,
+                          0
+#if defined( GUI_IS_X11 )
+                          ,
+                          255,
+                          230,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "right",
+                          0,
+                          210,
+                          255
+#if defined( GUI_IS_X11 )
+                          ,
+                          255,
+                          169,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "but_top",
+                          109,
+                          93,
+                          93
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          91,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "button",
+                          90,
+                          77,
+                          77
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          81,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "but_bot",
+                          76,
+                          65,
+                          65
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          69,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "lcd_col",
+                          202,
+                          221,
+                          92
+#if defined( GUI_IS_X11 )
+                          ,
+                          255,
+                          205,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "pix_col",
+                          0,
+                          0,
+                          128
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          20,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "pad_top",
+                          109,
+                          78,
+                          78
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          88,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "pad",
+                          90,
+                          64,
+                          64
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          73,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "pad_bot",
+                          76,
+                          54,
+                          54
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          60,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "disp_pad_top",
+                          155,
+                          118,
+                          84
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          124,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "disp_pad",
+                          124,
+                          94,
+                          67
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          99,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "disp_pad_bot",
+                          100,
+                          75,
+                          53
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          79,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "logo",
+                          204,
+                          169,
+                          107
+#if defined( GUI_IS_X11 )
+                          ,
+                          255,
+                          172,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "logo_back",
+                          64,
+                          64,
+                          64
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          65,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "label",
+                          202,
+                          184,
+                          144
+#if defined( GUI_IS_X11 )
+                          ,
+                          255,
+                          185,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "frame",
+                          0,
+                          0,
+                          0
+#if defined( GUI_IS_X11 )
+                          ,
+                          255,
+                          0,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "underlay",
+                          60,
+                          42,
+                          42
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          48,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "black",
+                          0,
+                          0,
+                          0
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          0,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { 0 } };
 
-keypad_t keypad;
-color_t* colors;
+color_t colors_gx[] = { { "white",
+                          255,
+                          255,
+                          255
+#if defined( GUI_IS_X11 )
+                          ,
+                          255,
+                          255,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "left",
+                          255,
+                          186,
+                          255
+#if defined( GUI_IS_X11 )
+                          ,
+                          255,
+                          220,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "right",
+                          0,
+                          255,
+                          204
+#if defined( GUI_IS_X11 )
+                          ,
+                          255,
+                          169,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "but_top",
+                          104,
+                          104,
+                          104
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          104,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "button",
+                          88,
+                          88,
+                          88
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          88,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "but_bot",
+                          74,
+                          74,
+                          74
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          74,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "lcd_col",
+                          202,
+                          221,
+                          92
+#if defined( GUI_IS_X11 )
+                          ,
+                          255,
+                          205,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "pix_col",
+                          0,
+                          0,
+                          128
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          20,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "pad_top",
+                          88,
+                          88,
+                          88
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          88,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "pad",
+                          74,
+                          74,
+                          74
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          74,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "pad_bot",
+                          64,
+                          64,
+                          64
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          64,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "disp_pad_top",
+                          128,
+                          128,
+                          138
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          128,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "disp_pad",
+                          104,
+                          104,
+                          110
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          104,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "disp_pad_bot",
+                          84,
+                          84,
+                          90
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          84,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "logo",
+                          176,
+                          176,
+                          184
+#if defined( GUI_IS_X11 )
+                          ,
+                          255,
+                          176,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "logo_back",
+                          104,
+                          104,
+                          110
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          104,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "label",
+                          240,
+                          240,
+                          240
+#if defined( GUI_IS_X11 )
+                          ,
+                          255,
+                          240,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "frame",
+                          0,
+                          0,
+                          0
+#if defined( GUI_IS_X11 )
+                          ,
+                          255,
+                          0,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "underlay",
+                          104,
+                          104,
+                          110
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          104,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { "black",
+                          0,
+                          0,
+                          0
+#if defined( GUI_IS_X11 )
+                          ,
+                          0,
+                          0,
+                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
+#endif
+                        },
+                        { 0 } };
 
-color_t colors_sx[] = {
-    { "white",
-      255,
-      255,
-      255,
-      255,
-      255,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "left",
-      255,
-      166,
-      0,
-      255,
-      230,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "right",
-      0,
-      210,
-      255,
-      255,
-      169,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "but_top",
-      109,
-      93,
-      93,
-      0,
-      91,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "button",
-      90,
-      77,
-      77,
-      0,
-      81,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "but_bot",
-      76,
-      65,
-      65,
-      0,
-      69,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "lcd_col",
-      202,
-      221,
-      92,
-      255,
-      205,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "pix_col",
-      0,
-      0,
-      128,
-      0,
-      20,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "pad_top",
-      109,
-      78,
-      78,
-      0,
-      88,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "pad", 90, 64, 64, 0, 73, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "pad_bot",
-      76,
-      54,
-      54,
-      0,
-      60,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "disp_pad_top",
-      155,
-      118,
-      84,
-      0,
-      124,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "disp_pad",
-      124,
-      94,
-      67,
-      0,
-      99,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "disp_pad_bot",
-      100,
-      75,
-      53,
-      0,
-      79,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "logo",
-      204,
-      169,
-      107,
-      255,
-      172,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "logo_back",
-      64,
-      64,
-      64,
-      0,
-      65,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "label",
-      202,
-      184,
-      144,
-      255,
-      185,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "frame", 0, 0, 0, 255, 0, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "underlay",
-      60,
-      42,
-      42,
-      0,
-      48,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "black", 0, 0, 0, 0, 0, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { 0 } };
-
-color_t colors_gx[] = {
-    { "white",
-      255,
-      255,
-      255,
-      255,
-      255,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "left",
-      255,
-      186,
-      255,
-      255,
-      220,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "right",
-      0,
-      255,
-      204,
-      255,
-      169,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "but_top",
-      104,
-      104,
-      104,
-      0,
-      104,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "button",
-      88,
-      88,
-      88,
-      0,
-      88,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "but_bot",
-      74,
-      74,
-      74,
-      0,
-      74,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "lcd_col",
-      202,
-      221,
-      92,
-      255,
-      205,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "pix_col",
-      0,
-      0,
-      128,
-      0,
-      20,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "pad_top",
-      88,
-      88,
-      88,
-      0,
-      88,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "pad", 74, 74, 74, 0, 74, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "pad_bot",
-      64,
-      64,
-      64,
-      0,
-      64,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "disp_pad_top",
-      128,
-      128,
-      138,
-      0,
-      128,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "disp_pad",
-      104,
-      104,
-      110,
-      0,
-      104,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "disp_pad_bot",
-      84,
-      84,
-      90,
-      0,
-      84,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "logo",
-      176,
-      176,
-      184,
-      255,
-      176,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "logo_back",
-      104,
-      104,
-      110,
-      0,
-      104,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "label",
-      240,
-      240,
-      240,
-      255,
-      240,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "frame", 0, 0, 0, 255, 0, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "underlay",
-      104,
-      104,
-      110,
-      0,
-      104,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "black", 0, 0, 0, 0, 0, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { 0 } };
-
-#elif defined( GUI_IS_SDL1 )
+#if defined( GUI_IS_SDL1 )
 
 // Control how the screen update is performed: at regular intervals (delayed)
 // or immediatly Note: this is only for the LCD. The annunciators and the
@@ -371,50 +550,6 @@ color_t colors_gx[] = {
 // #define DELAYEDDISPUPDATE
 // Interval in millisecond between screen updates
 #define DISPUPDATEINTERVAL 200
-
-color_t colors_sx[] = { { "white", 255, 255, 255 },
-                        { "left", 255, 166, 0 },
-                        { "right", 0, 210, 255 },
-                        { "but_top", 109, 93, 93 },
-                        { "button", 90, 77, 770 },
-                        { "but_bot", 76, 65, 65 },
-                        { "lcd_col", 202, 221, 92 },
-                        { "pix_col", 0, 0, 128 },
-                        { "pad_top", 109, 78, 78 },
-                        { "pad", 90, 64, 64 },
-                        { "pad_bot", 76, 54, 54 },
-                        { "disp_pad_top", 155, 118, 84 },
-                        { "disp_pad", 124, 94, 67 },
-                        { "disp_pad_bot", 100, 75, 53 },
-                        { "logo", 204, 169, 107 },
-                        { "logo_back", 64, 64, 64 },
-                        { "label", 202, 184, 144 },
-                        { "frame", 0, 0, 0 },
-                        { "underlay", 60, 42, 42 },
-                        { "black", 0, 0, 0 },
-                        { 0 } };
-
-color_t colors_gx[] = { { "white", 255, 255, 255 },
-                        { "left", 255, 186, 255 },
-                        { "right", 0, 255, 204 },
-                        { "but_top", 104, 104, 104 },
-                        { "button", 88, 88, 88 },
-                        { "but_bot", 74, 74, 74 },
-                        { "lcd_col", 202, 221, 92 },
-                        { "pix_col", 0, 0, 128 },
-                        { "pad_top", 88, 88, 88 },
-                        { "pad", 74, 74, 74 },
-                        { "pad_bot", 64, 64, 64 },
-                        { "disp_pad_top", 128, 128, 138 },
-                        { "disp_pad", 104, 104, 110 },
-                        { "disp_pad_bot", 84, 84, 90 },
-                        { "logo", 176, 176, 184 },
-                        { "logo_back", 104, 104, 110 },
-                        { "label", 240, 240, 240 },
-                        { "frame", 0, 0, 0 },
-                        { "underlay", 104, 104, 110 },
-                        { "black", 0, 0, 0 },
-                        { 0 } };
 
 unsigned int ARGBColors[ BLACK + 1 ];
 #endif
@@ -1173,12 +1308,8 @@ void adjust_contrast( int contrast ) {
         colors[ PIXEL ].b = b;
         AllocColors();
         XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
-#ifdef HAVE_XSHM
         disp.display_update = UPDATE_DISP | UPDATE_MENU;
         refresh_display();
-#else
-        redraw_display();
-#endif
         redraw_annunc();
         last_icon_state = -1;
         refresh_icon();
@@ -1193,12 +1324,8 @@ void adjust_contrast( int contrast ) {
         } else {
             XFreeColors( dpy, cmap, &old, 1, 0 );
             XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
-#ifdef HAVE_XSHM
             disp.display_update = UPDATE_DISP | UPDATE_MENU;
             refresh_display();
-#else
-            redraw_display();
-#endif
             redraw_annunc();
             last_icon_state = -1;
             refresh_icon();
@@ -1408,7 +1535,6 @@ int InitDisplay( int argc, char** argv ) {
      */
     does_backing_store = XDoesBackingStore( XScreenOfDisplay( dpy, screen ) );
 
-#ifdef HAVE_XSHM
     /*
      * Try to use XShm-Extension
      */
@@ -1422,13 +1548,6 @@ int InitDisplay( int argc, char** argv ) {
     }
     if ( shm_flag )
         fprintf( stderr, "%s: using XShm extension.\n", progname );
-#else
-    if ( useXShm ) {
-        if ( !quiet )
-            fprintf( stderr, "%s: not compiled to use XShm extension.\n",
-                     progname );
-    }
-#endif
 
     return 0;
 }
@@ -2800,13 +2919,11 @@ void DrawIcon( void ) {
                hp48_icon_height, 0, 0 );
 }
 
-#ifdef HAVE_XSHM
 int handle_xerror( Display* the_dpy, XErrorEvent* eev ) {
     xerror_flag = 1;
 
     return 0;
 }
-#endif
 
 void CreateDispWindow( void ) {
     XSetWindowAttributes xswa;
@@ -2843,7 +2960,6 @@ void CreateDispWindow( void ) {
 
     XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
 
-#ifdef HAVE_XSHM
     disp.display_update = UPDATE_DISP | UPDATE_MENU;
 
     xerror_flag = 0;
@@ -2993,15 +3109,12 @@ shm_error:
     XFlush( dpy );
 
     if ( !shm_flag ) {
-#endif
         rect.x = 5;
         rect.y = 0;
         rect.width = 262;
         rect.height = disp.h;
         XSetClipRectangles( dpy, disp.gc, 0, 0, &rect, 1, Unsorted );
-#ifdef HAVE_XSHM
     }
-#endif
 }
 
 int CreateWindows( int argc, char** argv ) {
@@ -3313,12 +3426,10 @@ int CreateWindows( int argc, char** argv ) {
     DrawButtons();
     DrawIcon();
 
-#ifdef HAVE_XSHM
     if ( shm_flag ) {
         XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
         XFillRectangle( dpy, disp.win, disp.gc, 5, 20, 262, 128 );
     }
-#endif
 
     return 0;
 }
@@ -3433,7 +3544,6 @@ int key_event( int b, XEvent* xev ) {
     return 0;
 }
 
-#ifdef HAVE_XSHM
 void refresh_display( void ) {
     if ( shm_flag ) {
         if ( disp.display_update & UPDATE_DISP ) {
@@ -3449,10 +3559,8 @@ void refresh_display( void ) {
         disp.display_update = 0;
     }
 }
-#endif
 
 void DrawDisp( void ) {
-#ifdef HAVE_XSHM
     if ( shm_flag ) {
         XShmPutImage( dpy, disp.win, disp.gc, disp.disp_image, disp.offset, 0,
                       5, 20, 262, ( unsigned int )( disp.lines + 2 ), 0 );
@@ -3463,11 +3571,9 @@ void DrawDisp( void ) {
         }
         disp.display_update = 0;
     } else {
-#endif
         redraw_display();
-#ifdef HAVE_XSHM
     }
-#endif
+
     redraw_annunc();
 }
 

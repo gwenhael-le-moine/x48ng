@@ -270,10 +270,8 @@ void do_shutdown( void ) {
         device.display_touched = 0;
         update_display();
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
         if ( disp.display_update )
             refresh_display();
-#endif
 #endif
     }
 
@@ -300,10 +298,8 @@ void do_shutdown( void ) {
             got_alarm = 0;
 
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
             if ( disp.display_update )
                 refresh_display();
-#endif
 #endif
 
             ticks = get_t1_t2();

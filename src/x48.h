@@ -6,11 +6,9 @@
 #include <X11/Xresource.h>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
-#ifdef HAVE_XSHM
 #include <X11/extensions/XShm.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
-#endif
 #elif defined( GUI_IS_SDL1 )
 #include <SDL/SDL.h>
 #include <SDL/SDL_gfxPrimitives.h>
@@ -145,12 +143,13 @@ extern color_t* colors;
 #define UPDATE_DISP 2
 #endif
 
-#if defined( GUI_IS_SDL1 )
 typedef struct keypad_t {
     unsigned int width;
     unsigned int height;
-} keypad_t;
+#if defined( GUI_IS_X11 )
+    Pixmap pixmap;
 #endif
+} keypad_t;
 
 typedef struct disp_t {
     unsigned int w, h;
@@ -162,22 +161,18 @@ typedef struct disp_t {
     int offset;
     int lines;
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
     int display_update;
     XShmSegmentInfo disp_info;
     XImage* disp_image;
     XShmSegmentInfo menu_info;
     XImage* menu_image;
 #endif
-#endif
 } disp_t;
 
 #if defined( GUI_IS_X11 )
 extern disp_t disp;
 
-#ifdef HAVE_XSHM
 extern int shm_flag;
-#endif
 
 extern Display* dpy;
 extern int screen;
@@ -264,9 +259,7 @@ extern void exit_x48( int tell_x11 );
 
 #if defined( GUI_IS_X11 )
 
-#ifdef HAVE_XSHM
 extern void refresh_display( void );
-#endif
 
 #elif defined( GUI_IS_SDL1 )
 

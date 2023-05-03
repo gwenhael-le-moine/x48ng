@@ -56,7 +56,7 @@ void init_nibble_maps( void ) {
         nibble_maps[ i ] =
             XCreateBitmapFromData( dpy, disp.win, ( char* )nibbles[ i ], 8, 2 );
     }
-#ifdef HAVE_XSHM
+
     if ( shm_flag ) {
         if ( disp.disp_image->bitmap_bit_order == MSBFirst ) {
             nibble_bits[ 0x0 ] = 0x00; /* ---- */
@@ -94,10 +94,10 @@ void init_nibble_maps( void ) {
             nibble_bits[ 0xf ] = 0xff; /* **** */
         }
     }
-#endif
 }
-#endif
-#if defined( GUI_IS_SDL1 )
+
+#elif defined( GUI_IS_SDL1 )
+
 ann_struct_t ann_tbl[] = {
     { ANN_LEFT, 16, 4, ann_left_width, ann_left_height, ann_left_bits },
     { ANN_RIGHT, 61, 4, ann_right_width, ann_right_height, ann_right_bits },
@@ -205,11 +205,9 @@ void update_display( void ) {
     static int old_offset = -1;
     static int old_lines = -1;
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
     int addr_pad;
     int val, line_pad, line_length;
     word_20 data_addr, data_addr_2;
-#endif
 #endif
 
     if ( !disp.mapped ) {
@@ -221,7 +219,6 @@ void update_display( void ) {
     if ( display.on ) {
         addr = display.disp_start;
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
         if ( shm_flag ) {
             data_addr = 0;
             data_addr_2 = disp.disp_image->bytes_per_line;
@@ -242,7 +239,6 @@ void update_display( void ) {
             }
             disp.display_update |= UPDATE_DISP;
         } else {
-#endif
 #endif
             if ( display.offset != old_offset ) {
                 memset(
@@ -265,14 +261,11 @@ void update_display( void ) {
                 addr += display.nibs_per_line;
             }
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
         }
-#endif
 #endif
         if ( i < DISP_ROWS ) {
             addr = display.menu_start;
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
             if ( shm_flag ) {
                 data_addr = 0;
                 data_addr_2 = disp.menu_image->bytes_per_line;
@@ -292,20 +285,16 @@ void update_display( void ) {
                 disp.display_update |= UPDATE_MENU;
             } else {
 #endif
-#endif
                 for ( ; i < DISP_ROWS; i++ ) {
                     draw_row( addr, i );
                     addr += NIBBLES_PER_ROW;
                 }
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
             }
-#endif
 #endif
         }
     } else {
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
         if ( shm_flag ) {
             memset( disp.disp_image->data, 0,
                     ( size_t )( disp.disp_image->bytes_per_line *
@@ -316,7 +305,6 @@ void update_display( void ) {
             disp.display_update = UPDATE_DISP | UPDATE_MENU;
         } else {
 #endif
-#endif
             memset( disp_buf, 0xf0, sizeof( disp_buf ) );
             for ( i = 0; i < 64; i++ ) {
                 for ( j = 0; j < NIBBLES_PER_ROW; j++ ) {
@@ -324,9 +312,7 @@ void update_display( void ) {
                 }
             }
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
         }
-#endif
 #endif
     }
 }
@@ -343,9 +329,7 @@ void redraw_display( void ) {
 void disp_draw_nibble( word_20 addr, word_4 val ) {
     long offset;
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
     int shm_addr;
-#endif
 #endif
     int x, y;
 
@@ -358,7 +342,6 @@ void disp_draw_nibble( word_20 addr, word_4 val ) {
         if ( y < 0 || y > 63 )
             return;
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
         if ( shm_flag ) {
             shm_addr = ( 2 * y * disp.disp_image->bytes_per_line ) + x;
             disp.disp_image->data[ shm_addr ] = nibble_bits[ val ];
@@ -368,19 +351,15 @@ void disp_draw_nibble( word_20 addr, word_4 val ) {
             disp.display_update |= UPDATE_DISP;
         } else {
 #endif
-#endif
             if ( val != disp_buf[ y ][ x ] ) {
                 disp_buf[ y ][ x ] = val;
                 draw_nibble( x, y, val );
             }
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
         }
-#endif
 #endif
     } else {
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
         if ( shm_flag ) {
             shm_addr = x;
             for ( y = 0; y < display.lines; y++ ) {
@@ -392,7 +371,6 @@ void disp_draw_nibble( word_20 addr, word_4 val ) {
             disp.display_update |= UPDATE_DISP;
         } else {
 #endif
-#endif
             for ( y = 0; y < display.lines; y++ ) {
                 if ( val != disp_buf[ y ][ x ] ) {
                     disp_buf[ y ][ x ] = val;
@@ -400,9 +378,7 @@ void disp_draw_nibble( word_20 addr, word_4 val ) {
                 }
             }
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
         }
-#endif
 #endif
     }
 }
@@ -410,15 +386,12 @@ void disp_draw_nibble( word_20 addr, word_4 val ) {
 void menu_draw_nibble( word_20 addr, word_4 val ) {
     long offset;
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
     int shm_addr;
-#endif
 #endif
     int x, y;
 
     offset = ( addr - display.menu_start );
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
     if ( shm_flag ) {
         shm_addr =
             2 * ( offset / NIBBLES_PER_ROW ) * disp.menu_image->bytes_per_line +
@@ -429,7 +402,6 @@ void menu_draw_nibble( word_20 addr, word_4 val ) {
         disp.display_update |= UPDATE_MENU;
     } else {
 #endif
-#endif
         x = offset % NIBBLES_PER_ROW;
         y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
         if ( val != disp_buf[ y ][ x ] ) {
@@ -437,9 +409,7 @@ void menu_draw_nibble( word_20 addr, word_4 val ) {
             draw_nibble( x, y, val );
         }
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
     }
-#endif
 #endif
 }
 

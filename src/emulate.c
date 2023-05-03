@@ -2379,10 +2379,8 @@ inline void schedule( void ) {
         got_alarm = 0;
 
 #if defined( GUI_IS_X11 )
-#ifdef HAVE_XSHM
         if ( disp.display_update )
             refresh_display();
-#endif
 #endif
 
         get_ui_event();
