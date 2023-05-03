@@ -17,11 +17,6 @@ static int last_annunc_state = -1;
 
 display_t display;
 
-#if defined( GUI_IS_X11 )
-#define DISP_ROWS 64
-#define NIBS_PER_BUFFER_ROW ( NIBBLES_PER_ROW + 2 )
-#endif
-
 unsigned char disp_buf[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
 unsigned char lcd_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
 

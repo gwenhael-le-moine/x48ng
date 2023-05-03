@@ -98,6 +98,9 @@
 
 #define LAST_BUTTON 48
 
+#define DISP_ROWS 64
+#define NIBS_PER_BUFFER_ROW ( NIBBLES_PER_ROW + 2 )
+
 #if defined( GUI_IS_SDL1 )
 #define UPDATE_MENU 1
 #define UPDATE_DISP 2
@@ -270,8 +273,6 @@ extern SDL_Surface* sdlsurface;
 
 void SDLInit( void );
 void SDLDrawAnnunc( char* annunc );
-#define DISP_ROWS 64
-#define NIBS_PER_BUFFER_ROW ( NIBBLES_PER_ROW + 2 )
 
 void SDLCreateAnnunc( void );
 void SDLDrawNibble( int nx, int ny, int val );
