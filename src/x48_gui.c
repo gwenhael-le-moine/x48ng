@@ -6556,6 +6556,7 @@ int get_ui_event( void ) {
 #endif
 
     return 1;
-
 #endif
+
+    return 0;                   /* this is never reached */
 }
