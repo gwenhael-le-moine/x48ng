@@ -962,7 +962,7 @@ int read_mem_file( char* name, word_4* mem, int size ) {
 int read_rom( const char* fname ) {
     int ram_size;
 
-    if ( !read_rom_file( romFileName, &saturn.rom, &rom_size ) )
+    if ( !read_rom_file( fname, &saturn.rom, &rom_size ) )
         return 0;
     dev_memory_init();
 

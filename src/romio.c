@@ -10,7 +10,7 @@
 unsigned int opt_gx = 0;
 unsigned int rom_size = 0;
 
-int read_rom_file( char* name, unsigned char** mem, unsigned int* size ) {
+int read_rom_file( const char* name, unsigned char** mem, unsigned int* size ) {
     struct stat st;
     FILE* fp;
     unsigned char* tmp_mem;
