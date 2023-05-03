@@ -1908,8 +1908,6 @@ void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small,
         XDrawPoint( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 3 ),
                     ( int )( buttons[ i ].h - 3 ) );
     }
-
-    return;
 }
 
 void DrawButtons( void ) {
@@ -1924,7 +1922,6 @@ void DrawButtons( void ) {
                        buttons[ i ].w, buttons[ i ].h, 0, 0 );
         }
     }
-    return;
 }
 
 int DrawButton( int i ) {
@@ -1949,8 +1946,6 @@ void CreateBackground( int width, int height, int w_top, int h_top,
     XSetForeground( dpy, gc, COLOR( DISP_PAD ) );
 
     XFillRectangle( dpy, keypad->pixmap, gc, 0, 0, width, height );
-
-    return;
 }
 
 void CreateKeypad( unsigned int w, unsigned int h, unsigned int offset_y,
@@ -2246,8 +2241,6 @@ void CreateKeypad( unsigned int w, unsigned int h, unsigned int offset_y,
 
         XFreePixmap( dpy, pix );
     }
-
-    return;
 }
 
 void CreateBezel( unsigned int width, unsigned int height,
@@ -2377,8 +2370,6 @@ void CreateBezel( unsigned int width, unsigned int height,
                ( int )( DISPLAY_OFFSET_Y + 1 ),
                ( int )( DISPLAY_OFFSET_X + display_width ),
                ( int )( DISPLAY_OFFSET_Y + display_height - 2 ) );
-
-    return;
 }
 
 void DrawMore( unsigned int w, unsigned int h, unsigned int offset_y,
@@ -2657,17 +2648,11 @@ void DrawMore( unsigned int w, unsigned int h, unsigned int offset_y,
         XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, science_width,
                     science_height, x, y, 1 );
     }
-
-    /*
-     * that's it. Ooph.
-     */
-    return;
 }
 
 void DrawKeypad( keypad_t* keypad ) {
     XCopyArea( dpy, keypad->pixmap, mainW, gc, 0, 0, keypad->width,
                keypad->height, 0, 0 );
-    return;
 }
 
 void CreateIcon( void ) {
@@ -2747,8 +2732,6 @@ void CreateIcon( void ) {
     XFillRectangle( dpy, icon_pix, gc, 0, 0, icon_maps[ ON_MAP ].w,
                     icon_maps[ ON_MAP ].h );
     XSetFillStyle( dpy, gc, FillSolid );
-
-    return;
 }
 
 void refresh_icon( void ) {
@@ -2796,12 +2779,12 @@ void refresh_icon( void ) {
 void DrawIcon( void ) {
     XCopyArea( dpy, icon_pix, iconW, gc, 0, 0, hp48_icon_width,
                hp48_icon_height, 0, 0 );
-    return;
 }
 
 #ifdef HAVE_XSHM
 int handle_xerror( Display* the_dpy, XErrorEvent* eev ) {
     xerror_flag = 1;
+
     return 0;
 }
 #endif
@@ -3000,8 +2983,6 @@ shm_error:
 #ifdef HAVE_XSHM
     }
 #endif
-
-    return;
 }
 
 int CreateWindows( int argc, char** argv ) {

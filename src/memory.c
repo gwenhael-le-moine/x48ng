@@ -681,7 +681,6 @@ void write_nibble_gx( long addr, int val ) {
     if ( addr >= display.menu_start && addr < display.menu_end ) {
         menu_draw_nibble( addr, val );
     }
-    return;
 }
 
 int read_nibble_sx( long addr ) {

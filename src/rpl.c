@@ -1095,8 +1095,6 @@ void decode_rpl_obj_2( word_20 addr, char* typ, char* dat ) {
 
     addr += 5;
     ( *op->func )( &addr, dat );
-
-    return;
 }
 
 char* decode_rpl_obj( word_20 addr, char* buf ) {
