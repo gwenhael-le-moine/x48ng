@@ -4,22 +4,22 @@
 #include "hp48.h"
 
 extern void push_return_addr( long addr );
-extern long pop_return_addr();
+extern long pop_return_addr( void );
 
-extern void init_annunc();
+extern void init_annunc( void );
 
-extern void init_saturn();
+extern void init_saturn( void );
 
-extern void check_timer();
+extern void check_timer( void );
 
 extern void register_to_status( unsigned char* r );
 extern void status_to_register( unsigned char* r );
 extern void swap_register_status( unsigned char* r );
-extern void clear_status();
+extern void clear_status( void );
 
 extern long read_nibbles( long addr, int len );
 extern void write_nibbles( long addr, long val, int len );
-extern void dev_memory_init();
+extern void dev_memory_init( void );
 
 extern void set_program_stat( int n );
 extern void clear_program_stat( int n );
@@ -52,16 +52,16 @@ extern void recall_n( unsigned char* reg, word_20 dat, int n );
 extern long dat_to_addr( unsigned char* dat );
 extern void addr_to_dat( long addr, unsigned char* dat );
 
-extern void do_in();
-extern void do_reset();
-extern void do_configure();
-extern void do_unconfigure();
-extern void do_inton();
-extern void do_intoff();
-extern void do_return_interupt();
-extern void do_reset_interrupt_system();
-extern void do_shutdown();
-extern int get_identification();
+extern void do_in( void );
+extern void do_reset( void );
+extern void do_configure( void );
+extern void do_unconfigure( void );
+extern void do_inton( void );
+extern void do_intoff( void );
+extern void do_return_interupt( void );
+extern void do_reset_interrupt_system( void );
+extern void do_shutdown( void );
+extern int get_identification( void );
 
 extern void add_p_plus_one( unsigned char* r );
 extern void add_register_constant( unsigned char* res, int code, int val );

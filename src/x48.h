@@ -246,14 +246,14 @@ extern button_t buttons_sx[];
 extern button_t buttons_gx[];
 
 extern int InitDisplay( int argc, char** argv );
-extern void SDLCreateHP();
+extern void SDLCreateHP( void );
 #endif
 
-extern int get_ui_event();
+extern int get_ui_event( void );
 
 extern void adjust_contrast( int contrast );
 #if defined( GUI_IS_X11 )
-extern void refresh_icon();
+extern void refresh_icon( void );
 #endif
 
 extern void ShowConnections( char* w, char* i );
@@ -263,7 +263,7 @@ extern void exit_x48( int tell_x11 );
 #if defined( GUI_IS_X11 )
 
 #ifdef HAVE_XSHM
-extern void refresh_display();
+extern void refresh_display( void );
 #endif
 
 #elif defined( GUI_IS_SDL1 )
@@ -273,15 +273,15 @@ extern unsigned int ARGBColors[ BLACK + 1 ];
 extern SDL_Surface* sdlwindow;
 extern SDL_Surface* sdlsurface;
 
-void SDLInit();
+void SDLInit( void );
 void SDLDrawAnnunc( char* annunc );
 #define DISP_ROWS 64
 #define NIBS_PER_BUFFER_ROW ( NIBBLES_PER_ROW + 2 )
 
-void SDLCreateAnnunc();
+void SDLCreateAnnunc( void );
 void SDLDrawNibble( int nx, int ny, int val );
-void SDLDrawKeypad();
-void SDLDrawButtons();
+void SDLDrawKeypad( void );
+void SDLDrawButtons( void );
 SDL_Surface* SDLCreateSurfFromData( unsigned int w, unsigned int h,
                                     unsigned char* data, unsigned int coloron,
                                     unsigned int coloroff );
@@ -290,8 +290,8 @@ SDL_Surface* SDLCreateARGBSurfFromData( unsigned int w, unsigned int h,
                                         unsigned int xpcolor );
 void SDLDrawSmallString( int x, int y, const char* string, unsigned int length,
                          unsigned int coloron, unsigned int coloroff );
-void SDLCreateColors();
-void SDLDrawKeyLetter();
+void SDLCreateColors( void );
+void SDLDrawKeyLetter( void );
 unsigned SDLBGRA2ARGB( unsigned color );
 void SDLDrawBezel( unsigned int width, unsigned int height,
                    unsigned int offset_y, unsigned int offset_x );
@@ -303,8 +303,8 @@ void SDLDrawLogo( unsigned int w, unsigned int h, unsigned int cut,
                   int keypad_width, int keypad_height );
 void SDLDrawBackground( int width, int height, int w_top, int h_top );
 void SDLUIShowKey( int hpkey );
-void SDLUIHideKey();
-void SDLUIFeedback();
+void SDLUIHideKey( void );
+void SDLUIFeedback( void );
 SDLWINDOW_t SDLCreateWindow( int x, int y, int w, int h, unsigned color,
                              int framewidth, int inverted );
 void SDLShowWindow( SDLWINDOW_t* win );
@@ -314,8 +314,8 @@ void SDLARGBTo( unsigned color, unsigned* a, unsigned* r, unsigned* g,
 unsigned SDLToARGB( unsigned a, unsigned r, unsigned g, unsigned b );
 void SDLMessageBox( int w, int h, const char* title, const char* text[],
                     unsigned color, unsigned colortext, int center );
-void SDLEventWaitClickOrKey();
-void SDLShowInformation();
+void SDLEventWaitClickOrKey( void );
+void SDLShowInformation( void );
 
 #endif
 

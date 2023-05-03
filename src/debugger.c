@@ -1320,7 +1320,7 @@ int debug( void ) {
     return 0;
 }
 
-int emulate_debug( void ) {
+void emulate_debug( void ) {
     do {
 
         step_instruction();
@@ -1337,6 +1337,4 @@ int emulate_debug( void ) {
         }
 
     } while ( !enter_debugger );
-
-    return 0;
 }

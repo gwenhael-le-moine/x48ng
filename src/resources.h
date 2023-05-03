@@ -33,11 +33,11 @@ extern char* res_class;
 #if defined( GUI_IS_X11 )
 extern XrmDatabase rdb;
 
-extern void usage();
-extern void show_version();
-extern void show_copyright();
-extern void show_warranty();
-extern void get_resources();
+extern void usage( void );
+extern void show_version( void );
+extern void show_copyright( void );
+extern void show_warranty( void );
+extern void get_resources( void );
 extern char* get_string_resource_from_db( XrmDatabase db, char* name,
                                           char* class );
 extern char* get_string_resource( char* name, char* class );
@@ -63,7 +63,7 @@ extern XFontStruct* get_font_resource( Display* dpy, char* res_name,
 #endif
 
 #if defined( GUI_IS_SDL1 )
-void get_resources();
+void get_resources( void );
 #endif
 
 #endif /* !_RESOURCES_H */

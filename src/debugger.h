@@ -17,11 +17,11 @@ extern int enter_debugger;
 extern int in_debugger;
 extern int exec_flags;
 
-extern void init_debugger();
-extern int debug();
-extern int emulate_debug();
+extern void init_debugger( void );
+extern int debug( void );
+extern void emulate_debug( void );
 
-extern int step_instruction();
+extern int step_instruction( void );
 extern char* str_nibbles( word_20 addr, int n );
 
 #endif /* !_DEBUGGER_H */

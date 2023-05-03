@@ -2378,21 +2378,21 @@ inline void schedule( void ) {
     if ( got_alarm ) {
         got_alarm = 0;
 
+#if defined( GUI_IS_X11 )
 #ifdef HAVE_XSHM
         if ( disp.display_update )
             refresh_display();
+#endif
 #endif
 
         get_ui_event();
     }
 }
 
-int emulate( void ) {
+void emulate( void ) {
     struct timeval tv;
-#if defined( GUI_IS_X11 )
     struct timeval tv2;
     struct timezone tz;
-#endif
 
     reset_timer( T1_TIMER );
     reset_timer( RUN_TIMER );
@@ -2417,7 +2417,6 @@ int emulate( void ) {
                                       sizeof( saturn.keybuf.rows[ 0 ] ) );
                   i++ ) {
                 if ( saturn.keybuf.rows[ i ] || throttle ) {
-#if defined( GUI_IS_X11 )
                     gettimeofday( &tv, &tz );
                     while ( ( tv.tv_sec == tv2.tv_sec ) &&
                             ( ( tv.tv_usec - tv2.tv_usec ) < 2 ) ) {
@@ -2427,9 +2426,6 @@ int emulate( void ) {
                     tv2.tv_usec = tv.tv_usec;
                     tv2.tv_sec = tv.tv_sec;
                     break;
-#elif defined( GUI_IS_SDL1 )
-                    gettimeofday( &tv, NULL );
-#endif
                 }
             }
         }
@@ -2444,6 +2440,4 @@ int emulate( void ) {
             schedule();
         }
     } while ( !enter_debugger );
-
-    return 0;
 }
