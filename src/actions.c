@@ -405,12 +405,6 @@ void push_return_addr( long addr ) {
     int i;
 
     if ( ++saturn.rstkp >= NR_RSTK ) {
-#if 0
-    fprintf(stderr, "%.5lx: RSTK overflow !!!\n", saturn.PC);
-    for (i = saturn.rstkp - 1; i >= 0; i--) {
-      fprintf(stderr, "\tRSTK[%d] %.5lx\n", i, saturn.rstk[i]);
-    }
-#endif
         for ( i = 1; i < NR_RSTK; i++ )
             saturn.rstk[ i - 1 ] = saturn.rstk[ i ];
         saturn.rstkp--;
