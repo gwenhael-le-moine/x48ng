@@ -171,9 +171,9 @@ typedef struct disp_t {
     XImage* menu_image;
 #endif
 } disp_t;
+extern disp_t disp;
 
 #if defined( GUI_IS_X11 )
-extern disp_t disp;
 
 extern int shm_flag;
 
@@ -240,7 +240,6 @@ typedef struct SDLWINDOW {
 } SDLWINDOW_t;
 
 extern ann_struct_t ann_tbl[];
-extern disp_t disp;
 extern button_t* buttons;
 extern button_t buttons_sx[];
 extern button_t buttons_gx[];
@@ -261,11 +260,8 @@ extern void ShowConnections( char* w, char* i );
 extern void exit_x48( int tell_x11 );
 
 #if defined( GUI_IS_X11 )
-
 extern void refresh_display( void );
-
 #elif defined( GUI_IS_SDL1 )
-
 extern unsigned int ARGBColors[ BLACK + 1 ];
 
 extern SDL_Surface* sdlwindow;
@@ -312,7 +308,6 @@ void SDLMessageBox( int w, int h, const char* title, const char* text[],
                     unsigned color, unsigned colortext, int center );
 void SDLEventWaitClickOrKey( void );
 void SDLShowInformation( void );
-
 #endif
 
 #endif /* !_X48_GUI_H */
