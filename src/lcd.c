@@ -51,7 +51,7 @@ unsigned char nibbles[ 16 ][ 2 ] = {
 
 static unsigned char nibble_bits[ 16 ];
 
-void init_nibble_maps( void ) {
+void init_nibble_maps() {
     int i;
 
     for ( i = 0; i < 16; i++ ) {
@@ -111,7 +111,7 @@ ann_struct_t ann_tbl[] = {
     { 0 } };
 #endif
 
-void init_display( void ) {
+void init_display() {
     display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
 
     display.disp_start = ( saturn.disp_addr & 0xffffe );
@@ -201,7 +201,7 @@ static inline void draw_row( long addr, int row ) {
     }
 }
 
-void update_display( void ) {
+void update_display() {
     int i, j;
     long addr;
     static int old_offset = -1;
@@ -333,7 +333,7 @@ void update_display( void ) {
     }
 }
 
-void redraw_display( void ) {
+void redraw_display() {
 #if defined( GUI_IS_X11 )
     XClearWindow( dpy, disp.win );
 #endif
@@ -465,7 +465,7 @@ struct ann_struct {
     { 0 } };
 #endif
 
-void draw_annunc( void ) {
+void draw_annunc() {
     int val;
     int i;
 
@@ -501,7 +501,7 @@ void draw_annunc( void ) {
 }
 
 #if defined( GUI_IS_X11 )
-void init_annunc( void ) {
+void init_annunc() {
     int i;
 
     for ( i = 0; ann_tbl[ i ].bit; i++ ) {
@@ -512,7 +512,7 @@ void init_annunc( void ) {
 }
 #endif
 
-void redraw_annunc( void ) {
+void redraw_annunc() {
     last_annunc_state = -1;
     draw_annunc();
 }

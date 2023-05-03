@@ -18,8 +18,8 @@
 #define MCTL_SysROM_GX 5
 
 #if 0
-extern void	init_mmu(void);
-extern void	reset_mmu(void);
+extern void	init_mmu();
+extern void	reset_mmu();
 #endif
 
 #endif /* !_MMU_H */

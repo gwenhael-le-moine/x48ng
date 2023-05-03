@@ -125,7 +125,7 @@
 
 #define _KEYBOARD_OFFSET_X SIDE_SKIP
 #define _KEYBOARD_OFFSET_Y ( TOP_SKIP + DISPLAY_HEIGHT + DISP_KBD_SKIP )
-#endif //SDL1
+#endif // SDL1
 
 typedef struct color_t {
     const char* name;
@@ -252,11 +252,11 @@ extern int InitDisplay( int argc, char** argv );
 extern void SDLCreateHP();
 #endif
 
-extern int get_ui_event( void );
+extern int get_ui_event();
 
 extern void adjust_contrast( int contrast );
 #if defined( GUI_IS_X11 )
-extern void refresh_icon( void );
+extern void refresh_icon();
 #endif
 
 extern void ShowConnections( char* w, char* i );
@@ -266,7 +266,7 @@ extern void exit_x48( int tell_x11 );
 #if defined( GUI_IS_X11 )
 
 #ifdef HAVE_XSHM
-extern void refresh_display( void );
+extern void refresh_display();
 #endif
 
 #elif defined( GUI_IS_SDL1 )
@@ -285,7 +285,7 @@ void SDLCreateAnnunc();
 // void SDLDrawLcd(unsigned char lcd_buffer[DISP_ROWS][NIBS_PER_BUFFER_ROW]);
 // void SDLDrawLcd();
 void SDLDrawNibble( int nx, int ny, int val );
-void SDLDrawKeypad( void );
+void SDLDrawKeypad();
 void SDLDrawButtons();
 SDL_Surface* SDLCreateSurfFromData( unsigned int w, unsigned int h,
                                     unsigned char* data, unsigned int coloron,

@@ -68,16 +68,16 @@ typedef struct device_t {
 } device_t;
 
 extern device_t device;
-extern void check_devices( void );
+extern void check_devices();
 #if 0
-extern void	check_out_register(void);
+extern void	check_out_register();
 #endif
 
-extern void update_display( void );
-extern void redraw_display( void );
+extern void update_display();
+extern void redraw_display();
 extern void disp_draw_nibble( word_20 addr, word_4 val );
 extern void menu_draw_nibble( word_20 addr, word_4 val );
-extern void draw_annunc( void );
-extern void redraw_annunc( void );
+extern void draw_annunc();
+extern void redraw_annunc();
 
 #endif /* !_DEVICE_H */

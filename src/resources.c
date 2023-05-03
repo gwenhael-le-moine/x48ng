@@ -41,7 +41,7 @@ char homeDirectory[ 1024 ];
 #endif
 
 #if defined( GUI_IS_X11 )
-void get_resources( void ) {
+void get_resources() {
     if ( get_boolean_resource( "printVersion", "PrintVersion" ) )
         show_version();
     if ( get_boolean_resource( "printCopyright", "PrintCopyright" ) )

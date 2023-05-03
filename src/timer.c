@@ -66,7 +66,7 @@ word_64 time_offset = 0x0;
  * 8. Prevent AutoOff by setting TIMEOUT
  *
  */
-void set_accesstime( void ) {
+void set_accesstime() {
     struct timeval tv;
 #if defined( GUI_IS_X11 )
     struct timezone tz;
@@ -83,7 +83,7 @@ void set_accesstime( void ) {
     /*
      * This is done to set the variable 'timezone' on SYSV systems
      */
-    ( void )time( &gmt );
+    (void)time( &gmt );
     ltm = localtime( &gmt );
 #if defined( SYSV_TIME ) || defined( __sgi )
     systime_offset = timezone;
@@ -310,7 +310,7 @@ word_64 get_timer( int timer ) {
  *
  */
 
-t1_t2_ticks get_t1_t2( void ) {
+t1_t2_ticks get_t1_t2() {
     struct timeval tv;
 #if defined( GUI_IS_X11 )
     struct timezone tz;

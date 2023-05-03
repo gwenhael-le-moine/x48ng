@@ -980,7 +980,7 @@ icon_map_t icon_maps_gx[] = {
 #define KEYBOARD_OFFSET_X SIDE_SKIP
 #define KEYBOARD_OFFSET_Y ( TOP_SKIP + DISPLAY_HEIGHT + DISP_KBD_SKIP )
 
-int AllocColors( void ) {
+int AllocColors() {
     int c, error, dyn;
     int r_shift = 0, g_shift = 0, b_shift = 0;
     XSetWindowAttributes xswa;
@@ -1940,7 +1940,7 @@ void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small,
     return;
 }
 
-void DrawButtons( void ) {
+void DrawButtons() {
     int i;
 
     for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
@@ -2698,7 +2698,7 @@ void DrawKeypad( keypad_t* keypad ) {
     return;
 }
 
-void CreateIcon( void ) {
+void CreateIcon() {
     XSetWindowAttributes xswa;
     XWindowAttributes xwa;
     Pixmap tmp_pix;
@@ -2779,7 +2779,7 @@ void CreateIcon( void ) {
     return;
 }
 
-void refresh_icon( void ) {
+void refresh_icon() {
     int icon_state;
 
     icon_state =
@@ -2821,7 +2821,7 @@ void refresh_icon( void ) {
     }
 }
 
-void DrawIcon( void ) {
+void DrawIcon() {
     XCopyArea( dpy, icon_pix, iconW, gc, 0, 0, hp48_icon_width,
                hp48_icon_height, 0, 0 );
     return;
@@ -2834,7 +2834,7 @@ int handle_xerror( Display* the_dpy, XErrorEvent* eev ) {
 }
 #endif
 
-void CreateDispWindow( void ) {
+void CreateDispWindow() {
     XSetWindowAttributes xswa;
     XGCValues val;
     unsigned long gc_mask;
@@ -3450,7 +3450,7 @@ int button_released( int b ) {
     return 0;
 }
 
-static int button_release_all( void ) {
+static int button_release_all() {
     int code;
     int b;
 
@@ -3516,7 +3516,7 @@ int key_event( int b, XEvent* xev ) {
 }
 
 #ifdef HAVE_XSHM
-void refresh_display( void ) {
+void refresh_display() {
     if ( shm_flag ) {
         if ( disp.display_update & UPDATE_DISP ) {
             XShmPutImage( dpy, disp.win, disp.gc, disp.disp_image, disp.offset,
@@ -3533,7 +3533,7 @@ void refresh_display( void ) {
 }
 #endif
 
-void DrawDisp( void ) {
+void DrawDisp() {
 #ifdef HAVE_XSHM
     if ( shm_flag ) {
         XShmPutImage( dpy, disp.win, disp.gc, disp.disp_image, disp.offset, 0,
@@ -3603,7 +3603,7 @@ void get_geometry_string( Window win, char* s, int allow_off_screen ) {
              x, ( y_s > 0 ) ? "+" : "-", y );
 }
 
-void save_command_line( void ) {
+void save_command_line() {
     XWindowAttributes xwa;
     int wm_argc, ac;
     char **wm_argv, geom[ 128 ], icon_geom[ 128 ];
@@ -3979,7 +3979,7 @@ int first_key = 0;
 
 int last_button = -1;
 
-extern char* get_stack( void );
+extern char* get_stack();
 #elif defined( GUI_IS_SDL1 )
 void SDLCreateHP() {
     /* int x, y, w, h; */
@@ -4142,7 +4142,7 @@ int button_released( int b ) {
     return 0;
 }
 
-static int button_release_all( void ) {
+static int button_release_all() {
     int b;
 
     for ( b = BUTTON_A; b <= LAST_BUTTON; b++ )
@@ -4151,7 +4151,7 @@ static int button_release_all( void ) {
     return 0;
 }
 
-/* void DrawDisp( void ) { */
+/* void DrawDisp() { */
 /*     redraw_display(); */
 /*     redraw_annunc(); */
 /* } */
@@ -4173,7 +4173,7 @@ int first_key = 0;
 
 int last_button = -1;
 
-extern char* get_stack( void );
+extern char* get_stack();
 
 // Find which key is pressed, if any.
 // Returns -1 is no key is pressed
@@ -4525,7 +4525,7 @@ void SDLCreateColors() {
 ///////////////////////////////////////////////
 // SDL PORT
 ///////////////////////////////////////////////
-void SDLCreateKeys( void ) {
+void SDLCreateKeys() {
     unsigned i, x, y;
     /* SDL_Rect srect, drect; */
     unsigned pixel;
@@ -5096,7 +5096,7 @@ void SDLDrawButtons() {
         buttons[ LAST_BUTTON ].x + buttons[ LAST_BUTTON ].w - buttons[ 0 ].x,
         buttons[ LAST_BUTTON ].y + buttons[ LAST_BUTTON ].h - buttons[ 0 ].y );
 }
-void SDLDrawKeypad( void ) {
+void SDLDrawKeypad() {
     /* int i, x, y; */
 
     SDLDrawKeyMenu();
@@ -5952,7 +5952,7 @@ void SDLShowInformation() {
 }
 #endif
 
-int get_ui_event( void ) {
+int get_ui_event() {
 #if defined( GUI_IS_X11 )
     XEvent xev;
     XClientMessageEvent* cm;

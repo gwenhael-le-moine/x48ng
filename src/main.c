@@ -67,21 +67,6 @@ void save_options( int argc, char** argv ) {
     }
 }
 #endif
-#if defined( GUI_IS_SDL1 )
-// Some error or information messages
-const char* errinit_title = "Emulator initialization failed";
-const char* errinit_text[] = { "",
-                               "In order to work the emulator needs",
-                               "the following files:",
-                               "  rom:   an HP48 rom dump",
-                               "  ram:   ram file",
-                               "  hp48:  HP state file",
-                               "",
-                               "These files must be in ~/.x48ng",
-                               "",
-                               "Install these files and try again.",
-                               0 };
-#endif
 
 int main( int argc, char** argv ) {
     sigset_t set;
@@ -134,8 +119,21 @@ int main( int argc, char** argv ) {
         fprintf( stderr, "%s: can\'t create window\n", progname );
         exit( 1 );
     }
-#endif
-#if defined( GUI_IS_SDL1 )
+#elif defined( GUI_IS_SDL1 )
+    // Some error or information messages
+    const char* errinit_title = "Emulator initialization failed";
+    const char* errinit_text[] = { "",
+                                   "In order to work the emulator needs",
+                                   "the following files:",
+                                   "  rom:   an HP48 rom dump",
+                                   "  ram:   ram file",
+                                   "  hp48:  HP state file",
+                                   "",
+                                   "These files must be in ~/.x48ng",
+                                   "",
+                                   "Install these files and try again.",
+                                   0 };
+
     // initialize emulator stuff
     rv = init_emulator();
     if ( rv != 0 ) {

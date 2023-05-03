@@ -145,7 +145,7 @@ cmd_tbl[] = {
 
     { 0, 0, 0 } };
 
-void init_debugger( void ) {
+void init_debugger() {
     int i;
 
     num_bkpts = 0;
@@ -620,7 +620,7 @@ static void set_st( word_64 val ) {
 #endif
 }
 
-static void dump_st( void ) {
+static void dump_st() {
     int i;
     int val;
 
@@ -670,7 +670,7 @@ static void set_hst( word_64 val ) {
 #endif
 }
 
-static void dump_hst( void ) {
+static void dump_hst() {
     short hst = 0;
     if ( saturn.XM != 0 )
         hst |= 1;
@@ -923,7 +923,7 @@ struct se {
     struct se* se_next;
 };
 
-char* get_stack( void ) {
+char* get_stack() {
     word_20 dsktop, dskbot;
     word_20 sp = 0, end = 0, ent = 0;
     word_20 ram_base, ram_mask;
@@ -1135,7 +1135,7 @@ static void do_rstk( int argc, char** argv ) {
     }
 }
 
-int debug( void ) {
+int debug() {
     t1_t2_ticks ticks;
     struct cmd* cmdp;
     char* cp;
@@ -1322,7 +1322,7 @@ int debug( void ) {
     return 0;
 }
 
-int emulate_debug( void ) {
+int emulate_debug() {
     do {
 
         step_instruction();

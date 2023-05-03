@@ -23,7 +23,7 @@ extern void stop_timer( int timer );
 extern word_64 get_timer( int timer );
 extern long diff_timer( word_64* t1, word_64* t2 );
 
-extern t1_t2_ticks get_t1_t2( void );
-extern void set_accesstime( void );
+extern t1_t2_ticks get_t1_t2();
+extern void set_accesstime();
 
 #endif /* !_TIMER_H */

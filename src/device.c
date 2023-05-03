@@ -12,7 +12,7 @@ extern int device_check;
 
 device_t device;
 
-void check_devices( void ) {
+void check_devices() {
     if ( device.display_touched > 0 && device.display_touched-- == 1 ) {
         device.display_touched = 0;
         update_display();
@@ -129,7 +129,7 @@ void check_devices( void ) {
 #include <stdlib.h>
 #include <unistd.h>
 
-void check_out_register(void) {
+void check_out_register(oid) {
   static int au = -2;
   unsigned char c[] = { 0xff, 0x00 };
 

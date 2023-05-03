@@ -198,33 +198,33 @@ extern long sched_adjtime;
 extern long schedule_event;
 
 extern display_t display;
-extern void init_display( void );
+extern void init_display();
 
 extern saturn_t saturn;
 
-extern int exit_emulator( void );
-extern int init_emulator( void );
-extern void init_active_stuff( void );
+extern int exit_emulator();
+extern int init_emulator();
+extern void init_active_stuff();
 
-extern int serial_init( void );
+extern int serial_init();
 extern void serial_baud( int baud );
-extern void transmit_char( void );
-extern void receive_char( void );
+extern void transmit_char();
+extern void receive_char();
 
-extern void do_kbd_int( void );
-extern void do_interupt( void );
+extern void do_kbd_int();
+extern void do_interupt();
 
 extern void ( *write_nibble )( long addr, int val );
 extern int ( *read_nibble )( long addr );
 extern int ( *read_nibble_crc )( long addr );
 
-extern int emulate( void );
-extern int step_instruction( void );
-extern void schedule( void );
+extern int emulate();
+extern int step_instruction();
+extern void schedule();
 
 extern int read_rom( const char* fname );
-extern int read_files( void );
-extern int write_files( void );
+extern int read_files();
+extern int write_files();
 
 extern void load_addr( word_20* dat, long addr, int n );
 #endif /* !_HP48_H */

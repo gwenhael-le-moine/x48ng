@@ -24,7 +24,7 @@ extern int rece_instr;
 static char* wire_name = ( char* )0;
 static char* ir_name = ( char* )0;
 
-void update_connection_display( void ) {
+void update_connection_display() {
     if ( wire_fd == -1 ) {
         if ( wire_name )
             free( wire_name );
@@ -38,7 +38,7 @@ void update_connection_display( void ) {
     ShowConnections( wire_name, ir_name );
 }
 
-int serial_init( void ) {
+int serial_init() {
     int c;
     int n;
     char tty_dev_name[ 128 ];
@@ -381,7 +381,7 @@ void serial_baud( int baud ) {
         update_connection_display();
 }
 
-void transmit_char( void ) {
+void transmit_char() {
     if ( saturn.ir_ctrl & 0x04 ) {
         if ( ir_fd == -1 ) {
             saturn.tcs &= 0x0e;
