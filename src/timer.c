@@ -83,7 +83,7 @@ void set_accesstime() {
     /*
      * This is done to set the variable 'timezone' on SYSV systems
      */
-    (void)time( &gmt );
+    ( void )time( &gmt );
     ltm = localtime( &gmt );
 #if defined( SYSV_TIME ) || defined( __sgi )
     systime_offset = timezone;
