@@ -73,16 +73,12 @@ int decode_group_80() {
         case 0: /* OUT=CS */
             saturn.PC += 3;
             copy_register( saturn.OUT, saturn.C, OUTS_FIELD );
-#if 0
-      check_out_register();
-#endif
+            /* check_out_register(); */
             return 0;
         case 1: /* OUT=C */
             saturn.PC += 3;
             copy_register( saturn.OUT, saturn.C, OUT_FIELD );
-#if 0
-      check_out_register();
-#endif
+            /* check_out_register(); */
             return 0;
         case 2: /* A=IN */
             saturn.PC += 3;

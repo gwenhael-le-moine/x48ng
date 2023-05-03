@@ -58,89 +58,83 @@ void check_devices() {
         sched_timer2 = saturn.t2_tick;
         device.t2_touched = 0;
     }
-#if 0
-  if (device.disp_test_touched) {
-    device.disp_test_touched = 0;
-  }
-  if (device.crc_touched) {
-    device.crc_touched = 0;
-  }
-  if (device.power_status_touched) {
-    device.power_status_touched = 0;
-  }
-  if (device.power_ctrl_touched) {
-    device.power_ctrl_touched = 0;
-  }
-  if (device.mode_touched) {
-    device.mode_touched = 0;
-  }
-  if (device.card_ctrl_touched) {
-    device.card_ctrl_touched = 0;
-  }
-  if (device.card_status_touched) {
-    device.card_status_touched = 0;
-  }
-  if (device.tcs_touched) {
-    device.tcs_touched = 0;
-  }
-  if (device.rcs_touched) {
-    device.rcs_touched = 0;
-  }
-  if (device.sreq_touched) {
-    device.sreq_touched = 0;
-  }
-  if (device.ir_ctrl_touched) {
-    device.ir_ctrl_touched = 0;
-  }
-  if (device.base_off_touched) {
-    device.base_off_touched = 0;
-  }
-  if (device.lcr_touched) {
-    device.lcr_touched = 0;
-  }
-  if (device.lbr_touched) {
-    device.lbr_touched = 0;
-  }
-  if (device.scratch_touched) {
-    device.scratch_touched = 0;
-  }
-  if (device.base_nibble_touched) {
-    device.base_nibble_touched = 0;
-  }
-  if (device.unknown_touched) {
-    device.unknown_touched = 0;
-  }
-  if (device.t1_ctrl_touched) {
-    device.t1_ctrl_touched = 0;
-  }
-  if (device.t2_ctrl_touched) {
-    device.t2_ctrl_touched = 0;
-  }
-  if (device.unknown2_touched) {
-    device.unknown2_touched = 0;
-  }
-#endif
+/*   if (device.disp_test_touched) { */
+/*     device.disp_test_touched = 0; */
+/*   } */
+/*   if (device.crc_touched) { */
+/*     device.crc_touched = 0; */
+/*   } */
+/*   if (device.power_status_touched) { */
+/*     device.power_status_touched = 0; */
+/*   } */
+/*   if (device.power_ctrl_touched) { */
+/*     device.power_ctrl_touched = 0; */
+/*   } */
+/*   if (device.mode_touched) { */
+/*     device.mode_touched = 0; */
+/*   } */
+/*   if (device.card_ctrl_touched) { */
+/*     device.card_ctrl_touched = 0; */
+/*   } */
+/*   if (device.card_status_touched) { */
+/*     device.card_status_touched = 0; */
+/*   } */
+/*   if (device.tcs_touched) { */
+/*     device.tcs_touched = 0; */
+/*   } */
+/*   if (device.rcs_touched) { */
+/*     device.rcs_touched = 0; */
+/*   } */
+/*   if (device.sreq_touched) { */
+/*     device.sreq_touched = 0; */
+/*   } */
+/*   if (device.ir_ctrl_touched) { */
+/*     device.ir_ctrl_touched = 0; */
+/*   } */
+/*   if (device.base_off_touched) { */
+/*     device.base_off_touched = 0; */
+/*   } */
+/*   if (device.lcr_touched) { */
+/*     device.lcr_touched = 0; */
+/*   } */
+/*   if (device.lbr_touched) { */
+/*     device.lbr_touched = 0; */
+/*   } */
+/*   if (device.scratch_touched) { */
+/*     device.scratch_touched = 0; */
+/*   } */
+/*   if (device.base_nibble_touched) { */
+/*     device.base_nibble_touched = 0; */
+/*   } */
+/*   if (device.unknown_touched) { */
+/*     device.unknown_touched = 0; */
+/*   } */
+/*   if (device.t1_ctrl_touched) { */
+/*     device.t1_ctrl_touched = 0; */
+/*   } */
+/*   if (device.t2_ctrl_touched) { */
+/*     device.t2_ctrl_touched = 0; */
+/*   } */
+/*   if (device.unknown2_touched) { */
+/*     device.unknown2_touched = 0; */
+/*   } */
 }
 
-#if 0
+/* #include <fcntl.h> */
+/* #include <stdio.h> */
+/* #include <stdlib.h> */
+/* #include <unistd.h> */
 
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
+/* void check_out_register(oid) { */
+/*   static int au = -2; */
+/*   unsigned char c[] = { 0xff, 0x00 }; */
 
-void check_out_register(oid) {
-  static int au = -2;
-  unsigned char c[] = { 0xff, 0x00 };
-
-  if (au == -2)
-    if ((au = open("/dev/audio", O_WRONLY)) < 0)
-  if (au < 0)
-    return;
-  if (saturn.OUT[2] & 0x8)
-    write(au, c, 1);
-  else
-    write(au, &c[1], 1);
-}
-
-#endif
+/*   if (au == -2) */
+/*     if ((au = open("/dev/audio", O_WRONLY)) < 0) */
+/*   if (au < 0) */
+/*     return; */
+/*   if (saturn.OUT[2] & 0x8) */
+/*     write(au, c, 1); */
+/*   else */
+/*     write(au, &c[1], 1); */
+/* } */

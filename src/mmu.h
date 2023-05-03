@@ -17,9 +17,7 @@
 #define MCTL_PORT2_GX 4
 #define MCTL_SysROM_GX 5
 
-#if 0
-extern void	init_mmu();
-extern void	reset_mmu();
-#endif
+/* extern void	init_mmu(); */
+/* extern void	reset_mmu(); */
 
 #endif /* !_MMU_H */

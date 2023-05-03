@@ -69,9 +69,8 @@ typedef struct device_t {
 
 extern device_t device;
 extern void check_devices();
-#if 0
-extern void	check_out_register();
-#endif
+
+/* extern void	check_out_register(); */
 
 extern void update_display();
 extern void redraw_display();
