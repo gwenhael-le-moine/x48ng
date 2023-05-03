@@ -136,9 +136,9 @@ typedef struct color_t {
 #endif
 } color_t;
 
-#if defined( GUI_IS_X11 )
 extern color_t* colors;
 
+#if defined( GUI_IS_X11 )
 #define COLOR( c ) ( colors[ ( c ) ].xcolor.pixel )
 
 #define UPDATE_MENU 1
@@ -241,7 +241,6 @@ typedef struct SDLWINDOW {
     int x, y;
 } SDLWINDOW_t;
 
-extern color_t* colors;
 extern ann_struct_t ann_tbl[];
 extern disp_t disp;
 extern button_t* buttons;
