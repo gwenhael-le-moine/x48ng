@@ -7,7 +7,7 @@
 #include "hp48.h"
 #include "hp48_emu.h"
 #include "timer.h"
-#include "x48_gui.h"
+#include "x48.h"
 
 #if defined( GUI_IS_SDL1 )
 #include <unistd.h>

@@ -6,7 +6,7 @@
 #include "hp48_emu.h"
 #include "device.h"
 #include "timer.h"
-#include "x48_gui.h"
+#include "x48.h"
 
 extern int device_check;
 

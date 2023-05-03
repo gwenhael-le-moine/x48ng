@@ -9,7 +9,7 @@
 
 #include "debugger.h"
 #include "hp48.h"
-#include "x48_gui.h"
+#include "x48.h"
 
 #if defined( GUI_IS_SDL1 )
 #include "resources.h"

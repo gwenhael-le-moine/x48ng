@@ -12,7 +12,7 @@
 #include "mmu.h"
 #include "resources.h"
 #include "romio.h"
-#include "x48_gui.h"
+#include "x48.h"
 
 extern int device_check;
 extern short port1_is_ram;

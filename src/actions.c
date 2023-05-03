@@ -10,7 +10,7 @@
 #include "hp48_emu.h"
 #include "romio.h"
 #include "timer.h"
-#include "x48_gui.h"
+#include "x48.h"
 
 static int interrupt_called = 0;
 extern long nibble_masks[ 16 ];

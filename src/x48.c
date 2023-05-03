@@ -22,7 +22,7 @@
 #include "buttons.h"
 #include "hp.h"
 #include "small.h"
-#include "x48_gui.h"
+#include "x48.h"
 #include "constants.h"
 #include "device.h"
 #include "errors.h"
