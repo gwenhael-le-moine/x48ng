@@ -1,8 +1,6 @@
 #ifndef _OPTIONS_H
 #define _OPTIONS_H 1
 
-#include "config.h"
-
 #if defined( GUI_IS_X11 )
 #include <X11/Xlib.h>
 #include <X11/Xresource.h>
