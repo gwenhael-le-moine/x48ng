@@ -252,7 +252,7 @@ extern int InitDisplay( int argc, char** argv );
 extern void SDLCreateHP();
 #endif
 
-extern int GetEvent( void );
+extern int get_ui_event( void );
 
 extern void adjust_contrast( int contrast );
 #if defined( GUI_IS_X11 )
@@ -272,7 +272,6 @@ extern void refresh_display( void );
 #elif defined( GUI_IS_SDL1 )
 
 extern unsigned int ARGBColors[ BLACK + 1 ];
-extern int SDLGetEvent();
 
 extern SDL_Surface* sdlwindow;
 extern SDL_Surface* sdlsurface;

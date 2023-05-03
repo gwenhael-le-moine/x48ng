@@ -412,12 +412,7 @@ void do_shutdown( void ) {
             set_t1 = ticks.t1_ticks;
 
             interrupt_called = 0;
-#if defined( GUI_IS_X11 )
-            if ( GetEvent() ) {
-#endif
-#if defined( GUI_IS_SDL1 )
-            if ( SDLGetEvent() ) {
-#endif
+            if ( get_ui_event() ) {
                 if ( interrupt_called )
                     wake = 1;
             }

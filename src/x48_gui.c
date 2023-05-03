@@ -4015,651 +4015,7 @@ int first_key = 0;
 int last_button = -1;
 
 extern char* get_stack( void );
-
-int GetEvent( void ) {
-    XEvent xev;
-    XClientMessageEvent* cm;
-    int i, wake, bufs = 2;
-    char buf[ 2 ];
-    KeySym sym;
-    // int button_expose;
-    // static int button_leave = -1;
-    static int release_pending = 0;
-    static XKeyEvent release_event;
-    static Time last_release_time = 0;
-
-    wake = 0;
-    if ( paste_last_key ) {
-        button_released( paste[ paste_count - 1 ] );
-        paste_last_key = 0;
-        return 1;
-    } else if ( paste_count < paste_size ) {
-        button_pressed( paste[ paste_count ] );
-        paste_last_key = 1;
-        paste_count++;
-        return 1;
-    }
-
-    if ( release_pending ) {
-        i = XLookupString( &release_event, buf, bufs, &sym, NULL );
-        wake = decode_key( ( XEvent* )&release_event, sym, buf, i );
-        release_pending = 0;
-        return wake;
-    }
-
-    do {
-        while ( XPending( dpy ) > 0 ) {
-
-            XNextEvent( dpy, &xev );
-
-            switch ( ( int )xev.type ) {
-
-                case KeyPress:
-
-                    if ( 0 && release_pending ) {
-                        printf( "xxx release_pending\n" );
-                    }
-                    release_pending = 0;
-                    if ( ( xev.xkey.time - last_release_time ) <= 1 ) {
-                        release_pending = 0;
-                        break;
-                    }
-
-                    i = XLookupString( &xev.xkey, buf, bufs, &sym, NULL );
-                    wake = decode_key( &xev, sym, buf, i );
-                    first_key = 1;
-                    break;
-
-                case KeyRelease:
-
-                    i = XLookupString( &xev.xkey, buf, bufs, &sym, NULL );
-                    first_key = 0;
-                    release_pending = 1;
-                    last_release_time = xev.xkey.time;
-                    memcpy( &release_event, &xev, sizeof( XKeyEvent ) );
-                    break;
-
-                case NoExpose:
-
-                    break;
-
-                case Expose:
-
-                    if ( xev.xexpose.count == 0 ) {
-                        if ( xev.xexpose.window == disp.win ) {
-                            DrawDisp();
-                        } else if ( xev.xexpose.window == iconW ) {
-                            DrawIcon();
-                        } else if ( xev.xexpose.window == mainW ) {
-                            DrawKeypad( &keypad );
-                        } else
-                            for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
-                                if ( xev.xexpose.window == buttons[ i ].xwin ) {
-                                    DrawButton( i );
-                                    break;
-                                }
-                            }
-                    }
-                    break;
-                case UnmapNotify:
-
-                    disp.mapped = 0;
-                    break;
-
-                case MapNotify:
-
-                    if ( !disp.mapped ) {
-                        disp.mapped = 1;
-                        update_display();
-                        redraw_annunc();
-                    }
-                    break;
-
-                case ButtonPress:
-
-                    if ( xev.xbutton.subwindow == disp.win ) {
-                        if ( xev.xbutton.button == Button2 ) {
-                            if ( xev.xbutton.subwindow == disp.win ) {
-                                int x;
-                                int flag = 0;
-                                char* paste_in = XFetchBuffer( dpy, &x, 0 );
-
-                                char* p = paste_in;
-                                if ( x > MAX_PASTE ) {
-                                    x = 0;
-                                    printf( "input too long. limit is %d "
-                                            "characters\n",
-                                            MAX_PASTE );
-                                }
-                                paste_count = 0;
-                                paste_size = 0;
-                                while ( x-- ) {
-                                    char c = *p++;
-                                    switch ( c ) {
-                                        case '.':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_PERIOD;
-                                            break;
-                                        case '0':
-                                            paste[ paste_size++ ] = BUTTON_0;
-                                            break;
-                                        case '1':
-                                            paste[ paste_size++ ] = BUTTON_1;
-                                            break;
-                                        case '2':
-                                            paste[ paste_size++ ] = BUTTON_2;
-                                            break;
-                                        case '3':
-                                            paste[ paste_size++ ] = BUTTON_3;
-                                            break;
-                                        case '4':
-                                            paste[ paste_size++ ] = BUTTON_4;
-                                            break;
-                                        case '5':
-                                            paste[ paste_size++ ] = BUTTON_5;
-                                            break;
-                                        case '6':
-                                            paste[ paste_size++ ] = BUTTON_6;
-                                            break;
-                                        case '7':
-                                            paste[ paste_size++ ] = BUTTON_7;
-                                            break;
-                                        case '8':
-                                            paste[ paste_size++ ] = BUTTON_8;
-                                            break;
-                                        case '9':
-                                            paste[ paste_size++ ] = BUTTON_9;
-                                            break;
-                                        case '\n':
-                                            paste[ paste_size++ ] = BUTTON_SHR;
-                                            paste[ paste_size++ ] =
-                                                BUTTON_PERIOD;
-                                            break;
-                                        case '!':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_DEL;
-                                            break;
-                                        case '+':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            paste[ paste_size++ ] = BUTTON_PLUS;
-                                            break;
-                                        case '-':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            paste[ paste_size++ ] =
-                                                BUTTON_MINUS;
-                                            break;
-                                        case '*':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            paste[ paste_size++ ] = BUTTON_MUL;
-                                            break;
-                                        case '/':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            paste[ paste_size++ ] = BUTTON_DIV;
-                                            break;
-                                        case ' ':
-                                            paste[ paste_size++ ] = 47;
-                                            break;
-                                        case '(':
-                                            paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_DIV;
-                                            break;
-                                        case '[':
-                                            paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_MUL;
-                                            break;
-                                        case '<':
-                                            if ( x > 1 && *p == '<' ) {
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_MINUS;
-                                                x--;
-                                                p++;
-                                            } else {
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_ALPHA;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_2;
-                                            }
-                                            break;
-                                        case '{':
-                                            paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_PLUS;
-                                            break;
-                                        case ')':
-                                        case ']':
-                                        case '}':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_RIGHT;
-                                            break;
-                                        case '>':
-                                            if ( x > 1 && *p == '>' ) {
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_RIGHT;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_RIGHT;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_RIGHT;
-                                                x--;
-                                                p++;
-                                            } else {
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_ALPHA;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHR;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_2;
-                                            }
-                                            break;
-                                        case '#':
-                                            paste[ paste_size++ ] = BUTTON_SHR;
-                                            paste[ paste_size++ ] = BUTTON_DIV;
-                                            break;
-                                        case '_':
-                                            paste[ paste_size++ ] = BUTTON_SHR;
-                                            paste[ paste_size++ ] = BUTTON_MUL;
-                                            break;
-                                        case '"':
-                                            if ( flag & 1 ) {
-                                                flag &= ~1;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_RIGHT;
-                                            } else {
-                                                flag |= 1;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHR;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_MINUS;
-                                            }
-                                            break;
-                                        case ':':
-                                            if ( flag & 2 ) {
-                                                flag &= ~2;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_RIGHT;
-                                            } else {
-                                                flag |= 2;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHR;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_PLUS;
-                                            }
-                                            break;
-                                        case '\'':
-                                            if ( flag & 4 ) {
-                                                flag &= ~4;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_RIGHT;
-                                            } else {
-                                                flag |= 4;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_COLON;
-                                            }
-                                            break;
-                                        case 'a':
-                                        case 'A':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_A;
-                                            break;
-                                        case 'b':
-                                        case 'B':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_B;
-                                            break;
-                                        case 'c':
-                                        case 'C':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_C;
-                                            break;
-                                        case 'd':
-                                        case 'D':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_D;
-                                            break;
-                                        case 'e':
-                                        case 'E':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_E;
-                                            break;
-                                        case 'f':
-                                        case 'F':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_F;
-                                            break;
-                                        case 'g':
-                                        case 'G':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_MTH;
-                                            break;
-                                        case 'h':
-                                        case 'H':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_PRG;
-                                            break;
-                                        case 'i':
-                                        case 'I':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_CST;
-                                            break;
-                                        case 'j':
-                                        case 'J':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_VAR;
-                                            break;
-                                        case 'k':
-                                        case 'K':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_UP;
-                                            break;
-                                        case 'l':
-                                        case 'L':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_NXT;
-                                            break;
-
-                                        case 'm':
-                                        case 'M':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] =
-                                                BUTTON_COLON;
-                                            break;
-                                        case 'n':
-                                        case 'N':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_STO;
-                                            break;
-                                        case 'o':
-                                        case 'O':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_EVAL;
-                                            break;
-                                        case 'p':
-                                        case 'P':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_LEFT;
-                                            break;
-                                        case 'q':
-                                        case 'Q':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_DOWN;
-                                            break;
-                                        case 'r':
-                                        case 'R':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] =
-                                                BUTTON_RIGHT;
-                                            break;
-                                        case 's':
-                                        case 'S':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_SIN;
-                                            break;
-                                        case 't':
-                                        case 'T':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_COS;
-                                            break;
-                                        case 'u':
-                                        case 'U':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_TAN;
-                                            break;
-                                        case 'v':
-                                        case 'V':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_SQRT;
-                                            break;
-                                        case 'w':
-                                        case 'W':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] =
-                                                BUTTON_POWER;
-                                            break;
-                                        case 'x':
-                                        case 'X':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_INV;
-                                            break;
-                                        case 'y':
-                                        case 'Y':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_NEG;
-                                            break;
-                                        case 'z':
-                                        case 'Z':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_EEX;
-                                            break;
-                                        default:
-                                            printf( "unknown %c %d\n", c, *p );
-                                            break;
-                                    }
-                                }
-                                if ( paste_in )
-                                    XFree( paste_in );
-                                if ( paste_size ) {
-                                    return 1;
-                                }
-                            }
-                        } else if ( xev.xbutton.button == Button3 ) {
-                            /* TODO Make cut from the screen work. */
-                            get_stack();
-                        } else {
-                            /* printf("In display %d\n", xev.xbutton.button); */
-                        }
-                    } else {
-                        if ( xev.xbutton.button == Button1 ||
-                             xev.xbutton.button == Button2 ||
-                             xev.xbutton.button == Button3 ) {
-                            for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
-                                if ( xev.xbutton.subwindow ==
-                                     buttons[ i ].xwin ) {
-                                    if ( buttons[ i ].pressed ) {
-                                        if ( xev.xbutton.button == Button3 ) {
-                                            button_released( i );
-                                            DrawButton( i );
-                                        }
-                                    } else {
-                                        last_button = i;
-                                        button_pressed( i );
-                                        wake = 1;
-                                        first_key = 1;
-                                        DrawButton( i );
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    break;
-
-                case ButtonRelease:
-
-                    first_key = 0;
-                    if ( xev.xbutton.button == Button1 ) {
-                        button_release_all();
-                    }
-                    if ( xev.xbutton.button == Button2 ) {
-                        if ( last_button >= 0 ) {
-                            button_released( last_button );
-                            DrawButton( last_button );
-                        }
-                        last_button = -1;
-                    }
-                    break;
-
-                case FocusOut:
-                    first_key = 0;
-                    button_release_all();
-                    break;
-
-                case MappingNotify:
-
-                    switch ( xev.xmapping.request ) {
-                        case MappingModifier:
-                        case MappingKeyboard:
-                            XRefreshKeyboardMapping( &xev.xmapping );
-                            break;
-                        case MappingPointer:
-                        default:
-                            break;
-                    }
-                    break;
-
-                case EnterNotify:
-                case LeaveNotify:
-
-                    break;
-
-                case ClientMessage:
-
-                    cm = ( XClientMessageEvent* )&xev;
-
-                    if ( cm->message_type == wm_protocols ) {
-                        if ( cm->data.l[ 0 ] == wm_delete_window ) {
-                            /*
-                             * Quit selected from window managers menu
-                             */
-                            exit_x48( 1 );
-                        }
-
-                        if ( cm->data.l[ 0 ] == wm_save_yourself ) {
-                            save_command_line();
-                        }
-                    }
-                    break;
-
-                default:
-
-#ifdef DEBUG_XEVENT
-                    printf( "Event: %d\n", xev.type );
-#endif
-                case KeymapNotify:
-                case ConfigureNotify:
-                case ReparentNotify:
-                    break;
-            }
-        }
-    } while ( first_key > 1 );
-    if ( first_key ) {
-        first_key++;
-    }
-    return wake;
-}
-#endif
-#if defined( GUI_IS_SDL1 )
+#elif defined( GUI_IS_SDL1 )
 void SDLCreateHP() {
     /* int x, y, w, h; */
     unsigned int width, height;
@@ -4890,249 +4246,6 @@ int SDLKeyToKey( SDLKey k ) {
         i++;
     }
     return -1;
-}
-
-int SDLGetEvent() {
-    // printf("Get event\n");
-    SDL_Event event;
-    int hpkey;
-    int rv;
-    static int lasthpkey = -1; // last key that was pressed or -1 for none
-    static int lastticks =
-        -1; // time at which a key was pressed or -1 if timer expired
-    static int lastislongpress = 0; // last key press was a long press
-    /* static unsigned ctr = 0; */
-    static int keyispressed = -1; // Indicate if a key is being held down by
-                                  // a finger (not set for long presses)
-    static int keyneedshow = 0;   // Indicates if the buttons need to be shown
-    static int dispupdate_t1 = -1,
-               dispupdate_t2; // Logic to display at regular intervals
-    // printf("SDLGetEvent %08X\n",ctr++);
-    /* unsigned t1, t2; */
-
-    /* unsigned ticks = SDL_GetTicks (); */
-    // printf("%u\n",ticks);
-
-    // make keys that last only one cycle
-    // button_release_all();
-
-    rv = 0; // nothing to do
-
-    // Check whether long pres on key
-    if ( lastticks > 0 && ( SDL_GetTicks() - lastticks > 750 ) ) {
-        // time elapsed
-        printf( "Timer expired\n" );
-        lastticks = -1;
-
-        // Check that the mouse is still on the same last key
-        int x, y, state;
-        // int hpkeykbd;
-        // char *kstate;
-        state = SDL_GetMouseState( &x, &y );
-        // kstate = SDL_GetKeyState(0);
-        // hpkeykbd = SDLKeyToKey(event.key.keysym.sym);
-        // if(state&SDL_BUTTON(1) && ((SDLCoordinateToKey(x,y)==lasthpkey)
-        // ||()
-        // ))
-        if ( state & SDL_BUTTON( 1 ) &&
-             SDLCoordinateToKey( x, y ) == lasthpkey ) {
-            lastislongpress = 1;
-            printf( "\tlong press\n" );
-            SDLUIFeedback();
-        }
-    }
-
-    // Iterate as long as there are events
-    // while( SDL_PollEvent( &event ) )
-    if ( SDL_PollEvent( &event ) ) {
-        // printf("PollEvent got %d\n",event.type);
-        switch ( event.type ) {
-            case SDL_QUIT:
-                printf( "Got SDL_QUIT event\n" );
-                exit_x48( 0 );
-                break;
-
-            // Mouse move: react to state changes in the buttons that are
-            // pressed
-            case SDL_MOUSEMOTION:
-                hpkey = SDLCoordinateToKey( event.motion.x, event.motion.y );
-                // printf("Mouse move %d,%d: %d hpkey: %d lasthpkey %d long
-                // %d\n", event.motion.x, event.motion.y,
-                // event.motion.state, hpkey,lasthpkey,lastislongpress);
-                if ( event.motion.state & SDL_BUTTON( 1 ) ) {
-                    // Mouse moves on a key different from the last key
-                    // (state change):
-                    // - release last (if last was pressed)
-                    // - press new (if new is pressed)
-                    if ( hpkey != lasthpkey ) {
-                        keyispressed = hpkey;
-
-                        if ( lasthpkey != -1 ) {
-                            if ( !lastislongpress ) {
-                                // button_released(lasthpkey);
-                                button_release_all();
-                                rv = 1;
-                                SDLUIFeedback();
-                                printf( "release all\n" );
-                            }
-                            // Stop timer, clear long key press
-                            lastticks = -1;
-                            lastislongpress = 0;
-                        }
-                        if ( hpkey != -1 ) {
-                            if ( !buttons[ hpkey ]
-                                      .pressed ) // If a key is down, it
-                                                 // can't be down another
-                                                 // time
-                            {
-                                button_pressed( hpkey );
-                                rv = 1;
-                                // Start timer
-                                lastticks = SDL_GetTicks();
-                                SDLUIFeedback();
-                                printf( "press %d\n", hpkey );
-                            }
-                        }
-                    }
-                    lasthpkey = hpkey;
-                }
-                if ( hpkey == -1 ) // Needed to avoid pressing and moving
-                                   // outside of a button releases
-                    lasthpkey = -1;
-
-                break;
-
-            case SDL_MOUSEBUTTONDOWN:
-            case SDL_MOUSEBUTTONUP:
-                // React only to left mouse button
-                if ( event.type == SDL_MOUSEBUTTONDOWN &&
-                     event.button.button == SDL_BUTTON_LEFT ) {
-
-                    if ( event.button.y < DISPLAY_OFFSET_Y ||
-                         event.button.y <
-                             48 ) // If we resized the screen, then there's
-                                  // no space above offset_y...clicking on
-                                  // the screen has to do something
-                        SDLShowInformation();
-                    // printf("l button up/down at %d %d. hpkey: %d lastkey:
-                    // %d long:
-                    // %d\n",event.button.x,event.button.y,hpkey,lasthpkey,lastislongpress);
-                }
-                hpkey = SDLCoordinateToKey( event.button.x, event.button.y );
-
-                if ( hpkey !=
-                     -1 ) // React to mouse up/down when click over a button
-                {
-                    if ( event.type == SDL_MOUSEBUTTONDOWN ) {
-                        keyispressed = hpkey;
-
-                        if ( !buttons[ hpkey ].pressed ) // Key can't be pressed
-                                                         // when down
-                        {
-                            button_pressed( hpkey );
-                            rv = 1;
-                            lasthpkey = hpkey;
-                            // Start timer
-                            lastticks = SDL_GetTicks();
-                            SDLUIFeedback();
-                            printf( "press %d\n", hpkey );
-                        }
-                    } else {
-                        keyispressed = -1;
-
-                        if ( !lastislongpress ) {
-                            button_release_all();
-                            rv = 1;
-                            lasthpkey = -1; // No key is pressed anymore
-                            SDLUIFeedback();
-                            printf( "release all\n" );
-                        }
-
-                        // Stop timer, clear long key press
-                        lastticks = -1;
-                        lastislongpress = 0;
-                    }
-                }
-                break;
-            case SDL_KEYDOWN:
-            case SDL_KEYUP:
-                printf( "Key: %d hpkey: %d\n", event.key.keysym.sym,
-                        SDLKeyToKey( event.key.keysym.sym ) );
-
-                if ( event.type == SDL_KEYDOWN &&
-                     event.key.keysym.sym == SDLK_F1 ) {
-                    SDLShowInformation();
-                }
-
-                hpkey = SDLKeyToKey( event.key.keysym.sym );
-                if ( hpkey != -1 ) {
-                    if ( event.type == SDL_KEYDOWN ) {
-                        keyispressed = hpkey;
-
-                        // Avoid pressing if it is already pressed
-                        if ( !buttons[ hpkey ].pressed ) {
-                            button_pressed( hpkey );
-                            rv = 1;
-                            SDLUIFeedback();
-                            printf( "press kbd %d\n", hpkey );
-                        }
-                    } else {
-                        keyispressed = -1;
-
-                        button_released( hpkey );
-                        rv = 1;
-                        SDLUIFeedback();
-                        printf( "release kbd %d\n", hpkey );
-                    }
-                }
-
-                break;
-        }
-    }
-
-    // Display button being pressed, if any
-    /* t1 = SDL_GetTicks (); */
-    SDLUIShowKey( keyispressed );
-    /* t2 = SDL_GetTicks (); */
-    // printf("Draw zoomed button: %03d\n",t2-t1);
-
-    // If we press long, then the button releases makes SDLUIShowKey restore
-    // the old key, but rv does not indicate that we need to update the
-    // buttons. Therefore we save it here
-    if ( rv )
-        keyneedshow = 1;
-
-    // Redraw the keyboard only if there is a button state change and no
-    // button is pressed (otherwise it overwrites the zoomed button)
-    if ( keyneedshow && keyispressed == -1 ) {
-        keyneedshow = 0;
-        /* t1 = SDL_GetTicks (); */
-        SDLDrawButtons();
-        /* t2 = SDL_GetTicks (); */
-        // printf("Draw all buttons: %03d\n",t2-t1);
-    }
-
-#ifdef DELAYEDDISPUPDATE
-    dispupdate_t2 = SDL_GetTicks();
-    if ( dispupdate_t2 - dispupdate_t1 > DISPUPDATEINTERVAL ) {
-        /* t1 = SDL_GetTicks (); */
-
-        int xoffset = DISPLAY_OFFSET_X + 5;
-        int yoffset = DISPLAY_OFFSET_Y + 20;
-
-        // LCD
-        SDL_UpdateRect( sdlwindow, xoffset, yoffset, 131 * 2, 64 * 2 );
-
-        // SDL_UpdateRect(sdlwindow,0,0,0,0);
-
-        /* t2 = SDL_GetTicks (); */
-        // printf("Update rect %03d\t%03d\n",ctr++,t2-t1);
-        dispupdate_t1 = dispupdate_t2;
-    }
-#endif
-
-    // return rv;
-    return 1;
 }
 
 void SDLDrawMore( unsigned int w, unsigned int h, unsigned int cut,
@@ -6884,3 +5997,892 @@ void SDLShowInformation() {
                    0 );
 }
 #endif
+
+int get_ui_event( void ) {
+#if defined( GUI_IS_X11 )
+    XEvent xev;
+    XClientMessageEvent* cm;
+    int i, wake, bufs = 2;
+    char buf[ 2 ];
+    KeySym sym;
+    // int button_expose;
+    // static int button_leave = -1;
+    static int release_pending = 0;
+    static XKeyEvent release_event;
+    static Time last_release_time = 0;
+
+    wake = 0;
+    if ( paste_last_key ) {
+        button_released( paste[ paste_count - 1 ] );
+        paste_last_key = 0;
+        return 1;
+    } else if ( paste_count < paste_size ) {
+        button_pressed( paste[ paste_count ] );
+        paste_last_key = 1;
+        paste_count++;
+        return 1;
+    }
+
+    if ( release_pending ) {
+        i = XLookupString( &release_event, buf, bufs, &sym, NULL );
+        wake = decode_key( ( XEvent* )&release_event, sym, buf, i );
+        release_pending = 0;
+        return wake;
+    }
+
+    do {
+        while ( XPending( dpy ) > 0 ) {
+
+            XNextEvent( dpy, &xev );
+
+            switch ( ( int )xev.type ) {
+
+                case KeyPress:
+
+                    if ( 0 && release_pending ) {
+                        printf( "xxx release_pending\n" );
+                    }
+                    release_pending = 0;
+                    if ( ( xev.xkey.time - last_release_time ) <= 1 ) {
+                        release_pending = 0;
+                        break;
+                    }
+
+                    i = XLookupString( &xev.xkey, buf, bufs, &sym, NULL );
+                    wake = decode_key( &xev, sym, buf, i );
+                    first_key = 1;
+                    break;
+
+                case KeyRelease:
+
+                    i = XLookupString( &xev.xkey, buf, bufs, &sym, NULL );
+                    first_key = 0;
+                    release_pending = 1;
+                    last_release_time = xev.xkey.time;
+                    memcpy( &release_event, &xev, sizeof( XKeyEvent ) );
+                    break;
+
+                case NoExpose:
+
+                    break;
+
+                case Expose:
+
+                    if ( xev.xexpose.count == 0 ) {
+                        if ( xev.xexpose.window == disp.win ) {
+                            DrawDisp();
+                        } else if ( xev.xexpose.window == iconW ) {
+                            DrawIcon();
+                        } else if ( xev.xexpose.window == mainW ) {
+                            DrawKeypad( &keypad );
+                        } else
+                            for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
+                                if ( xev.xexpose.window == buttons[ i ].xwin ) {
+                                    DrawButton( i );
+                                    break;
+                                }
+                            }
+                    }
+                    break;
+                case UnmapNotify:
+
+                    disp.mapped = 0;
+                    break;
+
+                case MapNotify:
+
+                    if ( !disp.mapped ) {
+                        disp.mapped = 1;
+                        update_display();
+                        redraw_annunc();
+                    }
+                    break;
+
+                case ButtonPress:
+
+                    if ( xev.xbutton.subwindow == disp.win ) {
+                        if ( xev.xbutton.button == Button2 ) {
+                            if ( xev.xbutton.subwindow == disp.win ) {
+                                int x;
+                                int flag = 0;
+                                char* paste_in = XFetchBuffer( dpy, &x, 0 );
+
+                                char* p = paste_in;
+                                if ( x > MAX_PASTE ) {
+                                    x = 0;
+                                    printf( "input too long. limit is %d "
+                                            "characters\n",
+                                            MAX_PASTE );
+                                }
+                                paste_count = 0;
+                                paste_size = 0;
+                                while ( x-- ) {
+                                    char c = *p++;
+                                    switch ( c ) {
+                                        case '.':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_PERIOD;
+                                            break;
+                                        case '0':
+                                            paste[ paste_size++ ] = BUTTON_0;
+                                            break;
+                                        case '1':
+                                            paste[ paste_size++ ] = BUTTON_1;
+                                            break;
+                                        case '2':
+                                            paste[ paste_size++ ] = BUTTON_2;
+                                            break;
+                                        case '3':
+                                            paste[ paste_size++ ] = BUTTON_3;
+                                            break;
+                                        case '4':
+                                            paste[ paste_size++ ] = BUTTON_4;
+                                            break;
+                                        case '5':
+                                            paste[ paste_size++ ] = BUTTON_5;
+                                            break;
+                                        case '6':
+                                            paste[ paste_size++ ] = BUTTON_6;
+                                            break;
+                                        case '7':
+                                            paste[ paste_size++ ] = BUTTON_7;
+                                            break;
+                                        case '8':
+                                            paste[ paste_size++ ] = BUTTON_8;
+                                            break;
+                                        case '9':
+                                            paste[ paste_size++ ] = BUTTON_9;
+                                            break;
+                                        case '\n':
+                                            paste[ paste_size++ ] = BUTTON_SHR;
+                                            paste[ paste_size++ ] =
+                                                BUTTON_PERIOD;
+                                            break;
+                                        case '!':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_DEL;
+                                            break;
+                                        case '+':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_PLUS;
+                                            break;
+                                        case '-':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] =
+                                                BUTTON_MINUS;
+                                            break;
+                                        case '*':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_MUL;
+                                            break;
+                                        case '/':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_DIV;
+                                            break;
+                                        case ' ':
+                                            paste[ paste_size++ ] = 47;
+                                            break;
+                                        case '(':
+                                            paste[ paste_size++ ] = BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_DIV;
+                                            break;
+                                        case '[':
+                                            paste[ paste_size++ ] = BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_MUL;
+                                            break;
+                                        case '<':
+                                            if ( x > 1 && *p == '<' ) {
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_MINUS;
+                                                x--;
+                                                p++;
+                                            } else {
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_ALPHA;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_2;
+                                            }
+                                            break;
+                                        case '{':
+                                            paste[ paste_size++ ] = BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_PLUS;
+                                            break;
+                                        case ')':
+                                        case ']':
+                                        case '}':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_RIGHT;
+                                            break;
+                                        case '>':
+                                            if ( x > 1 && *p == '>' ) {
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_RIGHT;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_RIGHT;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_RIGHT;
+                                                x--;
+                                                p++;
+                                            } else {
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_ALPHA;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHR;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_2;
+                                            }
+                                            break;
+                                        case '#':
+                                            paste[ paste_size++ ] = BUTTON_SHR;
+                                            paste[ paste_size++ ] = BUTTON_DIV;
+                                            break;
+                                        case '_':
+                                            paste[ paste_size++ ] = BUTTON_SHR;
+                                            paste[ paste_size++ ] = BUTTON_MUL;
+                                            break;
+                                        case '"':
+                                            if ( flag & 1 ) {
+                                                flag &= ~1;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_RIGHT;
+                                            } else {
+                                                flag |= 1;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHR;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_MINUS;
+                                            }
+                                            break;
+                                        case ':':
+                                            if ( flag & 2 ) {
+                                                flag &= ~2;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_RIGHT;
+                                            } else {
+                                                flag |= 2;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHR;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_PLUS;
+                                            }
+                                            break;
+                                        case '\'':
+                                            if ( flag & 4 ) {
+                                                flag &= ~4;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_RIGHT;
+                                            } else {
+                                                flag |= 4;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_COLON;
+                                            }
+                                            break;
+                                        case 'a':
+                                        case 'A':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_A;
+                                            break;
+                                        case 'b':
+                                        case 'B':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_B;
+                                            break;
+                                        case 'c':
+                                        case 'C':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_C;
+                                            break;
+                                        case 'd':
+                                        case 'D':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_D;
+                                            break;
+                                        case 'e':
+                                        case 'E':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_E;
+                                            break;
+                                        case 'f':
+                                        case 'F':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_F;
+                                            break;
+                                        case 'g':
+                                        case 'G':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_MTH;
+                                            break;
+                                        case 'h':
+                                        case 'H':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_PRG;
+                                            break;
+                                        case 'i':
+                                        case 'I':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_CST;
+                                            break;
+                                        case 'j':
+                                        case 'J':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_VAR;
+                                            break;
+                                        case 'k':
+                                        case 'K':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_UP;
+                                            break;
+                                        case 'l':
+                                        case 'L':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_NXT;
+                                            break;
+
+                                        case 'm':
+                                        case 'M':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] =
+                                                BUTTON_COLON;
+                                            break;
+                                        case 'n':
+                                        case 'N':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_STO;
+                                            break;
+                                        case 'o':
+                                        case 'O':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_EVAL;
+                                            break;
+                                        case 'p':
+                                        case 'P':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_LEFT;
+                                            break;
+                                        case 'q':
+                                        case 'Q':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_DOWN;
+                                            break;
+                                        case 'r':
+                                        case 'R':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] =
+                                                BUTTON_RIGHT;
+                                            break;
+                                        case 's':
+                                        case 'S':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_SIN;
+                                            break;
+                                        case 't':
+                                        case 'T':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_COS;
+                                            break;
+                                        case 'u':
+                                        case 'U':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_TAN;
+                                            break;
+                                        case 'v':
+                                        case 'V':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_SQRT;
+                                            break;
+                                        case 'w':
+                                        case 'W':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] =
+                                                BUTTON_POWER;
+                                            break;
+                                        case 'x':
+                                        case 'X':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_INV;
+                                            break;
+                                        case 'y':
+                                        case 'Y':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_NEG;
+                                            break;
+                                        case 'z':
+                                        case 'Z':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_EEX;
+                                            break;
+                                        default:
+                                            printf( "unknown %c %d\n", c, *p );
+                                            break;
+                                    }
+                                }
+                                if ( paste_in )
+                                    XFree( paste_in );
+                                if ( paste_size ) {
+                                    return 1;
+                                }
+                            }
+                        } else if ( xev.xbutton.button == Button3 ) {
+                            /* TODO Make cut from the screen work. */
+                            get_stack();
+                        } else {
+                            /* printf("In display %d\n", xev.xbutton.button); */
+                        }
+                    } else {
+                        if ( xev.xbutton.button == Button1 ||
+                             xev.xbutton.button == Button2 ||
+                             xev.xbutton.button == Button3 ) {
+                            for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
+                                if ( xev.xbutton.subwindow ==
+                                     buttons[ i ].xwin ) {
+                                    if ( buttons[ i ].pressed ) {
+                                        if ( xev.xbutton.button == Button3 ) {
+                                            button_released( i );
+                                            DrawButton( i );
+                                        }
+                                    } else {
+                                        last_button = i;
+                                        button_pressed( i );
+                                        wake = 1;
+                                        first_key = 1;
+                                        DrawButton( i );
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    break;
+
+                case ButtonRelease:
+
+                    first_key = 0;
+                    if ( xev.xbutton.button == Button1 ) {
+                        button_release_all();
+                    }
+                    if ( xev.xbutton.button == Button2 ) {
+                        if ( last_button >= 0 ) {
+                            button_released( last_button );
+                            DrawButton( last_button );
+                        }
+                        last_button = -1;
+                    }
+                    break;
+
+                case FocusOut:
+                    first_key = 0;
+                    button_release_all();
+                    break;
+
+                case MappingNotify:
+
+                    switch ( xev.xmapping.request ) {
+                        case MappingModifier:
+                        case MappingKeyboard:
+                            XRefreshKeyboardMapping( &xev.xmapping );
+                            break;
+                        case MappingPointer:
+                        default:
+                            break;
+                    }
+                    break;
+
+                case EnterNotify:
+                case LeaveNotify:
+
+                    break;
+
+                case ClientMessage:
+
+                    cm = ( XClientMessageEvent* )&xev;
+
+                    if ( cm->message_type == wm_protocols ) {
+                        if ( cm->data.l[ 0 ] == wm_delete_window ) {
+                            /*
+                             * Quit selected from window managers menu
+                             */
+                            exit_x48( 1 );
+                        }
+
+                        if ( cm->data.l[ 0 ] == wm_save_yourself ) {
+                            save_command_line();
+                        }
+                    }
+                    break;
+
+                default:
+
+#ifdef DEBUG_XEVENT
+                    printf( "Event: %d\n", xev.type );
+#endif
+                case KeymapNotify:
+                case ConfigureNotify:
+                case ReparentNotify:
+                    break;
+            }
+        }
+    } while ( first_key > 1 );
+    if ( first_key ) {
+        first_key++;
+    }
+    return wake;
+
+#elif defined( GUI_IS_SDL1 )
+
+    // printf("Get event\n");
+    SDL_Event event;
+    int hpkey;
+    int rv;
+    static int lasthpkey = -1; // last key that was pressed or -1 for none
+    static int lastticks =
+        -1; // time at which a key was pressed or -1 if timer expired
+    static int lastislongpress = 0; // last key press was a long press
+    /* static unsigned ctr = 0; */
+    static int keyispressed = -1; // Indicate if a key is being held down by
+                                  // a finger (not set for long presses)
+    static int keyneedshow = 0;   // Indicates if the buttons need to be shown
+    static int dispupdate_t1 = -1,
+               dispupdate_t2; // Logic to display at regular intervals
+    // printf("SDLGetEvent %08X\n",ctr++);
+    /* unsigned t1, t2; */
+
+    /* unsigned ticks = SDL_GetTicks (); */
+    // printf("%u\n",ticks);
+
+    // make keys that last only one cycle
+    // button_release_all();
+
+    rv = 0; // nothing to do
+
+    // Check whether long pres on key
+    if ( lastticks > 0 && ( SDL_GetTicks() - lastticks > 750 ) ) {
+        // time elapsed
+        printf( "Timer expired\n" );
+        lastticks = -1;
+
+        // Check that the mouse is still on the same last key
+        int x, y, state;
+        // int hpkeykbd;
+        // char *kstate;
+        state = SDL_GetMouseState( &x, &y );
+        // kstate = SDL_GetKeyState(0);
+        // hpkeykbd = SDLKeyToKey(event.key.keysym.sym);
+        // if(state&SDL_BUTTON(1) && ((SDLCoordinateToKey(x,y)==lasthpkey)
+        // ||()
+        // ))
+        if ( state & SDL_BUTTON( 1 ) &&
+             SDLCoordinateToKey( x, y ) == lasthpkey ) {
+            lastislongpress = 1;
+            printf( "\tlong press\n" );
+            SDLUIFeedback();
+        }
+    }
+
+    // Iterate as long as there are events
+    // while( SDL_PollEvent( &event ) )
+    if ( SDL_PollEvent( &event ) ) {
+        // printf("PollEvent got %d\n",event.type);
+        switch ( event.type ) {
+            case SDL_QUIT:
+                printf( "Got SDL_QUIT event\n" );
+                exit_x48( 0 );
+                break;
+
+            // Mouse move: react to state changes in the buttons that are
+            // pressed
+            case SDL_MOUSEMOTION:
+                hpkey = SDLCoordinateToKey( event.motion.x, event.motion.y );
+                // printf("Mouse move %d,%d: %d hpkey: %d lasthpkey %d long
+                // %d\n", event.motion.x, event.motion.y,
+                // event.motion.state, hpkey,lasthpkey,lastislongpress);
+                if ( event.motion.state & SDL_BUTTON( 1 ) ) {
+                    // Mouse moves on a key different from the last key
+                    // (state change):
+                    // - release last (if last was pressed)
+                    // - press new (if new is pressed)
+                    if ( hpkey != lasthpkey ) {
+                        keyispressed = hpkey;
+
+                        if ( lasthpkey != -1 ) {
+                            if ( !lastislongpress ) {
+                                // button_released(lasthpkey);
+                                button_release_all();
+                                rv = 1;
+                                SDLUIFeedback();
+                                printf( "release all\n" );
+                            }
+                            // Stop timer, clear long key press
+                            lastticks = -1;
+                            lastislongpress = 0;
+                        }
+                        if ( hpkey != -1 ) {
+                            if ( !buttons[ hpkey ]
+                                      .pressed ) // If a key is down, it
+                                                 // can't be down another
+                                                 // time
+                            {
+                                button_pressed( hpkey );
+                                rv = 1;
+                                // Start timer
+                                lastticks = SDL_GetTicks();
+                                SDLUIFeedback();
+                                printf( "press %d\n", hpkey );
+                            }
+                        }
+                    }
+                    lasthpkey = hpkey;
+                }
+                if ( hpkey == -1 ) // Needed to avoid pressing and moving
+                                   // outside of a button releases
+                    lasthpkey = -1;
+
+                break;
+
+            case SDL_MOUSEBUTTONDOWN:
+            case SDL_MOUSEBUTTONUP:
+                // React only to left mouse button
+                if ( event.type == SDL_MOUSEBUTTONDOWN &&
+                     event.button.button == SDL_BUTTON_LEFT ) {
+
+                    if ( event.button.y < DISPLAY_OFFSET_Y ||
+                         event.button.y <
+                             48 ) // If we resized the screen, then there's
+                                  // no space above offset_y...clicking on
+                                  // the screen has to do something
+                        SDLShowInformation();
+                    // printf("l button up/down at %d %d. hpkey: %d lastkey:
+                    // %d long:
+                    // %d\n",event.button.x,event.button.y,hpkey,lasthpkey,lastislongpress);
+                }
+                hpkey = SDLCoordinateToKey( event.button.x, event.button.y );
+
+                if ( hpkey !=
+                     -1 ) // React to mouse up/down when click over a button
+                {
+                    if ( event.type == SDL_MOUSEBUTTONDOWN ) {
+                        keyispressed = hpkey;
+
+                        if ( !buttons[ hpkey ].pressed ) // Key can't be pressed
+                                                         // when down
+                        {
+                            button_pressed( hpkey );
+                            rv = 1;
+                            lasthpkey = hpkey;
+                            // Start timer
+                            lastticks = SDL_GetTicks();
+                            SDLUIFeedback();
+                            printf( "press %d\n", hpkey );
+                        }
+                    } else {
+                        keyispressed = -1;
+
+                        if ( !lastislongpress ) {
+                            button_release_all();
+                            rv = 1;
+                            lasthpkey = -1; // No key is pressed anymore
+                            SDLUIFeedback();
+                            printf( "release all\n" );
+                        }
+
+                        // Stop timer, clear long key press
+                        lastticks = -1;
+                        lastislongpress = 0;
+                    }
+                }
+                break;
+            case SDL_KEYDOWN:
+            case SDL_KEYUP:
+                printf( "Key: %d hpkey: %d\n", event.key.keysym.sym,
+                        SDLKeyToKey( event.key.keysym.sym ) );
+
+                if ( event.type == SDL_KEYDOWN &&
+                     event.key.keysym.sym == SDLK_F1 ) {
+                    SDLShowInformation();
+                }
+
+                hpkey = SDLKeyToKey( event.key.keysym.sym );
+                if ( hpkey != -1 ) {
+                    if ( event.type == SDL_KEYDOWN ) {
+                        keyispressed = hpkey;
+
+                        // Avoid pressing if it is already pressed
+                        if ( !buttons[ hpkey ].pressed ) {
+                            button_pressed( hpkey );
+                            rv = 1;
+                            SDLUIFeedback();
+                            printf( "press kbd %d\n", hpkey );
+                        }
+                    } else {
+                        keyispressed = -1;
+
+                        button_released( hpkey );
+                        rv = 1;
+                        SDLUIFeedback();
+                        printf( "release kbd %d\n", hpkey );
+                    }
+                }
+
+                break;
+        }
+    }
+
+    // Display button being pressed, if any
+    /* t1 = SDL_GetTicks (); */
+    SDLUIShowKey( keyispressed );
+    /* t2 = SDL_GetTicks (); */
+    // printf("Draw zoomed button: %03d\n",t2-t1);
+
+    // If we press long, then the button releases makes SDLUIShowKey restore
+    // the old key, but rv does not indicate that we need to update the
+    // buttons. Therefore we save it here
+    if ( rv )
+        keyneedshow = 1;
+
+    // Redraw the keyboard only if there is a button state change and no
+    // button is pressed (otherwise it overwrites the zoomed button)
+    if ( keyneedshow && keyispressed == -1 ) {
+        keyneedshow = 0;
+        /* t1 = SDL_GetTicks (); */
+        SDLDrawButtons();
+        /* t2 = SDL_GetTicks (); */
+        // printf("Draw all buttons: %03d\n",t2-t1);
+    }
+
+#ifdef DELAYEDDISPUPDATE
+    dispupdate_t2 = SDL_GetTicks();
+    if ( dispupdate_t2 - dispupdate_t1 > DISPUPDATEINTERVAL ) {
+        /* t1 = SDL_GetTicks (); */
+
+        int xoffset = DISPLAY_OFFSET_X + 5;
+        int yoffset = DISPLAY_OFFSET_Y + 20;
+
+        // LCD
+        SDL_UpdateRect( sdlwindow, xoffset, yoffset, 131 * 2, 64 * 2 );
+
+        // SDL_UpdateRect(sdlwindow,0,0,0,0);
+
+        /* t2 = SDL_GetTicks (); */
+        // printf("Update rect %03d\t%03d\n",ctr++,t2-t1);
+        dispupdate_t1 = dispupdate_t2;
+    }
+#endif
+
+    // return rv;
+    return 1;
+
+#endif
+}
