@@ -9,12 +9,12 @@ LIBS = -lm -lhistory -lreadline
 GUI = x11
 
 ifeq ($(GUI), x11)
-	CFLAGS += -D 'GUI_IS_X11 = 1'
-	LIBS += -lX11 -lXext
+	CFLAGS += $(shell pkg-config --cflags x11 xext readline) -D_GNU_SOURCE=1 -DGUI_IS_X11=1 -DHAVE_XSHM=1
+	LIBS += $(shell pkg-config --libs x11 xext readline)
 endif
 ifeq ($(GUI), sdl1)
-	CFLAGS += $(shell pkg-config --cflags SDL_gfx readline sdl12_compat) -D 'GUI_IS_SDL1 = 1'
-	LIBS += $(shell pkg-config --libs SDL_gfx readline sdl12_compat)
+	CFLAGS += $(shell pkg-config --cflags SDL_gfx sdl12_compat readline) -DGUI_IS_SDL1=1
+	LIBS += $(shell pkg-config --libs SDL_gfx sdl12_compat readline)
 endif
 
 FULL_WARNINGS = no
