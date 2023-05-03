@@ -33,8 +33,7 @@ int resetOnStartup;
 char* serialLine;
 char* romFileName;
 char* homeDirectory;
-#endif
-#if defined( GUI_IS_SDL1 )
+#elif defined( GUI_IS_SDL1 )
 char serialLine[ 1024 ];
 char romFileName[ 1024 ];
 char homeDirectory[ 1024 ];
@@ -292,8 +291,9 @@ XFontStruct* get_font_resource( Display* dpy, char* name, char* class ) {
     }
     return f;
 }
-#endif
-#if defined( GUI_IS_SDL1 )
+
+#elif defined( GUI_IS_SDL1 )
+
 void get_resources(
     void ) { /*
            if (get_boolean_resource("printVersion", "PrintVersion"))
