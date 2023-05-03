@@ -1154,7 +1154,7 @@ void write_nibbles( long addr, long val, int len ) {
     }
 }
 
-void dev_memory_init() {
+void dev_memory_init( void ) {
     if ( opt_gx ) {
         read_nibble = read_nibble_gx;
         read_nibble_crc = read_nibble_crc_gx;

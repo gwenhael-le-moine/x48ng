@@ -64,7 +64,7 @@ word_64 run;
 static word_20 jumpmasks[] = { 0xffffffff, 0xfffffff0, 0xffffff00, 0xfffff000,
                                0xffff0000, 0xfff00000, 0xff000000, 0xf0000000 };
 
-int decode_group_80() {
+int decode_group_80( void ) {
     int t, op3, op4, op5, op6;
     unsigned char* REG;
     long addr;
@@ -233,7 +233,7 @@ int decode_group_80() {
     }
 }
 
-int decode_group_1() {
+int decode_group_1( void ) {
     int op, op2, op3, op4;
 
     op2 = read_nibble( saturn.PC + 1 );
@@ -1987,7 +1987,7 @@ static inline int decode_8_thru_f( int op1 ) {
     }
 }
 
-inline int step_instruction() {
+inline int step_instruction( void ) {
     int op0, op1, op2, op3;
     int stop = 0;
 
@@ -2230,7 +2230,7 @@ inline int step_instruction() {
     return stop;
 }
 
-inline void schedule() {
+inline void schedule( void ) {
     t1_t2_ticks ticks;
     unsigned long steps;
     static unsigned long old_stat_instr;
@@ -2392,7 +2392,7 @@ inline void schedule() {
     }
 }
 
-int emulate() {
+int emulate( void ) {
     struct timeval tv;
 #if defined( GUI_IS_X11 )
     struct timeval tv2;

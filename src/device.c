@@ -12,7 +12,7 @@ extern int device_check;
 
 device_t device;
 
-void check_devices() {
+void check_devices( void ) {
     if ( device.display_touched > 0 && device.display_touched-- == 1 ) {
         device.display_touched = 0;
         update_display();

@@ -11,7 +11,7 @@ char fixbuf[ 1024 ] = {
     0,
 };
 
-void fatal_exit() {
+void fatal_exit( void ) {
     if ( quiet )
         exit( 1 );
 

@@ -5,19 +5,9 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#if defined( GUI_IS_X11 )
-#include <X11/Xlib.h>
-#include <X11/Xresource.h>
-#include <X11/Xutil.h>
-#endif
-
 #include "resources.h"
 #include "disasm.h"
 #include "errors.h"
-
-#if defined( GUI_IS_X11 )
-XrmDatabase rdb = ( XrmDatabase )0;
-#endif
 
 int verbose;
 int quiet;
@@ -40,7 +30,13 @@ char homeDirectory[ 1024 ];
 #endif
 
 #if defined( GUI_IS_X11 )
-void get_resources() {
+#include <X11/Xlib.h>
+#include <X11/Xresource.h>
+#include <X11/Xutil.h>
+
+XrmDatabase rdb = ( XrmDatabase )0;
+
+void get_resources( void ) {
     if ( get_boolean_resource( "printVersion", "PrintVersion" ) )
         show_version();
     if ( get_boolean_resource( "printCopyright", "PrintCopyright" ) )
@@ -294,21 +290,12 @@ XFontStruct* get_font_resource( Display* dpy, char* name, char* class ) {
 
 #elif defined( GUI_IS_SDL1 )
 
-void get_resources(
-    void ) { /*
-           if (get_boolean_resource("printVersion", "PrintVersion"))
-           show_version();
-           if (get_boolean_resource("printCopyright", "PrintCopyright"))
-           show_copyright();
-           if (get_boolean_resource("printWarranty", "PrintWarranty"))
-           show_warranty();*/
-
+void get_resources( void ) {
     verbose = 0;
     quiet = 0;
     useTerminal = 1;
     useSerial = 0;
     strcpy( serialLine, "/dev/ttyS0" );
-    // initialize=0;
     initialize = 0;
     resetOnStartup = 0;
 
@@ -322,10 +309,7 @@ void get_resources(
     // emulator instead initializes the state and ram from scratch, and attempts
     //							to load the ROM
     // romFileName. This is just for bootstrapping: afterwards then the emulator
-    // will save the
-    // state
-    // to
-    // homeDirectory
+    // will save the state to homeDirectory
 
     // Have homeDirectory in the user's home
     strcpy( homeDirectory, ".x48ng" ); // live files are stored in ~/.x48ng

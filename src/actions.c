@@ -22,7 +22,7 @@ int first_press = 1; // PATCH
 int conf_bank1 = 0x00000;
 int conf_bank2 = 0x00000;
 
-void do_in() {
+void do_in( void ) {
     int i, in, out;
 
     out = 0;
@@ -99,7 +99,7 @@ void swap_register_status( unsigned char* r ) {
     }
 }
 
-void clear_status() {
+void clear_status( void ) {
     int i;
 
     for ( i = 0; i < 12; i++ ) {
@@ -130,7 +130,7 @@ int get_register_bit( unsigned char* reg, int n ) {
 short conf_tab_sx[] = { 1, 2, 2, 2, 2, 0 };
 short conf_tab_gx[] = { 1, 2, 2, 2, 2, 0 };
 
-void do_reset() {
+void do_reset( void ) {
     int i;
 
     for ( i = 0; i < 6; i++ ) {
@@ -143,11 +143,11 @@ void do_reset() {
     }
 }
 
-void do_inton() { saturn.kbd_ien = 1; }
+void do_inton( void ) { saturn.kbd_ien = 1; }
 
-void do_intoff() { saturn.kbd_ien = 0; }
+void do_intoff( void ) { saturn.kbd_ien = 0; }
 
-void do_return_interupt() {
+void do_return_interupt( void ) {
     if ( saturn.int_pending ) {
         saturn.int_pending = 0;
         saturn.intenable = 0;
@@ -163,7 +163,7 @@ void do_return_interupt() {
     }
 }
 
-void do_interupt() {
+void do_interupt( void ) {
     interrupt_called = 1;
     if ( saturn.intenable ) {
         push_return_addr( saturn.PC );
@@ -172,7 +172,7 @@ void do_interupt() {
     }
 }
 
-void do_kbd_int() {
+void do_kbd_int( void ) {
     interrupt_called = 1;
     if ( saturn.intenable ) {
         push_return_addr( saturn.PC );
@@ -183,7 +183,7 @@ void do_kbd_int() {
     }
 }
 
-void do_reset_interrupt_system() {
+void do_reset_interrupt_system( void ) {
     int i, gen_intr;
 
     saturn.kbd_ien = 1;
@@ -199,7 +199,7 @@ void do_reset_interrupt_system() {
     }
 }
 
-void do_unconfigure() {
+void do_unconfigure( void ) {
     int i;
     unsigned int conf;
 
@@ -222,7 +222,7 @@ void do_unconfigure() {
     }
 }
 
-void do_configure() {
+void do_configure( void ) {
     int i;
     unsigned long conf;
 
@@ -242,7 +242,7 @@ void do_configure() {
     }
 }
 
-int get_identification() {
+int get_identification( void ) {
     int i;
     static int chip_id[] = { 0,    0,    0,    0,    0x05, 0xf6,
                              0x07, 0xf8, 0x01, 0xf2, 0,    0 };
@@ -264,7 +264,7 @@ int get_identification() {
     return 0;
 }
 
-void do_shutdown() {
+void do_shutdown( void ) {
     int wake, alarms;
     t1_t2_ticks ticks;
 
@@ -412,7 +412,7 @@ void push_return_addr( long addr ) {
     saturn.rstk[ saturn.rstkp ] = addr;
 }
 
-long pop_return_addr() {
+long pop_return_addr( void ) {
     if ( saturn.rstkp < 0 )
         return 0;
     return saturn.rstk[ saturn.rstkp-- ];

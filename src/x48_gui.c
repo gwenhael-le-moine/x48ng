@@ -348,37 +348,8 @@ color_t colors_gx[] = {
     { "black", 0, 0, 0, 0, 0, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
     { 0 } };
 
-typedef struct button_t {
+#elif defined( GUI_IS_SDL1 )
 
-    char* name;
-    short pressed;
-    short extra;
-
-    int code;
-    int x, y;
-    unsigned int w, h;
-
-    int lc;
-    char* label;
-    short font_size;
-    unsigned int lw, lh;
-    unsigned char* lb;
-
-    char* letter;
-
-    char* left;
-    short is_menu;
-    char* right;
-    char* sub;
-
-    Pixmap map;
-    Pixmap down;
-    Window xwin;
-
-} button_t;
-#endif
-
-#if defined( GUI_IS_SDL1 )
 // Control how the screen update is performed: at regular intervals (delayed)
 // or immediatly Note: this is only for the LCD. The annunciators and the
 // buttons are always immediately updated
@@ -980,7 +951,7 @@ icon_map_t icon_maps_gx[] = {
 #define KEYBOARD_OFFSET_X SIDE_SKIP
 #define KEYBOARD_OFFSET_Y ( TOP_SKIP + DISPLAY_HEIGHT + DISP_KBD_SKIP )
 
-int AllocColors() {
+int AllocColors( void ) {
     int c, error, dyn;
     int r_shift = 0, g_shift = 0, b_shift = 0;
     XSetWindowAttributes xswa;
@@ -1442,8 +1413,9 @@ int InitDisplay( int argc, char** argv ) {
 
     return 0;
 }
-#endif
-#if defined( GUI_IS_SDL1 )
+
+#elif defined( GUI_IS_SDL1 )
+
 typedef struct sdltohpkeymap_t {
     SDLKey sdlkey;
     int hpkey;
@@ -1940,7 +1912,7 @@ void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small,
     return;
 }
 
-void DrawButtons() {
+void DrawButtons( void ) {
     int i;
 
     for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
@@ -2698,7 +2670,7 @@ void DrawKeypad( keypad_t* keypad ) {
     return;
 }
 
-void CreateIcon() {
+void CreateIcon( void ) {
     XSetWindowAttributes xswa;
     XWindowAttributes xwa;
     Pixmap tmp_pix;
@@ -2779,7 +2751,7 @@ void CreateIcon() {
     return;
 }
 
-void refresh_icon() {
+void refresh_icon( void ) {
     int icon_state;
 
     icon_state =
@@ -2821,7 +2793,7 @@ void refresh_icon() {
     }
 }
 
-void DrawIcon() {
+void DrawIcon( void ) {
     XCopyArea( dpy, icon_pix, iconW, gc, 0, 0, hp48_icon_width,
                hp48_icon_height, 0, 0 );
     return;
@@ -2834,7 +2806,7 @@ int handle_xerror( Display* the_dpy, XErrorEvent* eev ) {
 }
 #endif
 
-void CreateDispWindow() {
+void CreateDispWindow( void ) {
     XSetWindowAttributes xswa;
     XGCValues val;
     unsigned long gc_mask;
@@ -2870,7 +2842,6 @@ void CreateDispWindow() {
     XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
 
 #ifdef HAVE_XSHM
-
     disp.display_update = UPDATE_DISP | UPDATE_MENU;
 
     xerror_flag = 0;
@@ -3450,7 +3421,7 @@ int button_released( int b ) {
     return 0;
 }
 
-static int button_release_all() {
+static int button_release_all( void ) {
     int code;
     int b;
 
@@ -3516,7 +3487,7 @@ int key_event( int b, XEvent* xev ) {
 }
 
 #ifdef HAVE_XSHM
-void refresh_display() {
+void refresh_display( void ) {
     if ( shm_flag ) {
         if ( disp.display_update & UPDATE_DISP ) {
             XShmPutImage( dpy, disp.win, disp.gc, disp.disp_image, disp.offset,
@@ -3533,7 +3504,7 @@ void refresh_display() {
 }
 #endif
 
-void DrawDisp() {
+void DrawDisp( void ) {
 #ifdef HAVE_XSHM
     if ( shm_flag ) {
         XShmPutImage( dpy, disp.win, disp.gc, disp.disp_image, disp.offset, 0,
@@ -3603,7 +3574,7 @@ void get_geometry_string( Window win, char* s, int allow_off_screen ) {
              x, ( y_s > 0 ) ? "+" : "-", y );
 }
 
-void save_command_line() {
+void save_command_line( void ) {
     XWindowAttributes xwa;
     int wm_argc, ac;
     char **wm_argv, geom[ 128 ], icon_geom[ 128 ];
@@ -3981,7 +3952,7 @@ int last_button = -1;
 
 extern char* get_stack();
 #elif defined( GUI_IS_SDL1 )
-void SDLCreateHP() {
+void SDLCreateHP( void ) {
     /* int x, y, w, h; */
     unsigned int width, height;
 
@@ -4021,8 +3992,6 @@ void SDLCreateHP() {
 
     keypad.width = width;
     keypad.height = height;
-
-    printf( "Screen size: %d %d\n", width, height );
 
     cut = buttons[ BUTTON_MTH ].y + KEYBOARD_OFFSET_Y - 19;
     SDLDrawBackground( width, cut, width, height );
@@ -4142,7 +4111,7 @@ int button_released( int b ) {
     return 0;
 }
 
-static int button_release_all() {
+static int button_release_all( void ) {
     int b;
 
     for ( b = BUTTON_A; b <= LAST_BUTTON; b++ )
@@ -4151,7 +4120,7 @@ static int button_release_all() {
     return 0;
 }
 
-/* void DrawDisp() { */
+/* void DrawDisp( void ) { */
 /*     redraw_display(); */
 /*     redraw_annunc(); */
 /* } */
@@ -4205,17 +4174,9 @@ int SDLKeyToKey( SDLKey k ) {
 void SDLDrawMore( unsigned int w, unsigned int h, unsigned int cut,
                   unsigned int offset_y, unsigned int offset_x,
                   int keypad_width, int keypad_height ) {
-    /* int x, y; */
-    /* SDL_Surface *surf; */
 
     int display_height = DISPLAY_HEIGHT;
     int display_width = DISPLAY_WIDTH;
-
-    printf( "display: %d %d\n", display_height, display_width );
-    printf( "keypad: %d %d\n", keypad_height, keypad_width );
-    printf( "wh: %d %d\n", w, h );
-    printf( "cut: %d\n", cut );
-    printf( "offset: %d %d\n", offset_y, offset_x );
 
     // lower the whole thing
 
@@ -4354,7 +4315,6 @@ void SDLDrawLogo( unsigned int w, unsigned int h, unsigned int cut,
     int x, y;
     SDL_Surface* surf;
 
-    /* int display_height = DISPLAY_HEIGHT; */
     int display_width = DISPLAY_WIDTH;
 
     // insert the HP Logo
@@ -4500,7 +4460,7 @@ void SDLDrawLogo( unsigned int w, unsigned int h, unsigned int cut,
 ///////////////////////////////////////////////
 // SDL PORT
 ///////////////////////////////////////////////
-void SDLCreateColors() {
+void SDLCreateColors( void ) {
     unsigned i;
 
     for ( i = WHITE; i < BLACK; i++ )
@@ -4525,9 +4485,8 @@ void SDLCreateColors() {
 ///////////////////////////////////////////////
 // SDL PORT
 ///////////////////////////////////////////////
-void SDLCreateKeys() {
+void SDLCreateKeys( void ) {
     unsigned i, x, y;
-    /* SDL_Rect srect, drect; */
     unsigned pixel;
 
     for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
@@ -4542,17 +4501,6 @@ void SDLCreateKeys() {
                 SDL_SWSURFACE, buttons[ i ].w, buttons[ i ].h, 32, 0x00ff0000,
                 0x0000ff00, 0x000000ff, 0xff000000 );
         }
-        /*
-                        if (i < BUTTON_MTH)
-                                pixel = ARGBColors[DISP_PAD];
-                        else
-                        {
-                                if (opt_gx && buttons[i].is_menu)
-                                        pixel = ARGBColors[UNDERLAY];
-                                else
-                                        pixel = ARGBColors[PAD];
-                        }
-        */
         // Use alpha channel
         pixel = 0x00000000;
         // pixel = 0xffff0000;
@@ -4570,7 +4518,6 @@ void SDLCreateKeys() {
         SDL_FillRect( buttons[ i ].surfacedown, &rect, ARGBColors[ BUTTON ] );
 
         // draw the released button
-#if defined( GUI_IS_SDL1 )
         // draw edge of button
         lineColor( buttons[ i ].surfaceup, 1, buttons[ i ].h - 2, 1, 1,
                    SDLBGRA2ARGB( ARGBColors[ BUT_TOP ] ) );
@@ -4731,7 +4678,6 @@ void SDLCreateKeys() {
             stringColor( buttons[ i ].surfacedown, x, y, buttons[ i ].label,
                          0xffffffff );
         }
-#endif
         // Pixmap centered in button
         if ( buttons[ i ].lw != 0 ) {
             // If there's a bitmap, try to plot this
@@ -4763,7 +4709,7 @@ void SDLCreateKeys() {
 }
 
 // Draw the left labels (violet on GX)
-void SDLDrawKeyLabelLeft() {
+void SDLDrawKeyLabelLeft( void ) {
     int i, x, y;
     unsigned int pw /* , ph */;
     int wl, wr, ws;
@@ -4783,17 +4729,10 @@ void SDLDrawKeyLabelLeft() {
 
             if ( opt_gx ) {
                 pw = 58;
-                /* ph = 48; */
             } else {
                 pw = 46;
-                /* ph = 11; */
             }
 
-            // pix = XCreatePixmap(dpy, keypad->pixmap, pw, ph, depth);
-            // XSetForeground(dpy, gc, COLOR(UNDERLAY));
-            // XFillRectangle(dpy, pix, gc, 0, 0, pw, ph);
-            // XSetBackground(dpy, gc, COLOR(UNDERLAY));
-            // XSetForeground(dpy, gc, COLOR(LEFT));
             colorbg = ARGBColors[ UNDERLAY ];
             colorfg = ARGBColors[ LEFT ];
 
@@ -4805,14 +4744,6 @@ void SDLDrawKeyLabelLeft() {
                 y = 14;
             else
                 y = 9;
-
-            if ( !opt_gx ) {
-                // Removed some sx draw code
-                // XDrawPoint(dpy, pix, gc, 0, 0);
-                // XDrawPoint(dpy, pix, gc, 0, ph - 1);
-                // XDrawPoint(dpy, pix, gc, pw - 1, 0);
-                // XDrawPoint(dpy, pix, gc, pw - 1, ph - 1);
-            }
 
             // Set the coordinates to absolute
             if ( opt_gx ) {
@@ -4833,7 +4764,6 @@ void SDLDrawKeyLabelLeft() {
 
             if ( buttons[ i ].right == ( char* )0 ) {
                 // centered label
-
                 x = offset_x + buttons[ i ].x +
                     ( 1 + buttons[ i ].w -
                       SmallTextWidth( buttons[ i ].left,
@@ -4841,7 +4771,6 @@ void SDLDrawKeyLabelLeft() {
                         2;
             } else {
                 // label to the left
-
                 wl = SmallTextWidth( buttons[ i ].left,
                                      strlen( buttons[ i ].left ) );
                 wr = SmallTextWidth( buttons[ i ].right,
@@ -4862,7 +4791,7 @@ void SDLDrawKeyLabelLeft() {
 }
 
 // Draw the right labels (green on GX)
-void SDLDrawKeyLabelRight() {
+void SDLDrawKeyLabelRight( void ) {
     int i, x, y;
     unsigned int pw /* , ph */;
     int wl, wr, ws;
@@ -4873,12 +4802,6 @@ void SDLDrawKeyLabelRight() {
     // draw the right labels
 
     for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
-
-        // if (i < BUTTON_MTH)
-        //	pixel = COLOR(DISP_PAD);
-        // else
-        //	pixel = COLOR(PAD);
-
         if ( buttons[ i ].right == ( char* )0 )
             continue;
 
@@ -4886,10 +4809,8 @@ void SDLDrawKeyLabelRight() {
             // draw the dark shade under the label
             if ( opt_gx ) {
                 pw = 58;
-                /* ph = 48; */
             } else {
                 pw = 44;
-                /* ph = 9; */
             }
 
             colorbg = ARGBColors[ UNDERLAY ];
@@ -4903,14 +4824,6 @@ void SDLDrawKeyLabelRight() {
                 y = 14;
             else
                 y = 8;
-
-            if ( !opt_gx ) {
-                // Removed some sx draw code
-                // XDrawPoint(dpy, pix, gc, 0, 0);
-                // XDrawPoint(dpy, pix, gc, 0, ph - 1);
-                // XDrawPoint(dpy, pix, gc, pw - 1, 0);
-                // XDrawPoint(dpy, pix, gc, pw - 1, ph - 1);
-            }
 
             // Set the coordinates to absolute
             if ( opt_gx ) {
@@ -4927,9 +4840,6 @@ void SDLDrawKeyLabelRight() {
                                 colorbg );
         } // buttons[i].is_menu
         else {
-
-            // XSetBackground(dpy, gc, pixel);
-            // XSetForeground(dpy, gc, COLOR(RIGHT));
             colorbg = ARGBColors[ BLACK ];
             colorfg = ARGBColors[ RIGHT ];
 
@@ -4942,7 +4852,6 @@ void SDLDrawKeyLabelRight() {
                         2;
             } else {
                 // label to the right
-
                 wl = SmallTextWidth( buttons[ i ].left,
                                      strlen( buttons[ i ].left ) );
                 wr = SmallTextWidth( buttons[ i ].right,
@@ -4955,8 +4864,6 @@ void SDLDrawKeyLabelRight() {
 
             y = offset_y + buttons[ i ].y - small_descent;
 
-            // DrawSmallString(dpy, keypad->pixmap, gc, x, y,
-            // buttons[i].right, strlen(buttons[i].right));
             SDLDrawSmallString( x, y, buttons[ i ].right,
                                 strlen( buttons[ i ].right ), colorfg,
                                 colorbg );
@@ -4966,7 +4873,7 @@ void SDLDrawKeyLabelRight() {
 }
 
 // Draw the letter bottom right of the key
-void SDLDrawKeyLetter() {
+void SDLDrawKeyLetter( void ) {
     int i, x, y;
     int offset_y = KEYBOARD_OFFSET_Y;
     int offset_x = KEYBOARD_OFFSET_X;
@@ -4997,7 +4904,7 @@ void SDLDrawKeyLetter() {
 }
 
 // Bottom label: the only one is the cancel button
-void SDLDrawKeyLabelBottom() {
+void SDLDrawKeyLabelBottom( void ) {
     int i, x, y;
     int offset_y = KEYBOARD_OFFSET_Y;
     int offset_x = KEYBOARD_OFFSET_X;
@@ -5026,7 +4933,7 @@ void SDLDrawKeyLabelBottom() {
 }
 
 // Draws the greyish area around keys that trigger menus
-void SDLDrawKeyMenu() {
+void SDLDrawKeyMenu( void ) {
     int i, x, y;
     int offset_y = KEYBOARD_OFFSET_Y;
     int offset_x = KEYBOARD_OFFSET_X;
@@ -5065,7 +4972,7 @@ void SDLDrawKeyMenu() {
     }
 }
 
-void SDLDrawButtons() {
+void SDLDrawButtons( void ) {
     int i;
 
     for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
@@ -5096,9 +5003,8 @@ void SDLDrawButtons() {
         buttons[ LAST_BUTTON ].x + buttons[ LAST_BUTTON ].w - buttons[ 0 ].x,
         buttons[ LAST_BUTTON ].y + buttons[ LAST_BUTTON ].h - buttons[ 0 ].y );
 }
-void SDLDrawKeypad() {
-    /* int i, x, y; */
 
+void SDLDrawKeypad( void ) {
     SDLDrawKeyMenu();
     SDLDrawKeyLetter();
     SDLDrawKeyLabelBottom();
@@ -5112,7 +5018,6 @@ void SDLDrawSmallString( int x, int y, const char* string, unsigned int length,
                          unsigned int coloron, unsigned int coloroff ) {
     int i;
 
-    // printf("draw string: %d, %d, %s\n",x,y,string);
     for ( i = 0; i < length; i++ ) {
         if ( small_font[ ( int )string[ i ] ].h != 0 ) {
             int w = small_font[ ( int )string[ i ] ].w;
@@ -5141,7 +5046,7 @@ void SDLDrawSmallString( int x, int y, const char* string, unsigned int length,
 
 void SDLDrawBezel( unsigned int width, unsigned int height,
                    unsigned int offset_y, unsigned int offset_x ) {
-    int i /* , x, y*/;
+    int i;
     int display_height = DISPLAY_HEIGHT;
     int display_width = DISPLAY_WIDTH;
 
@@ -5268,22 +5173,10 @@ void SDLDrawBackground( int width, int height, int w_top, int h_top ) {
     SDL_FillRect( sdlwindow, &rect, ARGBColors[ LCD ] );
 }
 
-// SDL stuff
 SDL_Surface* sdlwindow;
 SDL_Surface* sdlsurface;
 
-/* SDL_TimerCallback */
-/* SDLTimerCallback () */
-/* { */
-/* } */
-
-/******************************************************************************
-InitSDL   InitSDL   InitSDL   InitSDL   InitSDL   InitSDL   InitSDL
-*******************************************************************************
-Basic SDL Initialization and atexit assignment.
-******************************************************************************/
-
-void SDLInit() {
+void SDLInit( void ) {
     SDL_version compiled;
 
     // Initialize SDL
@@ -5299,16 +5192,6 @@ void SDLInit() {
     // On exit: clean SDL
     atexit( SDL_Quit );
 
-    // icon
-    /*SDL_Surface *icon;
-    icon =
-    SDLCreateARGBSurfFromData(sdlicon_width,sdlicon_height,sdlicon_bits,SDLToARGB(255,sdlicon_bits[0],sdlicon_bits[1],sdlicon_bits[2]));
-
-    SDL_WM_SetIcon(icon, 0);
-    SDL_FreeSurface(icon);
-
-    */
-    /* SDL_WM_SetCaption( "x48ng: HP48 emulator", "x48ng" ); */
     // Initialize the geometric values
     KEYBOARD_HEIGHT = _KEYBOARD_HEIGHT;
     KEYBOARD_WIDTH = _KEYBOARD_WIDTH;
@@ -5332,36 +5215,19 @@ void SDLInit() {
                       buttons_gx[ LAST_BUTTON ].y +
                       buttons_gx[ LAST_BUTTON ].h + BOTTOM_SKIP;
 
-    // unsigned width = (buttons_sx[LAST_BUTTON].x +
-    // buttons_sx[LAST_BUTTON].w)
-    // + 2 * SIDE_SKIP; unsigned height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT
-    // + DISP_KBD_SKIP + buttons_sx[LAST_BUTTON].y +
-    // buttons_sx[LAST_BUTTON].h + BOTTOM_SKIP;
-    printf( "w/h: %d %d\n", width, height );
-
     sdlwindow = SDL_SetVideoMode( width, height, 32, SDL_SWSURFACE );
 
     if ( sdlwindow == NULL ) {
         printf( "Couldn't set video mode: %s\n", SDL_GetError() );
         exit( 1 );
     }
-
-    /*sdlsurface =
-    SDL_CreateRGBSurface(SDL_SWSURFACE,360,800,32,0x000000ff,0x0000ff00,0x00ff0000,0xff000000);
-    if(sdlsurface==NULL)
-    {
-            printf("Can't create another surface\n");
-            exit(1);
-    }*/
-
-    // SDL_SetTimer(100, SDLTimerCallback);
 }
 
 // This should be called once to setup the surfaces. Calling it multiple
 // times is fine, it won't do anything on subsequent calls.
-void SDLCreateAnnunc() {
+void SDLCreateAnnunc( void ) {
     int i;
-    /* int x, y, idx; */
+
     for ( i = 0; i < 6; i++ ) {
 
         // If the SDL surface does not exist yet, we create it on the fly
@@ -5417,59 +5283,10 @@ void SDLDrawAnnunc( char* annunc ) {
                     ann_tbl[ 5 ].y + ann_tbl[ 5 ].height - ann_tbl[ 0 ].y );
 }
 
-// lcd_buffer contains one nibble per byte (4 useful bit of data per byte)
-
-// void SDLDrawLcd(unsigned char lcd_buffer[DISP_ROWS][NIBS_PER_BUFFER_ROW])
-/*void SDLDrawLcd()
-{
-        // Do something here
-        int x,y;
-        int xoffset = DISPLAY_OFFSET_X+5;
-        int yoffset = DISPLAY_OFFSET_Y+20;
-
-        SDL_LockSurface(sdlwindow);
-        unsigned char *buffer=sdlwindow->pixels;
-        unsigned int pitch = sdlwindow->pitch;
-
-        unsigned char c = lcd_buffer[0][0];
-
-        for(y=0;y<2*DISP_ROWS;y++)
-        {
-                unsigned int *lineptr;
-                lineptr = (unsigned int*)(buffer + pitch*(yoffset + y));
-
-                for(x=0;x<131;x++)
-                {
-                        // Check if bit is on
-                        char c = lcd_buffer[y/2][x>>2];		// The 4
-lower bits in a byte are used (1 nibble per byte) char b = c & (1<<(x&3));
-if(b)
-                        {
-                                lineptr[xoffset+2*x]=ARGBColors[PIXEL];
-                                lineptr[xoffset+2*x+1]=ARGBColors[PIXEL];
-                        }
-                        else
-                        {
-                                lineptr[xoffset+2*x]=ARGBColors[LCD];
-                                lineptr[xoffset+2*x+1]=ARGBColors[LCD];
-                        }
-
-
-
-
-
-                }
-        }
-        SDL_UnlockSurface(sdlwindow);
-        SDL_UpdateRect(sdlwindow, 0,0,0,0);		// Should optimize:
-only update the area of the icons
-}*/
-
 void SDLDrawNibble( int _x, int _y, int val ) {
     int x, y;
     int xoffset = DISPLAY_OFFSET_X + 5;
     int yoffset = DISPLAY_OFFSET_Y + 20;
-    /* static unsigned ctr = 0; */
 
     SDL_LockSurface( sdlwindow );
     unsigned char* buffer = ( unsigned char* )sdlwindow->pixels;
@@ -5582,7 +5399,6 @@ unsigned SDLBGRA2ARGB( unsigned color ) {
     unsigned a, r, g, b;
     SDLARGBTo( color, &a, &r, &g, &b );
 
-    // color = a | (b<<24) | (g<<16) | (r<<8);
     color = a | ( r << 24 ) | ( g << 16 ) | ( b << 8 );
     return color;
 }
@@ -5618,11 +5434,7 @@ void SDLUIShowKey( int hpkey ) {
         ssurf = buttons[ hpkey ].surfaceup;
 
     // Zoomed surface
-    // zsurf = zoomSurface(ssurf,1.5,1.9,1);
-    /* unsigned t1, t2; */
-    /* t1 = SDL_GetTicks (); */
     zsurf = zoomSurface( ssurf, zoomfactor, zoomfactor, 0 );
-    /* t2 = SDL_GetTicks (); */
 
     // Background backup
     showkeylastsurf =
@@ -5669,7 +5481,7 @@ void SDLUIShowKey( int hpkey ) {
     // Update
     SDL_UpdateRect( sdlwindow, x, y, zsurf->w, zsurf->h );
 }
-void SDLUIHideKey() {
+void SDLUIHideKey( void ) {
     SDL_Rect drect;
 
     if ( showkeylastsurf == 0 )
@@ -5688,7 +5500,7 @@ void SDLUIHideKey() {
     showkeylastsurf = 0;
 }
 
-void SDLUIFeedback() {
+void SDLUIFeedback( void ) {
     // This function should give some UI feedback to indicate that a key was
     // pressed E.g. by beeping, vibrating or flashing something
 
@@ -5781,10 +5593,6 @@ SDLWINDOW_t SDLCreateWindow( int x, int y, int w, int h, unsigned color,
         colordark = t;
     }
 
-    printf( "color: %08X\n", color );
-    printf( "colorlight: %08X\n", colorlight );
-    printf( "colordark: %08X\n", colordark );
-
     // Draw the frame
     int i;
     for ( i = 0; i < framewidth; i++ ) {
@@ -5864,7 +5672,6 @@ void SDLMessageBox( int w, int h, const char* title, const char* text[],
     y = ( sdlwindow->h - h ) / 2;
 
     SDLWINDOW_t win;
-    printf( "ShowWindow\n" );
     win = SDLCreateWindow( x, y, w, h, color, framewidth, 0 );
 
     stringColor( win.surf, ( w - strlen( title ) * 8 ) / 2,
@@ -5892,7 +5699,7 @@ void SDLMessageBox( int w, int h, const char* title, const char* text[],
     SDLHideWindow( &win );
 }
 
-void SDLEventWaitClickOrKey() {
+void SDLEventWaitClickOrKey( void ) {
     SDL_Event event;
     while ( 1 ) {
         SDL_WaitEvent( &event );
@@ -5912,7 +5719,7 @@ void SDLEventWaitClickOrKey() {
     }
 }
 
-void SDLShowInformation() {
+void SDLShowInformation( void ) {
     const char* info_title = "x48ng - HP48 emulator";
 
     const char* info_text[] = { //"12345678901234567890123456789012345",
@@ -5952,7 +5759,7 @@ void SDLShowInformation() {
 }
 #endif
 
-int get_ui_event() {
+int get_ui_event( void ) {
 #if defined( GUI_IS_X11 )
     XEvent xev;
     XClientMessageEvent* cm;
@@ -5993,9 +5800,6 @@ int get_ui_event() {
 
                 case KeyPress:
 
-                    if ( 0 && release_pending ) {
-                        printf( "xxx release_pending\n" );
-                    }
                     release_pending = 0;
                     if ( ( xev.xkey.time - last_release_time ) <= 1 ) {
                         release_pending = 0;
@@ -6594,7 +6398,6 @@ int get_ui_event() {
 
 #elif defined( GUI_IS_SDL1 )
 
-    // printf("Get event\n");
     SDL_Event event;
     int hpkey;
     int rv;
@@ -6602,43 +6405,26 @@ int get_ui_event() {
     static int lastticks =
         -1; // time at which a key was pressed or -1 if timer expired
     static int lastislongpress = 0; // last key press was a long press
-    /* static unsigned ctr = 0; */
-    static int keyispressed = -1; // Indicate if a key is being held down by
-                                  // a finger (not set for long presses)
-    static int keyneedshow = 0;   // Indicates if the buttons need to be shown
+    static int keyispressed = -1;   // Indicate if a key is being held down by
+                                    // a finger (not set for long presses)
+    static int keyneedshow = 0;     // Indicates if the buttons need to be shown
     static int dispupdate_t1 = -1,
                dispupdate_t2; // Logic to display at regular intervals
-    // printf("SDLGetEvent %08X\n",ctr++);
-    /* unsigned t1, t2; */
-
-    /* unsigned ticks = SDL_GetTicks (); */
-    // printf("%u\n",ticks);
-
-    // make keys that last only one cycle
-    // button_release_all();
 
     rv = 0; // nothing to do
 
     // Check whether long pres on key
     if ( lastticks > 0 && ( SDL_GetTicks() - lastticks > 750 ) ) {
         // time elapsed
-        printf( "Timer expired\n" );
         lastticks = -1;
 
         // Check that the mouse is still on the same last key
         int x, y, state;
-        // int hpkeykbd;
-        // char *kstate;
         state = SDL_GetMouseState( &x, &y );
-        // kstate = SDL_GetKeyState(0);
-        // hpkeykbd = SDLKeyToKey(event.key.keysym.sym);
-        // if(state&SDL_BUTTON(1) && ((SDLCoordinateToKey(x,y)==lasthpkey)
-        // ||()
-        // ))
+
         if ( state & SDL_BUTTON( 1 ) &&
              SDLCoordinateToKey( x, y ) == lasthpkey ) {
             lastislongpress = 1;
-            printf( "\tlong press\n" );
             SDLUIFeedback();
         }
     }
@@ -6646,10 +6432,8 @@ int get_ui_event() {
     // Iterate as long as there are events
     // while( SDL_PollEvent( &event ) )
     if ( SDL_PollEvent( &event ) ) {
-        // printf("PollEvent got %d\n",event.type);
         switch ( event.type ) {
             case SDL_QUIT:
-                printf( "Got SDL_QUIT event\n" );
                 exit_x48( 0 );
                 break;
 
@@ -6657,9 +6441,6 @@ int get_ui_event() {
             // pressed
             case SDL_MOUSEMOTION:
                 hpkey = SDLCoordinateToKey( event.motion.x, event.motion.y );
-                // printf("Mouse move %d,%d: %d hpkey: %d lasthpkey %d long
-                // %d\n", event.motion.x, event.motion.y,
-                // event.motion.state, hpkey,lasthpkey,lastislongpress);
                 if ( event.motion.state & SDL_BUTTON( 1 ) ) {
                     // Mouse moves on a key different from the last key
                     // (state change):
@@ -6670,11 +6451,9 @@ int get_ui_event() {
 
                         if ( lasthpkey != -1 ) {
                             if ( !lastislongpress ) {
-                                // button_released(lasthpkey);
                                 button_release_all();
                                 rv = 1;
                                 SDLUIFeedback();
-                                printf( "release all\n" );
                             }
                             // Stop timer, clear long key press
                             lastticks = -1;
@@ -6691,7 +6470,6 @@ int get_ui_event() {
                                 // Start timer
                                 lastticks = SDL_GetTicks();
                                 SDLUIFeedback();
-                                printf( "press %d\n", hpkey );
                             }
                         }
                     }
@@ -6715,9 +6493,6 @@ int get_ui_event() {
                                   // no space above offset_y...clicking on
                                   // the screen has to do something
                         SDLShowInformation();
-                    // printf("l button up/down at %d %d. hpkey: %d lastkey:
-                    // %d long:
-                    // %d\n",event.button.x,event.button.y,hpkey,lasthpkey,lastislongpress);
                 }
                 hpkey = SDLCoordinateToKey( event.button.x, event.button.y );
 
@@ -6736,7 +6511,6 @@ int get_ui_event() {
                             // Start timer
                             lastticks = SDL_GetTicks();
                             SDLUIFeedback();
-                            printf( "press %d\n", hpkey );
                         }
                     } else {
                         keyispressed = -1;
@@ -6746,7 +6520,6 @@ int get_ui_event() {
                             rv = 1;
                             lasthpkey = -1; // No key is pressed anymore
                             SDLUIFeedback();
-                            printf( "release all\n" );
                         }
 
                         // Stop timer, clear long key press
@@ -6757,9 +6530,6 @@ int get_ui_event() {
                 break;
             case SDL_KEYDOWN:
             case SDL_KEYUP:
-                printf( "Key: %d hpkey: %d\n", event.key.keysym.sym,
-                        SDLKeyToKey( event.key.keysym.sym ) );
-
                 if ( event.type == SDL_KEYDOWN &&
                      event.key.keysym.sym == SDLK_F1 ) {
                     SDLShowInformation();
@@ -6775,7 +6545,6 @@ int get_ui_event() {
                             button_pressed( hpkey );
                             rv = 1;
                             SDLUIFeedback();
-                            printf( "press kbd %d\n", hpkey );
                         }
                     } else {
                         keyispressed = -1;
@@ -6783,7 +6552,6 @@ int get_ui_event() {
                         button_released( hpkey );
                         rv = 1;
                         SDLUIFeedback();
-                        printf( "release kbd %d\n", hpkey );
                     }
                 }
 
@@ -6792,10 +6560,7 @@ int get_ui_event() {
     }
 
     // Display button being pressed, if any
-    /* t1 = SDL_GetTicks (); */
     SDLUIShowKey( keyispressed );
-    /* t2 = SDL_GetTicks (); */
-    // printf("Draw zoomed button: %03d\n",t2-t1);
 
     // If we press long, then the button releases makes SDLUIShowKey restore
     // the old key, but rv does not indicate that we need to update the
@@ -6807,32 +6572,21 @@ int get_ui_event() {
     // button is pressed (otherwise it overwrites the zoomed button)
     if ( keyneedshow && keyispressed == -1 ) {
         keyneedshow = 0;
-        /* t1 = SDL_GetTicks (); */
         SDLDrawButtons();
-        /* t2 = SDL_GetTicks (); */
-        // printf("Draw all buttons: %03d\n",t2-t1);
     }
 
 #ifdef DELAYEDDISPUPDATE
     dispupdate_t2 = SDL_GetTicks();
     if ( dispupdate_t2 - dispupdate_t1 > DISPUPDATEINTERVAL ) {
-        /* t1 = SDL_GetTicks (); */
-
         int xoffset = DISPLAY_OFFSET_X + 5;
         int yoffset = DISPLAY_OFFSET_Y + 20;
 
         // LCD
         SDL_UpdateRect( sdlwindow, xoffset, yoffset, 131 * 2, 64 * 2 );
-
-        // SDL_UpdateRect(sdlwindow,0,0,0,0);
-
-        /* t2 = SDL_GetTicks (); */
-        // printf("Update rect %03d\t%03d\n",ctr++,t2-t1);
         dispupdate_t1 = dispupdate_t2;
     }
 #endif
 
-    // return rv;
     return 1;
 
 #endif

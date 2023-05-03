@@ -8,7 +8,7 @@
 #include "constants.h"
 #include "resources.h"
 
-void usage() {
+void usage( void ) {
     fprintf( stdout, "\n\
 %s Version %d.%d.%d\n\
 \n\
@@ -55,13 +55,13 @@ where options include:\n\
     exit( 1 );
 }
 
-void show_version() {
+void show_version( void ) {
     fprintf( stdout, "\n\
 %s Version %d.%d.%d",
              progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
 }
 
-void show_copyright() {
+void show_copyright( void ) {
     fprintf( stdout, "\n\
                                COPYRIGHT\n\
 \n\
@@ -82,7 +82,7 @@ along with this program; if not, write to the Free Software\n\
 Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.\n\n" );
 }
 
-void show_warranty() {
+void show_warranty( void ) {
     fprintf( stdout, "\n\
                               NO WARRANTY\n\
 \n\

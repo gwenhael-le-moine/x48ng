@@ -103,8 +103,6 @@
 #define UPDATE_MENU 1
 #define UPDATE_DISP 2
 
-// Screen size
-
 #define _KEYBOARD_HEIGHT                                                       \
     ( buttons_gx[ LAST_BUTTON ].y + buttons_gx[ LAST_BUTTON ].h )
 #define _KEYBOARD_WIDTH                                                        \
@@ -189,7 +187,6 @@ extern int InitDisplay( int argc, char** argv );
 extern int CreateWindows( int argc, char** argv );
 #endif
 
-#if defined( GUI_IS_SDL1 )
 typedef struct button_t {
     const char* name;
     short pressed;
@@ -212,13 +209,18 @@ typedef struct button_t {
     const char* right;
     const char* sub;
 
-    ///////////////////////////////////////////////
-    // SDL PORT
-    ///////////////////////////////////////////////
-    SDL_Surface *surfaceup, *surfacedown;
-
+#if defined( GUI_IS_X11 )
+    Pixmap map;
+    Pixmap down;
+    Window xwin;
+#elif defined( GUI_IS_SDL1 )
+    SDL_Surface* surfaceup;
+    SDL_Surface* surfacedown;
+    int __dummy;
+#endif
 } button_t;
 
+#if defined( GUI_IS_SDL1 )
 // This mimicks the structure formerly lcd.c, except with SDL surfaces instead
 // of Pixmaps.
 typedef struct ann_struct {
@@ -228,9 +230,6 @@ typedef struct ann_struct {
     unsigned int width;
     unsigned int height;
     unsigned char* bits;
-    ///////////////////////////////////////////////
-    // SDL PORT
-    ///////////////////////////////////////////////
 
     SDL_Surface* surfaceon;
     SDL_Surface* surfaceoff;
@@ -282,8 +281,6 @@ void SDLDrawAnnunc( char* annunc );
 #define NIBS_PER_BUFFER_ROW ( NIBBLES_PER_ROW + 2 )
 
 void SDLCreateAnnunc();
-// void SDLDrawLcd(unsigned char lcd_buffer[DISP_ROWS][NIBS_PER_BUFFER_ROW]);
-// void SDLDrawLcd();
 void SDLDrawNibble( int nx, int ny, int val );
 void SDLDrawKeypad();
 void SDLDrawButtons();
@@ -293,8 +290,6 @@ SDL_Surface* SDLCreateSurfFromData( unsigned int w, unsigned int h,
 SDL_Surface* SDLCreateARGBSurfFromData( unsigned int w, unsigned int h,
                                         unsigned char* data,
                                         unsigned int xpcolor );
-// void SDLDrawSmallString(int x, int y, const char *string, unsigned int
-// length);
 void SDLDrawSmallString( int x, int y, const char* string, unsigned int length,
                          unsigned int coloron, unsigned int coloroff );
 void SDLCreateColors();

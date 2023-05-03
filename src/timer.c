@@ -66,7 +66,7 @@ word_64 time_offset = 0x0;
  * 8. Prevent AutoOff by setting TIMEOUT
  *
  */
-void set_accesstime() {
+void set_accesstime( void ) {
     struct timeval tv;
 #if defined( GUI_IS_X11 )
     struct timezone tz;
@@ -310,7 +310,7 @@ word_64 get_timer( int timer ) {
  *
  */
 
-t1_t2_ticks get_t1_t2() {
+t1_t2_ticks get_t1_t2( void ) {
     struct timeval tv;
 #if defined( GUI_IS_X11 )
     struct timezone tz;

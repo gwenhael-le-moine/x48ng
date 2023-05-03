@@ -24,7 +24,7 @@ extern int rece_instr;
 static char* wire_name = ( char* )0;
 static char* ir_name = ( char* )0;
 
-void update_connection_display() {
+void update_connection_display( void ) {
     if ( wire_fd == -1 ) {
         if ( wire_name )
             free( wire_name );
@@ -38,7 +38,7 @@ void update_connection_display() {
     ShowConnections( wire_name, ir_name );
 }
 
-int serial_init() {
+int serial_init( void ) {
     int c;
     int n;
     char tty_dev_name[ 128 ];
@@ -381,7 +381,7 @@ void serial_baud( int baud ) {
         update_connection_display();
 }
 
-void transmit_char() {
+void transmit_char( void ) {
     if ( saturn.ir_ctrl & 0x04 ) {
         if ( ir_fd == -1 ) {
             saturn.tcs &= 0x0e;
@@ -438,7 +438,7 @@ void transmit_char() {
 
 #define NR_BUFFER 256
 
-void receive_char() {
+void receive_char( void ) {
     struct timeval tout;
     fd_set rfds;
     int nfd;

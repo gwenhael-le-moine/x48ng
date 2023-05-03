@@ -166,7 +166,7 @@ saturn_0_3_0_t saturn_0_3_0;
 
 #include "config.h"
 
-void saturn_config_init() {
+void saturn_config_init( void ) {
     saturn.version[ 0 ] = VERSION_MAJOR;
     saturn.version[ 1 ] = VERSION_MINOR;
     saturn.version[ 2 ] = PATCHLEVEL;
@@ -181,7 +181,7 @@ void saturn_config_init() {
     saturn.lbr = 0x0;
 }
 
-void init_saturn() {
+void init_saturn( void ) {
     int i;
 
     memset( &saturn, 0, sizeof( saturn ) - 4 * sizeof( unsigned char* ) );
@@ -1023,7 +1023,7 @@ void get_home_directory( char* path ) {
     }
 }
 
-int read_files() {
+int read_files( void ) {
     char path[ 1024 ];
     char fnam[ 1024 ];
     unsigned long v1, v2;
@@ -1379,7 +1379,7 @@ int write_mem_file( char* name, word_4* mem, int size ) {
     return 1;
 }
 
-int write_files() {
+int write_files( void ) {
     char path[ 1024 ];
     char fnam[ 1024 ];
     struct stat st;
@@ -1558,7 +1558,7 @@ int write_files() {
     return 1;
 }
 
-int init_emulator() {
+int init_emulator( void ) {
     if ( !initialize )
         if ( read_files() ) {
             if ( resetOnStartup )
@@ -1573,7 +1573,7 @@ int init_emulator() {
     return 0;
 }
 
-void init_active_stuff() {
+void init_active_stuff( void ) {
     serial_init();
 #if defined( GUI_IS_X11 )
     init_annunc();
@@ -1581,7 +1581,7 @@ void init_active_stuff() {
     init_display();
 }
 
-int exit_emulator() {
+int exit_emulator( void ) {
     write_files();
     return 1;
 }
