@@ -2,12 +2,11 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
+#include <assert.h>
 
 #include "debugger.h"
 #include "romio.h"
 #include "timer.h"
-
-#include <assert.h>
 
 typedef struct x48_timer_t {
     word_1 run;
@@ -66,9 +65,8 @@ word_64 time_offset = 0x0;
  */
 void set_accesstime( void ) {
     struct timeval tv;
-#if defined( GUI_IS_X11 )
     struct timezone tz;
-#endif
+
     word_64 ticks, timeout, timer2;
     word_20 accesstime_loc, timeout_loc;
     word_20 accesscrc_loc, timeoutclk_loc;
@@ -83,19 +81,11 @@ void set_accesstime( void ) {
      */
     ( void )time( &gmt );
     ltm = localtime( &gmt );
-#if defined( SYSV_TIME ) || defined( __sgi )
     systime_offset = timezone;
     if ( ltm->tm_isdst )
         systime_offset -= 3600;
-#else
-    systime_offset = -ltm->tm_gmtoff;
-#endif
 
-#if defined( GUI_IS_X11 )
     gettimeofday( &tv, &tz );
-#elif defined( GUI_IS_SDL1 )
-    gettimeofday( &tv, NULL );
-#endif
     tv.tv_sec -= systime_offset;
 
     ticks = tv.tv_sec;
@@ -154,20 +144,14 @@ void set_accesstime( void ) {
 
 void start_timer( int timer ) {
     struct timeval tv;
-#if defined( GUI_IS_X11 )
     struct timezone tz;
-#endif
+
     assert( timer <= NR_TIMERS );
 
     if ( timers[ timer ].run == 1 )
         return;
 
-#if defined( GUI_IS_X11 )
     gettimeofday( &tv, &tz );
-#endif
-#if defined( GUI_IS_SDL1 )
-    gettimeofday( &tv, NULL );
-#endif
 
     tv.tv_sec -= systime_offset;
 
@@ -184,9 +168,7 @@ void start_timer( int timer ) {
 
 void restart_timer( int timer ) {
     struct timeval tv;
-#if defined( GUI_IS_X11 )
     struct timezone tz;
-#endif
 
     if ( timer > NR_TIMERS )
         return;
@@ -195,12 +177,7 @@ void restart_timer( int timer ) {
     timers[ timer ].stop = 0;
     timers[ timer ].value = 0;
 
-#if defined( GUI_IS_X11 )
     gettimeofday( &tv, &tz );
-#endif
-#if defined( GUI_IS_SDL1 )
-    gettimeofday( &tv, NULL );
-#endif
 
     tv.tv_sec -= systime_offset;
 
@@ -217,9 +194,7 @@ void restart_timer( int timer ) {
 
 void stop_timer( int timer ) {
     struct timeval tv;
-#if defined( GUI_IS_X11 )
     struct timezone tz;
-#endif
 
     if ( timer > NR_TIMERS )
         return;
@@ -227,12 +202,7 @@ void stop_timer( int timer ) {
     if ( timers[ timer ].run == 0 )
         return;
 
-#if defined( GUI_IS_X11 )
     gettimeofday( &tv, &tz );
-#endif
-#if defined( GUI_IS_SDL1 )
-    gettimeofday( &tv, NULL );
-#endif
 
     tv.tv_sec -= systime_offset;
 
@@ -264,9 +234,8 @@ static word_64 zero = 0;
 
 word_64 get_timer( int timer ) {
     struct timeval tv;
-#if defined( GUI_IS_X11 )
     struct timezone tz;
-#endif
+
     word_64 stop;
 
     if ( timer > NR_TIMERS )
@@ -274,12 +243,7 @@ word_64 get_timer( int timer ) {
 
     if ( timers[ timer ].run ) {
 
-#if defined( GUI_IS_X11 )
         gettimeofday( &tv, &tz );
-#endif
-#if defined( GUI_IS_SDL1 )
-        gettimeofday( &tv, NULL );
-#endif
 
         tv.tv_sec -= systime_offset;
 
@@ -310,9 +274,8 @@ word_64 get_timer( int timer ) {
 
 t1_t2_ticks get_t1_t2( void ) {
     struct timeval tv;
-#if defined( GUI_IS_X11 )
     struct timezone tz;
-#endif
+
     word_64 stop;
     t1_t2_ticks ticks;
     word_64 access_time;
@@ -322,12 +285,7 @@ t1_t2_ticks get_t1_t2( void ) {
     word_20 accesstime_loc;
     int i;
 
-#if defined( GUI_IS_X11 )
     gettimeofday( &tv, &tz );
-#endif
-#if defined( GUI_IS_SDL1 )
-    gettimeofday( &tv, NULL );
-#endif
 
     tv.tv_sec -= systime_offset;
 
