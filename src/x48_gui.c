@@ -4101,15 +4101,9 @@ static int button_release_all( void ) {
     return 0;
 }
 
-/* void DrawDisp( void ) { */
-/*     redraw_display(); */
-/*     redraw_annunc(); */
-/* } */
-
 void exit_x48( int tell_x11 ) {
     exit_emulator();
-    // if (tell_x11)
-    //    XCloseDisplay(dpy);
+
     exit( 0 );
 }
 
@@ -4290,6 +4284,7 @@ void SDLDrawMore( unsigned int w, unsigned int h, unsigned int cut,
     lineColor( sdlwindow, 7, keypad_height - 9, 7, keypad_height - 11,
                SDLBGRA2ARGB( ARGBColors[ PAD_BOT ] ) );
 }
+
 void SDLDrawLogo( unsigned int w, unsigned int h, unsigned int cut,
                   unsigned int offset_y, unsigned int offset_x,
                   int keypad_width, int keypad_height ) {
@@ -4438,9 +4433,6 @@ void SDLDrawLogo( unsigned int w, unsigned int h, unsigned int cut,
     }
 }
 
-///////////////////////////////////////////////
-// SDL PORT
-///////////////////////////////////////////////
 void SDLCreateColors( void ) {
     unsigned i;
 
@@ -4463,9 +4455,6 @@ void SDLCreateColors( void ) {
     ARGBColors[ PIXEL ] = 0xff000000 | ( r << 16 ) | ( g << 8 ) | b;
 }
 
-///////////////////////////////////////////////
-// SDL PORT
-///////////////////////////////////////////////
 void SDLCreateKeys( void ) {
     unsigned i, x, y;
     unsigned pixel;
@@ -5207,10 +5196,7 @@ void SDLInit( void ) {
 // This should be called once to setup the surfaces. Calling it multiple
 // times is fine, it won't do anything on subsequent calls.
 void SDLCreateAnnunc( void ) {
-    int i;
-
-    for ( i = 0; i < 6; i++ ) {
-
+    for ( int i = 0; i < 6; i++ ) {
         // If the SDL surface does not exist yet, we create it on the fly
         if ( ann_tbl[ i ].surfaceon ) {
             SDL_FreeSurface( ann_tbl[ i ].surfaceon );
@@ -5233,12 +5219,10 @@ void SDLCreateAnnunc( void ) {
 }
 
 void SDLDrawAnnunc( char* annunc ) {
-    int i;
-
     SDLCreateAnnunc();
 
     // Print the annunciator
-    for ( i = 0; i < 6; i++ ) {
+    for ( int i = 0; i < 6; i++ ) {
         SDL_Rect srect;
         SDL_Rect drect;
         srect.x = 0;
@@ -5462,6 +5446,7 @@ void SDLUIShowKey( int hpkey ) {
     // Update
     SDL_UpdateRect( sdlwindow, x, y, zsurf->w, zsurf->h );
 }
+
 void SDLUIHideKey( void ) {
     SDL_Rect drect;
 
@@ -5590,6 +5575,7 @@ SDLWINDOW_t SDLCreateWindow( int x, int y, int w, int h, unsigned color,
 
     return win;
 }
+
 void SDLShowWindow( SDLWINDOW_t* win ) {
     // Blit the window
     SDL_Rect srect;
@@ -6372,6 +6358,7 @@ int get_ui_event( void ) {
             }
         }
     } while ( first_key > 1 );
+
     if ( first_key ) {
         first_key++;
     }
