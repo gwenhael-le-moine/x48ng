@@ -2411,30 +2411,26 @@ void emulate( void ) {
     do {
         step_instruction();
 
-        {
-            int i;
-            for ( i = 0; i < ( int )( sizeof( saturn.keybuf.rows ) /
+        for ( int i = 0; i < ( int )( sizeof( saturn.keybuf.rows ) /
                                       sizeof( saturn.keybuf.rows[ 0 ] ) );
-                  i++ ) {
-                if ( saturn.keybuf.rows[ i ] || throttle ) {
+              i++ ) {
+            if ( saturn.keybuf.rows[ i ] || throttle ) {
+                /* Throttling speed if needed */
+                gettimeofday( &tv, &tz );
+                while ( ( tv.tv_sec == tv2.tv_sec ) &&
+                        ( ( tv.tv_usec - tv2.tv_usec ) < 2 ) ) {
                     gettimeofday( &tv, &tz );
-                    while ( ( tv.tv_sec == tv2.tv_sec ) &&
-                            ( ( tv.tv_usec - tv2.tv_usec ) < 2 ) ) {
-                        gettimeofday( &tv, &tz );
-                    }
-
-                    tv2.tv_usec = tv.tv_usec;
-                    tv2.tv_sec = tv.tv_sec;
-                    break;
                 }
+
+                tv2.tv_usec = tv.tv_usec;
+                tv2.tv_sec = tv.tv_sec;
+                break;
             }
         }
 
-        /* We need to throttle the speed here. */
-
         if ( schedule_event < 0 ) {
-            // puts("bug");
-            //	schedule_event = 0;
+            fprintf( stderr, "bug" );
+            schedule_event = 0;
         }
         if ( schedule_event-- <= 0 ) {
             schedule();
