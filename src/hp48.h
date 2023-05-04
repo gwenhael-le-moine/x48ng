@@ -215,25 +215,25 @@ extern void init_saturn( void ); /* hp48_init.c */
 extern int exit_emulator( void ); /* hp48_init.c */
 extern int init_emulator( void ); /* hp48_init.c */
 
-extern int serial_init( void ); /* hp48_serial.c */
+extern int serial_init( void );      /* hp48_serial.c */
 extern void serial_baud( int baud ); /* hp48_serial.c */
-extern void transmit_char( void ); /* hp48_serial.c */
-extern void receive_char( void ); /* hp48_serial.c */
+extern void transmit_char( void );   /* hp48_serial.c */
+extern void receive_char( void );    /* hp48_serial.c */
 
-extern void do_kbd_int( void ); /* hp48emu_actions.c */
+extern void do_kbd_int( void );  /* hp48emu_actions.c */
 extern void do_interupt( void ); /* hp48emu_actions.c */
 
 extern void ( *write_nibble )( long addr, int val ); /* hp48emu_memory.c */
-extern int ( *read_nibble )( long addr ); /* hp48emu_memory.c */
-extern int ( *read_nibble_crc )( long addr ); /* hp48emu_memory.c */
+extern int ( *read_nibble )( long addr );            /* hp48emu_memory.c */
+extern int ( *read_nibble_crc )( long addr );        /* hp48emu_memory.c */
 
-extern void emulate( void ); /* hp48_emulate.c */
+extern void emulate( void );         /* hp48_emulate.c */
 extern int step_instruction( void ); /* hp48_emulate.c */
-extern void schedule( void ); /* hp48_emulate.c */
+extern void schedule( void );        /* hp48_emulate.c */
 
 extern int read_rom( const char* fname ); /* hp48_init.c */
-extern int read_files( void ); /* hp48_init.c */
-extern int write_files( void ); /* hp48_init.c */
+extern int read_files( void );            /* hp48_init.c */
+extern int write_files( void );           /* hp48_init.c */
 
 extern void load_addr( word_20* dat, long addr, int n ); /* hp48_emulate.c */
-#endif /* !_HP48_H */
+#endif                                                   /* !_HP48_H */

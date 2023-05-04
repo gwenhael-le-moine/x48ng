@@ -145,11 +145,9 @@ void check_devices( void ) {
 /*     write(au, &c[1], 1); */
 /* } */
 
-
 /*******/
 /* LCD */
 /*******/
-
 
 static int last_annunc_state = -1;
 
@@ -585,7 +583,7 @@ void draw_annunc( void ) {
         if ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit )
             sdl_annuncstate[ i ] = 1;
         else
-          sdl_annuncstate[ i ] = 0;
+            sdl_annuncstate[ i ] = 0;
 #endif
     }
 #if defined( GUI_IS_X11 )

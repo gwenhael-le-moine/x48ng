@@ -9,14 +9,12 @@
 extern int disassembler_mode;
 extern const char* mode_name[];
 
-
 /* #ifndef _APPEND_H */
 /* #define _APPEND_H 1 */
 extern char* append_str( char* buf, const char* string );
 extern char* append_tab( char* buf );
 extern char* append_tab_16( char* buf );
 /* #endif /\* !_APPEND_H *\/ */
-
 
 extern word_20 disassemble( word_20 addr, char* out );
 

@@ -10,7 +10,6 @@
 #include "romio.h"
 #include "rpl.h"
 
-
 /* #ifndef _HP48CHAR_H */
 /* #define _HP48CHAR_H 1 */
 
@@ -276,7 +275,6 @@ trans_tbl_t hp48_trans_tbl[ 256 ] = { { 0, ( char* )"\\0" },
                                       { 254, ( char* )"\\254" },
                                       { 255, ( char* )"\\255" } };
 /* #endif /\* !_HP48CHAR_H *\/ */
-
 
 struct objfunc {
     char* name;

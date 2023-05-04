@@ -120,7 +120,7 @@ int main( int argc, char** argv ) {
     /*
      * can't be done before windows exist
      */
-    {                           /* init_active_stuff() */
+    { /* init_active_stuff() */
         serial_init();
 
 #if defined( GUI_IS_X11 )

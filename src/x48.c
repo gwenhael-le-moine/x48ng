@@ -1457,8 +1457,7 @@ int InitDisplay( int argc, char** argv ) {
 
         free( res_class );
         res_class = strdup( res_name );
-        *res_class =
-            islower( *res_class ) ? toupper( *res_class ) : *res_class;
+        *res_class = islower( *res_class ) ? toupper( *res_class ) : *res_class;
 
         argc = saved_argc;
         argv = ( char** )malloc( ( argc + 1 ) * sizeof( char* ) );
@@ -1729,7 +1728,7 @@ void exit_x48( int tell_x11 ) {
 
 #if defined( GUI_IS_X11 )
     if ( tell_x11 )
-      XCloseDisplay( dpy );
+        XCloseDisplay( dpy );
 #endif
 
     exit( 0 );

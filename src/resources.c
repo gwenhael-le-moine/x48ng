@@ -35,7 +35,6 @@ char homeDirectory[ 1024 ];
 
 XrmDatabase rdb = ( XrmDatabase )0;
 
-
 void usage( void ) {
     fprintf( stdout, "\n\
 %s Version %d.%d.%d\n\

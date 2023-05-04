@@ -71,11 +71,11 @@ extern void check_devices( void ); /* device.c */
 
 /* extern void	check_out_register( void ); */
 
-extern void update_display( void ); /* device_lcd.c */
-extern void redraw_display( void ); /* device_lcd.c */
+extern void update_display( void );                       /* device_lcd.c */
+extern void redraw_display( void );                       /* device_lcd.c */
 extern void disp_draw_nibble( word_20 addr, word_4 val ); /* device_lcd.c */
 extern void menu_draw_nibble( word_20 addr, word_4 val ); /* device_lcd.c */
-extern void draw_annunc( void ); /* device_lcd.c */
-extern void redraw_annunc( void ); /* device_lcd.c */
+extern void draw_annunc( void );                          /* device_lcd.c */
+extern void redraw_annunc( void );                        /* device_lcd.c */
 
 #endif /* !_DEVICE_H */
