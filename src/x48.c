@@ -1103,6 +1103,18 @@ button_t buttons_gx[] = {
 
     { 0 } };
 
+#define MAX_PASTE 128
+int paste[ MAX_PASTE * 3 ];
+int paste_count = 0;
+int paste_size = 0;
+int paste_last_key = 0;
+
+int first_key = 0;
+
+int last_button = -1;
+
+extern char* get_stack();
+
 #if defined( GUI_IS_X11 )
 typedef struct icon_t {
     unsigned int w;
@@ -4077,18 +4089,6 @@ int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen ) {
     }
     return wake;
 }
-
-#define MAX_PASTE 128
-int paste[ MAX_PASTE * 3 ];
-int paste_count = 0;
-int paste_size = 0;
-int paste_last_key = 0;
-
-int first_key = 0;
-
-int last_button = -1;
-
-extern char* get_stack();
 #elif defined( GUI_IS_SDL1 )
 void SDLCreateHP( void ) {
     /* int x, y, w, h; */
@@ -4203,18 +4203,6 @@ static int button_release_all( void ) {
             button_released( b );
     return 0;
 }
-
-#define MAX_PASTE 128
-int paste[ MAX_PASTE * 3 ];
-int paste_count = 0;
-int paste_size = 0;
-int paste_last_key = 0;
-
-int first_key = 0;
-
-int last_button = -1;
-
-extern char* get_stack();
 
 // Find which key is pressed, if any.
 // Returns -1 is no key is pressed

@@ -1198,7 +1198,6 @@ typedef struct button_t {
 #endif
 } button_t;
 
-#if defined( GUI_IS_SDL1 )
 // This mimicks the structure formerly lcd.c, except with SDL surfaces instead
 // of Pixmaps.
 typedef struct ann_struct {
@@ -1209,16 +1208,20 @@ typedef struct ann_struct {
     unsigned int height;
     unsigned char* bits;
 
+#if defined( GUI_IS_X11 )
+    Pixmap pixmap;
+#elif defined( GUI_IS_SDL1 )
     SDL_Surface* surfaceon;
     SDL_Surface* surfaceoff;
+#endif
 } ann_struct_t;
+extern ann_struct_t ann_tbl[];
 
+#if defined( GUI_IS_SDL1 )
 typedef struct SDLWINDOW {
     SDL_Surface *oldsurf, *surf;
     int x, y;
 } SDLWINDOW_t;
-
-extern ann_struct_t ann_tbl[];
 #endif
 
 #if defined( GUI_IS_X11 )
