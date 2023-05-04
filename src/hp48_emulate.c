@@ -4,7 +4,7 @@
 #include "debugger.h"
 #include "device.h"
 #include "hp48.h"
-#include "hp48_emu.h"
+#include "hp48emu.h"
 #include "timer.h"
 #include "x48.h"
 

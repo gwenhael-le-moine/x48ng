@@ -9,7 +9,7 @@
 
 #include "device.h"
 #include "hp48.h"
-#include "hp48_emu.h"
+#include "hp48emu.h"
 #include "resources.h"
 #include "x48.h"
 

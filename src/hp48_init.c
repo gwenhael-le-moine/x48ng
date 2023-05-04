@@ -7,10 +7,9 @@
 #include <string.h>
 #include <sys/types.h>
 
-#include "config.h"
 #include "device.h"
 #include "hp48.h"
-#include "hp48_emu.h"
+#include "hp48emu.h"
 #include "resources.h"
 #include "romio.h"
 
@@ -1570,14 +1569,6 @@ int init_emulator( void ) {
         exit( 1 );
 
     return 0;
-}
-
-void init_active_stuff( void ) {
-    serial_init();
-#if defined( GUI_IS_X11 )
-    init_annunc();
-#endif
-    init_display();
 }
 
 int exit_emulator( void ) {

@@ -4,7 +4,26 @@
 #include <stdint.h>
 #include <sys/time.h>
 
-#include "mmu.h"
+/* #ifndef _MMU_H */
+/* #define _MMU_H 1 */
+
+#define NR_MCTL 6
+
+#define MCTL_MMIO_SX 0
+#define MCTL_SysRAM_SX 1
+#define MCTL_PORT1_SX 2
+#define MCTL_PORT2_SX 3
+#define MCTL_EXTRA_SX 4
+#define MCTL_SysROM_SX 5
+
+#define MCTL_MMIO_GX 0
+#define MCTL_SysRAM_GX 1
+#define MCTL_BANK_GX 2
+#define MCTL_PORT1_GX 3
+#define MCTL_PORT2_GX 4
+#define MCTL_SysROM_GX 5
+
+/* #endif /\* !_MMU_H *\/ */
 
 #define RAM_SIZE_SX 0x10000
 #define RAM_SIZE_GX 0x40000
@@ -177,14 +196,6 @@ typedef struct saturn_t {
 
 #define NIBBLES_PER_ROW 0x22
 
-#if defined( GUI_IS_SDL1 )
-#define DISP_ROWS 64
-#define NIBS_PER_BUFFER_ROW ( NIBBLES_PER_ROW + 2 )
-
-extern unsigned char disp_buf[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
-extern unsigned char lcd_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
-#endif
-
 extern int got_alarm;
 
 extern int set_t1;
@@ -196,33 +207,33 @@ extern long sched_adjtime;
 extern long schedule_event;
 
 extern display_t display;
-extern void init_display( void );
+extern void init_display( void ); /* device_lcd.c */
 
 extern saturn_t saturn;
+extern void init_saturn( void ); /* hp48_init.c */
 
-extern int exit_emulator( void );
-extern int init_emulator( void );
-extern void init_active_stuff( void );
+extern int exit_emulator( void ); /* hp48_init.c */
+extern int init_emulator( void ); /* hp48_init.c */
 
-extern int serial_init( void );
-extern void serial_baud( int baud );
-extern void transmit_char( void );
-extern void receive_char( void );
+extern int serial_init( void ); /* hp48_serial.c */
+extern void serial_baud( int baud ); /* hp48_serial.c */
+extern void transmit_char( void ); /* hp48_serial.c */
+extern void receive_char( void ); /* hp48_serial.c */
 
-extern void do_kbd_int( void );
-extern void do_interupt( void );
+extern void do_kbd_int( void ); /* hp48emu_actions.c */
+extern void do_interupt( void ); /* hp48emu_actions.c */
 
-extern void ( *write_nibble )( long addr, int val );
-extern int ( *read_nibble )( long addr );
-extern int ( *read_nibble_crc )( long addr );
+extern void ( *write_nibble )( long addr, int val ); /* hp48emu_memory.c */
+extern int ( *read_nibble )( long addr ); /* hp48emu_memory.c */
+extern int ( *read_nibble_crc )( long addr ); /* hp48emu_memory.c */
 
-extern void emulate( void );
-extern int step_instruction( void );
-extern void schedule( void );
+extern void emulate( void ); /* hp48_emulate.c */
+extern int step_instruction( void ); /* hp48_emulate.c */
+extern void schedule( void ); /* hp48_emulate.c */
 
-extern int read_rom( const char* fname );
-extern int read_files( void );
-extern int write_files( void );
+extern int read_rom( const char* fname ); /* hp48_init.c */
+extern int read_files( void ); /* hp48_init.c */
+extern int write_files( void ); /* hp48_init.c */
 
-extern void load_addr( word_20* dat, long addr, int n );
+extern void load_addr( word_20* dat, long addr, int n ); /* hp48_emulate.c */
 #endif /* !_HP48_H */

@@ -1,4 +1,0 @@
-#define VERSION_MAJOR 0
-#define VERSION_MINOR 9
-#define PATCHLEVEL 10
-#define COMPILE_VERSION 0

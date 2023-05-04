@@ -5,7 +5,7 @@
 #include "debugger.h"
 #include "device.h"
 #include "hp48.h"
-#include "hp48_emu.h"
+#include "hp48emu.h"
 #include "romio.h"
 #include "timer.h"
 #include "x48.h"
@@ -19,6 +19,9 @@ int first_press = 1; // PATCH
 
 int conf_bank1 = 0x00000;
 int conf_bank2 = 0x00000;
+
+short conf_tab_sx[] = { 1, 2, 2, 2, 2, 0 };
+short conf_tab_gx[] = { 1, 2, 2, 2, 2, 0 };
 
 void do_in( void ) {
     int i, in, out;
@@ -124,9 +127,6 @@ void clear_register_bit( unsigned char* reg, int n ) {
 int get_register_bit( unsigned char* reg, int n ) {
     return ( ( int )( reg[ n / 4 ] & ( 1 << ( n % 4 ) ) ) > 0 ) ? 1 : 0;
 }
-
-short conf_tab_sx[] = { 1, 2, 2, 2, 2, 0 };
-short conf_tab_gx[] = { 1, 2, 2, 2, 2, 0 };
 
 void do_reset( void ) {
     int i;

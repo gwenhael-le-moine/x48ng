@@ -1,8 +1,13 @@
 # Makefile to build x48ng without autotools
 
+VERSION_MAJOR = 0
+VERSION_MINOR = 9
+PATCHLEVEL = 10
+COMPILE_VERSION = 0
+
 CC = gcc
 
-CFLAGS = -g -O2
+CFLAGS = -g -O2 -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DPATCHLEVEL=$(PATCHLEVEL) -DCOMPILE_VERSION=$(COMPILE_VERSION)
 LIBS = -lm -lhistory -lreadline
 
 #possible values: x11, sdl1
@@ -36,7 +41,7 @@ dump2rom: src/dump2rom.o
 checkrom: src/checkrom.o src/romio.o
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
-x48ng: src/main.o src/actions.o src/debugger.o src/device.o src/disasm.o src/emulate.o src/errors.o src/init.o src/lcd.o src/memory.o src/register.o src/resources.o src/romio.o src/rpl.o src/serial.o src/timer.o src/x48.o src/options.o src/resources.o
+x48ng: src/main.o src/hp48emu_actions.o src/debugger.o src/device.o src/disasm.o src/hp48_emulate.o src/errors.o src/hp48_init.o src/hp48emu_memory.o src/hp48emu_register.o src/resources.o src/romio.o src/rpl.o src/hp48_serial.o src/timer.o src/x48.o src/resources.o
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
 # Cleaning

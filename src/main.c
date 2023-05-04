@@ -6,17 +6,13 @@
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <langinfo.h>
+#include <locale.h>
 
 #include "debugger.h"
 #include "hp48.h"
-#include "x48.h"
-
-#if defined( GUI_IS_SDL1 )
 #include "resources.h"
-#endif
-
-#include <langinfo.h>
-#include <locale.h>
+#include "x48.h"
 
 char* progname;
 char* res_name;
@@ -153,8 +149,15 @@ int main( int argc, char** argv ) {
     /*
      * can't be done before windows exist
      */
-    init_active_stuff();
+    {                           /* init_active_stuff() */
+        serial_init();
 
+#if defined( GUI_IS_X11 )
+        init_annunc();
+#endif
+
+        init_display();
+    }
     /*
      *  install a handler for SIGALRM
      */

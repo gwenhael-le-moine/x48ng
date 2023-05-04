@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "hp48.h"
-#include "hp48_emu.h"
+#include "hp48emu.h"
 
 extern long nibble_masks[ 16 ];
 
