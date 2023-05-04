@@ -1,8 +1,8 @@
 # Makefile to build x48ng without autotools
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 9
-PATCHLEVEL = 10
+VERSION_MINOR = 10
+PATCHLEVEL = 0
 COMPILE_VERSION = 0
 
 CC = gcc
