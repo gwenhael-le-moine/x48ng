@@ -47,23 +47,8 @@ extern Visual* get_visual_resource( Display* dpy, char* name, char* class,
                                     unsigned int* depth );
 extern XFontStruct* get_font_resource( Display* dpy, char* res_name,
                                        char* res_class );
-
-#ifndef isupper
-#define isupper( c ) ( ( c ) >= 'A' && ( c ) <= 'Z' )
-#endif
-#ifndef islower
-#define islower( c ) ( ( c ) >= 'a' && ( c ) <= 'z' )
-#endif
-#ifndef _tolower
-#define _tolower( c ) ( ( c ) - 'A' + 'a' )
-#endif
-#ifndef _toupper
-#define _toupper( c ) ( ( c ) - 'a' + 'A' )
-#endif
-#endif
-
-#if defined( GUI_IS_SDL1 )
-void get_resources( void );
+#elif defined( GUI_IS_SDL1 )
+extern void get_resources( void );
 #endif
 
 #endif /* !_RESOURCES_H */

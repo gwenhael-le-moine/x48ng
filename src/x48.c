@@ -3,9 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <ctype.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <unistd.h>
 #include <sys/utsname.h>
 
 #if defined( GUI_IS_X11 )
@@ -1380,7 +1381,7 @@ int InitDisplay( int argc, char** argv ) {
 
     res_name = progname;
     res_class = strdup( res_name );
-    *res_class = islower( *res_class ) ? _toupper( *res_class ) : *res_class;
+    *res_class = islower( *res_class ) ? toupper( *res_class ) : *res_class;
 
     /*
      * look for argument -name
@@ -1393,12 +1394,12 @@ int InitDisplay( int argc, char** argv ) {
         }
 
         for ( s = res_name; *s; s++ )
-            *s = isupper( *s ) ? _tolower( *s ) : *s;
+            *s = isupper( *s ) ? tolower( *s ) : *s;
 
         free( res_class );
         res_class = strdup( res_name );
         *res_class =
-            islower( *res_class ) ? _toupper( *res_class ) : *res_class;
+            islower( *res_class ) ? toupper( *res_class ) : *res_class;
 
         argc = saved_argc;
         argv = ( char** )malloc( ( argc + 1 ) * sizeof( char* ) );

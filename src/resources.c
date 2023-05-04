@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <ctype.h>
 
 #include "resources.h"
 #include "disasm.h"
@@ -98,7 +99,7 @@ int get_mnemonic_resource( char* name, char* class ) {
     if ( !s )
         return CLASS_MNEMONICS;
     for ( tmp = buf; *s; s++ )
-        *tmp++ = isupper( *s ) ? _tolower( *s ) : *s;
+        *tmp++ = isupper( *s ) ? tolower( *s ) : *s;
     *tmp = 0;
     free( os );
 
@@ -118,7 +119,7 @@ int get_boolean_resource( char* name, char* class ) {
     if ( !s )
         return 0;
     for ( tmp = buf; *s; s++ )
-        *tmp++ = isupper( *s ) ? _tolower( *s ) : *s;
+        *tmp++ = isupper( *s ) ? tolower( *s ) : *s;
     *tmp = 0;
     free( os );
 
@@ -225,7 +226,7 @@ Visual* get_visual_resource( Display* dpy, char* name, char* class,
     if ( s )
         for ( tmp = s; *tmp; tmp++ )
             if ( isupper( *tmp ) )
-                *tmp = _tolower( *tmp );
+                *tmp = tolower( *tmp );
 
     if ( !s || !strcmp( s, "default" ) )
         vclass = -1;
