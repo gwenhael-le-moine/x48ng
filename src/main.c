@@ -39,45 +39,11 @@ void signal_handler( int sig ) {
     }
 }
 
-#if defined( GUI_IS_X11 )
-void save_options( int argc, char** argv ) {
-    int l;
-
-    saved_argc = argc;
-    saved_argv = ( char** )malloc( ( argc + 2 ) * sizeof( char* ) );
-    if ( saved_argv == ( char** )0 ) {
-        fprintf( stderr, "%s: malloc failed in save_options(), exit\n",
-                 progname );
-        exit( 1 );
-    }
-    saved_argv[ argc ] = ( char* )0;
-    while ( argc-- ) {
-        l = strlen( argv[ argc ] ) + 1;
-        saved_argv[ argc ] = ( char* )malloc( l );
-        if ( saved_argv[ argc ] == ( char* )0 ) {
-            fprintf( stderr, "%s: malloc failed in save_options(), exit\n",
-                     progname );
-            exit( 1 );
-        }
-        memcpy( saved_argv[ argc ], argv[ argc ], l );
-    }
-}
-#endif
-
 int main( int argc, char** argv ) {
     sigset_t set;
     struct sigaction sa;
     long flags;
     struct itimerval it;
-#if defined( GUI_IS_SDL1 )
-    int rv, i;
-
-    // SDL Initialization
-    SDLInit();
-
-    // Global parameter initialization
-    get_resources();
-#endif
 
     setlocale( LC_ALL, "C" );
 
@@ -129,12 +95,17 @@ int main( int argc, char** argv ) {
                                    "",
                                    "Install these files and try again.",
                                    0 };
+    // SDL Initialization
+    SDLInit();
+
+    // Global parameter initialization
+    get_resources();
 
     // initialize emulator stuff
-    rv = init_emulator();
+    int rv = init_emulator();
     if ( rv != 0 ) {
         printf( "%s\n", errinit_title );
-        for ( i = 0; errinit_text[ i ]; i++ )
+        for ( int i = 0; errinit_text[ i ]; i++ )
             printf( "%s\n", errinit_text[ i ] );
         SDLMessageBox( 300, 200, errinit_title, errinit_text, 0xf0e0c0c0,
                        0xff000000, 0 );
@@ -158,6 +129,7 @@ int main( int argc, char** argv ) {
 
         init_display();
     }
+
     /*
      *  install a handler for SIGALRM
      */

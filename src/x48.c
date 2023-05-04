@@ -1724,6 +1724,17 @@ int SmallTextWidth( const char* string, unsigned int length ) {
     return w;
 }
 
+void exit_x48( int tell_x11 ) {
+    exit_emulator();
+
+#if defined( GUI_IS_X11 )
+    if ( tell_x11 )
+      XCloseDisplay( dpy );
+#endif
+
+    exit( 0 );
+}
+
 #if defined( GUI_IS_X11 )
 int DrawSmallString( Display* the_dpy, Drawable d, GC the_gc, int x, int y,
                      const char* string, unsigned int length ) {
@@ -3686,6 +3697,29 @@ void get_geometry_string( Window win, char* s, int allow_off_screen ) {
              x, ( y_s > 0 ) ? "+" : "-", y );
 }
 
+void save_options( int argc, char** argv ) {
+    int l;
+
+    saved_argc = argc;
+    saved_argv = ( char** )malloc( ( argc + 2 ) * sizeof( char* ) );
+    if ( saved_argv == ( char** )0 ) {
+        fprintf( stderr, "%s: malloc failed in save_options(), exit\n",
+                 progname );
+        exit( 1 );
+    }
+    saved_argv[ argc ] = ( char* )0;
+    while ( argc-- ) {
+        l = strlen( argv[ argc ] ) + 1;
+        saved_argv[ argc ] = ( char* )malloc( l );
+        if ( saved_argv[ argc ] == ( char* )0 ) {
+            fprintf( stderr, "%s: malloc failed in save_options(), exit\n",
+                     progname );
+            exit( 1 );
+        }
+        memcpy( saved_argv[ argc ], argv[ argc ], l );
+    }
+}
+
 void save_command_line( void ) {
     XWindowAttributes xwa;
     int wm_argc, ac;
@@ -3734,13 +3768,6 @@ void save_command_line( void ) {
     wm_argv[ wm_argc ] = ( char* )0;
 
     XSetCommand( dpy, mainW, wm_argv, wm_argc );
-}
-
-void exit_x48( int tell_x11 ) {
-    exit_emulator();
-    if ( tell_x11 )
-        XCloseDisplay( dpy );
-    exit( 0 );
 }
 
 int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen ) {
@@ -4176,12 +4203,6 @@ static int button_release_all( void ) {
         if ( buttons[ b ].pressed )
             button_released( b );
     return 0;
-}
-
-void exit_x48( int tell_x11 ) {
-    exit_emulator();
-
-    exit( 0 );
 }
 
 #define MAX_PASTE 128
