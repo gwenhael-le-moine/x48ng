@@ -144,10 +144,10 @@ void init_display( void ) {
 #endif
 }
 
-#if defined( GUI_IS_X11 )
 static inline void draw_nibble( int c, int r, int val ) {
     int x, y;
 
+#if defined( GUI_IS_X11 )
     x = ( c * 8 ) + 5;
     if ( r <= display.lines )
         x -= disp.offset;
@@ -158,25 +158,17 @@ static inline void draw_nibble( int c, int r, int val ) {
                     y, 1 );
         lcd_buffer[ r ][ c ] = val;
     }
-}
-#endif
-#if defined( GUI_IS_SDL1 )
-static inline void draw_nibble( int c, int r, int val ) {
-    int x, y;
-
-    if ( val != lcd_buffer[ r ][ c ] ) {
+#elif defined( GUI_IS_SDL1 )
+    if ( val != lcd_buffer[ r ][ c ] )
         lcd_buffer[ r ][ c ] = val;
-    }
-    ///////////////////////////////////////////////
-    // SDL PORT
-    ///////////////////////////////////////////////
+
     x = ( c * 4 ); // x: start in pixels
     if ( r <= display.lines )
         x -= disp.offset; // Correct the pixels with display offset
     y = r;                // y: start in pixels
     SDLDrawNibble( x, y, val );
-}
 #endif
+}
 
 static inline void draw_row( long addr, int row ) {
     int i, v;
@@ -450,8 +442,7 @@ void draw_annunc( void ) {
         }
     }
     refresh_icon();
-#endif
-#if defined( GUI_IS_SDL1 )
+#elif defined( GUI_IS_SDL1 )
     char sdl_annuncstate[ 6 ];
     for ( i = 0; ann_tbl[ i ].bit; i++ ) {
         if ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit )
