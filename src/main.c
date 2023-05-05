@@ -81,6 +81,8 @@ int main( int argc, char** argv ) {
         fprintf( stderr, "%s: can\'t create window\n", progname );
         exit( 1 );
     }
+
+    init_annunc();
 #elif defined( GUI_IS_SDL1 )
     // Some error or information messages
     const char* errinit_title = "Emulator initialization failed";
@@ -117,18 +119,9 @@ int main( int argc, char** argv ) {
     SDLCreateHP();
 #endif
 
-    /*
-     * can't be done before windows exist
-     */
-    { /* init_active_stuff() */
-        serial_init();
+    serial_init();
 
-#if defined( GUI_IS_X11 )
-        init_annunc();
-#endif
-
-        init_display();
-    }
+    init_display();
 
     /*
      *  install a handler for SIGALRM
