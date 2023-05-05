@@ -74,7 +74,7 @@ install: all
 	chmod 755 $(DESTDIR)$(PREFIX)/share/x48ng/setup-x48ng-home.sh
 
 	install -m 755 -d -- $(DESTDIR)$(MANDIR)/man1
-	install -c -m 644 x48ng.man.1 $(DESTDIR)$(MANDIR)/man1/x48ng.1
+	sed "s|@VERSION|$(VERSION_MAJOR).$(VERSION_MINOR).$(PATCHLEVEL)|g" x48ng.man.1 > $(DESTDIR)$(MANDIR)/man1/x48ng.1
 	gzip -9  $(DESTDIR)$(MANDIR)/man1/x48ng.1
 
 	install -m 755 -d -- $(DESTDIR)$(DOCDIR)

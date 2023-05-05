@@ -1,8 +1,8 @@
 .\" # @configure_input@
-.\"  
+.\"
 .\" $Id$
 .\" Copyright (c) 2005  G. Allen Morris III
-.\" 
+.\"
 .\" Permission is hereby granted, free of charge, to any person obtaining
 .\" a copy of this software and associated documentation files (the
 .\" "Software"), to deal in the Software without restriction, including
@@ -10,10 +10,10 @@
 .\" distribute, sublicense, and/or sell copies of the Software, and to
 .\" permit persons to whom the Software is furnished to do so, subject to
 .\" the following conditions:
-.\" 
+.\"
 .\" The above copyright notice and this permission notice shall be included
 .\" in all copies or substantial portions of the Software.
-.\" 
+.\"
 .\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 .\" OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 .\" MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -21,7 +21,7 @@
 .\" OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 .\" ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 .\" OTHER DEALINGS IN THE SOFTWARE.
-.\" 
+.\"
 .\" Except as contained in this notice, the name of the X Consortium shall
 .\" not be used in advertising or otherwise to promote the sale, use or
 .\" other dealings in this Software without prior written authorization
@@ -42,11 +42,11 @@
 .if n .sp 1
 .if t .sp .5
 ..
-.TH X48 1 "20 April 2006" "Version @VERSION@" "X48 Manual Pages"
+.TH X48NG 1 "05 May 2023" "Version @VERSION@" "X48NG Manual Pages"
 .SH NAME
-x48 \- scientific calculator for X and an HP 48 emulator
+x48ng \- scientific calculator for X and an HP 48 emulator
 .SH SYNOPSIS
-.B x48
+.B x48ng
 [\-options ...]
 
 where options include:
@@ -105,11 +105,11 @@ where options include:
 .br
     [\-reset                     perform a reset (PC = 0) on startup
 .br
-    [\-initialize                force initialization x48 from ROM-dump
+    [\-initialize                force initialization x48ng from ROM-dump
 .br
     [\-rom        <filename>     if initializing, read ROM from <filename>
 .br
-    [\-home       <directory>    use directory ~/<directory> to save x48 files
+    [\-home       <directory>    use directory ~/<directory> to save x48ng files
 .br
     [\-xrm        <resource>     set Xresource <resource>
 .br
@@ -117,12 +117,12 @@ where options include:
 
 
 .SH DESCRIPTION
-.I x48
+.I x48ng
 is a scientific calculator desktop accessory that emulate an HP\-48 SX
 or an HP\-48 GX.
 .SH OPTIONS
 .PP
-\fIx48\fP accepts all of the standard toolkit command line options along
+\fIx48ng\fP accepts all of the standard toolkit command line options along
 with several additional options:
 .PP
 .TP 8
@@ -131,7 +131,7 @@ Show a list of options.
 .PP
 .TP 8
 .B \-version
-This  causes  x48  to  print a version number to the standard output.
+This  causes  x48ng  to  print a version number to the standard output.
 .PP
 .TP 8
 .B \-iconic
@@ -139,12 +139,12 @@ Start iconic
 .SH OPERATION
 
 .PP
-x48 emulates an HP 48 calculator. This manual does not attempt to
+x48ng emulates an HP 48 calculator. This manual does not attempt to
 describe the operation of the HP calulator, but only the user interface
 to the emulator.
 
 .I Pointer Usage:
-When mouse button one is press on an x48 key the key is depress until
+When mouse button one is press on an x48ng key the key is depress until
 the mouse button is released.  If you wish to have more than one key
 press at a time mouse button 3 may be used.  Button pressed with mouse
 button 3 will remain pressed until mouse button 1 is used.  For example
@@ -152,14 +152,14 @@ to reset the calulator you can press the A key and the F key with mouse
 button 3 and then press the on button with mouse button 1.
 
 Mouse button 2 will paste the text in the cut buffer to the calculator
-if it is press in the display area of the calculator. See notes on 
+if it is press in the display area of the calculator. See notes on
 pasting text into the calculator below.
 
 Use of mouse elsewhere on the image of the calculator is undefined.
 
 .SH ACCELERATORS
 
-The keyboard may be used to input data into the x48.
+The keyboard may be used to input data into the x48ng.
 The number keys on the keyboard coresponds to the number buttons on
 the calaculator, and the alphbetic keys on the keyboard control the
 buttons on the top half of the calculator and the @code{+/-} and
@@ -176,13 +176,13 @@ calculator.
 .SH WIDGET HIERARCHY
 .SH APPLICATION RESOURCES
 The  program  understands  all of the core X Toolkit resource names and
-classes.  Application specific resources (e.g., "\fBX48\fR.\fINAME\fR") follow:
+classes.  Application specific resources (e.g., "\fBX48NG\fR.\fINAME\fR") follow:
 .TP
 .B .display: <diplayname>
 Specifies the display to use.
 .TP
 .B *geometry: {+|-}x{+|-}y
-You can not change the size of \fIx48\fR, but you can set the location of \fIx48\fR.
+You can not change the size of \fIx48ng\fR, but you can set the location of \fIx48ng\fR.
 .TP
 .B *iconGeom: <geometrystring>
 
@@ -199,7 +199,7 @@ You can not change the size of \fIx48\fR, but you can set the location of \fIx48
 .B *useXShm: <true|false>
 
 .TP
-.B *visual: <default|staticgray|staticcolor|truecolor|grayscale|pseudocolor|directcolor|\fI0xnn\fR|\fInn\fR> 
+.B *visual: <default|staticgray|staticcolor|truecolor|grayscale|pseudocolor|directcolor|\fI0xnn\fR|\fInn\fR>
 
 .TP
 .B *mono: <true|false>
@@ -268,7 +268,7 @@ You can not change the size of \fIx48\fR, but you can set the location of \fIx48
 .B *Netbook:
 
 .SH COLORS
-The x48 is trying to look like a particular device.
+The x48ng is trying to look like a particular device.
 The colors are therefore not selectable.
 .br
 .SH "ENVIRONMENT"
@@ -277,9 +277,11 @@ XUSERFILESEARCHPATH
 X(7x), xrdb(1)
 .SH BUGS
 .PP
-Bugs can be found and reported at: http://developer.berlios.de/bugs/?group_id=3335
+Bugs can be found and reported at: https://github.com/gwenhael-le-moine/x48ng
 .SH COPYRIGHT
 Copyright \(co 1994-2005 Eddie C. Dost
+.br
+Copyright \(co 2023 Gwenhael Le Moine
 .br
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -287,3 +289,5 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 Eddie C. Dost
 .br
 G. Allen Morris III <gam3@gam3.net>
+.br
+Gwenhael Le Moine
