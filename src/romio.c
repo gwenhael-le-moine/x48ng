@@ -159,7 +159,7 @@ int read_rom_file( const char* name, unsigned char** mem, unsigned int* size ) {
     }
 
     if ( verbose )
-        printf( "%s: read %s\n", progname, name );
+        printf( "read %s\n", name );
 
     return 1;
 }

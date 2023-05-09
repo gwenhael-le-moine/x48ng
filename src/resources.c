@@ -228,7 +228,7 @@ int get_boolean_resource( char* name, char* class ) {
     if ( !strcmp( buf, "off" ) || !strcmp( buf, "false" ) ||
          !strcmp( buf, "no" ) )
         return 0;
-    fprintf( stderr, "%s: %s must be boolean, not %s.\n", progname, name, buf );
+    fprintf( stderr, "%s must be boolean, not %s.\n", name, buf );
     return 0;
 }
 
@@ -241,7 +241,7 @@ int get_integer_resource( char* name, char* class ) {
         free( s );
         return val;
     }
-    fprintf( stderr, "%s: %s must be an integer, not %s.\n", progname, name,
+    fprintf( stderr, "%s must be an integer, not %s.\n", name,
              s );
     free( s );
     return 0;
@@ -255,11 +255,11 @@ unsigned int get_pixel_resource( char* name, char* class, Display* dpy,
         goto DEFAULT;
 
     if ( !XParseColor( dpy, cmap, s, &color ) ) {
-        fprintf( stderr, "%s: can't parse color %s\n", progname, s );
+        fprintf( stderr, "can't parse color %s\n", s );
         goto DEFAULT;
     }
     if ( !XAllocColor( dpy, cmap, &color ) ) {
-        fprintf( stderr, "%s: couldn't allocate color %s\n", progname, s );
+        fprintf( stderr, "couldn't allocate color %s\n", s );
         goto DEFAULT;
     }
     free( s );
@@ -346,7 +346,7 @@ Visual* get_visual_resource( Display* dpy, char* name, char* class,
     else if ( 1 == sscanf( s, " 0x%x %c", &id, &c ) )
         vclass = -2;
     else {
-        fprintf( stderr, "%s: unrecognized visual \"%s\".\n", progname, s );
+        fprintf( stderr, "unrecognized visual \"%s\".\n", s );
         vclass = -1;
     }
     if ( s )
@@ -359,7 +359,7 @@ Visual* get_visual_resource( Display* dpy, char* name, char* class,
         Visual* v = id_to_visual( dpy, id, depth );
         if ( v )
             return v;
-        fprintf( stderr, "%s: no visual with id 0x%x.\n", progname, id );
+        fprintf( stderr, "no visual with id 0x%x.\n", id );
         *depth = DefaultDepth( dpy, DefaultScreen( dpy ) );
         return DefaultVisual( dpy, DefaultScreen( dpy ) );
     } else

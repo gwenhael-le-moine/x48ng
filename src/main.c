@@ -78,7 +78,7 @@ int main( int argc, char** argv ) {
      *  Create the HP-48 window
      */
     if ( CreateWindows( saved_argc, saved_argv ) < 0 ) {
-        fprintf( stderr, "%s: can\'t create window\n", progname );
+        fprintf( stderr, "can\'t create window\n" );
         exit( 1 );
     }
 

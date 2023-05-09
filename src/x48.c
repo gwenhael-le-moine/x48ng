@@ -1235,8 +1235,7 @@ int AllocColors( void ) {
                     dyn = 0;
                     if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 ) {
                         if ( !quiet )
-                            fprintf( stderr, "%s: XAllocColor failed.\n",
-                                     progname );
+                            fprintf( stderr, "XAllocColor failed.\n" );
                         error = c;
                         break;
                     }
@@ -1244,8 +1243,7 @@ int AllocColors( void ) {
                     dyn = 0;
                     if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 ) {
                         if ( !quiet )
-                            fprintf( stderr, "%s: XAllocColor failed.\n",
-                                     progname );
+                            fprintf( stderr, "XAllocColor failed.\n" );
                         error = c;
                         break;
                     }
@@ -1255,8 +1253,7 @@ int AllocColors( void ) {
             } else {
                 if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 ) {
                     if ( !quiet )
-                        fprintf( stderr, "%s: XAllocColor failed.\n",
-                                 progname );
+                        fprintf( stderr, "XAllocColor failed.\n" );
                     error = c;
                     break;
                 }
@@ -1270,7 +1267,7 @@ int AllocColors( void ) {
 
     if ( error != -1 ) {
         if ( !quiet )
-            fprintf( stderr, "%s: Using own Colormap.\n", progname );
+            fprintf( stderr, "Using own Colormap.\n" );
         /*
          * free colors so far allocated
          */
@@ -1391,8 +1388,7 @@ void adjust_contrast( int contrast ) {
         if ( XAllocColor( dpy, cmap, &colors[ PIXEL ].xcolor ) == 0 ) {
             colors[ PIXEL ].xcolor.pixel = old;
             if ( !quiet )
-                fprintf( stderr, "%s: warning: can\'t alloc new pixel color.\n",
-                         progname );
+                fprintf( stderr, "warning: can\'t alloc new pixel color.\n" );
         } else {
             XFreeColors( dpy, cmap, &old, 1, 0 );
             XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
@@ -1445,8 +1441,8 @@ int InitDisplay( int argc, char** argv ) {
     if ( ( argc == 2 ) && !strcmp( argv[ 1 ], "-help" ) )
         usage();
     else if ( argc > 1 ) {
-        fprintf( stderr, "%s: unknown option %s or missing argument\n",
-                 progname, argv[ 1 ] );
+        fprintf( stderr, "unknown option %s or missing argument\n",
+                 argv[ 1 ] );
         usage();
     }
 
@@ -1494,11 +1490,11 @@ int InitDisplay( int argc, char** argv ) {
     if ( dpy == ( Display* )0 ) {
         if ( res ) {
             if ( !quiet )
-                fprintf( stderr, "%s: can\'t open display %s\n", progname,
+                fprintf( stderr, "can\'t open display %s\n",
                          res );
         } else {
             if ( !quiet )
-                fprintf( stderr, "%s: can\'t open display\n", progname );
+                fprintf( stderr, "can\'t open display\n" );
         }
         return -1;
     }
@@ -1614,11 +1610,10 @@ int InitDisplay( int argc, char** argv ) {
     if ( !XShmQueryExtension( dpy ) ) {
         shm_flag = 0;
         if ( !quiet )
-            fprintf( stderr, "%s: Xserver does not support XShm extension.\n",
-                     progname );
+            fprintf( stderr, "Xserver does not support XShm extension.\n" );
     }
     if ( shm_flag )
-        fprintf( stderr, "%s: using XShm extension.\n", progname );
+        fprintf( stderr, "using XShm extension.\n" );
 
     return 0;
 }
@@ -3060,8 +3055,7 @@ void CreateDispWindow( void ) {
             shm_flag = 0;
             if ( !quiet )
                 fprintf( stderr,
-                         "%s: XShm error in CreateImage(DISP), disabling.\n",
-                         progname );
+                         "XShm error in CreateImage(DISP), disabling.\n" );
             goto shm_error;
         }
 
@@ -3077,8 +3071,7 @@ void CreateDispWindow( void ) {
             disp.disp_image = NULL;
             shm_flag = 0;
             if ( !quiet )
-                fprintf( stderr, "%s: XShm error in shmget(DISP), disabling.\n",
-                         progname );
+                fprintf( stderr, "XShm error in shmget(DISP), disabling.\n" );
             goto shm_error;
         }
 
@@ -3091,8 +3084,7 @@ void CreateDispWindow( void ) {
             disp.disp_image = NULL;
             shm_flag = 0;
             if ( !quiet )
-                fprintf( stderr, "%s: XShm error in shmat(DISP), disabling.\n",
-                         progname );
+                fprintf( stderr, "XShm error in shmat(DISP), disabling.\n" );
             goto shm_error;
         }
         disp.disp_image->data = disp.disp_info.shmaddr;
@@ -3110,8 +3102,7 @@ void CreateDispWindow( void ) {
             shm_flag = 0;
             if ( !quiet )
                 fprintf( stderr,
-                         "%s: XShm error in CreateImage(MENU), disabling.\n",
-                         progname );
+                         "XShm error in CreateImage(MENU), disabling.\n" );
             goto shm_error;
         }
 
@@ -3129,8 +3120,7 @@ void CreateDispWindow( void ) {
             disp.menu_image = NULL;
             shm_flag = 0;
             if ( !quiet )
-                fprintf( stderr, "%s: XShm error in shmget(MENU), disabling.\n",
-                         progname );
+                fprintf( stderr, "XShm error in shmget(MENU), disabling.\n" );
             goto shm_error;
         }
 
@@ -3145,8 +3135,7 @@ void CreateDispWindow( void ) {
             disp.menu_image = NULL;
             shm_flag = 0;
             if ( !quiet )
-                fprintf( stderr, "%s: XShm error in shmat(MENU), disabling.\n",
-                         progname );
+                fprintf( stderr, "XShm error in shmat(MENU), disabling.\n" );
             goto shm_error;
         }
         disp.menu_image->data = disp.menu_info.shmaddr;
@@ -3164,8 +3153,7 @@ void CreateDispWindow( void ) {
             disp.menu_image = NULL;
             shm_flag = 0;
             if ( !quiet )
-                fprintf( stderr, "%s: XShm error in shmget(MENU), disabling.\n",
-                         progname );
+                fprintf( stderr, "XShm error in shmget(MENU), disabling.\n" );
             goto shm_error;
         } else {
             shmctl( disp.disp_info.shmid, IPC_RMID, 0 );
@@ -3180,7 +3168,7 @@ void CreateDispWindow( void ) {
                             disp.menu_image->height ) );
 
         if ( verbose )
-            printf( "%s: using XShm extension.\n", progname );
+            printf( "using XShm extension.\n" );
 
         CompletionType = XShmGetEventBase( dpy ) + ShmCompletion;
     }
@@ -3714,8 +3702,7 @@ void save_options( int argc, char** argv ) {
     saved_argc = argc;
     saved_argv = ( char** )malloc( ( argc + 2 ) * sizeof( char* ) );
     if ( saved_argv == ( char** )0 ) {
-        fprintf( stderr, "%s: malloc failed in save_options(), exit\n",
-                 progname );
+        fprintf( stderr, "malloc failed in save_options(), exit\n" );
         exit( 1 );
     }
     saved_argv[ argc ] = ( char* )0;
@@ -3723,8 +3710,7 @@ void save_options( int argc, char** argv ) {
         l = strlen( argv[ argc ] ) + 1;
         saved_argv[ argc ] = ( char* )malloc( l );
         if ( saved_argv[ argc ] == ( char* )0 ) {
-            fprintf( stderr, "%s: malloc failed in save_options(), exit\n",
-                     progname );
+            fprintf( stderr, "malloc failed in save_options(), exit\n" );
             exit( 1 );
         }
         memcpy( saved_argv[ argc ], argv[ argc ], l );
@@ -3742,8 +3728,7 @@ void save_command_line( void ) {
     if ( wm_argv == ( char** )0 ) {
         if ( !quiet )
             fprintf( stderr,
-                     "%s: warning: malloc failed in wm_save_yourself.\n",
-                     progname );
+                     "warning: malloc failed in wm_save_yourself.\n" );
         XSetCommand( dpy, mainW, saved_argv, saved_argc );
         return;
     }

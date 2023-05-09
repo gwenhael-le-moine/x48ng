@@ -1148,21 +1148,21 @@ int debug( void ) {
     if ( !useDebugger ) {
         if ( enter_debugger & ILLEGAL_INSTRUCTION ) {
             if ( !quiet )
-                fprintf( stderr, "%s: reset (illegal instruction at 0x%.5lX)\n",
-                         progname, saturn.PC );
+                fprintf( stderr, "reset (illegal instruction at 0x%.5lX)\n",
+                         saturn.PC );
             saturn.PC = 0;
         }
         if ( enter_debugger & USER_INTERRUPT )
             if ( verbose )
-                printf( "%s: user interrupt (SIGINT) ignored\n", progname );
+                printf( "%s: usnterrupt (SIGINT) ignored\n" );
         exit_x48( 1 );
         if ( enter_debugger & BREAKPOINT_HIT )
             if ( verbose )
-                printf( "%s: breakpoint hit at 0x%.5lX ignored\n", progname,
+                printf( "breakpoint hit at 0x%.5lX ignored\n",
                         saturn.PC );
         if ( enter_debugger & TRAP_INSTRUCTION )
             if ( verbose )
-                printf( "%s: trap instruction at 0x%.5lX ignored\n", progname,
+                printf( "trap instruction at 0x%.5lX ignored\n",
                         saturn.PC );
         enter_debugger = 0;
         return 0;

@@ -9,7 +9,6 @@ unsigned char* rom;
 unsigned short rom_crc, crc;
 
 int verbose = 0;
-char* progname;
 
 #define calc_crc( n )                                                          \
     ( crc = ( ( crc >> 4 ) ^ ( ( ( crc ^ n ) & 0xf ) * 0x1081 ) ) )

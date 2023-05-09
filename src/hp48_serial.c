@@ -57,7 +57,7 @@ int serial_init( void ) {
             if ( ( ttyp = open( tty_dev_name, O_RDWR | O_NDELAY, 0666 ) ) >=
                  0 ) {
                 if ( verbose )
-                    printf( "%s: wire connection on %s\n", progname,
+                    printf( "wire connection on %s\n",
                             tty_dev_name );
                 wire_name = strdup( tty_dev_name );
             }
@@ -74,7 +74,7 @@ int serial_init( void ) {
                         ttyp = wire_fd;
                         sprintf( tty_dev_name, "/dev/tty%c%x", c, n );
                         if ( verbose )
-                            printf( "%s: wire connection on %s\n", progname,
+                            printf( "wire connection on %s\n",
                                     tty_dev_name );
                         wire_name = strdup( tty_dev_name );
                         break;
@@ -93,8 +93,8 @@ int serial_init( void ) {
 #endif
         {
             if ( !quiet )
-                fprintf( stderr, "%s: ioctl(wire, TCGETS) failed, errno = %d\n",
-                         progname, errno );
+                fprintf( stderr, "ioctl(wire, TCGETS) failed, errno = %d\n",
+                         errno );
             wire_fd = -1;
             ttyp = -1;
         }
@@ -117,8 +117,8 @@ int serial_init( void ) {
 #endif
         {
             if ( !quiet )
-                fprintf( stderr, "%s: ioctl(wire, TCSETS) failed, errno = %d\n",
-                         progname, errno );
+                fprintf( stderr, "ioctl(wire, TCSETS) failed, errno = %d\n",
+                         errno );
             wire_fd = -1;
             ttyp = -1;
         }
@@ -129,7 +129,7 @@ int serial_init( void ) {
         sprintf( tty_dev_name, serialLine );
         if ( ( ir_fd = open( tty_dev_name, O_RDWR | O_NDELAY ) ) >= 0 ) {
             if ( verbose )
-                printf( "%s: IR connection on %s\n", progname, tty_dev_name );
+                printf( "IR connection on %s\n", tty_dev_name );
             ir_name = strdup( tty_dev_name );
         }
     }
@@ -142,8 +142,8 @@ int serial_init( void ) {
 #endif
         {
             if ( !quiet )
-                fprintf( stderr, "%s: ioctl(IR, TCGETS) failed, errno = %d\n",
-                         progname, errno );
+                fprintf( stderr, "ioctl(IR, TCGETS) failed, errno = %d\n",
+                         errno );
             ir_fd = -1;
         }
     }
@@ -165,8 +165,8 @@ int serial_init( void ) {
 #endif
         {
             if ( !quiet )
-                fprintf( stderr, "%s: ioctl(IR, TCSETS) failed, errno = %d\n",
-                         progname, errno );
+                fprintf( stderr, "ioctl(IR, TCSETS) failed, errno = %d\n",
+                         errno );
             ir_fd = -1;
         }
     }
@@ -186,8 +186,8 @@ void serial_baud( int baud ) {
 #endif
         {
             if ( !quiet )
-                fprintf( stderr, "%s: ioctl(IR,  TCGETS) failed, errno = %d\n",
-                         progname, errno );
+                fprintf( stderr, "ioctl(IR,  TCGETS) failed, errno = %d\n",
+                         errno );
             ir_fd = -1;
             error = 1;
         }
@@ -232,8 +232,7 @@ void serial_baud( int baud ) {
 
     if ( ( ir_fd >= 0 ) && ( ( ttybuf.c_ospeed ) == 0 ) ) {
         if ( !quiet )
-            fprintf( stderr, "%s: can\'t set baud rate, using 9600\n",
-                     progname );
+            fprintf( stderr, "can\'t set baud rate, using 9600\n" );
         ttybuf.c_cflag |= B9600;
     }
 #else
@@ -277,8 +276,7 @@ void serial_baud( int baud ) {
 
     if ( ( ir_fd >= 0 ) && ( ( ttybuf.c_cflag & CBAUD ) == 0 ) ) {
         if ( !quiet )
-            fprintf( stderr, "%s: can\'t set baud rate, using 9600\n",
-                     progname );
+            fprintf( stderr, "can\'t set baud rate, using 9600\n" );
         ttybuf.c_cflag |= B9600;
     }
 #endif
@@ -290,8 +288,7 @@ void serial_baud( int baud ) {
 #endif
         {
             if ( !quiet )
-                fprintf( stderr, "%s: ioctl(IR,  TCSETS) failed, errno = %d\n",
-                         progname, errno );
+              fprintf( stderr, "ioctl(IR,  TCSETS) failed, errno = %d\n", errno );
             ir_fd = -1;
             error = 1;
         }
@@ -305,8 +302,8 @@ void serial_baud( int baud ) {
 #endif
         {
             if ( !quiet )
-                fprintf( stderr, "%s: ioctl(wire, TCGETS) failed, errno = %d\n",
-                         progname, errno );
+                fprintf( stderr, "ioctl(wire, TCGETS) failed, errno = %d\n",
+                          errno );
             wire_fd = -1;
             ttyp = -1;
             error = 1;
@@ -355,8 +352,7 @@ void serial_baud( int baud ) {
 
     if ( ( ttyp >= 0 ) && ( ( ttybuf.c_cflag & CBAUD ) == 0 ) ) {
         if ( !quiet )
-            fprintf( stderr, "%s: can\'t set baud rate, using 9600\n",
-                     progname );
+            fprintf( stderr, "can\'t set baud rate, using 9600\n" );
         ttybuf.c_cflag |= B9600;
     }
 #endif
@@ -368,8 +364,8 @@ void serial_baud( int baud ) {
 #endif
         {
             if ( !quiet )
-                fprintf( stderr, "%s: ioctl(wire, TCSETS) failed, errno = %d\n",
-                         progname, errno );
+                fprintf( stderr, "ioctl(wire, TCSETS) failed, errno = %d\n",
+                          errno );
             wire_fd = -1;
             ttyp = -1;
             error = 1;
@@ -406,7 +402,7 @@ void transmit_char( void ) {
             }
         } else {
             if ( errno != EAGAIN ) {
-                fprintf( stderr, "%s: serial write error: %d\n", progname,
+                fprintf( stderr, "serial write error: %d\n",
                          errno );
             }
             saturn.tcs &= 0x0e;
@@ -423,7 +419,7 @@ void transmit_char( void ) {
         } else {
             if ( errno != EAGAIN ) {
                 if ( !quiet )
-                    fprintf( stderr, "%s: serial write error: %d\n", progname,
+                    fprintf( stderr, "serial write error: %d\n",
                              errno );
             }
             saturn.tcs &= 0x0e;

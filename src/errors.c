@@ -15,11 +15,11 @@ void fatal_exit( void ) {
         exit( 1 );
 
     if ( errbuf[ 0 ] == '\0' ) {
-        fprintf( stderr, "%s: FATAL ERROR, exit.\n", progname );
+        fprintf( stderr, "FATAL ERROR, exit.\n" );
         exit( 1 );
     }
 
-    fprintf( stderr, "%s: FATAL ERROR, exit.\n  - %s\n", progname, errbuf );
+    fprintf( stderr, "FATAL ERROR, exit.\n  - %s\n", errbuf );
 
     if ( fixbuf[ 0 ] != '\0' )
         fprintf( stderr, "  - %s\n", fixbuf );
