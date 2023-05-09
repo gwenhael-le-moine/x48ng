@@ -1,4 +1,5 @@
 src/*.o
+src/tools/*.o
 
 checkrom
 dump2rom

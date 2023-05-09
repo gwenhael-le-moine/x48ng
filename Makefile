@@ -7,7 +7,7 @@ COMPILE_VERSION = 0
 
 CC = gcc
 
-CFLAGS = -g -O2 -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DPATCHLEVEL=$(PATCHLEVEL) -DCOMPILE_VERSION=$(COMPILE_VERSION)
+CFLAGS = -g -O2 -I./src/ -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DPATCHLEVEL=$(PATCHLEVEL) -DCOMPILE_VERSION=$(COMPILE_VERSION)
 LIBS = -lm -lhistory -lreadline
 
 #possible values: x11, sdl1
@@ -32,13 +32,13 @@ endif
 all: mkcard checkrom dump2rom x48ng
 
 # Binaries
-mkcard: src/mkcard.o
+mkcard: src/tools/mkcard.o
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
-dump2rom: src/dump2rom.o
+dump2rom: src/tools/dump2rom.o
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
-checkrom: src/checkrom.o src/romio.o
+checkrom: src/tools/checkrom.o src/romio.o
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
 x48ng: src/main.o src/hp48emu_actions.o src/debugger.o src/device.o src/disasm.o src/hp48_emulate.o src/errors.o src/hp48_init.o src/hp48emu_memory.o src/hp48emu_register.o src/resources.o src/romio.o src/rpl.o src/hp48_serial.o src/timer.o src/x48.o src/resources.o
@@ -46,7 +46,7 @@ x48ng: src/main.o src/hp48emu_actions.o src/debugger.o src/device.o src/disasm.o
 
 # Cleaning
 clean:
-	rm -f src/*.o
+	rm -f src/*.o src/tools/*.o
 
 clean-all: clean
 	rm -f x48ng mkcard checkrom dump2rom
