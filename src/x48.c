@@ -1441,8 +1441,7 @@ int InitDisplay( int argc, char** argv ) {
     if ( ( argc == 2 ) && !strcmp( argv[ 1 ], "-help" ) )
         usage();
     else if ( argc > 1 ) {
-        fprintf( stderr, "unknown option %s or missing argument\n",
-                 argv[ 1 ] );
+        fprintf( stderr, "unknown option %s or missing argument\n", argv[ 1 ] );
         usage();
     }
 
@@ -1490,8 +1489,7 @@ int InitDisplay( int argc, char** argv ) {
     if ( dpy == ( Display* )0 ) {
         if ( res ) {
             if ( !quiet )
-                fprintf( stderr, "can\'t open display %s\n",
-                         res );
+                fprintf( stderr, "can\'t open display %s\n", res );
         } else {
             if ( !quiet )
                 fprintf( stderr, "can\'t open display\n" );
@@ -3727,8 +3725,7 @@ void save_command_line( void ) {
     wm_argv = ( char** )malloc( ( saved_argc + 5 ) * sizeof( char* ) );
     if ( wm_argv == ( char** )0 ) {
         if ( !quiet )
-            fprintf( stderr,
-                     "warning: malloc failed in wm_save_yourself.\n" );
+            fprintf( stderr, "warning: malloc failed in wm_save_yourself.\n" );
         XSetCommand( dpy, mainW, saved_argv, saved_argc );
         return;
     }

@@ -57,8 +57,7 @@ int serial_init( void ) {
             if ( ( ttyp = open( tty_dev_name, O_RDWR | O_NDELAY, 0666 ) ) >=
                  0 ) {
                 if ( verbose )
-                    printf( "wire connection on %s\n",
-                            tty_dev_name );
+                    printf( "wire connection on %s\n", tty_dev_name );
                 wire_name = strdup( tty_dev_name );
             }
         }
@@ -74,8 +73,7 @@ int serial_init( void ) {
                         ttyp = wire_fd;
                         sprintf( tty_dev_name, "/dev/tty%c%x", c, n );
                         if ( verbose )
-                            printf( "wire connection on %s\n",
-                                    tty_dev_name );
+                            printf( "wire connection on %s\n", tty_dev_name );
                         wire_name = strdup( tty_dev_name );
                         break;
                     }
@@ -288,7 +286,8 @@ void serial_baud( int baud ) {
 #endif
         {
             if ( !quiet )
-              fprintf( stderr, "ioctl(IR,  TCSETS) failed, errno = %d\n", errno );
+                fprintf( stderr, "ioctl(IR,  TCSETS) failed, errno = %d\n",
+                         errno );
             ir_fd = -1;
             error = 1;
         }
@@ -303,7 +302,7 @@ void serial_baud( int baud ) {
         {
             if ( !quiet )
                 fprintf( stderr, "ioctl(wire, TCGETS) failed, errno = %d\n",
-                          errno );
+                         errno );
             wire_fd = -1;
             ttyp = -1;
             error = 1;
@@ -365,7 +364,7 @@ void serial_baud( int baud ) {
         {
             if ( !quiet )
                 fprintf( stderr, "ioctl(wire, TCSETS) failed, errno = %d\n",
-                          errno );
+                         errno );
             wire_fd = -1;
             ttyp = -1;
             error = 1;
@@ -402,8 +401,7 @@ void transmit_char( void ) {
             }
         } else {
             if ( errno != EAGAIN ) {
-                fprintf( stderr, "serial write error: %d\n",
-                         errno );
+                fprintf( stderr, "serial write error: %d\n", errno );
             }
             saturn.tcs &= 0x0e;
             if ( saturn.io_ctrl & 0x04 ) {
@@ -419,8 +417,7 @@ void transmit_char( void ) {
         } else {
             if ( errno != EAGAIN ) {
                 if ( !quiet )
-                    fprintf( stderr, "serial write error: %d\n",
-                             errno );
+                    fprintf( stderr, "serial write error: %d\n", errno );
             }
             saturn.tcs &= 0x0e;
             if ( saturn.io_ctrl & 0x04 ) {

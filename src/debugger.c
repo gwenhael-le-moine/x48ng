@@ -1158,12 +1158,10 @@ int debug( void ) {
         exit_x48( 1 );
         if ( enter_debugger & BREAKPOINT_HIT )
             if ( verbose )
-                printf( "breakpoint hit at 0x%.5lX ignored\n",
-                        saturn.PC );
+                printf( "breakpoint hit at 0x%.5lX ignored\n", saturn.PC );
         if ( enter_debugger & TRAP_INSTRUCTION )
             if ( verbose )
-                printf( "trap instruction at 0x%.5lX ignored\n",
-                        saturn.PC );
+                printf( "trap instruction at 0x%.5lX ignored\n", saturn.PC );
         enter_debugger = 0;
         return 0;
     }

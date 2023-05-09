@@ -342,8 +342,7 @@ int read_mem_file( char* name, word_4* mem, int size ) {
 
         if ( st.st_size != size / 2 ) {
             if ( !quiet )
-                fprintf( stderr,
-                         "strange size %s, expected %d, found %ld\n",
+                fprintf( stderr, "strange size %s, expected %d, found %ld\n",
                          name, size / 2, st.st_size );
             fclose( fp );
             return 0;
@@ -353,8 +352,7 @@ int read_mem_file( char* name, word_4* mem, int size ) {
             for ( i = 0, j = 0; i < size / 2; i++ ) {
                 if ( 1 != fread( &byte, 1, 1, fp ) ) {
                     if ( !quiet )
-                        fprintf( stderr, "can\'t read %s\n",
-                                 name );
+                        fprintf( stderr, "can\'t read %s\n", name );
                     fclose( fp );
                     return 0;
                 }
@@ -440,9 +438,8 @@ void get_home_directory( char* path ) {
                 strcat( path, "/" );
             } else {
                 if ( !quiet )
-                    fprintf( stderr,
-                             "can\'t figure out your home directory, "
-                             "trying /tmp\n" );
+                    fprintf( stderr, "can\'t figure out your home directory, "
+                                     "trying /tmp\n" );
                 strcpy( path, "/tmp" );
             }
         }
@@ -539,8 +536,7 @@ int read_files( void ) {
     saturn.ram = ( word_4* )NULL;
     if ( NULL == ( saturn.ram = ( word_4* )malloc( ram_size ) ) ) {
         if ( !quiet )
-            fprintf( stderr, "can\'t malloc RAM[%d]\n",
-                     ram_size );
+            fprintf( stderr, "can\'t malloc RAM[%d]\n", ram_size );
         exit( 1 );
     }
 
@@ -568,8 +564,7 @@ int read_files( void ) {
         if ( ( port1_size == 0x10000 ) || ( port1_size == 0x40000 ) ) {
             if ( NULL == ( saturn.port1 = ( word_4* )malloc( port1_size ) ) ) {
                 if ( !quiet )
-                    fprintf( stderr, "can\'t malloc PORT1[%ld]\n",
-                             port1_size );
+                    fprintf( stderr, "can\'t malloc PORT1[%ld]\n", port1_size );
             } else if ( !read_mem_file( fnam, saturn.port1, port1_size ) ) {
                 port1_size = 0;
                 port1_is_ram = 0;
@@ -602,8 +597,7 @@ int read_files( void ) {
                ( ( port2_size == 0x10000 ) || ( port2_size == 0x40000 ) ) ) ) {
             if ( NULL == ( saturn.port2 = ( word_4* )malloc( port2_size ) ) ) {
                 if ( !quiet )
-                    fprintf( stderr, "can\'t malloc PORT2[%ld]\n",
-                             port2_size );
+                    fprintf( stderr, "can\'t malloc PORT2[%ld]\n", port2_size );
             } else if ( !read_mem_file( fnam, saturn.port2, port2_size ) ) {
                 port2_size = 0;
                 port2_is_ram = 0;
@@ -756,15 +750,13 @@ int write_files( void ) {
             make_dir = 1;
         } else {
             if ( !quiet )
-                fprintf( stderr, "can\'t stat %s, saving to /tmp\n",
-                         path );
+                fprintf( stderr, "can\'t stat %s, saving to /tmp\n", path );
             strcpy( path, "/tmp" );
         }
     } else {
         if ( !S_ISDIR( st.st_mode ) ) {
             if ( !quiet )
-                fprintf( stderr, "%s is no directory, saving to /tmp\n",
-                         path );
+                fprintf( stderr, "%s is no directory, saving to /tmp\n", path );
             strcpy( path, "/tmp" );
         }
     }
@@ -772,8 +764,7 @@ int write_files( void ) {
     if ( make_dir ) {
         if ( mkdir( path, 0777 ) == -1 ) {
             if ( !quiet )
-                fprintf( stderr, "can\'t mkdir %s, saving to /tmp\n",
-                         path );
+                fprintf( stderr, "can\'t mkdir %s, saving to /tmp\n", path );
             strcpy( path, "/tmp" );
         }
     }
@@ -784,8 +775,7 @@ int write_files( void ) {
     strcat( fnam, "hp48" );
     if ( ( fp = fopen( fnam, "w" ) ) == NULL ) {
         if ( !quiet )
-            fprintf( stderr, "can\'t open %s, no saving done\n",
-                     fnam );
+            fprintf( stderr, "can\'t open %s, no saving done\n", fnam );
         return 0;
     }
 

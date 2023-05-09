@@ -241,8 +241,7 @@ int get_integer_resource( char* name, char* class ) {
         free( s );
         return val;
     }
-    fprintf( stderr, "%s must be an integer, not %s.\n", name,
-             s );
+    fprintf( stderr, "%s must be an integer, not %s.\n", name, s );
     free( s );
     return 0;
 }
