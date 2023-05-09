@@ -70,12 +70,40 @@ int main( int argc, char** argv ) {
     if ( InitDisplay( argc, argv ) < 0 ) {
         exit( 1 );
     }
+#elif defined( GUI_IS_SDL1 )
+    // SDL Initialization
+    SDLInit();
+
+    // Global parameter initialization
+    get_resources();
+#endif
 
     /*
      * initialize emulator stuff
      */
-    init_emulator();
+    if ( init_emulator() != 0 ) {
+        // Some error or information messages
+        const char* errinit_title = "Emulator initialization failed";
+        const char* errinit_text[] = { "",
+                                       "In order to work the emulator needs",
+                                       "the following files:",
+                                       "  rom:   an HP48 rom dump",
+                                       "  ram:   ram file",
+                                       "  hp48:  HP state file",
+                                       "",
+                                       "These files must be in ~/.x48ng",
+                                       "",
+                                       "Install these files and try again.",
+                                       0 };
 
+        printf( "%s\n", errinit_title );
+        for ( int i = 0; errinit_text[ i ]; i++ )
+            printf( "%s\n", errinit_text[ i ] );
+
+        return 0;
+    }
+
+#if defined( GUI_IS_X11 )
     /*
      *  Create the HP-48 window
      */
@@ -86,36 +114,11 @@ int main( int argc, char** argv ) {
 
     init_annunc();
 #elif defined( GUI_IS_SDL1 )
-    // Some error or information messages
-    const char* errinit_title = "Emulator initialization failed";
-    const char* errinit_text[] = { "",
-                                   "In order to work the emulator needs",
-                                   "the following files:",
-                                   "  rom:   an HP48 rom dump",
-                                   "  ram:   ram file",
-                                   "  hp48:  HP state file",
-                                   "",
-                                   "These files must be in ~/.x48ng",
-                                   "",
-                                   "Install these files and try again.",
-                                   0 };
     // SDL Initialization
     SDLInit();
 
     // Global parameter initialization
     get_resources();
-
-    // initialize emulator stuff
-    int rv = init_emulator();
-    if ( rv != 0 ) {
-        printf( "%s\n", errinit_title );
-        for ( int i = 0; errinit_text[ i ]; i++ )
-            printf( "%s\n", errinit_text[ i ] );
-        SDLMessageBox( 300, 200, errinit_title, errinit_text, 0xf0e0c0c0,
-                       0xff000000, 0 );
-
-        return 0;
-    }
 
     // Create the HP-48 window
     SDLCreateHP();
