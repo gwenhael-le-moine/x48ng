@@ -14,9 +14,11 @@
 #include "resources.h"
 #include "x48.h"
 
+#if defined( GUI_IS_X11 )
 char* progname;
 char* res_name;
 char* res_class;
+#endif
 
 int saved_argc;
 char** saved_argv;
@@ -47,6 +49,7 @@ int main( int argc, char** argv ) {
 
     setlocale( LC_ALL, "C" );
 
+#if defined( GUI_IS_X11 )
     /*
      *  Get the name we are called.
      */
@@ -56,7 +59,6 @@ int main( int argc, char** argv ) {
     else
         progname++;
 
-#if defined( GUI_IS_X11 )
     /*
      * save command line options
      */

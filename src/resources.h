@@ -26,11 +26,11 @@ extern char romFileName[];
 extern char homeDirectory[];
 #endif
 
+#if defined( GUI_IS_X11 )
 extern char* progname;
 extern char* res_name;
 extern char* res_class;
 
-#if defined( GUI_IS_X11 )
 extern XrmDatabase rdb;
 
 extern void usage( void );
