@@ -29,19 +29,19 @@ endif
 
 .PHONY: all clean clean-all pretty-code install
 
-all: mkcard checkrom dump2rom x48ng
+all: dist/mkcard dist/checkrom dist/dump2rom dist/x48ng
 
 # Binaries
-mkcard: src/tools/mkcard.o
+dist/mkcard: src/tools/mkcard.o
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
-dump2rom: src/tools/dump2rom.o
+dist/dump2rom: src/tools/dump2rom.o
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
-checkrom: src/tools/checkrom.o src/romio.o
+dist/checkrom: src/tools/checkrom.o src/romio.o
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
-x48ng: src/main.o src/hp48emu_actions.o src/x48_debugger.o src/hp48_device.o src/x48_debugger_disasm.o src/hp48_emulate.o src/x48_errors.o src/hp48_init.o src/hp48emu_memory.o src/hp48emu_register.o src/x48_resources.o src/romio.o src/x48_debugger_rpl.o src/hp48_serial.o src/timer.o src/x48.o
+dist/x48ng: src/main.o src/hp48emu_actions.o src/x48_debugger.o src/hp48_device.o src/x48_debugger_disasm.o src/hp48_emulate.o src/x48_errors.o src/hp48_init.o src/hp48emu_memory.o src/hp48emu_register.o src/x48_resources.o src/romio.o src/x48_debugger_rpl.o src/hp48_serial.o src/timer.o src/x48.o
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
 # Cleaning
@@ -49,7 +49,7 @@ clean:
 	rm -f src/*.o src/tools/*.o
 
 clean-all: clean
-	rm -f x48ng mkcard checkrom dump2rom
+	rm -f dist/mkcard dist/checkrom dist/dump2rom dist/x48ng
 
 # Formatting
 pretty-code:
@@ -61,27 +61,27 @@ DOCDIR = $(PREFIX)/doc/x48ng
 MANDIR = $(PREFIX)/man
 install: all
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/bin
-	install -c -m 755 x48ng $(DESTDIR)$(PREFIX)/bin/x48ng
+	install -c -m 755 dist/x48ng $(DESTDIR)$(PREFIX)/bin/x48ng
 
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/share/x48ng
-	install -c -m 755 mkcard $(DESTDIR)$(PREFIX)/share/x48ng/mkcard
-	install -c -m 755 dump2rom $(DESTDIR)$(PREFIX)/share/x48ng/dump2rom
-	install -c -m 755 checkrom $(DESTDIR)$(PREFIX)/share/x48ng/checkrom
-	install -c -m 644 hplogo.png $(DESTDIR)$(PREFIX)/share/x48ng/hplogo.png
-	cp -R ROMs/ $(DESTDIR)$(PREFIX)/share/x48ng/
+	install -c -m 755 dist/mkcard $(DESTDIR)$(PREFIX)/share/x48ng/mkcard
+	install -c -m 755 dist/dump2rom $(DESTDIR)$(PREFIX)/share/x48ng/dump2rom
+	install -c -m 755 dist/checkrom $(DESTDIR)$(PREFIX)/share/x48ng/checkrom
+	install -c -m 644 dist/hplogo.png $(DESTDIR)$(PREFIX)/share/x48ng/hplogo.png
+	cp -R dist/ROMs/ $(DESTDIR)$(PREFIX)/share/x48ng/
 	find $(DESTDIR)$(PREFIX)/share/x48ng/ROMs/ -name "*.bz2" -exec bunzip2 {} \;
-	sed "s|@PREFIX@|$(PREFIX)|g" setup-x48ng-home.sh > $(DESTDIR)$(PREFIX)/share/x48ng/setup-x48ng-home.sh
+	sed "s|@PREFIX@|$(PREFIX)|g" dist/setup-x48ng-home.sh > $(DESTDIR)$(PREFIX)/share/x48ng/setup-x48ng-home.sh
 	chmod 755 $(DESTDIR)$(PREFIX)/share/x48ng/setup-x48ng-home.sh
 
 	install -m 755 -d -- $(DESTDIR)$(MANDIR)/man1
-	sed "s|@VERSION@|$(VERSION_MAJOR).$(VERSION_MINOR).$(PATCHLEVEL)|g" x48ng.man.1 > $(DESTDIR)$(MANDIR)/man1/x48ng.1
+	sed "s|@VERSION@|$(VERSION_MAJOR).$(VERSION_MINOR).$(PATCHLEVEL)|g" dist/x48ng.man.1 > $(DESTDIR)$(MANDIR)/man1/x48ng.1
 	gzip -9  $(DESTDIR)$(MANDIR)/man1/x48ng.1
 
 	install -m 755 -d -- $(DESTDIR)$(DOCDIR)
 	cp -R AUTHORS LICENSE README* doc* romdump/ $(DESTDIR)$(DOCDIR)
 
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/share/applications
-	sed "s|@PREFIX@|$(PREFIX)|g" x48ng.desktop > $(DESTDIR)$(PREFIX)/share/applications/x48ng.desktop
+	sed "s|@PREFIX@|$(PREFIX)|g" dist/x48ng.desktop > $(DESTDIR)$(PREFIX)/share/applications/x48ng.desktop
 
 	install -m 755 -d -- $(DESTDIR)/etc/X11/app-defaults
-	install -c -m 644 X48NG.ad $(DESTDIR)/etc/X11/app-defaults/X48NG
+	install -c -m 644 dist/X48NG.ad $(DESTDIR)/etc/X11/app-defaults/X48NG

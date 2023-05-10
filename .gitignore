@@ -1,7 +1,7 @@
 src/*.o
 src/tools/*.o
 
-checkrom
-dump2rom
-mkcard
-x48ng
+dist/checkrom
+dist/dump2rom
+dist/mkcard
+dist/x48ng
