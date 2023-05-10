@@ -389,6 +389,10 @@ int read_rom( const char* fname ) {
 
     if ( !read_rom_file( fname, &saturn.rom, &rom_size ) )
         return 0;
+
+    if ( verbose )
+        printf( "read %s\n", fname );
+
     dev_memory_init();
 
     if ( opt_gx )
@@ -463,6 +467,9 @@ int read_files( void ) {
     strcat( fnam, "rom" );
     if ( !read_rom_file( fnam, &saturn.rom, &rom_size ) )
         return 0;
+
+    if ( verbose )
+        printf( "read %s\n", fnam );
 
     rom_is_new = 0;
 

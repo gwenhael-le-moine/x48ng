@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-#include "resources.h"
 #include "romio.h"
 
 unsigned int opt_gx = 0;
@@ -157,9 +156,6 @@ int read_rom_file( const char* name, unsigned char** mem, unsigned int* size ) {
             return 0;
         }
     }
-
-    if ( verbose )
-        printf( "read %s\n", name );
 
     return 1;
 }
