@@ -112,12 +112,6 @@ int main( int argc, char** argv ) {
 
     init_annunc();
 #elif defined( GUI_IS_SDL1 )
-    // SDL Initialization
-    SDLInit();
-
-    // Global parameter initialization
-    get_resources();
-
     // Create the HP-48 window
     SDLCreateHP();
 #endif
