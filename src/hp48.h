@@ -60,7 +60,6 @@
 #define ANN_IO 0xa0
 
 typedef struct device_t {
-
     int display_touched;
 
     char contrast_touched;
@@ -110,7 +109,6 @@ typedef struct device_t {
 
     char t1_touched;
     char t2_touched;
-
 } device_t;
 
 /* #endif /\* !_DEVICE_H *\/ */
@@ -154,7 +152,6 @@ typedef struct mem_cntl_t {
 } mem_cntl_t;
 
 typedef struct saturn_t {
-
     unsigned long magic;
     char version[ 4 ];
 
@@ -257,7 +254,6 @@ typedef struct saturn_t {
     unsigned char* ram;
     unsigned char* port1;
     unsigned char* port2;
-
 } saturn_t;
 
 #define NIBBLES_PER_ROW 0x22
@@ -283,8 +279,8 @@ extern display_t display;
 extern saturn_t saturn;
 extern void init_saturn( void ); /* hp48_init.c */
 
-extern int exit_emulator( void ); /* hp48_init.c */
 extern int init_emulator( void ); /* hp48_init.c */
+extern int exit_emulator( void ); /* hp48_init.c */
 
 extern int serial_init( void );      /* hp48_serial.c */
 extern void serial_baud( int baud ); /* hp48_serial.c */

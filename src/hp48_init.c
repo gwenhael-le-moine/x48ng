@@ -917,6 +917,7 @@ int init_emulator( void ) {
         }
 
     init_saturn();
+
     if ( !read_rom( romFileName ) )
         exit( 1 );
 
@@ -925,5 +926,6 @@ int init_emulator( void ) {
 
 int exit_emulator( void ) {
     write_files();
+
     return 1;
 }
