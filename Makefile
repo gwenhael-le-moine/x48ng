@@ -41,7 +41,7 @@ dump2rom: src/tools/dump2rom.o
 checkrom: src/tools/checkrom.o src/romio.o
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
-x48ng: src/main.o src/hp48emu_actions.o src/debugger.o src/device.o src/disasm.o src/hp48_emulate.o src/errors.o src/hp48_init.o src/hp48emu_memory.o src/hp48emu_register.o src/resources.o src/romio.o src/rpl.o src/hp48_serial.o src/timer.o src/x48.o src/resources.o
+x48ng: src/main.o src/hp48emu_actions.o src/debugger.o src/hp48_device.o src/disasm.o src/hp48_emulate.o src/errors.o src/hp48_init.o src/hp48emu_memory.o src/hp48emu_register.o src/resources.o src/romio.o src/rpl.o src/hp48_serial.o src/timer.o src/x48.o src/resources.o
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
 # Cleaning

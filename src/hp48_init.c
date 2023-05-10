@@ -7,7 +7,6 @@
 #include <string.h>
 #include <sys/types.h>
 
-#include "device.h"
 #include "hp48.h"
 #include "hp48emu.h"
 #include "resources.h"

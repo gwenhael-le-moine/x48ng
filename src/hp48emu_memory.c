@@ -4,7 +4,6 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#include "device.h"
 #include "hp48.h"
 #include "hp48emu.h"
 #include "resources.h"

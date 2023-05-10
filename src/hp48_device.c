@@ -8,7 +8,6 @@
 #include <X11/Xutil.h>
 #endif
 
-#include "device.h"
 #include "hp48.h"
 #include "hp48emu.h"
 #include "timer.h"

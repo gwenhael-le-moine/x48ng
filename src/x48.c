@@ -10,7 +10,6 @@
 #include <sys/utsname.h>
 
 #include "x48.h"
-#include "device.h"
 #include "errors.h"
 #include "hp48.h"
 #include "resources.h"

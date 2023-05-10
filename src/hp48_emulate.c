@@ -2,7 +2,6 @@
 #include <unistd.h>
 
 #include "debugger.h"
-#include "device.h"
 #include "hp48.h"
 #include "hp48emu.h"
 #include "timer.h"

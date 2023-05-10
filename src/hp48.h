@@ -47,6 +47,74 @@
 #define NR_RSTK 8
 #define NR_PSTAT 16
 
+/* #ifndef _DEVICE_H */
+/* #define _DEVICE_H 1 */
+
+#define DISP_INSTR_OFF 0x10
+
+#define ANN_LEFT 0x81
+#define ANN_RIGHT 0x82
+#define ANN_ALPHA 0x84
+#define ANN_BATTERY 0x88
+#define ANN_BUSY 0x90
+#define ANN_IO 0xa0
+
+typedef struct device_t {
+
+    int display_touched;
+
+    char contrast_touched;
+
+    char disp_test_touched;
+
+    char crc_touched;
+
+    char power_status_touched;
+    char power_ctrl_touched;
+
+    char mode_touched;
+
+    char ann_touched;
+
+    char baud_touched;
+
+    char card_ctrl_touched;
+    char card_status_touched;
+
+    char ioc_touched;
+
+    char tcs_touched;
+    char rcs_touched;
+
+    char rbr_touched;
+    char tbr_touched;
+
+    char sreq_touched;
+
+    char ir_ctrl_touched;
+
+    char base_off_touched;
+
+    char lcr_touched;
+    char lbr_touched;
+
+    char scratch_touched;
+    char base_nibble_touched;
+
+    char unknown_touched;
+
+    char t1_ctrl_touched;
+    char t2_ctrl_touched;
+
+    char unknown2_touched;
+
+    char t1_touched;
+    char t2_touched;
+
+} device_t;
+
+/* #endif /\* !_DEVICE_H *\/ */
+
 typedef unsigned char word_1;
 typedef unsigned char word_4;
 typedef unsigned char word_8;
@@ -63,7 +131,6 @@ typedef struct keystate_t {
 } keystate_t;
 
 typedef struct display_t {
-
     int on;
 
     long disp_start;
@@ -79,7 +146,6 @@ typedef struct display_t {
     long menu_end;
 
     int annunc;
-
 } display_t;
 
 typedef struct mem_cntl_t {
@@ -206,8 +272,13 @@ extern int adj_time_pending;
 extern long sched_adjtime;
 extern long schedule_event;
 
+/* #ifndef _DEVICE_H */
+/* #define _DEVICE_H 1 */
+
+extern device_t device;
 extern display_t display;
-extern void init_display( void ); /* device_lcd.c */
+
+/* #endif /\* !_DEVICE_H *\/ */
 
 extern saturn_t saturn;
 extern void init_saturn( void ); /* hp48_init.c */
@@ -236,4 +307,19 @@ extern int read_files( void );            /* hp48_init.c */
 extern int write_files( void );           /* hp48_init.c */
 
 extern void load_addr( word_20* dat, long addr, int n ); /* hp48_emulate.c */
+
+/* #ifndef _DEVICE_H */
+/* #define _DEVICE_H 1 */
+extern void check_devices( void ); /* device.c */
+
+extern void init_display( void ); /* device.c */
+extern void update_display( void );                       /* device.c */
+extern void redraw_display( void );                       /* device.c */
+extern void disp_draw_nibble( word_20 addr, word_4 val ); /* device.c */
+extern void menu_draw_nibble( word_20 addr, word_4 val ); /* device.c */
+extern void draw_annunc( void );                          /* device.c */
+extern void redraw_annunc( void );                        /* device.c */
+
+/* extern void	check_out_register( void ); */
+/* #endif /\* !_DEVICE_H *\/ */
 #endif                                                   /* !_HP48_H */
