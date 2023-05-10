@@ -25,7 +25,7 @@ saturn_t saturn;
 
 void signal_handler( int sig ) {
     switch ( sig ) {
-        case SIGINT:
+        case SIGINT:            /* Ctrl-C */
             enter_debugger |= USER_INTERRUPT;
             break;
         case SIGALRM:
@@ -65,9 +65,9 @@ int main( int argc, char** argv ) {
     /*
      *  Open up the display
      */
-    if ( InitDisplay( argc, argv ) < 0 ) {
+    if ( InitDisplay( argc, argv ) < 0 )
         exit( 1 );
-    }
+
 #elif defined( GUI_IS_SDL1 )
     // SDL Initialization
     SDLInit();
