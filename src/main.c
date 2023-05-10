@@ -25,7 +25,7 @@ saturn_t saturn;
 
 void signal_handler( int sig ) {
     switch ( sig ) {
-        case SIGINT:            /* Ctrl-C */
+        case SIGINT: /* Ctrl-C */
             enter_debugger |= USER_INTERRUPT;
             break;
         case SIGALRM:

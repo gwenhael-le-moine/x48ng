@@ -344,13 +344,16 @@ XFontStruct* get_font_resource( Display* dpy, char* name, char* class ) {
     if ( s )
         f = XLoadQueryFont( dpy, s );
     else {
+        char errbuf[ 1024 ];
         sprintf( errbuf, "can\'t get resource \'%s\'", name );
-        fatal_exit();
+        fatal_exit( errbuf, "" );
     }
     if ( f == ( XFontStruct* )0 ) {
+        char errbuf[ 1024 ];
+        char fixbuf[ 1024 ];
         sprintf( errbuf, "can\'t load font \'%s\'", s );
         sprintf( fixbuf, "Please change resource \'%s\'", name );
-        fatal_exit();
+        fatal_exit( errbuf, fixbuf );
     }
     return f;
 }

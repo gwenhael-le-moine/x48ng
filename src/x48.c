@@ -1278,10 +1278,9 @@ int AllocColors( void ) {
          * Create my own Colormap
          */
         cmap = XCreateColormap( dpy, mainW, visual, AllocNone );
-        if ( cmap == ( Colormap )0 ) {
-            sprintf( errbuf, "can\'t alloc Colormap.\n" );
-            fatal_exit();
-        }
+        if ( cmap == ( Colormap )0 )
+            fatal_exit( "can\'t alloc Colormap.\n", "" );
+
         xswa.colormap = cmap;
         XChangeWindowAttributes( dpy, mainW, CWColormap, &xswa );
         if ( iconW )
@@ -1313,24 +1312,20 @@ int AllocColors( void ) {
                 if ( XAllocColorCells( dpy, cmap, True, ( unsigned long* )0, 0,
                                        &colors[ c ].xcolor.pixel, 1 ) == 0 ) {
                     dyn = 0;
-                    if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 ) {
-                        sprintf( errbuf, "can\'t alloc Color.\n" );
-                        fatal_exit();
-                    }
+                    if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 )
+                        fatal_exit( "can\'t alloc Color.\n", "" );
+
                 } else if ( colors[ c ].xcolor.pixel >= visual->map_entries ) {
                     dyn = 0;
-                    if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 ) {
-                        sprintf( errbuf, "can\'t alloc Color.\n" );
-                        fatal_exit();
-                    }
+                    if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 )
+                        fatal_exit( "can\'t alloc Color.\n", "" );
+
                 } else {
                     XStoreColor( dpy, cmap, &colors[ c ].xcolor );
                 }
             } else {
-                if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 ) {
-                    sprintf( errbuf, "can\'t alloc Color.\n" );
-                    fatal_exit();
-                }
+                if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 )
+                    fatal_exit( "can\'t alloc Color.\n", "" );
             }
         }
     }
@@ -1453,10 +1448,8 @@ int InitDisplay( int argc, char** argv ) {
      */
     res = get_string_resource_from_db( cmd, "name", "Name" );
     if ( res ) {
-        if ( !( res_name = strdup( res ) ) ) {
-            sprintf( errbuf, "out of memory in InitDisplay()\n" );
-            fatal_exit();
-        }
+        if ( !( res_name = strdup( res ) ) )
+            fatal_exit( "out of memory in InitDisplay()\n", "" );
 
         for ( s = res_name; *s; s++ )
             *s = isupper( *s ) ? tolower( *s ) : *s;
@@ -1467,10 +1460,9 @@ int InitDisplay( int argc, char** argv ) {
 
         argc = saved_argc;
         argv = ( char** )malloc( ( argc + 1 ) * sizeof( char* ) );
-        if ( argv == ( char** )0 ) {
-            sprintf( errbuf, "out of memory in InitDisplay()\n" );
-            fatal_exit();
-        }
+        if ( argv == ( char** )0 )
+            fatal_exit( "out of memory in InitDisplay()\n", "" );
+
         argv[ argc ] = ( char* )0;
         for ( i = 0; i < argc; i++ )
             argv[ i ] = saved_argv[ i ];
@@ -3271,10 +3263,9 @@ int CreateWindows( int argc, char** argv ) {
 
     if ( ( name = get_string_resource( "title", "Title" ) ) == ( char* )0 ) {
         name = ( char* )malloc( 128 );
-        if ( name == ( char* )0 ) {
-            sprintf( errbuf, "malloc failed.\n" );
-            fatal_exit();
-        }
+        if ( name == ( char* )0 )
+            fatal_exit( "malloc failed.\n", "" );
+
         sprintf( name, "%s-%d.%d.%d", progname, saturn.version[ 0 ],
                  saturn.version[ 1 ], saturn.version[ 2 ] );
     }
