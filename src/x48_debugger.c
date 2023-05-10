@@ -8,11 +8,11 @@
 #include <unistd.h>
 #include <X11/Xlib.h>
 
-#include "debugger.h"
-#include "debugger_disasm.h"
-#include "debugger_rpl.h"
+#include "x48_debugger.h"
+#include "x48_debugger_disasm.h"
+#include "x48_debugger_rpl.h"
 #include "hp48.h"
-#include "resources.h"
+#include "x48_resources.h"
 #include "romio.h"
 #include "timer.h"
 #include "x48.h" /* for exit_x48() */

@@ -6,7 +6,7 @@
 
 #include "hp48.h"
 #include "hp48emu.h"
-#include "resources.h"
+#include "x48_resources.h"
 #include "romio.h"
 #include "x48.h"
 

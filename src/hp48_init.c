@@ -9,7 +9,7 @@
 
 #include "hp48.h"
 #include "hp48emu.h"
-#include "resources.h"
+#include "x48_resources.h"
 #include "romio.h"
 
 #define X48_MAGIC 0x48503438

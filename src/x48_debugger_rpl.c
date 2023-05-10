@@ -3,12 +3,12 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "debugger.h"
-#include "debugger_disasm.h"
 #include "hp48.h"
 #include "hp48emu.h"
 #include "romio.h"
-#include "debugger_rpl.h"
+#include "x48_debugger.h"
+#include "x48_debugger_disasm.h"
+#include "x48_debugger_rpl.h"
 
 /* #ifndef _HP48CHAR_H */
 /* #define _HP48CHAR_H 1 */

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "debugger.h"
+#include "x48_debugger.h"
 #include "hp48.h"
 #include "hp48emu.h"
 #include "romio.h"

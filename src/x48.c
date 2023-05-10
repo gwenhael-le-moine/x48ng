@@ -10,9 +10,9 @@
 #include <sys/utsname.h>
 
 #include "x48.h"
-#include "errors.h"
+#include "x48_errors.h"
 #include "hp48.h"
-#include "resources.h"
+#include "x48_resources.h"
 #include "romio.h"
 
 #if defined( GUI_IS_X11 )

@@ -9,7 +9,7 @@
 
 #include "hp48.h"
 #include "hp48emu.h"
-#include "resources.h"
+#include "x48_resources.h"
 #include "x48.h"
 
 static int wire_fd;

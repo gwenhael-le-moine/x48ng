@@ -9,10 +9,10 @@
 #include <langinfo.h>
 #include <locale.h>
 
-#include "debugger.h"
 #include "hp48.h"
-#include "resources.h"
 #include "x48.h"
+#include "x48_debugger.h"
+#include "x48_resources.h"
 
 #if defined( GUI_IS_X11 )
 char* progname;
