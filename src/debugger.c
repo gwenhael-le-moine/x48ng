@@ -15,7 +15,7 @@
 #include "resources.h"
 #include "romio.h"
 #include "timer.h"
-#include "x48.h" /* call exit_x48() */
+#include "x48.h" /* call for_x48() */
 
 #define MAX_ARGS 16
 

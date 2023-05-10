@@ -1332,67 +1332,6 @@ int AllocColors( void ) {
     return 0;
 }
 
-void adjust_contrast( int contrast ) {
-    int gray = 0;
-    int r = 0, g = 0, b = 0;
-    unsigned long old;
-
-    if ( contrast < 0x3 )
-        contrast = 0x3;
-    if ( contrast > 0x13 )
-        contrast = 0x13;
-
-    old = colors[ PIXEL ].xcolor.pixel;
-    switch ( color_mode ) {
-        case COLOR_MODE_MONO:
-            return;
-        case COLOR_MODE_GRAY:
-            gray = ( 0x13 - contrast ) * ( colors[ LCD ].gray_rgb / 0x10 );
-            colors[ PIXEL ].xcolor.red = gray << 8;
-            colors[ PIXEL ].xcolor.green = gray << 8;
-            colors[ PIXEL ].xcolor.blue = gray << 8;
-            break;
-        default:
-            r = ( 0x13 - contrast ) * ( colors[ LCD ].r / 0x10 );
-            g = ( 0x13 - contrast ) * ( colors[ LCD ].g / 0x10 );
-            b = 128 -
-                ( ( 0x13 - contrast ) * ( ( 128 - colors[ LCD ].b ) / 0x10 ) );
-            colors[ PIXEL ].xcolor.red = r << 8;
-            colors[ PIXEL ].xcolor.green = g << 8;
-            colors[ PIXEL ].xcolor.blue = b << 8;
-            break;
-    }
-    if ( direct_color ) {
-        colors[ PIXEL ].gray_rgb = gray;
-        colors[ PIXEL ].r = r;
-        colors[ PIXEL ].g = g;
-        colors[ PIXEL ].b = b;
-        AllocColors();
-        XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
-        disp.display_update = UPDATE_DISP | UPDATE_MENU;
-        refresh_display();
-        redraw_annunc();
-        last_icon_state = -1;
-        refresh_icon();
-    } else if ( dynamic_color ) {
-        XStoreColor( dpy, cmap, &colors[ PIXEL ].xcolor );
-    } else {
-        if ( XAllocColor( dpy, cmap, &colors[ PIXEL ].xcolor ) == 0 ) {
-            colors[ PIXEL ].xcolor.pixel = old;
-            if ( verbose )
-                fprintf( stderr, "warning: can\'t alloc new pixel color.\n" );
-        } else {
-            XFreeColors( dpy, cmap, &old, 1, 0 );
-            XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
-            disp.display_update = UPDATE_DISP | UPDATE_MENU;
-            refresh_display();
-            redraw_annunc();
-            last_icon_state = -1;
-            refresh_icon();
-        }
-    }
-}
-
 int merge_app_defaults( char* path, XrmDatabase* db ) {
     char file[ 1024 ];
     XrmDatabase tmp;
@@ -1692,13 +1631,74 @@ sdltohpkeymap_t sdltohpkeymap[] = {
 
     // end marker
     { ( SDLKey )0, ( SDLKey )0 } };
+#endif
 
 void adjust_contrast( int contrast ) {
+#if defined( GUI_IS_X11 )
+    int gray = 0;
+    int r = 0, g = 0, b = 0;
+    unsigned long old;
+
+    if ( contrast < 0x3 )
+        contrast = 0x3;
+    if ( contrast > 0x13 )
+        contrast = 0x13;
+
+    old = colors[ PIXEL ].xcolor.pixel;
+    switch ( color_mode ) {
+        case COLOR_MODE_MONO:
+            return;
+        case COLOR_MODE_GRAY:
+            gray = ( 0x13 - contrast ) * ( colors[ LCD ].gray_rgb / 0x10 );
+            colors[ PIXEL ].xcolor.red = gray << 8;
+            colors[ PIXEL ].xcolor.green = gray << 8;
+            colors[ PIXEL ].xcolor.blue = gray << 8;
+            break;
+        default:
+            r = ( 0x13 - contrast ) * ( colors[ LCD ].r / 0x10 );
+            g = ( 0x13 - contrast ) * ( colors[ LCD ].g / 0x10 );
+            b = 128 -
+                ( ( 0x13 - contrast ) * ( ( 128 - colors[ LCD ].b ) / 0x10 ) );
+            colors[ PIXEL ].xcolor.red = r << 8;
+            colors[ PIXEL ].xcolor.green = g << 8;
+            colors[ PIXEL ].xcolor.blue = b << 8;
+            break;
+    }
+    if ( direct_color ) {
+        colors[ PIXEL ].gray_rgb = gray;
+        colors[ PIXEL ].r = r;
+        colors[ PIXEL ].g = g;
+        colors[ PIXEL ].b = b;
+        AllocColors();
+        XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
+        disp.display_update = UPDATE_DISP | UPDATE_MENU;
+        refresh_display();
+        redraw_annunc();
+        last_icon_state = -1;
+        refresh_icon();
+    } else if ( dynamic_color ) {
+        XStoreColor( dpy, cmap, &colors[ PIXEL ].xcolor );
+    } else {
+        if ( XAllocColor( dpy, cmap, &colors[ PIXEL ].xcolor ) == 0 ) {
+            colors[ PIXEL ].xcolor.pixel = old;
+            if ( verbose )
+                fprintf( stderr, "warning: can\'t alloc new pixel color.\n" );
+        } else {
+            XFreeColors( dpy, cmap, &old, 1, 0 );
+            XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
+            disp.display_update = UPDATE_DISP | UPDATE_MENU;
+            refresh_display();
+            redraw_annunc();
+            last_icon_state = -1;
+            refresh_icon();
+        }
+    }
+#elif defined( GUI_IS_SDL1 )
     SDLCreateColors();
     SDLCreateAnnunc();
     redraw_display();
-}
 #endif
+}
 
 int SmallTextWidth( const char* string, unsigned int length ) {
     int i, w;
