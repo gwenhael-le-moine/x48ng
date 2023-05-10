@@ -12,6 +12,11 @@ This is my fork of x48-0.6.4 where I deviate from the original code and do my ow
 3. removed the autotools-based build system and wrote a simple Makefile instead
 4. added a x48ng.desktop file and an icon
 
+## Bugs to fix
+
+- It always starts with right-shift active
+- debugger: `stack` segfaults
+
 ## What more I would like to do:
 
 1. clean-up further.
