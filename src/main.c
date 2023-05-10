@@ -16,8 +16,6 @@
 
 #if defined( GUI_IS_X11 )
 char* progname;
-char* res_name;
-char* res_class;
 #endif
 
 int saved_argc;

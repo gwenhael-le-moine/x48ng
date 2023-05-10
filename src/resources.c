@@ -22,6 +22,8 @@ int resetOnStartup;
 char* serialLine;
 char* romFileName;
 char* homeDirectory;
+char* res_name;
+char* res_class;
 #elif defined( GUI_IS_SDL1 )
 char serialLine[ 1024 ];
 char romFileName[ 1024 ];
