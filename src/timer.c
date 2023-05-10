@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <assert.h>
 
-#include "x48_debugger.h"       /* used for in_debugger */
+#include "x48_debugger.h" /* used for in_debugger */
 #include "romio.h"
 #include "timer.h"
 

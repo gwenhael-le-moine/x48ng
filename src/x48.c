@@ -3489,80 +3489,9 @@ int CreateWindows( int argc, char** argv ) {
     return 0;
 }
 
-int button_pressed( int b ) {
-    int code;
-    int i, r, c;
-
-    code = buttons[ b ].code;
-    buttons[ b ].pressed = 1;
-    if ( code == 0x8000 ) {
-        for ( i = 0; i < 9; i++ )
-            saturn.keybuf.rows[ i ] |= 0x8000;
-        do_kbd_int();
-    } else {
-        r = code >> 4;
-        c = 1 << ( code & 0xf );
-        if ( ( saturn.keybuf.rows[ r ] & c ) == 0 ) {
-            if ( saturn.kbd_ien ) {
-                do_kbd_int();
-            }
-            if ( ( saturn.keybuf.rows[ r ] & c ) ) {
-                fprintf( stderr, "bug\n" );
-            }
-            saturn.keybuf.rows[ r ] |= c;
-        }
-    }
-
-    return 0;
-}
-
-int button_released( int b ) {
-    int code;
-
-    code = buttons[ b ].code;
-    buttons[ b ].pressed = 0;
-    if ( code == 0x8000 ) {
-        int i;
-        for ( i = 0; i < 9; i++ )
-            saturn.keybuf.rows[ i ] &= ~0x8000;
-    } else {
-        int r, c;
-        r = code >> 4;
-        c = 1 << ( code & 0xf );
-        saturn.keybuf.rows[ r ] &= ~c;
-    }
-    return 0;
-}
-
-static int button_release_all( void ) {
-    int code;
-    int b;
-
-    for ( b = BUTTON_A; b <= LAST_BUTTON; b++ ) {
-        if ( buttons[ b ].pressed ) {
-            code = buttons[ b ].code;
-            if ( code == 0x8000 ) {
-                int i;
-                for ( i = 0; i < 9; i++ )
-                    saturn.keybuf.rows[ i ] &= ~0x8000;
-            } else {
-                int r, c;
-                r = code >> 4;
-                c = 1 << ( code & 0xf );
-                saturn.keybuf.rows[ r ] &= ~c;
-            }
-            buttons[ b ].pressed = 0;
-            DrawButton( b );
-        }
-    }
-
-    return 0;
-}
-
 int key_event( int b, XEvent* xev ) {
     int code;
     int i, r, c;
-    // int all_up;
 
     code = buttons[ b ].code;
     if ( xev->type == KeyPress ) {
@@ -3600,19 +3529,19 @@ int key_event( int b, XEvent* xev ) {
 }
 
 void refresh_display( void ) {
-    if ( shm_flag ) {
-        if ( disp.display_update & UPDATE_DISP ) {
-            XShmPutImage( dpy, disp.win, disp.gc, disp.disp_image, disp.offset,
-                          0, 5, 20, 262, ( unsigned int )( disp.lines + 2 ),
-                          0 );
-        }
-        if ( ( disp.lines < 126 ) && ( disp.display_update & UPDATE_MENU ) ) {
-            XShmPutImage( dpy, disp.win, disp.gc, disp.menu_image, 0, 0, 5,
-                          ( int )( disp.lines + 22 ), 262,
-                          ( unsigned int )( 126 - disp.lines ), 0 );
-        }
-        disp.display_update = 0;
+    if ( !shm_flag )
+        return;
+
+    if ( disp.display_update & UPDATE_DISP ) {
+        XShmPutImage( dpy, disp.win, disp.gc, disp.disp_image, disp.offset, 0,
+                      5, 20, 262, ( unsigned int )( disp.lines + 2 ), 0 );
     }
+    if ( ( disp.lines < 126 ) && ( disp.display_update & UPDATE_MENU ) ) {
+        XShmPutImage( dpy, disp.win, disp.gc, disp.menu_image, 0, 0, 5,
+                      ( int )( disp.lines + 22 ), 262,
+                      ( unsigned int )( 126 - disp.lines ), 0 );
+    }
+    disp.display_update = 0;
 }
 
 void DrawDisp( void ) {
@@ -4111,67 +4040,6 @@ void SDLCreateHP( void ) {
     SDLDrawKeypad();
 
     SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 );
-}
-
-int button_pressed( int b ) {
-    int code;
-    int i, r, c;
-
-    if ( buttons[ b ].pressed == 1 ) // Check not already pressed (may be
-                                     // important: avoids a useless do_kbd_int)
-        return 0;
-    buttons[ b ].pressed = 1;
-
-    code = buttons[ b ].code;
-
-    if ( code == 0x8000 ) {
-        for ( i = 0; i < 9; i++ )
-            saturn.keybuf.rows[ i ] |= 0x8000;
-        do_kbd_int();
-    } else {
-        r = code >> 4;
-        c = 1 << ( code & 0xf );
-        if ( ( saturn.keybuf.rows[ r ] & c ) == 0 ) {
-            if ( saturn.kbd_ien ) {
-                do_kbd_int();
-            }
-            saturn.keybuf.rows[ r ] |= c;
-        }
-    }
-
-    return 0;
-}
-
-int button_released( int b ) {
-    int code;
-
-    if ( buttons[ b ].pressed ==
-         0 ) // Check not already released (not critical)
-        return 0;
-    buttons[ b ].pressed = 0;
-
-    code = buttons[ b ].code;
-    if ( code == 0x8000 ) {
-        int i;
-        for ( i = 0; i < 9; i++ )
-            saturn.keybuf.rows[ i ] &= ~0x8000;
-    } else {
-        int r, c;
-        r = code >> 4;
-        c = 1 << ( code & 0xf );
-        saturn.keybuf.rows[ r ] &= ~c;
-    }
-
-    return 0;
-}
-
-static int button_release_all( void ) {
-    int b;
-
-    for ( b = BUTTON_A; b <= LAST_BUTTON; b++ )
-        if ( buttons[ b ].pressed )
-            button_released( b );
-    return 0;
 }
 
 // Find which key is pressed, if any.
@@ -5780,6 +5648,87 @@ void SDLShowInformation( void ) {
                    0 );
 }
 #endif
+
+int button_pressed( int b ) {
+    int code;
+    int i, r, c;
+
+    if ( buttons[ b ].pressed == 1 ) // Check not already pressed (may be
+                                     // important: avoids a useless do_kbd_int)
+        return 0;
+
+    buttons[ b ].pressed = 1;
+
+    code = buttons[ b ].code;
+
+    if ( code == 0x8000 ) {
+        for ( i = 0; i < 9; i++ )
+            saturn.keybuf.rows[ i ] |= 0x8000;
+        do_kbd_int();
+    } else {
+        r = code >> 4;
+        c = 1 << ( code & 0xf );
+        if ( ( saturn.keybuf.rows[ r ] & c ) == 0 ) {
+            if ( saturn.kbd_ien )
+                do_kbd_int();
+            if ( ( saturn.keybuf.rows[ r ] & c ) )
+                fprintf( stderr, "bug\n" );
+
+            saturn.keybuf.rows[ r ] |= c;
+        }
+    }
+
+    return 0;
+}
+
+int button_released( int b ) {
+    int code;
+
+    if ( buttons[ b ].pressed ==
+         0 ) // Check not already released (not critical)
+        return 0;
+
+    buttons[ b ].pressed = 0;
+
+    code = buttons[ b ].code;
+    if ( code == 0x8000 ) {
+        int i;
+        for ( i = 0; i < 9; i++ )
+            saturn.keybuf.rows[ i ] &= ~0x8000;
+    } else {
+        int r, c;
+        r = code >> 4;
+        c = 1 << ( code & 0xf );
+        saturn.keybuf.rows[ r ] &= ~c;
+    }
+
+    return 0;
+}
+
+static int button_release_all( void ) {
+    for ( int b = BUTTON_A; b <= LAST_BUTTON; b++ )
+        if ( buttons[ b ].pressed ) {
+#if defined( GUI_IS_X11 )
+            int code = buttons[ b ].code;
+            if ( code == 0x8000 ) {
+                int i;
+                for ( i = 0; i < 9; i++ )
+                    saturn.keybuf.rows[ i ] &= ~0x8000;
+            } else {
+                int r, c;
+                r = code >> 4;
+                c = 1 << ( code & 0xf );
+                saturn.keybuf.rows[ r ] &= ~c;
+            }
+            buttons[ b ].pressed = 0;
+            DrawButton( b );
+#elif defined( GUI_IS_SDL1 )
+            button_released( b );
+#endif
+        }
+
+    return 0;
+}
 
 void ShowConnections( char* wire, char* ir ) {
     char name[ 128 ];
