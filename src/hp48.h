@@ -319,7 +319,5 @@ extern void disp_draw_nibble( word_20 addr, word_4 val ); /* hp48_device.c */
 extern void menu_draw_nibble( word_20 addr, word_4 val ); /* hp48_device.c */
 extern void draw_annunc( void );                          /* hp48_device.c */
 extern void redraw_annunc( void );                        /* hp48_device.c */
-
-/* extern void	check_out_register( void ); */
 /* #endif /\* !_DEVICE_H *\/ */
 #endif                                                   /* !_HP48_H */
