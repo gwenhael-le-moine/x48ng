@@ -1146,14 +1146,14 @@ int debug( void ) {
      */
     if ( !useDebugger ) {
         if ( enter_debugger & ILLEGAL_INSTRUCTION ) {
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "reset (illegal instruction at 0x%.5lX)\n",
                          saturn.PC );
             saturn.PC = 0;
         }
         if ( enter_debugger & USER_INTERRUPT )
             if ( verbose )
-                printf( "%s: usnterrupt (SIGINT) ignored\n" );
+                printf( "usnterrupt (SIGINT) ignored\n" );
         exit_x48( 1 );
         if ( enter_debugger & BREAKPOINT_HIT )
             if ( verbose )

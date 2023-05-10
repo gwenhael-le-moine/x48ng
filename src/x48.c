@@ -43,7 +43,6 @@ static XrmOptionDescRec options[] = {
     { "-connFont", "*connectionFont", XrmoptionSepArg, ( void* )0 },
 
     { "-verbose", "*verbose", XrmoptionNoArg, ( void* )"True" },
-    { "-quiet", "*quiet", XrmoptionNoArg, ( void* )"True" },
 
     { "-terminal", "*useTerminal", XrmoptionNoArg, ( void* )"True" },
     { "+terminal", "*useTerminal", XrmoptionNoArg, ( void* )"False" },
@@ -97,7 +96,6 @@ static char* defaults[] = {
     "*largeLabelFont:	-*-fixed-medium-r-normal-*-20-*-*-*-*-*-iso8859-1",
     "*connectionFont:	-*-fixed-medium-r-normal-*-12-*-*-*-*-*-iso8859-1",
     "*verbose:		False",
-    "*quiet:			False",
     "*printVersion:	False",
     "*printCopyright:	False",
     "*printWarranty:	False",
@@ -1233,7 +1231,7 @@ int AllocColors( void ) {
                                        &colors[ c ].xcolor.pixel, 1 ) == 0 ) {
                     dyn = 0;
                     if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 ) {
-                        if ( !quiet )
+                        if ( verbose )
                             fprintf( stderr, "XAllocColor failed.\n" );
                         error = c;
                         break;
@@ -1241,7 +1239,7 @@ int AllocColors( void ) {
                 } else if ( colors[ c ].xcolor.pixel >= visual->map_entries ) {
                     dyn = 0;
                     if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 ) {
-                        if ( !quiet )
+                        if ( verbose )
                             fprintf( stderr, "XAllocColor failed.\n" );
                         error = c;
                         break;
@@ -1251,7 +1249,7 @@ int AllocColors( void ) {
                 }
             } else {
                 if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 ) {
-                    if ( !quiet )
+                    if ( verbose )
                         fprintf( stderr, "XAllocColor failed.\n" );
                     error = c;
                     break;
@@ -1265,7 +1263,7 @@ int AllocColors( void ) {
      */
 
     if ( error != -1 ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "Using own Colormap.\n" );
         /*
          * free colors so far allocated
@@ -1381,7 +1379,7 @@ void adjust_contrast( int contrast ) {
     } else {
         if ( XAllocColor( dpy, cmap, &colors[ PIXEL ].xcolor ) == 0 ) {
             colors[ PIXEL ].xcolor.pixel = old;
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "warning: can\'t alloc new pixel color.\n" );
         } else {
             XFreeColors( dpy, cmap, &old, 1, 0 );
@@ -1479,10 +1477,10 @@ int InitDisplay( int argc, char** argv ) {
     dpy = XOpenDisplay( res );
     if ( dpy == ( Display* )0 ) {
         if ( res ) {
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "can\'t open display %s\n", res );
         } else {
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "can\'t open display\n" );
         }
         return -1;
@@ -1598,7 +1596,7 @@ int InitDisplay( int argc, char** argv ) {
 
     if ( !XShmQueryExtension( dpy ) ) {
         shm_flag = 0;
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "Xserver does not support XShm extension.\n" );
     }
     if ( shm_flag )
@@ -1710,7 +1708,7 @@ int SmallTextWidth( const char* string, unsigned int length ) {
         if ( small_font[ ( int )string[ i ] ].h != 0 ) {
             w += small_font[ ( int )string[ i ] ].w + 1;
         } else {
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "Unknown small letter 0x00%x\n",
                          ( int )string[ i ] );
             w += 5;
@@ -3042,7 +3040,7 @@ void CreateDispWindow( void ) {
                                            &disp.disp_info, 262, 128 );
         if ( disp.disp_image == NULL ) {
             shm_flag = 0;
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr,
                          "XShm error in CreateImage(DISP), disabling.\n" );
             goto shm_error;
@@ -3059,7 +3057,7 @@ void CreateDispWindow( void ) {
             XDestroyImage( disp.disp_image );
             disp.disp_image = NULL;
             shm_flag = 0;
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "XShm error in shmget(DISP), disabling.\n" );
             goto shm_error;
         }
@@ -3072,7 +3070,7 @@ void CreateDispWindow( void ) {
             XDestroyImage( disp.disp_image );
             disp.disp_image = NULL;
             shm_flag = 0;
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "XShm error in shmat(DISP), disabling.\n" );
             goto shm_error;
         }
@@ -3089,7 +3087,7 @@ void CreateDispWindow( void ) {
             XDestroyImage( disp.disp_image );
             disp.disp_image = NULL;
             shm_flag = 0;
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr,
                          "XShm error in CreateImage(MENU), disabling.\n" );
             goto shm_error;
@@ -3108,7 +3106,7 @@ void CreateDispWindow( void ) {
             XDestroyImage( disp.menu_image );
             disp.menu_image = NULL;
             shm_flag = 0;
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "XShm error in shmget(MENU), disabling.\n" );
             goto shm_error;
         }
@@ -3123,7 +3121,7 @@ void CreateDispWindow( void ) {
             XDestroyImage( disp.menu_image );
             disp.menu_image = NULL;
             shm_flag = 0;
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "XShm error in shmat(MENU), disabling.\n" );
             goto shm_error;
         }
@@ -3141,7 +3139,7 @@ void CreateDispWindow( void ) {
             XDestroyImage( disp.menu_image );
             disp.menu_image = NULL;
             shm_flag = 0;
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "XShm error in shmget(MENU), disabling.\n" );
             goto shm_error;
         } else {
@@ -3714,7 +3712,7 @@ void save_command_line( void ) {
 
     wm_argv = ( char** )malloc( ( saved_argc + 5 ) * sizeof( char* ) );
     if ( wm_argv == ( char** )0 ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "warning: malloc failed in wm_save_yourself.\n" );
         XSetCommand( dpy, mainW, saved_argv, saved_argc );
         return;

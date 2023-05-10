@@ -7,7 +7,6 @@
 #endif
 
 extern int verbose;
-extern int quiet;
 extern int useTerminal;
 extern int useSerial;
 extern int useXShm;

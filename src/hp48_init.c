@@ -77,7 +77,7 @@ int read_8( FILE* fp, word_8* var ) {
     unsigned char tmp;
 
     if ( fread( &tmp, 1, 1, fp ) != 1 ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t read word_8\n" );
         return 0;
     }
@@ -89,7 +89,7 @@ int read_char( FILE* fp, char* var ) {
     char tmp;
 
     if ( fread( &tmp, 1, 1, fp ) != 1 ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t read char\n" );
         return 0;
     }
@@ -101,7 +101,7 @@ int read_16( FILE* fp, word_16* var ) {
     unsigned char tmp[ 2 ];
 
     if ( fread( &tmp[ 0 ], 1, 2, fp ) != 2 ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t read word_16\n" );
         return 0;
     }
@@ -114,7 +114,7 @@ int read_32( FILE* fp, word_32* var ) {
     unsigned char tmp[ 4 ];
 
     if ( fread( &tmp[ 0 ], 1, 4, fp ) != 4 ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t read word_32\n" );
         return 0;
     }
@@ -129,7 +129,7 @@ int read_u_long( FILE* fp, unsigned long* var ) {
     unsigned char tmp[ 4 ];
 
     if ( fread( &tmp[ 0 ], 1, 4, fp ) != 4 ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t read unsigned long\n" );
         return 0;
     }
@@ -313,13 +313,13 @@ int read_mem_file( char* name, word_4* mem, int size ) {
     int i, j;
 
     if ( NULL == ( fp = fopen( name, "r" ) ) ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "ct open %s\n" );
         return 0;
     }
 
     if ( stat( name, &st ) < 0 ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t stat %s\n", name );
         return 0;
     }
@@ -329,7 +329,7 @@ int read_mem_file( char* name, word_4* mem, int size ) {
          * size is same as memory size, old version file
          */
         if ( fread( mem, 1, ( size_t )size, fp ) != size ) {
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "can\'t read %s\n", name );
             fclose( fp );
             return 0;
@@ -340,7 +340,7 @@ int read_mem_file( char* name, word_4* mem, int size ) {
          */
 
         if ( st.st_size != size / 2 ) {
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "strange size %s, expected %d, found %ld\n",
                          name, size / 2, st.st_size );
             fclose( fp );
@@ -350,7 +350,7 @@ int read_mem_file( char* name, word_4* mem, int size ) {
         if ( NULL == ( tmp_mem = ( word_8* )malloc( ( size_t )st.st_size ) ) ) {
             for ( i = 0, j = 0; i < size / 2; i++ ) {
                 if ( 1 != fread( &byte, 1, 1, fp ) ) {
-                    if ( !quiet )
+                    if ( verbose )
                         fprintf( stderr, "can\'t read %s\n", name );
                     fclose( fp );
                     return 0;
@@ -360,7 +360,7 @@ int read_mem_file( char* name, word_4* mem, int size ) {
             }
         } else {
             if ( fread( tmp_mem, 1, ( size_t )size / 2, fp ) != size / 2 ) {
-                if ( !quiet )
+                if ( verbose )
                     fprintf( stderr, "can\'t read %s\n", name );
                 fclose( fp );
                 free( tmp_mem );
@@ -397,7 +397,7 @@ int read_rom( const char* fname ) {
         ram_size = RAM_SIZE_SX;
 
     if ( NULL == ( saturn.ram = ( word_4* )malloc( ram_size ) ) ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t malloc RAM\n" );
         return 0;
     }
@@ -436,7 +436,7 @@ void get_home_directory( char* path ) {
                 strcpy( path, pwd->pw_dir );
                 strcat( path, "/" );
             } else {
-                if ( !quiet )
+                if ( verbose )
                     fprintf( stderr, "can\'t figure out your home directory, "
                                      "trying /tmp\n" );
                 strcpy( path, "/tmp" );
@@ -469,7 +469,7 @@ int read_files( void ) {
     strcpy( fnam, path );
     strcat( fnam, "hp48" );
     if ( NULL == ( fp = fopen( fnam, "r" ) ) ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t open %s\n", fnam );
         return 0;
     }
@@ -493,7 +493,7 @@ int read_files( void ) {
         read_version = 1;
         for ( i = 0; i < 4; i++ ) {
             if ( !read_char( fp, &saturn.version[ i ] ) ) {
-                if ( !quiet )
+                if ( verbose )
                     fprintf( stderr, "can\'t read version\n" );
                 read_version = 0;
             }
@@ -513,7 +513,7 @@ int read_files( void ) {
              * try to read latest version file
              */
             if ( !read_hp48_file( fp ) ) {
-                if ( !quiet )
+                if ( verbose )
                     fprintf( stderr, "can\'t handle %s\n", fnam );
                 init_saturn();
             } else if ( verbose ) {
@@ -534,7 +534,7 @@ int read_files( void ) {
 
     saturn.ram = ( word_4* )NULL;
     if ( NULL == ( saturn.ram = ( word_4* )malloc( ram_size ) ) ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t malloc RAM[%d]\n", ram_size );
         exit( 1 );
     }
@@ -542,7 +542,7 @@ int read_files( void ) {
     strcpy( fnam, path );
     strcat( fnam, "ram" );
     if ( ( fp = fopen( fnam, "r" ) ) == NULL ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t open %s\n", fnam );
         return 0;
     }
@@ -562,7 +562,7 @@ int read_files( void ) {
         port1_size = 2 * st.st_size;
         if ( ( port1_size == 0x10000 ) || ( port1_size == 0x40000 ) ) {
             if ( NULL == ( saturn.port1 = ( word_4* )malloc( port1_size ) ) ) {
-                if ( !quiet )
+                if ( verbose )
                     fprintf( stderr, "can\'t malloc PORT1[%ld]\n", port1_size );
             } else if ( !read_mem_file( fnam, saturn.port1, port1_size ) ) {
                 port1_size = 0;
@@ -595,7 +595,7 @@ int read_files( void ) {
              ( !opt_gx &&
                ( ( port2_size == 0x10000 ) || ( port2_size == 0x40000 ) ) ) ) {
             if ( NULL == ( saturn.port2 = ( word_4* )malloc( port2_size ) ) ) {
-                if ( !quiet )
+                if ( verbose )
                     fprintf( stderr, "can\'t malloc PORT2[%ld]\n", port2_size );
             } else if ( !read_mem_file( fnam, saturn.port2, port2_size ) ) {
                 port2_size = 0;
@@ -623,7 +623,7 @@ int write_8( FILE* fp, word_8* var ) {
 
     tmp = *var;
     if ( fwrite( &tmp, 1, 1, fp ) != 1 ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t write word_8\n" );
         return 0;
     }
@@ -635,7 +635,7 @@ int write_char( FILE* fp, char* var ) {
 
     tmp = *var;
     if ( fwrite( &tmp, 1, 1, fp ) != 1 ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t write char\n" );
         return 0;
     }
@@ -648,7 +648,7 @@ int write_16( FILE* fp, word_16* var ) {
     tmp[ 0 ] = ( *var >> 8 ) & 0xff;
     tmp[ 1 ] = *var & 0xff;
     if ( fwrite( &tmp[ 0 ], 1, 2, fp ) != 2 ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t write word_16\n" );
         return 0;
     }
@@ -663,7 +663,7 @@ int write_32( FILE* fp, word_32* var ) {
     tmp[ 2 ] = ( *var >> 8 ) & 0xff;
     tmp[ 3 ] = *var & 0xff;
     if ( fwrite( &tmp[ 0 ], 1, 4, fp ) != 4 ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t write word_32\n" );
         return 0;
     }
@@ -678,7 +678,7 @@ int write_u_long( FILE* fp, unsigned long* var ) {
     tmp[ 2 ] = ( *var >> 8 ) & 0xff;
     tmp[ 3 ] = *var & 0xff;
     if ( fwrite( &tmp[ 0 ], 1, 4, fp ) != 4 ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t write unsigned long\n" );
         return 0;
     }
@@ -692,7 +692,7 @@ int write_mem_file( char* name, word_4* mem, int size ) {
     int i, j;
 
     if ( NULL == ( fp = fopen( name, "w" ) ) ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t open %s\n", name );
         return 0;
     }
@@ -702,7 +702,7 @@ int write_mem_file( char* name, word_4* mem, int size ) {
             byte = ( mem[ j++ ] & 0x0f );
             byte |= ( mem[ j++ ] << 4 ) & 0xf0;
             if ( 1 != fwrite( &byte, 1, 1, fp ) ) {
-                if ( !quiet )
+                if ( verbose )
                     fprintf( stderr, "can\'t write %s\n", name );
                 fclose( fp );
                 return 0;
@@ -715,7 +715,7 @@ int write_mem_file( char* name, word_4* mem, int size ) {
         }
 
         if ( fwrite( tmp_mem, 1, ( size_t )size / 2, fp ) != size / 2 ) {
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "can\'t write %s\n", name );
             fclose( fp );
             free( tmp_mem );
@@ -748,13 +748,13 @@ int write_files( void ) {
         if ( errno == ENOENT ) {
             make_dir = 1;
         } else {
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "can\'t stat %s, saving to /tmp\n", path );
             strcpy( path, "/tmp" );
         }
     } else {
         if ( !S_ISDIR( st.st_mode ) ) {
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "%s is no directory, saving to /tmp\n", path );
             strcpy( path, "/tmp" );
         }
@@ -762,7 +762,7 @@ int write_files( void ) {
 
     if ( make_dir ) {
         if ( mkdir( path, 0777 ) == -1 ) {
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "can\'t mkdir %s, saving to /tmp\n", path );
             strcpy( path, "/tmp" );
         }
@@ -773,7 +773,7 @@ int write_files( void ) {
     strcpy( fnam, path );
     strcat( fnam, "hp48" );
     if ( ( fp = fopen( fnam, "w" ) ) == NULL ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t open %s, no saving done\n", fnam );
         return 0;
     }

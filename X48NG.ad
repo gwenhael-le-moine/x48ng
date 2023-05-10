@@ -18,7 +18,6 @@
 ! informative stuff
 !
 *verbose:		False
-*quiet:			False
 
 *printVersion:		False
 *printCopyright:	False

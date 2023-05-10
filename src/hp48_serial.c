@@ -89,7 +89,7 @@ int serial_init( void ) {
         if ( ioctl( ttyp, TCGETS, ( char* )&ttybuf ) < 0 )
 #endif
         {
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "ioctl(wire, TCGETS) failed, errno = %d\n",
                          errno );
             wire_fd = -1;
@@ -113,7 +113,7 @@ int serial_init( void ) {
         if ( ioctl( ttyp, TCSETS, ( char* )&ttybuf ) < 0 )
 #endif
         {
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "ioctl(wire, TCSETS) failed, errno = %d\n",
                          errno );
             wire_fd = -1;
@@ -138,7 +138,7 @@ int serial_init( void ) {
         if ( ioctl( ir_fd, TCGETS, ( char* )&ttybuf ) < 0 )
 #endif
         {
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "ioctl(IR, TCGETS) failed, errno = %d\n",
                          errno );
             ir_fd = -1;
@@ -161,7 +161,7 @@ int serial_init( void ) {
         if ( ioctl( ir_fd, TCSETS, ( char* )&ttybuf ) < 0 )
 #endif
         {
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "ioctl(IR, TCSETS) failed, errno = %d\n",
                          errno );
             ir_fd = -1;
@@ -182,7 +182,7 @@ void serial_baud( int baud ) {
         if ( ioctl( ir_fd, TCGETS, ( char* )&ttybuf ) < 0 )
 #endif
         {
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "ioctl(IR,  TCGETS) failed, errno = %d\n",
                          errno );
             ir_fd = -1;
@@ -228,7 +228,7 @@ void serial_baud( int baud ) {
     }
 
     if ( ( ir_fd >= 0 ) && ( ( ttybuf.c_ospeed ) == 0 ) ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t set baud rate, using 9600\n" );
         ttybuf.c_cflag |= B9600;
     }
@@ -272,7 +272,7 @@ void serial_baud( int baud ) {
     }
 
     if ( ( ir_fd >= 0 ) && ( ( ttybuf.c_cflag & CBAUD ) == 0 ) ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t set baud rate, using 9600\n" );
         ttybuf.c_cflag |= B9600;
     }
@@ -284,7 +284,7 @@ void serial_baud( int baud ) {
         if ( ioctl( ir_fd, TCSETS, ( char* )&ttybuf ) < 0 )
 #endif
         {
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "ioctl(IR,  TCSETS) failed, errno = %d\n",
                          errno );
             ir_fd = -1;
@@ -299,7 +299,7 @@ void serial_baud( int baud ) {
         if ( ioctl( ttyp, TCGETS, ( char* )&ttybuf ) < 0 )
 #endif
         {
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "ioctl(wire, TCGETS) failed, errno = %d\n",
                          errno );
             wire_fd = -1;
@@ -349,7 +349,7 @@ void serial_baud( int baud ) {
     }
 
     if ( ( ttyp >= 0 ) && ( ( ttybuf.c_cflag & CBAUD ) == 0 ) ) {
-        if ( !quiet )
+        if ( verbose )
             fprintf( stderr, "can\'t set baud rate, using 9600\n" );
         ttybuf.c_cflag |= B9600;
     }
@@ -361,7 +361,7 @@ void serial_baud( int baud ) {
         if ( ioctl( ttyp, TCSETS, ( char* )&ttybuf ) < 0 )
 #endif
         {
-            if ( !quiet )
+            if ( verbose )
                 fprintf( stderr, "ioctl(wire, TCSETS) failed, errno = %d\n",
                          errno );
             wire_fd = -1;
@@ -415,7 +415,7 @@ void transmit_char( void ) {
             }
         } else {
             if ( errno != EAGAIN ) {
-                if ( !quiet )
+                if ( verbose )
                     fprintf( stderr, "serial write error: %d\n", errno );
             }
             saturn.tcs &= 0x0e;

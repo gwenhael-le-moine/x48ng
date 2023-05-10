@@ -9,7 +9,6 @@
 #include "errors.h"
 
 int verbose;
-int quiet;
 int useTerminal;
 int useSerial;
 int useXShm;
@@ -64,7 +63,6 @@ where options include:\n\
     -copyright                   print out copyright information\n\
     -warranty                    print out warranty information\n\
     -verbose                     run verbosive\n\
-    -quiet                       run quietly\n\
     -/+terminal                  turn on/off pseudo terminal interface\n\
     -/+serial                    turn on/off serial interface\n\
     -line       <devicename>     use serial line <devicename> for IR connection\n\
@@ -361,7 +359,6 @@ XFontStruct* get_font_resource( Display* dpy, char* name, char* class ) {
 
 void get_resources( void ) {
     verbose = 0;
-    quiet = 0;
     useTerminal = 1;
     useSerial = 0;
     initialize = 0;
@@ -380,7 +377,6 @@ void get_resources( void ) {
         show_warranty();
 
     verbose = get_boolean_resource( "verbose", "Verbose" );
-    quiet = get_boolean_resource( "quiet", "Quiet" );
 
     useXShm = get_boolean_resource( "useXShm", "UseXShm" );
 
