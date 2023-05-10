@@ -10,12 +10,12 @@
 
 #include "debugger.h"
 #include "debugger_disasm.h"
+#include "debugger_rpl.h"
 #include "hp48.h"
 #include "resources.h"
 #include "romio.h"
-#include "debugger_rpl.h"
 #include "timer.h"
-#include "x48.h"
+#include "x48.h"                /* call exit_x48() */
 
 #define MAX_ARGS 16
 
