@@ -1241,14 +1241,6 @@ extern SDL_Surface* sdlsurface;
 
 extern int InitDisplay( int argc, char** argv );
 
-#if defined( GUI_IS_X11 )
-extern int CreateWindows( int argc, char** argv );
-#endif
-
-#if defined( GUI_IS_SDL1 )
-extern void SDLCreateHP( void );
-#endif
-
 extern int get_ui_event( void );
 extern void adjust_contrast( int contrast );
 
@@ -1262,9 +1254,11 @@ extern void save_options( int argc, char** argv );
 extern void refresh_icon( void );
 extern void refresh_display( void );
 extern void init_annunc( void ); /* lcd.c */
+extern int CreateWindows( int argc, char** argv );
 
 #elif defined( GUI_IS_SDL1 )
 
+extern void SDLCreateHP( void );
 void SDLInit( void );
 void SDLDrawAnnunc( char* annunc );
 
