@@ -5,7 +5,7 @@
 #include <ctype.h>
 
 #include "resources.h"
-#include "debugger_disasm.h"             /* `disassembler_mode` & `CLASS_MNEMONICS` */
+#include "debugger_disasm.h" /* `disassembler_mode` & `CLASS_MNEMONICS` */
 #include "errors.h"
 
 int verbose;
