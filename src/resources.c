@@ -136,38 +136,6 @@ PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE\n\
 POSSIBILITY OF SUCH DAMAGES.\n\n" );
 }
 
-void get_resources( void ) {
-    if ( get_boolean_resource( "printVersion", "PrintVersion" ) )
-        show_version();
-    if ( get_boolean_resource( "printCopyright", "PrintCopyright" ) )
-        show_copyright();
-    if ( get_boolean_resource( "printWarranty", "PrintWarranty" ) )
-        show_warranty();
-
-    verbose = get_boolean_resource( "verbose", "Verbose" );
-    quiet = get_boolean_resource( "quiet", "Quiet" );
-
-    useXShm = get_boolean_resource( "useXShm", "UseXShm" );
-
-    useTerminal = get_boolean_resource( "useTerminal", "UseTerminal" );
-    useSerial = get_boolean_resource( "useSerial", "UseSerial" );
-    serialLine = get_string_resource( "serialLine", "SerialLine" );
-
-    initialize =
-        get_boolean_resource( "completeInitialize", "CompleteInitialize" );
-    resetOnStartup = get_boolean_resource( "resetOnStartup", "ResetOnStartup" );
-    romFileName = get_string_resource( "romFileName", "RomFileName" );
-    homeDirectory = get_string_resource( "homeDirectory", "HomeDirectory" );
-
-    useDebugger = get_boolean_resource( "useDebugger", "UseDebugger" );
-    disassembler_mode = get_mnemonic_resource( "disassemblerMnemonics",
-                                               "DisassemblerMnemonics" );
-
-    netbook = get_boolean_resource( "netbook", "Netbook" );
-
-    throttle = get_boolean_resource( "throttle", "Throttle" );
-}
-
 char* get_string_resource_from_db( XrmDatabase db, char* name, char* class ) {
     XrmValue value;
     char* type;
@@ -386,56 +354,54 @@ XFontStruct* get_font_resource( Display* dpy, char* name, char* class ) {
     }
     return f;
 }
-
-#elif defined( GUI_IS_SDL1 )
+#endif
 
 void get_resources( void ) {
     verbose = 0;
     quiet = 0;
     useTerminal = 1;
     useSerial = 0;
-    strcpy( serialLine, "/dev/ttyS0" );
     initialize = 0;
     resetOnStartup = 0;
-
-    // There are two directories that can contain files:
-    // homeDirectory:		Directory in which the live files (hp state,
-    // ram, but also a copy of the rom) are stored
-    //							homeDirectory is the
-    // first directory in which x48ng attempts to load the emulator data It
-    // is also in homeDirectory that state files are saved
-    // romFileName:		if loading files from homeDirectory fails, the
-    // emulator instead initializes the state and ram from scratch, and attempts
-    //							to load the ROM
-    // romFileName. This is just for bootstrapping: afterwards then the emulator
-    // will save the state to homeDirectory
-
-    // Have homeDirectory in the user's home
-    strcpy( homeDirectory, ".x48ng" ); // live files are stored in ~/.x48ng
-
-    // As a fallback, assume that a ROM will be available at the same location
-    // as the executable We assume that the rom file is in the same
-    int rv;
-    rv = readlink(
-        "/proc/self/exe", romFileName,
-        sizeof( romFileName ) ); // Find the full path name of the executable
-                                 // (this is linux/cygwin only)
-    if ( rv > 0 && rv < sizeof( romFileName ) ) {
-        // If found...
-        romFileName[ rv ] = 0;
-        // find the last slash and terminate
-        char* slash = strrchr( romFileName, '/' );
-        *slash = 0;
-        // append the name of the rom file
-        strcat( romFileName, "/rom" );
-    } else {
-        // Couldn't find path to executable... just use some default
-        strcpy( romFileName, "rom.dump" );
-    }
-
     useDebugger = 1;
     disassembler_mode = CLASS_MNEMONICS; // HP_MNEMONICS
     netbook = 0;
     throttle = 0;
-}
+
+#if defined( GUI_IS_X11 )
+    if ( get_boolean_resource( "printVersion", "PrintVersion" ) )
+        show_version();
+    if ( get_boolean_resource( "printCopyright", "PrintCopyright" ) )
+        show_copyright();
+    if ( get_boolean_resource( "printWarranty", "PrintWarranty" ) )
+        show_warranty();
+
+    verbose = get_boolean_resource( "verbose", "Verbose" );
+    quiet = get_boolean_resource( "quiet", "Quiet" );
+
+    useXShm = get_boolean_resource( "useXShm", "UseXShm" );
+
+    useTerminal = get_boolean_resource( "useTerminal", "UseTerminal" );
+    useSerial = get_boolean_resource( "useSerial", "UseSerial" );
+    serialLine = get_string_resource( "serialLine", "SerialLine" );
+
+    initialize =
+        get_boolean_resource( "completeInitialize", "CompleteInitialize" );
+    resetOnStartup = get_boolean_resource( "resetOnStartup", "ResetOnStartup" );
+    romFileName = get_string_resource( "romFileName", "RomFileName" );
+    homeDirectory = get_string_resource( "homeDirectory", "HomeDirectory" );
+
+    useDebugger = get_boolean_resource( "useDebugger", "UseDebugger" );
+    disassembler_mode = get_mnemonic_resource( "disassemblerMnemonics",
+                                               "DisassemblerMnemonics" );
+
+    netbook = get_boolean_resource( "netbook", "Netbook" );
+
+    throttle = get_boolean_resource( "throttle", "Throttle" );
+#elif defined( GUI_IS_SDL1 )
+    strcpy( serialLine, "/dev/ttyS0" );
+
+    // Have homeDirectory in the user's home
+    strcpy( homeDirectory, ".x48ng" ); // live files are stored in ~/.x48ng
 #endif
+}
