@@ -13,7 +13,7 @@
 #include "hp48.h"
 #include "resources.h"
 #include "romio.h"
-#include "rpl.h"
+#include "debugger_rpl.h"
 #include "timer.h"
 #include "x48.h"
 
