@@ -4,9 +4,9 @@
 #include <unistd.h>
 #include <assert.h>
 
-#include "x48_debugger.h" /* used for in_debugger */
 #include "romio.h"
 #include "timer.h"
+#include "x48_debugger.h" /* used for in_debugger */
 
 typedef struct x48_timer_t {
     word_1 run;

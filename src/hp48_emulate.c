@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include "x48_debugger.h"
 #include "hp48.h"
 #include "hp48emu.h"
 #include "timer.h"
 #include "x48.h"
+#include "x48_debugger.h"
 
 extern int throttle;
 

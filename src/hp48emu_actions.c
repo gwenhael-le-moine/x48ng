@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "x48_debugger.h"
 #include "hp48.h"
 #include "hp48emu.h"
 #include "romio.h"
 #include "timer.h"
 #include "x48.h"
+#include "x48_debugger.h"
 
 static int interrupt_called = 0;
 extern long nibble_masks[ 16 ];

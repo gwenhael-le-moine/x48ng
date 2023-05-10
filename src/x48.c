@@ -9,11 +9,11 @@
 #include <sys/types.h>
 #include <sys/utsname.h>
 
+#include "hp48.h"
+#include "romio.h"
 #include "x48.h"
 #include "x48_errors.h"
-#include "hp48.h"
 #include "x48_resources.h"
-#include "romio.h"
 
 #if defined( GUI_IS_X11 )
 static XrmOptionDescRec options[] = {

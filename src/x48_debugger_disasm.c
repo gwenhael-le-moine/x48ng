@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "x48_debugger_disasm.h"
 #include "hp48.h"
+#include "x48_debugger_disasm.h"
 
 #define TAB_SKIP 8
 

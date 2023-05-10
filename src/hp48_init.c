@@ -9,8 +9,8 @@
 
 #include "hp48.h"
 #include "hp48emu.h"
-#include "x48_resources.h"
 #include "romio.h"
+#include "x48_resources.h"
 
 #define X48_MAGIC 0x48503438
 #define NR_CONFIG 8

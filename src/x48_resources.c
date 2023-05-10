@@ -4,9 +4,9 @@
 #include <unistd.h>
 #include <ctype.h>
 
-#include "x48_resources.h"
 #include "x48_debugger_disasm.h" /* `disassembler_mode` & `CLASS_MNEMONICS` */
 #include "x48_errors.h"
+#include "x48_resources.h"
 
 int verbose;
 int useTerminal;
