@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 #include "debugger.h"
-#include "disasm.h"
+#include "debugger_disasm.h"
 #include "hp48.h"
 #include "hp48emu.h"
 #include "romio.h"

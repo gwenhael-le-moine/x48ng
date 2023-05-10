@@ -9,7 +9,7 @@
 #include <X11/Xlib.h>
 
 #include "debugger.h"
-#include "disasm.h"
+#include "debugger_disasm.h"
 #include "hp48.h"
 #include "resources.h"
 #include "romio.h"
