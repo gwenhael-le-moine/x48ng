@@ -310,15 +310,15 @@ extern void load_addr( word_20* dat, long addr, int n ); /* hp48_emulate.c */
 
 /* #ifndef _DEVICE_H */
 /* #define _DEVICE_H 1 */
-extern void check_devices( void ); /* device.c */
+extern void check_devices( void ); /* hp48_device.c */
 
-extern void init_display( void ); /* device.c */
-extern void update_display( void );                       /* device.c */
-extern void redraw_display( void );                       /* device.c */
-extern void disp_draw_nibble( word_20 addr, word_4 val ); /* device.c */
-extern void menu_draw_nibble( word_20 addr, word_4 val ); /* device.c */
-extern void draw_annunc( void );                          /* device.c */
-extern void redraw_annunc( void );                        /* device.c */
+extern void init_display( void ); /* hp48_device.c */
+extern void update_display( void );                       /* hp48_device.c */
+extern void redraw_display( void );                       /* hp48_device.c */
+extern void disp_draw_nibble( word_20 addr, word_4 val ); /* hp48_device.c */
+extern void menu_draw_nibble( word_20 addr, word_4 val ); /* hp48_device.c */
+extern void draw_annunc( void );                          /* hp48_device.c */
+extern void redraw_annunc( void );                        /* hp48_device.c */
 
 /* extern void	check_out_register( void ); */
 /* #endif /\* !_DEVICE_H *\/ */
