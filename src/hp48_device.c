@@ -13,6 +13,8 @@
 #include "timer.h"
 #include "x48.h"
 
+saturn_t saturn;
+
 extern int device_check;
 
 device_t device;

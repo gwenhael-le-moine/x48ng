@@ -21,8 +21,6 @@ char* progname;
 int saved_argc;
 char** saved_argv;
 
-saturn_t saturn;
-
 void signal_handler( int sig ) {
     switch ( sig ) {
         case SIGINT: /* Ctrl-C */
