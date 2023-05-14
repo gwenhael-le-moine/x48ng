@@ -2,7 +2,7 @@
 
 DOTX48NG=${DOTX48NG:-.x48ng}
 
-ROM=${ROM:-@PREFIX@/share/x48ng/ROMsgxrom-r}
+ROM=${ROM:-@PREFIX@/share/x48ng/ROMs/gxrom-r}
 
 [ -d ~/${DOTX48NG} ] && rm -fr ~/${DOTX48NG}
 mkdir -p ~/${DOTX48NG}
