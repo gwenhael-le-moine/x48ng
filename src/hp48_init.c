@@ -916,12 +916,11 @@ int write_files( void ) {
 }
 
 int init_emulator( void ) {
-    if ( !initialize )
-        if ( read_files() ) {
-            if ( resetOnStartup )
-                saturn.PC = 0x00000;
-            return 0;
-        }
+    if ( !initialize && read_files() ) {
+      if ( resetOnStartup )
+        saturn.PC = 0x00000;
+      return 0;
+    }
 
     init_saturn();
 

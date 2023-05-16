@@ -284,23 +284,28 @@ static inline void draw_nibble( int c, int r, int val ) {
 
 #if defined( GUI_IS_X11 )
     x = ( c * 8 ) + 5;
+#elif defined( GUI_IS_SDL1 )
+    x = ( c * 4 ); // x: start in pixels
+#endif
     if ( r <= display.lines )
         x -= disp.offset;
+#if defined( GUI_IS_X11 )
     y = ( r * 2 ) + 20;
+#elif defined( GUI_IS_SDL1 )
+    y = r;                // y: start in pixels
+#endif
     val &= 0x0f;
     if ( val != lcd_buffer[ r ][ c ] ) {
+#if defined( GUI_IS_X11 )
         XCopyPlane( dpy, nibble_maps[ val ], disp.win, disp.gc, 0, 0, 8, 2, x,
-                    y, 1 );
+                   y, 1 );
+#endif
         lcd_buffer[ r ][ c ] = val;
     }
-#elif defined( GUI_IS_SDL1 )
     if ( val != lcd_buffer[ r ][ c ] )
         lcd_buffer[ r ][ c ] = val;
 
-    x = ( c * 4 ); // x: start in pixels
-    if ( r <= display.lines )
-        x -= disp.offset; // Correct the pixels with display offset
-    y = r;                // y: start in pixels
+#if defined( GUI_IS_SDL1 )
     SDLDrawNibble( x, y, val );
 #endif
 }
@@ -537,7 +542,6 @@ void menu_draw_nibble( word_20 addr, word_4 val ) {
 
 void draw_annunc( void ) {
     int val;
-    int i;
 
     val = display.annunc;
 
@@ -548,7 +552,7 @@ void draw_annunc( void ) {
 #if defined( GUI_IS_SDL1 )
     char sdl_annuncstate[ 6 ];
 #endif
-    for ( i = 0; ann_tbl[ i ].bit; i++ ) {
+    for ( int i = 0; ann_tbl[ i ].bit; i++ ) {
 #if defined( GUI_IS_X11 )
         if ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit ) {
             XCopyPlane( dpy, ann_tbl[ i ].pixmap, disp.win, disp.gc, 0, 0,
@@ -574,13 +578,10 @@ void draw_annunc( void ) {
 
 #if defined( GUI_IS_X11 )
 void init_annunc( void ) {
-    int i;
-
-    for ( i = 0; ann_tbl[ i ].bit; i++ ) {
+    for ( int i = 0; ann_tbl[ i ].bit; i++ )
         ann_tbl[ i ].pixmap =
             XCreateBitmapFromData( dpy, disp.win, ( char* )ann_tbl[ i ].bits,
                                    ann_tbl[ i ].width, ann_tbl[ i ].height );
-    }
 }
 #endif
 

@@ -38,11 +38,6 @@ void signal_handler( int sig ) {
 }
 
 int main( int argc, char** argv ) {
-    sigset_t set;
-    struct sigaction sa;
-    long flags;
-    struct itimerval it;
-
     setlocale( LC_ALL, "C" );
 
 #if defined( GUI_IS_X11 )
@@ -77,27 +72,7 @@ int main( int argc, char** argv ) {
     /*
      * initialize emulator stuff
      */
-    if ( init_emulator() != 0 ) {
-        // Some error or information messages
-        const char* errinit_title = "Emulator initialization failed";
-        const char* errinit_text[] = { "",
-                                       "In order to work the emulator needs",
-                                       "the following files:",
-                                       "  rom:   an HP48 rom dump",
-                                       "  ram:   ram file",
-                                       "  hp48:  HP state file",
-                                       "",
-                                       "These files must be in ~/.x48ng",
-                                       "",
-                                       "Install these files and try again.",
-                                       0 };
-
-        printf( "%s\n", errinit_title );
-        for ( int i = 0; errinit_text[ i ]; i++ )
-            printf( "%s\n", errinit_text[ i ] );
-
-        return 0;
-    }
+    init_emulator();
 
 #if defined( GUI_IS_X11 )
     /*
@@ -118,9 +93,12 @@ int main( int argc, char** argv ) {
 
     init_display();
 
-    /*
-     *  install a handler for SIGALRM
-     */
+
+    /*****************************************/
+    /* handlers for SIGALRM, SIGINT, SIGPIPE */
+    /*****************************************/
+    sigset_t set;
+    struct sigaction sa;
     sigemptyset( &set );
     sigaddset( &set, SIGALRM );
     sa.sa_handler = signal_handler;
@@ -130,9 +108,6 @@ int main( int argc, char** argv ) {
 #endif
     sigaction( SIGALRM, &sa, ( struct sigaction* )0 );
 
-    /*
-     *  install a handler for SIGINT
-     */
     sigemptyset( &set );
     sigaddset( &set, SIGINT );
     sa.sa_handler = signal_handler;
@@ -142,9 +117,6 @@ int main( int argc, char** argv ) {
 #endif
     sigaction( SIGINT, &sa, ( struct sigaction* )0 );
 
-    /*
-     *  install a handler for SIGPIPE
-     */
     sigemptyset( &set );
     sigaddset( &set, SIGPIPE );
     sa.sa_handler = signal_handler;
@@ -154,9 +126,10 @@ int main( int argc, char** argv ) {
 #endif
     sigaction( SIGPIPE, &sa, ( struct sigaction* )0 );
 
-    /*
-     * set the real time interval timer
-     */
+    /************************************/
+    /* set the real time interval timer */
+    /************************************/
+    struct itimerval it;
     int interval = 20000;
     it.it_interval.tv_sec = 0;
     it.it_interval.tv_usec = interval;
@@ -164,9 +137,10 @@ int main( int argc, char** argv ) {
     it.it_value.tv_usec = interval;
     setitimer( ITIMER_REAL, &it, ( struct itimerval* )0 );
 
-    /*
-     * Set stdin flags to not include O_NDELAY and O_NONBLOCK
-     */
+    /**********************************************************/
+    /* Set stdin flags to not include O_NDELAY and O_NONBLOCK */
+    /**********************************************************/
+    long flags;
     flags = fcntl( STDIN_FILENO, F_GETFL, 0 );
     flags &= ~O_NDELAY;
     flags &= ~O_NONBLOCK;
