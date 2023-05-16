@@ -1,15 +1,25 @@
 #!/usr/bin/env sh
 
-TARGET=${TARGET:-.x48ng}
+DOTX48NG=${DOTX48NG:-.x48ng}
 
-mkdir -p ~/${TARGET}
+ROM=${ROM:-@PREFIX@/share/x48ng/ROMs/gxrom-r}
 
-cp @PREFIX@/share/x48ng/ROMs/gxrom-r ~/${TARGET}/rom.dump
-cp ~/${TARGET}/rom.dump ~/${TARGET}/rom
+[ -d ~/${DOTX48NG} ] && rm -fr ~/${DOTX48NG}
+mkdir -p ~/${DOTX48NG}
 
-cd ~/${TARGET}
+cp $ROM ~/${DOTX48NG}/rom.dump
+cp ~/${DOTX48NG}/rom.dump ~/${DOTX48NG}/rom
+cd ~/${DOTX48NG}
 
-@PREFIX@/share/x48ng/mkcard 128K port1
-@PREFIX@/share/x48ng/mkcard 4M port2
+PORT1_SIZE=128K
+PORT2_SIZE=4M
 
-@PREFIX@/bin/x48ng -initialize -home ${TARGET}
+if $(echo $ROM | grep -q "^sx"); then
+    PORT2_SIZE=128K
+fi
+
+@PREFIX@/share/x48ng/mkcard $PORT1_SIZE port1
+@PREFIX@/share/x48ng/mkcard $PORT2_SIZE port2
+
+cd ~/${DOTX48NG}/
+@PREFIX@/bin/x48ng -home ${DOTX48NG} -verbose -initialize
