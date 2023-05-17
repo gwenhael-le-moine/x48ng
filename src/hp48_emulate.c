@@ -2415,9 +2415,8 @@ void emulate( void ) {
                 /* Throttling speed if needed */
                 gettimeofday( &tv, &tz );
                 while ( ( tv.tv_sec == tv2.tv_sec ) &&
-                        ( ( tv.tv_usec - tv2.tv_usec ) < 2 ) ) {
+                        ( ( tv.tv_usec - tv2.tv_usec ) < 2 ) )
                     gettimeofday( &tv, &tz );
-                }
 
                 tv2.tv_usec = tv.tv_usec;
                 tv2.tv_sec = tv.tv_sec;
