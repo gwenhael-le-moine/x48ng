@@ -179,7 +179,7 @@ unsigned char nibbles[ 16 ][ 2 ] = {
     { 0xff, 0xff }  /* **** */
 };
 
-static unsigned char nibble_bits[ 16 ];
+static unsigned char nibble_bitmap[ 16 ];
 
 void init_nibble_maps( void ) {
     int i;
@@ -191,52 +191,52 @@ void init_nibble_maps( void ) {
 
     if ( shm_flag ) {
         if ( disp.disp_image->bitmap_bit_order == MSBFirst ) {
-            nibble_bits[ 0x0 ] = 0x00; /* ---- */
-            nibble_bits[ 0x1 ] = 0xc0; /* *--- */
-            nibble_bits[ 0x2 ] = 0x30; /* -*-- */
-            nibble_bits[ 0x3 ] = 0xf0; /* **-- */
-            nibble_bits[ 0x4 ] = 0x0c; /* --*- */
-            nibble_bits[ 0x5 ] = 0xcc; /* *-*- */
-            nibble_bits[ 0x6 ] = 0x3c; /* -**- */
-            nibble_bits[ 0x7 ] = 0xfc; /* ***- */
-            nibble_bits[ 0x8 ] = 0x03; /* ---* */
-            nibble_bits[ 0x9 ] = 0xc3; /* *--* */
-            nibble_bits[ 0xa ] = 0x33; /* -*-* */
-            nibble_bits[ 0xb ] = 0xf3; /* **-* */
-            nibble_bits[ 0xc ] = 0x0f; /* --** */
-            nibble_bits[ 0xd ] = 0xcf; /* *-** */
-            nibble_bits[ 0xe ] = 0x3f; /* -*** */
-            nibble_bits[ 0xf ] = 0xff; /* **** */
+            nibble_bitmap[ 0x0 ] = 0x00; /* ---- */
+            nibble_bitmap[ 0x1 ] = 0xc0; /* *--- */
+            nibble_bitmap[ 0x2 ] = 0x30; /* -*-- */
+            nibble_bitmap[ 0x3 ] = 0xf0; /* **-- */
+            nibble_bitmap[ 0x4 ] = 0x0c; /* --*- */
+            nibble_bitmap[ 0x5 ] = 0xcc; /* *-*- */
+            nibble_bitmap[ 0x6 ] = 0x3c; /* -**- */
+            nibble_bitmap[ 0x7 ] = 0xfc; /* ***- */
+            nibble_bitmap[ 0x8 ] = 0x03; /* ---* */
+            nibble_bitmap[ 0x9 ] = 0xc3; /* *--* */
+            nibble_bitmap[ 0xa ] = 0x33; /* -*-* */
+            nibble_bitmap[ 0xb ] = 0xf3; /* **-* */
+            nibble_bitmap[ 0xc ] = 0x0f; /* --** */
+            nibble_bitmap[ 0xd ] = 0xcf; /* *-** */
+            nibble_bitmap[ 0xe ] = 0x3f; /* -*** */
+            nibble_bitmap[ 0xf ] = 0xff; /* **** */
         } else {
-            nibble_bits[ 0x0 ] = 0x00; /* ---- */
-            nibble_bits[ 0x1 ] = 0x03; /* *--- */
-            nibble_bits[ 0x2 ] = 0x0c; /* -*-- */
-            nibble_bits[ 0x3 ] = 0x0f; /* **-- */
-            nibble_bits[ 0x4 ] = 0x30; /* --*- */
-            nibble_bits[ 0x5 ] = 0x33; /* *-*- */
-            nibble_bits[ 0x6 ] = 0x3c; /* -**- */
-            nibble_bits[ 0x7 ] = 0x3f; /* ***- */
-            nibble_bits[ 0x8 ] = 0xc0; /* ---* */
-            nibble_bits[ 0x9 ] = 0xc3; /* *--* */
-            nibble_bits[ 0xa ] = 0xcc; /* -*-* */
-            nibble_bits[ 0xb ] = 0xcf; /* **-* */
-            nibble_bits[ 0xc ] = 0xf0; /* --** */
-            nibble_bits[ 0xd ] = 0xf3; /* *-** */
-            nibble_bits[ 0xe ] = 0xfc; /* -*** */
-            nibble_bits[ 0xf ] = 0xff; /* **** */
+            nibble_bitmap[ 0x0 ] = 0x00; /* ---- */
+            nibble_bitmap[ 0x1 ] = 0x03; /* *--- */
+            nibble_bitmap[ 0x2 ] = 0x0c; /* -*-- */
+            nibble_bitmap[ 0x3 ] = 0x0f; /* **-- */
+            nibble_bitmap[ 0x4 ] = 0x30; /* --*- */
+            nibble_bitmap[ 0x5 ] = 0x33; /* *-*- */
+            nibble_bitmap[ 0x6 ] = 0x3c; /* -**- */
+            nibble_bitmap[ 0x7 ] = 0x3f; /* ***- */
+            nibble_bitmap[ 0x8 ] = 0xc0; /* ---* */
+            nibble_bitmap[ 0x9 ] = 0xc3; /* *--* */
+            nibble_bitmap[ 0xa ] = 0xcc; /* -*-* */
+            nibble_bitmap[ 0xb ] = 0xcf; /* **-* */
+            nibble_bitmap[ 0xc ] = 0xf0; /* --** */
+            nibble_bitmap[ 0xd ] = 0xf3; /* *-** */
+            nibble_bitmap[ 0xe ] = 0xfc; /* -*** */
+            nibble_bitmap[ 0xf ] = 0xff; /* **** */
         }
     }
 }
 #endif
 
 ann_struct_t ann_tbl[] = {
-    { ANN_LEFT, 16, 4, ann_left_width, ann_left_height, ann_left_bits },
-    { ANN_RIGHT, 61, 4, ann_right_width, ann_right_height, ann_right_bits },
-    { ANN_ALPHA, 106, 4, ann_alpha_width, ann_alpha_height, ann_alpha_bits },
+    { ANN_LEFT, 16, 4, ann_left_width, ann_left_height, ann_left_bitmap },
+    { ANN_RIGHT, 61, 4, ann_right_width, ann_right_height, ann_right_bitmap },
+    { ANN_ALPHA, 106, 4, ann_alpha_width, ann_alpha_height, ann_alpha_bitmap },
     { ANN_BATTERY, 151, 4, ann_battery_width, ann_battery_height,
-      ann_battery_bits },
-    { ANN_BUSY, 196, 4, ann_busy_width, ann_busy_height, ann_busy_bits },
-    { ANN_IO, 241, 4, ann_io_width, ann_io_height, ann_io_bits },
+      ann_battery_bitmap },
+    { ANN_BUSY, 196, 4, ann_busy_width, ann_busy_height, ann_busy_bitmap },
+    { ANN_IO, 241, 4, ann_io_width, ann_io_height, ann_io_bitmap },
     { 0 } };
 
 void init_display( void ) {
@@ -357,8 +357,8 @@ void update_display( void ) {
             for ( i = 0; i <= display.lines; i++ ) {
                 for ( j = 0; j < line_length; j++ ) {
                     val = read_nibble( addr++ );
-                    disp.disp_image->data[ data_addr++ ] = nibble_bits[ val ];
-                    disp.disp_image->data[ data_addr_2++ ] = nibble_bits[ val ];
+                    disp.disp_image->data[ data_addr++ ] = nibble_bitmap[ val ];
+                    disp.disp_image->data[ data_addr_2++ ] = nibble_bitmap[ val ];
                 }
                 addr += addr_pad;
                 data_addr += line_pad;
@@ -402,9 +402,9 @@ void update_display( void ) {
                     for ( j = 0; j < NIBBLES_PER_ROW; j++ ) {
                         val = read_nibble( addr++ );
                         disp.menu_image->data[ data_addr++ ] =
-                            nibble_bits[ val ];
+                            nibble_bitmap[ val ];
                         disp.menu_image->data[ data_addr_2++ ] =
-                            nibble_bits[ val ];
+                            nibble_bitmap[ val ];
                     }
                     data_addr += line_pad;
                     data_addr_2 += line_pad;
@@ -471,10 +471,10 @@ void disp_draw_nibble( word_20 addr, word_4 val ) {
 #if defined( GUI_IS_X11 )
         if ( shm_flag ) {
             shm_addr = ( 2 * y * disp.disp_image->bytes_per_line ) + x;
-            disp.disp_image->data[ shm_addr ] = nibble_bits[ val ];
+            disp.disp_image->data[ shm_addr ] = nibble_bitmap[ val ];
             disp.disp_image
                 ->data[ shm_addr + disp.disp_image->bytes_per_line ] =
-                nibble_bits[ val ];
+                nibble_bitmap[ val ];
             disp.display_update |= UPDATE_DISP;
         } else {
 #endif
@@ -490,9 +490,9 @@ void disp_draw_nibble( word_20 addr, word_4 val ) {
         if ( shm_flag ) {
             shm_addr = x;
             for ( y = 0; y < display.lines; y++ ) {
-                disp.disp_image->data[ shm_addr ] = nibble_bits[ val ];
+                disp.disp_image->data[ shm_addr ] = nibble_bitmap[ val ];
                 shm_addr += disp.disp_image->bytes_per_line;
-                disp.disp_image->data[ shm_addr ] = nibble_bits[ val ];
+                disp.disp_image->data[ shm_addr ] = nibble_bitmap[ val ];
                 shm_addr += disp.disp_image->bytes_per_line;
             }
             disp.display_update |= UPDATE_DISP;
@@ -523,9 +523,9 @@ void menu_draw_nibble( word_20 addr, word_4 val ) {
         shm_addr =
             2 * ( offset / NIBBLES_PER_ROW ) * disp.menu_image->bytes_per_line +
             ( offset % NIBBLES_PER_ROW );
-        disp.menu_image->data[ shm_addr ] = nibble_bits[ val ];
+        disp.menu_image->data[ shm_addr ] = nibble_bitmap[ val ];
         disp.menu_image->data[ shm_addr + disp.menu_image->bytes_per_line ] =
-            nibble_bits[ val ];
+            nibble_bitmap[ val ];
         disp.display_update |= UPDATE_MENU;
     } else {
 #endif
