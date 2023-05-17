@@ -743,27 +743,61 @@ button_t buttons_sx[] = {
       0,     0, 0, 0,    "I", "MODES", 1,  0,  0,     0 },
     { "VAR", 0, 0, 0x72, 150, 50,       36, 26, WHITE, "VAR",
       0,     0, 0, 0,    "J", "MEMORY", 1,  0,  0,     0 },
-    { "UP", 0,        0,         0x71,    200, 50,        36, 26, WHITE, 0,
+    { "UP", 0,        0,         0x71,      200, 50,        36, 26, WHITE, 0,
       0,    up_width, up_height, up_bitmap, "K", "LIBRARY", 1,  0,  0,     0 },
     { "NXT", 0, 0, 0x70, 250, 50,     36, 26, WHITE, "NXT",
       0,     0, 0, 0,    "L", "PREV", 0,  0,  0,     0 },
 
-    { "COLON", 0, 0,           0x04,         0,          100, 36,   26, WHITE,
-      0,       0, colon_width, colon_height, colon_bitmap, "M", "UP", 0,  "HOME",
-      0,       0 },
+    { "COLON",
+      0,
+      0,
+      0x04,
+      0,
+      100,
+      36,
+      26,
+      WHITE,
+      0,
+      0,
+      colon_width,
+      colon_height,
+      colon_bitmap,
+      "M",
+      "UP",
+      0,
+      "HOME",
+      0,
+      0 },
     { "STO", 0, 0, 0x64, 50,  100,   36, 26,    WHITE, "STO",
       0,     0, 0, 0,    "N", "DEF", 0,  "RCL", 0,     0 },
     { "EVAL", 0, 0, 0x63, 100, 100,  36, 26,     WHITE, "EVAL",
       0,      0, 0, 0,    "O", "aQ", 0,  "aNUM", 0,     0 },
-    { "LEFT", 0, 0, 0x62,       150,         100,       36,  26,
+    { "LEFT", 0, 0, 0x62,       150,         100,         36,  26,
       WHITE,  0, 0, left_width, left_height, left_bitmap, "P", "GRAPH",
       0,      0, 0, 0 },
-    { "DOWN", 0, 0, 0x61,       200,         100,       36,  26,
+    { "DOWN", 0, 0, 0x61,       200,         100,         36,  26,
       WHITE,  0, 0, down_width, down_height, down_bitmap, "Q", "REVIEW",
       0,      0, 0, 0 },
-    { "RIGHT", 0, 0,           0x60,         250,        100, 36,     26, WHITE,
-      0,       0, right_width, right_height, right_bitmap, "R", "SWAP", 0,  0,
-      0,       0 },
+    { "RIGHT",
+      0,
+      0,
+      0x60,
+      250,
+      100,
+      36,
+      26,
+      WHITE,
+      0,
+      0,
+      right_width,
+      right_height,
+      right_bitmap,
+      "R",
+      "SWAP",
+      0,
+      0,
+      0,
+      0 },
 
     { "SIN", 0, 0, 0x34, 0,   150,    36, 26,  WHITE, "SIN",
       0,     0, 0, 0,    "S", "ASIN", 0,  "b", 0,     0 },
@@ -771,12 +805,13 @@ button_t buttons_sx[] = {
       0,     0, 0, 0,    "T", "ACOS", 0,  "c", 0,     0 },
     { "TAN", 0, 0, 0x53, 100, 150,    36, 26,  WHITE, "TAN",
       0,     0, 0, 0,    "U", "ATAN", 0,  "d", 0,     0 },
-    { "SQRT", 0,          0,           0x52,      150, 150, 36, 26,  WHITE, 0,
-      0,      sqrt_width, sqrt_height, sqrt_bitmap, "V", "e", 0,  "f", 0,     0 },
-    { "POWER", 0, 0,           0x51,         200,        150, 36,  26, WHITE,
+    { "SQRT", 0,   0, 0x52,       150,         150,         36,  26,
+      WHITE,  0,   0, sqrt_width, sqrt_height, sqrt_bitmap, "V", "e",
+      0,      "f", 0, 0 },
+    { "POWER", 0, 0,           0x51,         200,          150, 36,  26, WHITE,
       0,       0, power_width, power_height, power_bitmap, "W", "g", 0,  "LOG",
       0,       0 },
-    { "INV", 0,         0,          0x50,     250, 150, 36, 26,   WHITE, 0,
+    { "INV", 0,         0,          0x50,       250, 150, 36, 26,   WHITE, 0,
       0,     inv_width, inv_height, inv_bitmap, "X", "h", 0,  "LN", 0,     0 },
 
     { "ENTER", 0, 0, 0x44, 0, 200,        86, 26,       WHITE, "ENTER",
@@ -788,7 +823,7 @@ button_t buttons_sx[] = {
       0,     0, 0, 0,    "Z", "2D", 0,  "3D", 0,     0 },
     { "DEL", 0, 0, 0x41, 200, 200,     36, 26, WHITE, "DEL",
       0,     0, 0, 0,    0,   "PURGE", 0,  0,  0,     0 },
-    { "BS", 0,        0,         0x40,    250, 200,    36, 26,    WHITE, 0,
+    { "BS", 0,        0,         0x40,      250, 200,    36, 26,    WHITE, 0,
       0,    bs_width, bs_height, bs_bitmap, 0,   "DROP", 0,  "CLR", 0,     0 },
 
     { "ALPHA",
@@ -817,10 +852,10 @@ button_t buttons_sx[] = {
       1,   0, 0, 0,    0,   "PLOT", 1,  0,  0,     0 },
     { "9", 0, 0, 0x31, 180, 250,       46, 26, WHITE, "9",
       1,   0, 0, 0,    0,   "ALGEBRA", 1,  0,  0,     0 },
-    { "DIV", 0,         0,          0x30,     240, 250,   46, 26,  WHITE, 0,
+    { "DIV", 0,         0,          0x30,       240, 250,   46, 26,  WHITE, 0,
       0,     div_width, div_height, div_bitmap, 0,   "( )", 0,  "#", 0,     0 },
 
-    { "SHL", 0,         0,          0x25,     0, 300, 36, 26, LEFT, 0,
+    { "SHL", 0,         0,          0x25,       0, 300, 36, 26, LEFT, 0,
       0,     shl_width, shl_height, shl_bitmap, 0, 0,   0,  0,  0,    0 },
     { "4", 0, 0, 0x23, 60, 300,    46, 26, WHITE, "4",
       1,   0, 0, 0,    0,  "TIME", 1,  0,  0,     0 },
@@ -828,10 +863,10 @@ button_t buttons_sx[] = {
       1,   0, 0, 0,    0,   "STAT", 1,  0,  0,     0 },
     { "6", 0, 0, 0x21, 180, 300,     46, 26, WHITE, "6",
       1,   0, 0, 0,    0,   "UNITS", 1,  0,  0,     0 },
-    { "MUL", 0,         0,          0x20,     240, 300,   46, 26,  WHITE, 0,
+    { "MUL", 0,         0,          0x20,       240, 300,   46, 26,  WHITE, 0,
       0,     mul_width, mul_height, mul_bitmap, 0,   "[ ]", 0,  "_", 0,     0 },
 
-    { "SHR", 0,         0,          0x15,     0, 350, 36, 26, RIGHT, 0,
+    { "SHR", 0,         0,          0x15,       0, 350, 36, 26, RIGHT, 0,
       0,     shr_width, shr_height, shr_bitmap, 0, 0,   0,  0,  0,     0 },
     { "1", 0, 0, 0x13, 60, 350,   46, 26,      WHITE, "1",
       1,   0, 0, 0,    0,  "RAD", 0,  "POLAR", 0,     0 },
@@ -839,7 +874,7 @@ button_t buttons_sx[] = {
       1,   0, 0, 0,    0,   "STACK", 0,  "ARG", 0,     0 },
     { "3", 0, 0, 0x11, 180, 350,   46, 26,     WHITE, "3",
       1,   0, 0, 0,    0,   "CMD", 0,  "MENU", 0,     0 },
-    { "MINUS", 0, 0,           0x10,         240,        350, 46,  26, WHITE,
+    { "MINUS", 0, 0,           0x10,         240,          350, 46,  26, WHITE,
       0,       0, minus_width, minus_height, minus_bitmap, 0,   "i", 0,  "j",
       0,       0 },
 
@@ -851,7 +886,7 @@ button_t buttons_sx[] = {
       1,        0, 0, 0,    0,   ", ", 0,  " k", 0,     0 },
     { "SPC", 0, 0, 0x01, 180, 400,  46, 26,   WHITE, "SPC",
       0,     0, 0, 0,    0,   "l ", 0,  " m", 0,     0 },
-    { "PLUS", 0,     0, 0x00,       240,         400,       46, 26,
+    { "PLUS", 0,     0, 0x00,       240,         400,         46, 26,
       WHITE,  0,     0, plus_width, plus_height, plus_bitmap, 0,  "{ }",
       0,      ": :", 0, 0 },
 
@@ -987,27 +1022,61 @@ button_t buttons_gx[] = {
       0,     0, 0, 0,    "I", 0,  0,  "MODES", 0,     0 },
     { "VAR", 0, 0, 0x72, 150, 50, 36, 26,       WHITE, "VAR",
       0,     0, 0, 0,    "J", 0,  0,  "MEMORY", 0,     0 },
-    { "UP", 0,        0,         0x71,    200, 50, 36, 26,      WHITE, 0,
+    { "UP", 0,        0,         0x71,      200, 50, 36, 26,      WHITE, 0,
       0,    up_width, up_height, up_bitmap, "K", 0,  0,  "STACK", 0,     0 },
     { "NXT", 0, 0, 0x70, 250, 50,     36, 26,     WHITE, "NXT",
       0,     0, 0, 0,    "L", "PREV", 0,  "MENU", 0,     0 },
 
-    { "COLON", 0, 0,           0x04,         0,          100, 36,   26, WHITE,
-      0,       0, colon_width, colon_height, colon_bitmap, "M", "UP", 0,  "HOME",
-      0,       0 },
+    { "COLON",
+      0,
+      0,
+      0x04,
+      0,
+      100,
+      36,
+      26,
+      WHITE,
+      0,
+      0,
+      colon_width,
+      colon_height,
+      colon_bitmap,
+      "M",
+      "UP",
+      0,
+      "HOME",
+      0,
+      0 },
     { "STO", 0, 0, 0x64, 50,  100,   36, 26,    WHITE, "STO",
       0,     0, 0, 0,    "N", "DEF", 0,  "RCL", 0,     0 },
     { "EVAL", 0, 0, 0x63, 100, 100,    36, 26,     WHITE, "EVAL",
       0,      0, 0, 0,    "O", "aNUM", 0,  "UNDO", 0,     0 },
-    { "LEFT", 0, 0, 0x62,       150,         100,       36,  26,
+    { "LEFT", 0, 0, 0x62,       150,         100,         36,  26,
       WHITE,  0, 0, left_width, left_height, left_bitmap, "P", "PICTURE",
       0,      0, 0, 0 },
-    { "DOWN", 0, 0, 0x61,       200,         100,       36,  26,
+    { "DOWN", 0, 0, 0x61,       200,         100,         36,  26,
       WHITE,  0, 0, down_width, down_height, down_bitmap, "Q", "VIEW",
       0,      0, 0, 0 },
-    { "RIGHT", 0, 0,           0x60,         250,        100, 36,     26, WHITE,
-      0,       0, right_width, right_height, right_bitmap, "R", "SWAP", 0,  0,
-      0,       0 },
+    { "RIGHT",
+      0,
+      0,
+      0x60,
+      250,
+      100,
+      36,
+      26,
+      WHITE,
+      0,
+      0,
+      right_width,
+      right_height,
+      right_bitmap,
+      "R",
+      "SWAP",
+      0,
+      0,
+      0,
+      0 },
 
     { "SIN", 0, 0, 0x34, 0,   150,    36, 26,  WHITE, "SIN",
       0,     0, 0, 0,    "S", "ASIN", 0,  "b", 0,     0 },
@@ -1015,12 +1084,13 @@ button_t buttons_gx[] = {
       0,     0, 0, 0,    "T", "ACOS", 0,  "c", 0,     0 },
     { "TAN", 0, 0, 0x53, 100, 150,    36, 26,  WHITE, "TAN",
       0,     0, 0, 0,    "U", "ATAN", 0,  "d", 0,     0 },
-    { "SQRT", 0,          0,           0x52,      150, 150, 36, 26,  WHITE, 0,
-      0,      sqrt_width, sqrt_height, sqrt_bitmap, "V", "n", 0,  "o", 0,     0 },
-    { "POWER", 0, 0,           0x51,         200,        150, 36,  26, WHITE,
+    { "SQRT", 0,   0, 0x52,       150,         150,         36,  26,
+      WHITE,  0,   0, sqrt_width, sqrt_height, sqrt_bitmap, "V", "n",
+      0,      "o", 0, 0 },
+    { "POWER", 0, 0,           0x51,         200,          150, 36,  26, WHITE,
       0,       0, power_width, power_height, power_bitmap, "W", "p", 0,  "LOG",
       0,       0 },
-    { "INV", 0,         0,          0x50,     250, 150, 36, 26,   WHITE, 0,
+    { "INV", 0,         0,          0x50,       250, 150, 36, 26,   WHITE, 0,
       0,     inv_width, inv_height, inv_bitmap, "X", "q", 0,  "LN", 0,     0 },
 
     { "ENTER", 0, 0, 0x44, 0, 200,        86, 26,       WHITE, "ENTER",
@@ -1032,7 +1102,7 @@ button_t buttons_gx[] = {
       0,     0, 0, 0,    "Z", "PURG", 0,  "ARG", 0,     0 },
     { "DEL", 0, 0, 0x41, 200, 200,     36, 26, WHITE, "DEL",
       0,     0, 0, 0,    0,   "CLEAR", 0,  0,  0,     0 },
-    { "BS", 0,        0,         0x40,    250, 200,    36, 26, WHITE, 0,
+    { "BS", 0,        0,         0x40,      250, 200,    36, 26, WHITE, 0,
       0,    bs_width, bs_height, bs_bitmap, 0,   "DROP", 0,  0,  0,     0 },
 
     { "ALPHA",
@@ -1061,10 +1131,10 @@ button_t buttons_gx[] = {
       1,   0, 0, 0,    0,   0,   1,  "PLOT", 0,     0 },
     { "9", 0, 0, 0x31, 180, 250, 46, 26,         WHITE, "9",
       1,   0, 0, 0,    0,   0,   1,  "SYMBOLIC", 0,     0 },
-    { "DIV", 0,         0,          0x30,     240, 250,  46, 26,  WHITE, 0,
+    { "DIV", 0,         0,          0x30,       240, 250,  46, 26,  WHITE, 0,
       0,     div_width, div_height, div_bitmap, 0,   "r ", 0,  "s", 0,     0 },
 
-    { "SHL", 0,         0,          0x25,     0, 300, 36, 26, LEFT, 0,
+    { "SHL", 0,         0,          0x25,       0, 300, 36, 26, LEFT, 0,
       0,     shl_width, shl_height, shl_bitmap, 0, 0,   0,  0,  0,    0 },
     { "4", 0, 0, 0x23, 60, 300, 46, 26,     WHITE, "4",
       1,   0, 0, 0,    0,  0,   1,  "TIME", 0,     0 },
@@ -1072,10 +1142,10 @@ button_t buttons_gx[] = {
       1,   0, 0, 0,    0,   0,   1,  "STAT", 0,     0 },
     { "6", 0, 0, 0x21, 180, 300, 46, 26,      WHITE, "6",
       1,   0, 0, 0,    0,   0,   1,  "UNITS", 0,     0 },
-    { "MUL", 0,         0,          0x20,     240, 300,  46, 26,  WHITE, 0,
+    { "MUL", 0,         0,          0x20,       240, 300,  46, 26,  WHITE, 0,
       0,     mul_width, mul_height, mul_bitmap, 0,   "t ", 0,  "u", 0,     0 },
 
-    { "SHR", 0,         0,          0x15,     0, 350, 36, 26,  RIGHT, 0,
+    { "SHR", 0,         0,          0x15,       0, 350, 36, 26,  RIGHT, 0,
       0,     shr_width, shr_height, shr_bitmap, 0, 0,   1,  " ", 0,     0 },
     { "1", 0, 0, 0x13, 60, 350, 46, 26,    WHITE, "1",
       1,   0, 0, 0,    0,  0,   1,  "I/O", 0,     0 },
@@ -1083,7 +1153,7 @@ button_t buttons_gx[] = {
       1,   0, 0, 0,    0,   0,   1,  "LIBRARY", 0,     0 },
     { "3", 0, 0, 0x11, 180, 350, 46, 26,       WHITE, "3",
       1,   0, 0, 0,    0,   0,   1,  "EQ LIB", 0,     0 },
-    { "MINUS", 0, 0,           0x10,         240,        350, 46,   26, WHITE,
+    { "MINUS", 0, 0,           0x10,         240,          350, 46,   26, WHITE,
       0,       0, minus_width, minus_height, minus_bitmap, 0,   "v ", 0,  "w",
       0,       0 },
 
@@ -1095,8 +1165,9 @@ button_t buttons_gx[] = {
       1,        0, 0, 0,    0,   "\002 ", 0,  "\001", 0,     0 },
     { "SPC", 0, 0, 0x01, 180, 400,     46, 26,  WHITE, "SPC",
       0,     0, 0, 0,    0,   "\005 ", 0,  "z", 0,     0 },
-    { "PLUS",     0,           0,         0x00, 240,  400, 46,  26, WHITE, 0, 0,
-      plus_width, plus_height, plus_bitmap, 0,    "x ", 0,   "y", 0,  0 },
+    { "PLUS", 0,   0, 0x00,       240,         400,         46, 26,
+      WHITE,  0,   0, plus_width, plus_height, plus_bitmap, 0,  "x ",
+      0,      "y", 0, 0 },
 
     { 0 } };
 
@@ -1150,7 +1221,8 @@ icon_map_t icon_maps_gx[] = {
     { hp48_text_gx_width, hp48_text_gx_height, LABEL, hp48_text_gx_bitmap },
     { hp48_keys_width, hp48_keys_height, BLACK, hp48_keys_bitmap },
     { hp48_orange_width, hp48_orange_height, LEFT, hp48_orange_bitmap },
-    { hp48_green_gx_width, hp48_green_gx_height, RIGHT, hp48_green_gx_bitmap } };
+    { hp48_green_gx_width, hp48_green_gx_height, RIGHT,
+      hp48_green_gx_bitmap } };
 
 #define KEYBOARD_HEIGHT ( buttons[ LAST_BUTTON ].y + buttons[ LAST_BUTTON ].h )
 #define KEYBOARD_WIDTH ( buttons[ LAST_BUTTON ].x + buttons[ LAST_BUTTON ].w )
@@ -2791,8 +2863,9 @@ void DrawMore( unsigned int w, unsigned int h, unsigned int offset_y,
         XSetForeground( dpy, gc, COLOR( LOGO ) );
         x = DISPLAY_OFFSET_X + hp_width;
         y = hp_height + 8 - hp48gx_height;
-        pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )hp48gx_bitmap,
-                                     hp48gx_width, hp48gx_height );
+        pix =
+            XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )hp48gx_bitmap,
+                                   hp48gx_width, hp48gx_height );
         XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, hp48gx_width,
                     hp48gx_height, x, y, 1 );
         XFreePixmap( dpy, pix );
@@ -2801,9 +2874,9 @@ void DrawMore( unsigned int w, unsigned int h, unsigned int offset_y,
         x = DISPLAY_OFFSET_X + DISPLAY_WIDTH - gx_128K_ram_width +
             gx_silver_x_hot + 2;
         y = 10 + gx_silver_y_hot;
-        pix =
-            XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )gx_silver_bitmap,
-                                   gx_silver_width, gx_silver_height );
+        pix = XCreateBitmapFromData( dpy, keypad->pixmap,
+                                     ( char* )gx_silver_bitmap, gx_silver_width,
+                                     gx_silver_height );
         XSetStipple( dpy, gc, pix );
         XSetTSOrigin( dpy, gc, x, y );
         XFillRectangle( dpy, keypad->pixmap, gc, x, y, gx_silver_width,
@@ -2814,9 +2887,9 @@ void DrawMore( unsigned int w, unsigned int h, unsigned int offset_y,
         x = DISPLAY_OFFSET_X + display_width - gx_128K_ram_width +
             gx_green_x_hot + 2;
         y = 10 + gx_green_y_hot;
-        pix =
-            XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )gx_green_bitmap,
-                                   gx_green_width, gx_green_height );
+        pix = XCreateBitmapFromData( dpy, keypad->pixmap,
+                                     ( char* )gx_green_bitmap, gx_green_width,
+                                     gx_green_height );
         XSetStipple( dpy, gc, pix );
         XSetTSOrigin( dpy, gc, x, y );
         XFillRectangle( dpy, keypad->pixmap, gc, x, y, gx_green_width,
@@ -2829,8 +2902,9 @@ void DrawMore( unsigned int w, unsigned int h, unsigned int offset_y,
         x = DISPLAY_OFFSET_X;
         y = TOP_SKIP - DISP_FRAME - hp48sx_height - 3;
 
-        pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )hp48sx_bitmap,
-                                     hp48sx_width, hp48sx_height );
+        pix =
+            XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )hp48sx_bitmap,
+                                   hp48sx_width, hp48sx_height );
 
         XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, hp48sx_width,
                     hp48sx_height, x, y, 1 );
@@ -2840,8 +2914,9 @@ void DrawMore( unsigned int w, unsigned int h, unsigned int offset_y,
         x = DISPLAY_OFFSET_X + display_width - 1 - science_width;
         y = TOP_SKIP - DISP_FRAME - science_height - 4;
 
-        pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )science_bitmap,
-                                     science_width, science_height );
+        pix =
+            XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )science_bitmap,
+                                   science_width, science_height );
 
         XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, science_width,
                     science_height, x, y, 1 );
@@ -4306,7 +4381,8 @@ void SDLDrawLogo( unsigned int w, unsigned int h, unsigned int cut,
             gx_green_x_hot + 2;
         y = 10 + gx_green_y_hot;
         surf = SDLCreateSurfFromData(
-            gx_green_width, gx_green_height, gx_green_bitmap, ARGBColors[ RIGHT ],
+            gx_green_width, gx_green_height, gx_green_bitmap,
+            ARGBColors[ RIGHT ],
             0 ); // Background transparent: draw only green menu
         srect.x = 0;
         srect.y = 0;

@@ -491,7 +491,7 @@ int read_files( void ) {
     strcpy( fnam, path );
     strcat( fnam, "rom" );
     if ( !read_rom_file( fnam, &saturn.rom, &rom_size ) )
-      return 0;
+        return 0;
 
     if ( verbose )
         printf( "read %s\n", fnam );

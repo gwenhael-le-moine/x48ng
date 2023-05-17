@@ -324,7 +324,7 @@ static unsigned char hp48_bottom_bitmap[] = {
 #define hp48_logo_width 13
 #define hp48_logo_height 4
 static unsigned char hp48_logo_bitmap[] = { 0x00, 0x00, 0x00, 0x00,
-                                          0xf8, 0x1f, 0xf8, 0x1f };
+                                            0xf8, 0x1f, 0xf8, 0x1f };
 
 #define hp48_text_width 29
 #define hp48_text_height 7
@@ -415,7 +415,7 @@ static unsigned char hp48_top_gx_bitmap[] = {
 #define hp48_logo_gx_width 16
 #define hp48_logo_gx_height 4
 static unsigned char hp48_logo_gx_bitmap[] = { 0x00, 0x00, 0x00, 0x00,
-                                             0xf8, 0xf7, 0xf8, 0xf7 };
+                                               0xf8, 0xf7, 0xf8, 0xf7 };
 
 #define hp48_text_gx_width 29
 #define hp48_text_gx_height 7
@@ -563,15 +563,15 @@ static unsigned char bs_bitmap[] = {
 
 #define alpha_width 12
 #define alpha_height 10
-static unsigned char alpha_bitmap[] = { 0x78, 0x00, 0x84, 0x08, 0x82, 0x09, 0x83,
-                                      0x05, 0x83, 0x05, 0x83, 0x03, 0x83, 0x01,
-                                      0x83, 0x01, 0x46, 0x09, 0x3c, 0x06 };
+static unsigned char alpha_bitmap[] = {
+    0x78, 0x00, 0x84, 0x08, 0x82, 0x09, 0x83, 0x05, 0x83, 0x05,
+    0x83, 0x03, 0x83, 0x01, 0x83, 0x01, 0x46, 0x09, 0x3c, 0x06 };
 
 #define div_width 10
 #define div_height 10
 static unsigned char div_bitmap[] = { 0x30, 0x00, 0x30, 0x00, 0x00, 0x00, 0x00,
-                                    0x00, 0xff, 0x03, 0xff, 0x03, 0x00, 0x00,
-                                    0x00, 0x00, 0x30, 0x00, 0x30, 0x00 };
+                                      0x00, 0xff, 0x03, 0xff, 0x03, 0x00, 0x00,
+                                      0x00, 0x00, 0x30, 0x00, 0x30, 0x00 };
 
 #define shl_width 24
 #define shl_height 14
@@ -584,8 +584,8 @@ static unsigned char shl_bitmap[] = {
 #define mul_width 10
 #define mul_height 10
 static unsigned char mul_bitmap[] = { 0x03, 0x03, 0x87, 0x03, 0xce, 0x01, 0xfc,
-                                    0x00, 0x78, 0x00, 0x78, 0x00, 0xfc, 0x00,
-                                    0xce, 0x01, 0x87, 0x03, 0x03, 0x03 };
+                                      0x00, 0x78, 0x00, 0x78, 0x00, 0xfc, 0x00,
+                                      0xce, 0x01, 0x87, 0x03, 0x03, 0x03 };
 
 #define shr_width 24
 #define shr_height 14
@@ -597,20 +597,20 @@ static unsigned char shr_bitmap[] = {
 
 #define minus_width 10
 #define minus_height 10
-static unsigned char minus_bitmap[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                                      0x00, 0xff, 0x03, 0xff, 0x03, 0x00, 0x00,
-                                      0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+static unsigned char minus_bitmap[] = {
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x03,
+    0xff, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 #define plus_width 10
 #define plus_height 10
 static unsigned char plus_bitmap[] = { 0x30, 0x00, 0x30, 0x00, 0x30, 0x00, 0x30,
-                                     0x00, 0xff, 0x03, 0xff, 0x03, 0x30, 0x00,
-                                     0x30, 0x00, 0x30, 0x00, 0x30, 0x00 };
+                                       0x00, 0xff, 0x03, 0xff, 0x03, 0x30, 0x00,
+                                       0x30, 0x00, 0x30, 0x00, 0x30, 0x00 };
 
 #define colon_width 2
 #define colon_height 10
 static unsigned char colon_bitmap[] = { 0x03, 0x03, 0x03, 0x03, 0x00,
-                                      0x00, 0x00, 0x00, 0x00, 0x00 };
+                                        0x00, 0x00, 0x00, 0x00, 0x00 };
 
 /* Below used only for X11 */
 #define last_width 120
@@ -636,45 +636,47 @@ static unsigned char last_bitmap[] = {
 #define blank_width 4
 #define blank_height 7
 static unsigned char blank_bitmap[] = { 0x00, 0x00, 0x00, 0x00,
-                                      0x00, 0x00, 0x00 };
+                                        0x00, 0x00, 0x00 };
 
 #define hash_width 5
 #define hash_height 7
-static unsigned char hash_bitmap[] = { 0x00, 0x0a, 0x1f, 0x0a, 0x0a, 0x1f, 0x0a };
+static unsigned char hash_bitmap[] = { 0x00, 0x0a, 0x1f, 0x0a,
+                                       0x0a, 0x1f, 0x0a };
 
 #define lbrace_width 3
 #define lbrace_height 7
 static unsigned char lbrace_bitmap[] = { 0x04, 0x02, 0x01, 0x01,
-                                       0x01, 0x02, 0x04 };
+                                         0x01, 0x02, 0x04 };
 
 #define rbrace_width 3
 #define rbrace_height 7
 static unsigned char rbrace_bitmap[] = { 0x01, 0x02, 0x04, 0x04,
-                                       0x04, 0x02, 0x01 };
+                                         0x04, 0x02, 0x01 };
 
 #define comma_width 3
 #define comma_height 7
 static unsigned char comma_bitmap[] = { 0x00, 0x00, 0x00, 0x00,
-                                      0x06, 0x06, 0x03 };
+                                        0x06, 0x06, 0x03 };
 
 #define slash_width 3
 #define slash_height 7
 static unsigned char slash_bitmap[] = { 0x04, 0x04, 0x02, 0x02,
-                                      0x02, 0x01, 0x01 };
+                                        0x02, 0x01, 0x01 };
 
 #define two_width 5
 #define two_height 7
-static unsigned char two_bitmap[] = { 0x0e, 0x11, 0x10, 0x08, 0x04, 0x02, 0x1f };
+static unsigned char two_bitmap[] = { 0x0e, 0x11, 0x10, 0x08,
+                                      0x04, 0x02, 0x1f };
 
 #define three_width 5
 #define three_height 7
 static unsigned char three_bitmap[] = { 0x0e, 0x11, 0x10, 0x0c,
-                                      0x10, 0x11, 0x0e };
+                                        0x10, 0x11, 0x0e };
 
 #define small_colon_width 2
 #define small_colon_height 7
 static unsigned char small_colon_bitmap[] = { 0x00, 0x03, 0x03, 0x00,
-                                            0x03, 0x03, 0x00 };
+                                              0x03, 0x03, 0x00 };
 
 #define A_width 5
 #define A_height 7
@@ -783,37 +785,38 @@ static unsigned char Z_bitmap[] = { 0x1f, 0x10, 0x08, 0x04, 0x02, 0x01, 0x1f };
 #define lbracket_width 3
 #define lbracket_height 7
 static unsigned char lbracket_bitmap[] = { 0x07, 0x01, 0x01, 0x01,
-                                         0x01, 0x01, 0x07 };
+                                           0x01, 0x01, 0x07 };
 
 #define rbracket_width 3
 #define rbracket_height 7
 static unsigned char rbracket_bitmap[] = { 0x07, 0x04, 0x04, 0x04,
-                                         0x04, 0x04, 0x07 };
+                                           0x04, 0x04, 0x07 };
 
 #define arrow_width 7
 #define arrow_height 7
 static unsigned char arrow_bitmap[] = { 0x00, 0x08, 0x18, 0x3f,
-                                      0x18, 0x08, 0x00 };
+                                        0x18, 0x08, 0x00 };
 
 #define diff_width 5
 #define diff_height 7
-static unsigned char diff_bitmap[] = { 0x0e, 0x10, 0x10, 0x1e, 0x11, 0x11, 0x0e };
+static unsigned char diff_bitmap[] = { 0x0e, 0x10, 0x10, 0x1e,
+                                       0x11, 0x11, 0x0e };
 
 #define integral_width 5
 #define integral_height 8
 static unsigned char integral_bitmap[] = { 0x0c, 0x12, 0x02, 0x04,
-                                         0x04, 0x08, 0x09, 0x06 };
+                                           0x04, 0x08, 0x09, 0x06 };
 
 #define sigma_width 6
 #define sigma_height 9
 static unsigned char sigma_bitmap[] = { 0x3f, 0x21, 0x02, 0x04, 0x08,
-                                      0x04, 0x02, 0x21, 0x3f };
+                                        0x04, 0x02, 0x21, 0x3f };
 
 #define sqr_width 11
 #define sqr_height 10
 static unsigned char sqr_bitmap[] = { 0x00, 0x03, 0x80, 0x04, 0x00, 0x04, 0x00,
-                                    0x02, 0x26, 0x01, 0x94, 0x07, 0x08, 0x00,
-                                    0x14, 0x00, 0x53, 0x00, 0x21, 0x00 };
+                                      0x02, 0x26, 0x01, 0x94, 0x07, 0x08, 0x00,
+                                      0x14, 0x00, 0x53, 0x00, 0x21, 0x00 };
 
 #define root_width 18
 #define root_height 13
@@ -826,35 +829,36 @@ static unsigned char root_bitmap[] = {
 #define pow10_width 13
 #define pow10_height 9
 static unsigned char pow10_bitmap[] = { 0x00, 0x12, 0x00, 0x0c, 0x32, 0x04,
-                                      0x4b, 0x0a, 0x4a, 0x09, 0x4a, 0x00,
-                                      0x4a, 0x00, 0x4a, 0x00, 0x32, 0x00 };
+                                        0x4b, 0x0a, 0x4a, 0x09, 0x4a, 0x00,
+                                        0x4a, 0x00, 0x4a, 0x00, 0x32, 0x00 };
 
 #define exp_width 11
 #define exp_height 9
 static unsigned char exp_bitmap[] = { 0x80, 0x04, 0x00, 0x03, 0x00, 0x01,
-                                    0x8c, 0x02, 0x52, 0x02, 0x09, 0x00,
-                                    0x07, 0x00, 0x21, 0x00, 0x1e, 0x00 };
+                                      0x8c, 0x02, 0x52, 0x02, 0x09, 0x00,
+                                      0x07, 0x00, 0x21, 0x00, 0x1e, 0x00 };
 
 #define under_width 6
 #define under_height 7
 static unsigned char under_bitmap[] = { 0x00, 0x00, 0x00, 0x00,
-                                      0x00, 0x00, 0x3f };
+                                        0x00, 0x00, 0x3f };
 
 #define prog_width 16
 #define prog_height 7
-static unsigned char prog_bitmap[] = { 0x48, 0x12, 0x24, 0x24, 0x12, 0x48, 0x09,
-                                     0x90, 0x12, 0x48, 0x24, 0x24, 0x48, 0x12 };
+static unsigned char prog_bitmap[] = { 0x48, 0x12, 0x24, 0x24, 0x12,
+                                       0x48, 0x09, 0x90, 0x12, 0x48,
+                                       0x24, 0x24, 0x48, 0x12 };
 
 #define string_width 10
 #define string_height 7
 static unsigned char string_bitmap[] = { 0x85, 0x02, 0x85, 0x02, 0x85,
-                                       0x02, 0x00, 0x00, 0x00, 0x00,
-                                       0x00, 0x00, 0x00, 0x00 };
+                                         0x02, 0x00, 0x00, 0x00, 0x00,
+                                         0x00, 0x00, 0x00, 0x00 };
 
 #define equal_width 5
 #define equal_height 7
 static unsigned char equal_bitmap[] = { 0x00, 0x1f, 0x00, 0x00,
-                                      0x1f, 0x00, 0x00 };
+                                        0x1f, 0x00, 0x00 };
 
 #define nl_width 8
 #define nl_height 7
@@ -867,24 +871,24 @@ static unsigned char pi_bitmap[] = { 0x20, 0x1f, 0x12, 0x12, 0x12, 0x12, 0x12 };
 #define angle_width 8
 #define angle_height 7
 static unsigned char angle_bitmap[] = { 0x40, 0x20, 0x10, 0x28,
-                                      0x44, 0x42, 0xff };
+                                        0x44, 0x42, 0xff };
 
 #define lcurly_width 5
 #define lcurly_height 7
 static unsigned char lcurly_bitmap[] = { 0x18, 0x04, 0x04, 0x02,
-                                       0x04, 0x04, 0x18 };
+                                         0x04, 0x04, 0x18 };
 
 #define rcurly_width 5
 #define rcurly_height 7
 static unsigned char rcurly_bitmap[] = { 0x03, 0x04, 0x04, 0x08,
-                                       0x04, 0x04, 0x03 };
+                                         0x04, 0x04, 0x03 };
 
 #define sqr_gx_width 11
 #define sqr_gx_height 13
-static unsigned char sqr_gx_bitmap[] = { 0x00, 0x03, 0x80, 0x04, 0x00, 0x04, 0x00,
-                                       0x02, 0x00, 0x01, 0x80, 0x07, 0x00, 0x00,
-                                       0x66, 0x00, 0x14, 0x00, 0x08, 0x00, 0x14,
-                                       0x00, 0x53, 0x00, 0x21, 0x00 };
+static unsigned char sqr_gx_bitmap[] = {
+    0x00, 0x03, 0x80, 0x04, 0x00, 0x04, 0x00, 0x02, 0x00,
+    0x01, 0x80, 0x07, 0x00, 0x00, 0x66, 0x00, 0x14, 0x00,
+    0x08, 0x00, 0x14, 0x00, 0x53, 0x00, 0x21, 0x00 };
 
 #define root_gx_width 18
 #define root_gx_height 15
@@ -915,7 +919,7 @@ static unsigned char parens_gx_bitmap[] = {
 #define hash_gx_width 8
 #define hash_gx_height 12
 static unsigned char hash_gx_bitmap[] = { 0x00, 0x00, 0x48, 0x48, 0xfe, 0x24,
-                                        0x24, 0x7f, 0x12, 0x12, 0x00, 0x00 };
+                                          0x24, 0x7f, 0x12, 0x12, 0x00, 0x00 };
 
 #define bracket_gx_width 12
 #define bracket_gx_height 12
@@ -951,7 +955,7 @@ static unsigned char curly_gx_bitmap[] = {
 #define colon_gx_width 8
 #define colon_gx_height 12
 static unsigned char colon_gx_bitmap[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0xc3,
-                                         0xc3, 0x00, 0x00, 0xc3, 0xc3, 0x00 };
+                                           0xc3, 0x00, 0x00, 0xc3, 0xc3, 0x00 };
 
 #define angle_gx_width 12
 #define angle_gx_height 12
@@ -975,7 +979,7 @@ static unsigned char nl_gx_bitmap[] = {
 #define comma_gx_width 3
 #define comma_gx_height 12
 static unsigned char comma_gx_bitmap[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                                         0x07, 0x07, 0x07, 0x04, 0x04, 0x02 };
+                                           0x07, 0x07, 0x07, 0x04, 0x04, 0x02 };
 
 #define arrow_gx_width 18
 #define arrow_gx_height 12
@@ -987,7 +991,7 @@ static unsigned char arrow_gx_bitmap[] = {
 #define equal_gx_width 8
 #define equal_gx_height 12
 static unsigned char equal_gx_bitmap[] = { 0x00, 0x00, 0x00, 0xff, 0xff, 0x00,
-                                         0x00, 0xff, 0xff, 0x00, 0x00, 0x00 };
+                                           0x00, 0xff, 0xff, 0x00, 0x00, 0x00 };
 
 typedef struct letter_t {
     unsigned int w, h;
@@ -1091,26 +1095,26 @@ static letter_t small_font[] = {
     { rbracket_width, rbracket_height, rbracket_bitmap },
     { 0, 0, 0 },
     { under_width, under_height, under_bitmap },
-    { 0, 0, 0 },                                        /* # 96 */
-    { arrow_width, arrow_height, arrow_bitmap },          /* a == left arrow   */
-    { diff_width, diff_height, diff_bitmap },             /* b == differential */
-    { integral_width, integral_height, integral_bitmap }, /* c == integral */
-    { sigma_width, sigma_height, sigma_bitmap },          /* d == sigma */
-    { sqr_width, sqr_height, sqr_bitmap },                /* e == sqr */
-    { root_width, root_height, root_bitmap },             /* f == root */
-    { pow10_width, pow10_height, pow10_bitmap },          /* g == pow10 */
-    { exp_width, exp_height, exp_bitmap },                /* h == exp */
-    { prog_width, prog_height, prog_bitmap },             /* i == << >> */
-    { string_width, string_height, string_bitmap },       /* j == " " */
-    { nl_width, nl_height, nl_bitmap },                   /* k == New Line */
-    { pi_width, pi_height, pi_bitmap },                   /* l == pi */
-    { angle_width, angle_height, angle_bitmap },          /* m == angle */
-    { sqr_gx_width, sqr_gx_height, sqr_gx_bitmap },       /* n == sqr gx */
-    { root_gx_width, root_gx_height, root_gx_bitmap },    /* o == root gx */
-    { pow10_gx_width, pow10_gx_height, pow10_gx_bitmap }, /* p == pow10 gx */
-    { exp_gx_width, exp_gx_height, exp_gx_bitmap },       /* q == exp gx */
-    { parens_gx_width, parens_gx_height, parens_gx_bitmap },    /* r == ( ) gx */
-    { hash_gx_width, hash_gx_height, hash_gx_bitmap },          /* s == # gx */
+    { 0, 0, 0 },                                 /* # 96 */
+    { arrow_width, arrow_height, arrow_bitmap }, /* a == left arrow   */
+    { diff_width, diff_height, diff_bitmap },    /* b == differential */
+    { integral_width, integral_height, integral_bitmap },    /* c == integral */
+    { sigma_width, sigma_height, sigma_bitmap },             /* d == sigma */
+    { sqr_width, sqr_height, sqr_bitmap },                   /* e == sqr */
+    { root_width, root_height, root_bitmap },                /* f == root */
+    { pow10_width, pow10_height, pow10_bitmap },             /* g == pow10 */
+    { exp_width, exp_height, exp_bitmap },                   /* h == exp */
+    { prog_width, prog_height, prog_bitmap },                /* i == << >> */
+    { string_width, string_height, string_bitmap },          /* j == " " */
+    { nl_width, nl_height, nl_bitmap },                      /* k == New Line */
+    { pi_width, pi_height, pi_bitmap },                      /* l == pi */
+    { angle_width, angle_height, angle_bitmap },             /* m == angle */
+    { sqr_gx_width, sqr_gx_height, sqr_gx_bitmap },          /* n == sqr gx */
+    { root_gx_width, root_gx_height, root_gx_bitmap },       /* o == root gx */
+    { pow10_gx_width, pow10_gx_height, pow10_gx_bitmap },    /* p == pow10 gx */
+    { exp_gx_width, exp_gx_height, exp_gx_bitmap },          /* q == exp gx */
+    { parens_gx_width, parens_gx_height, parens_gx_bitmap }, /* r == ( ) gx */
+    { hash_gx_width, hash_gx_height, hash_gx_bitmap },       /* s == # gx */
     { bracket_gx_width, bracket_gx_height, bracket_gx_bitmap }, /* t == [] gx */
     { under_gx_width, under_gx_height, under_gx_bitmap },       /* u == _ gx */
     { prog_gx_width, prog_gx_height, prog_gx_bitmap },    /* v == << >> gx */

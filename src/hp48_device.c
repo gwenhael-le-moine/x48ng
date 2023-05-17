@@ -358,7 +358,8 @@ void update_display( void ) {
                 for ( j = 0; j < line_length; j++ ) {
                     val = read_nibble( addr++ );
                     disp.disp_image->data[ data_addr++ ] = nibble_bitmap[ val ];
-                    disp.disp_image->data[ data_addr_2++ ] = nibble_bitmap[ val ];
+                    disp.disp_image->data[ data_addr_2++ ] =
+                        nibble_bitmap[ val ];
                 }
                 addr += addr_pad;
                 data_addr += line_pad;
