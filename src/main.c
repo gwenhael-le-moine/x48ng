@@ -93,7 +93,6 @@ int main( int argc, char** argv ) {
 
     init_display();
 
-
     /*****************************************/
     /* handlers for SIGALRM, SIGINT, SIGPIPE */
     /*****************************************/

@@ -1136,9 +1136,9 @@ long read_nibbles( long addr, int len ) {
     long val = 0;
 
     addr += len;
-    while ( len-- > 0 ) {
+    while ( len-- > 0 )
         val = ( val << 4 ) | read_nibble( --addr );
-    }
+
     return val;
 }
 

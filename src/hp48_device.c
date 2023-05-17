@@ -292,13 +292,13 @@ static inline void draw_nibble( int c, int r, int val ) {
 #if defined( GUI_IS_X11 )
     y = ( r * 2 ) + 20;
 #elif defined( GUI_IS_SDL1 )
-    y = r;                // y: start in pixels
+    y = r;         // y: start in pixels
 #endif
     val &= 0x0f;
     if ( val != lcd_buffer[ r ][ c ] ) {
 #if defined( GUI_IS_X11 )
         XCopyPlane( dpy, nibble_maps[ val ], disp.win, disp.gc, 0, 0, 8, 2, x,
-                   y, 1 );
+                    y, 1 );
 #endif
         lcd_buffer[ r ][ c ] = val;
     }
@@ -554,19 +554,17 @@ void draw_annunc( void ) {
 #endif
     for ( int i = 0; ann_tbl[ i ].bit; i++ ) {
 #if defined( GUI_IS_X11 )
-        if ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit ) {
+        if ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit )
             XCopyPlane( dpy, ann_tbl[ i ].pixmap, disp.win, disp.gc, 0, 0,
                         ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].x,
                         ann_tbl[ i ].y, 1 );
-        } else {
+        else
             XClearArea( dpy, disp.win, ann_tbl[ i ].x, ann_tbl[ i ].y,
                         ann_tbl[ i ].width, ann_tbl[ i ].height, False );
-        }
+
 #elif defined( GUI_IS_SDL1 )
-        if ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit )
-            sdl_annuncstate[ i ] = 1;
-        else
-            sdl_annuncstate[ i ] = 0;
+        sdl_annuncstate[ i ] =
+            ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit ) ? 1 : 0;
 #endif
     }
 #if defined( GUI_IS_X11 )

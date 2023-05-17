@@ -30,10 +30,7 @@ int main( int argc, char** argv ) {
         exit( 1 );
     }
 
-    if ( opt_gx != 0 )
-        ver_addr = 0x7ffbf;
-    else
-        ver_addr = 0x7fff0;
+    ver_addr = ( opt_gx != 0 ) ? 0x7ffbf : 0x7fff0;
 
     for ( i = 0; i < 6; i++ ) {
         version[ i ] = rom[ ver_addr + 2 * i + 1 ] << 4;
@@ -42,15 +39,13 @@ int main( int argc, char** argv ) {
     version[ 6 ] = '\0';
     printf( "ROM Version is %s\n", version );
 
-    for ( i = 0x100; i < 0x140; i++ ) {
+    for ( i = 0x100; i < 0x140; i++ )
         rom[ i ] = 0x0;
-    }
 
     fail = a = 0;
     D0 = 0x00000;
     D1 = 0x40000;
     for ( d = 1; d <= rom_size / 0x80000; d++ ) {
-
         crc = 0x0000;
         rom_crc = 0;
         for ( i = 0; i < 4; i++ ) {
@@ -66,13 +61,14 @@ int main( int argc, char** argv ) {
         d0 = D0;
         d1 = D1;
         for ( c = 0x3fff; c >= 0x0000; c-- ) {
-            for ( i = 0; i < 16; i++ ) {
+            for ( i = 0; i < 16; i++ )
                 calc_crc( rom[ d0 + i ] );
-            }
+
             d0 += 16;
-            for ( i = 0; i < 16; i++ ) {
+
+            for ( i = 0; i < 16; i++ )
                 calc_crc( rom[ d1 + i ] );
-            }
+
             d1 += 16;
         }
         D0 += 0x80000;
@@ -80,9 +76,8 @@ int main( int argc, char** argv ) {
         a = crc;
         a = ( ( a | 0xf0000 ) + 1 ) & 0xfffff;
 
-        if ( a != 0x00000 ) {
+        if ( a != 0x00000 )
             fail++;
-        }
     }
 
     if ( fail != 0 )

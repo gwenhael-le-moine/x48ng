@@ -163,10 +163,9 @@ int check_breakpoint( int type, word_20 addr ) {
         if ( bp->flags == 0 )
             continue;
         n--;
-        if ( bp->flags & BP_RANGE && addr >= bp->addr &&
-             addr <= bp->end_addr ) {
+        if ( bp->flags & BP_RANGE && addr >= bp->addr && addr <= bp->end_addr )
             goto hit_it;
-        }
+
         if ( bp->flags & type && addr == bp->addr ) {
         hit_it:
             if ( type == BP_READ ) {
@@ -175,9 +174,9 @@ int check_breakpoint( int type, word_20 addr ) {
             } else if ( type == BP_WRITE ) {
                 printf( "%.5lX: Write watchpoint %d hit at %.5lX\n", saturn.PC,
                         i, addr );
-            } else {
+            } else
                 printf( "Breakpoint %d hit at %.5lX\n", i, addr );
-            }
+
             return 1;
         }
     }
@@ -212,47 +211,40 @@ char* read_str( char* str, int n, int fp ) {
 }
 
 static inline void str_to_upper( char* arg ) {
-    int i;
-
-    for ( i = 0; i < strlen( arg ); i++ ) {
-        if ( 'a' <= arg[ i ] && arg[ i ] <= 'z' ) {
+    for ( int i = 0; i < strlen( arg ); i++ )
+        if ( 'a' <= arg[ i ] && arg[ i ] <= 'z' )
             arg[ i ] = ( char )( ( int )arg[ i ] - ( int )'a' + ( int )'A' );
-        }
-    }
 }
 
 static int decode_dec( int* num, char* arg ) {
-    int i;
-
     if ( arg == ( char* )0 ) {
         printf( "Command requires an argument.\n" );
         return 0;
     }
 
     *num = 0;
-    for ( i = 0; i < strlen( arg ); i++ ) {
+    for ( int i = 0; i < strlen( arg ); i++ ) {
         *num *= 10;
-        if ( '0' <= arg[ i ] && arg[ i ] <= '9' ) {
+        if ( '0' <= arg[ i ] && arg[ i ] <= '9' )
             *num += ( ( int )arg[ i ] - ( int )'0' );
-        } else {
+        else {
             *num = 0;
             printf( "Not a number: %s.\n", arg );
             return 0;
         }
     }
+
     return 1;
 }
 
 static int decode_20( word_20* addr, char* arg ) {
-    int i;
-
     if ( arg == ( char* )0 ) {
         printf( "Command requires an argument.\n" );
         return 0;
     }
 
     *addr = 0;
-    for ( i = 0; i < strlen( arg ); i++ ) {
+    for ( int i = 0; i < strlen( arg ); i++ ) {
         *addr <<= 4;
         if ( '0' <= arg[ i ] && arg[ i ] <= '9' ) {
             *addr |= ( ( int )arg[ i ] - ( int )'0' );
@@ -269,15 +261,13 @@ static int decode_20( word_20* addr, char* arg ) {
 }
 
 static int decode_32( word_32* addr, char* arg ) {
-    int i;
-
     if ( arg == ( char* )0 ) {
         printf( "Command requires an argument.\n" );
         return 0;
     }
 
     *addr = 0;
-    for ( i = 0; i < strlen( arg ); i++ ) {
+    for ( int i = 0; i < strlen( arg ); i++ ) {
         *addr <<= 4;
         if ( '0' <= arg[ i ] && arg[ i ] <= '9' ) {
             *addr |= ( ( int )arg[ i ] - ( int )'0' );
@@ -293,15 +283,13 @@ static int decode_32( word_32* addr, char* arg ) {
 }
 
 static int decode_64( word_64* addr, char* arg ) {
-    int i;
-
     if ( arg == ( char* )0 ) {
         printf( "Command requires an argument.\n" );
         return 0;
     }
 #ifdef SIMPLE_64
     *addr = 0;
-    for ( i = 0; i < strlen( arg ); i++ ) {
+    for ( int i = 0; i < strlen( arg ); i++ ) {
         *addr <<= 4;
         if ( '0' <= arg[ i ] && arg[ i ] <= '9' ) {
             *addr |= ( ( int )arg[ i ] - ( int )'0' );
@@ -315,7 +303,7 @@ static int decode_64( word_64* addr, char* arg ) {
     }
 #else
     addr->lo = addr->hi = 0;
-    for ( i = 0; i < strlen( arg ); i++ ) {
+    for ( int i = 0; i < strlen( arg ); i++ ) {
         addr->hi <<= 4;
         addr->hi |= ( ( addr->lo >> 28 ) & 0x0f );
         addr->lo <<= 4;

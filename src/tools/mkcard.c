@@ -55,19 +55,18 @@ int main( int argc, char** argv ) {
     else {
         fprintf(
             stderr,
-            "%s: size must be one of 32K, 128K, 256K, 512K, 1M, 2M, or 4M\n",
-            argv[ 0 ] );
+            "size must be one of 32K, 128K, 256K, 512K, 1M, 2M, or 4M\n" );
         exit( 1 );
     }
 
     if ( ( core = ( unsigned char* )malloc( size ) ) == NULL ) {
-        fprintf( stderr, "%s: can\'t malloc %ld bytes\n", argv[ 0 ], size );
+        fprintf( stderr, "can\'t malloc %ld bytes\n", size );
         exit( 1 );
     }
     memset( core, 0, size );
 
     if ( !write_mem_file( name, core, size ) ) {
-        fprintf( stderr, "%s: can\'t write to %s\n", argv[ 0 ], name );
+        fprintf( stderr, "can\'t write to %s\n", name );
         exit( 1 );
     }
 

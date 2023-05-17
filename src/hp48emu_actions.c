@@ -91,20 +91,16 @@ void swap_register_status( unsigned char* r ) {
     for ( i = 0; i < 12; i++ ) {
         tmp = saturn.PSTAT[ i ];
         saturn.PSTAT[ i ] = ( r[ i / 4 ] >> ( i % 4 ) ) & 1;
-        if ( tmp ) {
+        if ( tmp )
             r[ i / 4 ] |= 1 << ( i % 4 );
-        } else {
+        else
             r[ i / 4 ] &= ~( 1 << ( i % 4 ) ) & 0xf;
-        }
     }
 }
 
 void clear_status( void ) {
-    int i;
-
-    for ( i = 0; i < 12; i++ ) {
+    for ( int i = 0; i < 12; i++ )
         saturn.PSTAT[ i ] = 0;
-    }
 }
 
 void set_register_nibble( unsigned char* reg, int n, unsigned char val ) {
@@ -128,13 +124,12 @@ int get_register_bit( unsigned char* reg, int n ) {
 }
 
 void do_reset( void ) {
-    int i;
-
-    for ( i = 0; i < 6; i++ ) {
+    for ( int i = 0; i < 6; i++ ) {
         if ( opt_gx )
             saturn.mem_cntl[ i ].unconfigured = conf_tab_gx[ i ];
         else
             saturn.mem_cntl[ i ].unconfigured = conf_tab_sx[ i ];
+
         saturn.mem_cntl[ i ].config[ 0 ] = 0x0;
         saturn.mem_cntl[ i ].config[ 1 ] = 0x0;
     }
@@ -175,32 +170,27 @@ void do_kbd_int( void ) {
         push_return_addr( saturn.PC );
         saturn.PC = 0xf;
         saturn.intenable = 0;
-    } else {
+    } else
         saturn.int_pending = 1;
-    }
 }
 
 void do_reset_interrupt_system( void ) {
-    int i, gen_intr;
-
     saturn.kbd_ien = 1;
-    gen_intr = 0;
-    for ( i = 0; i < 9; i++ ) {
+    int gen_intr = 0;
+    for ( int i = 0; i < 9; i++ ) {
         if ( saturn.keybuf.rows[ i ] != 0 ) {
             gen_intr = 1;
             break;
         }
     }
-    if ( gen_intr ) {
+    if ( gen_intr )
         do_kbd_int();
-    }
 }
 
 void do_unconfigure( void ) {
     int i;
-    unsigned int conf;
+    unsigned int conf = 0;
 
-    conf = 0;
     for ( i = 4; i >= 0; i-- ) {
         conf <<= 4;
         conf |= saturn.C[ i ];
@@ -212,6 +202,7 @@ void do_unconfigure( void ) {
                 saturn.mem_cntl[ i ].unconfigured = conf_tab_gx[ i ];
             else
                 saturn.mem_cntl[ i ].unconfigured = conf_tab_sx[ i ];
+
             saturn.mem_cntl[ i ].config[ 0 ] = 0x0;
             saturn.mem_cntl[ i ].config[ 1 ] = 0x0;
             break;
@@ -221,9 +212,8 @@ void do_unconfigure( void ) {
 
 void do_configure( void ) {
     int i;
-    unsigned long conf;
+    unsigned long conf = 0;
 
-    conf = 0;
     for ( i = 4; i >= 0; i-- ) {
         conf <<= 4;
         conf |= saturn.C[ i ];
@@ -245,10 +235,10 @@ int get_identification( void ) {
                              0x07, 0xf8, 0x01, 0xf2, 0,    0 };
     int id;
 
-    for ( i = 0; i < 6; i++ ) {
+    for ( i = 0; i < 6; i++ )
         if ( saturn.mem_cntl[ i ].unconfigured )
             break;
-    }
+
     if ( i < 6 )
         id = chip_id[ 2 * i + ( 2 - saturn.mem_cntl[ i ].unconfigured ) ];
     else
@@ -302,22 +292,20 @@ void do_shutdown( void ) {
 #endif
 
             ticks = get_t1_t2();
-            if ( saturn.t2_ctrl & 0x01 ) {
+            if ( saturn.t2_ctrl & 0x01 )
                 saturn.timer2 = ticks.t2_ticks;
-            }
+
             saturn.timer1 = set_t1 - ticks.t1_ticks;
             set_t1 = ticks.t1_ticks;
 
             interrupt_called = 0;
-            if ( get_ui_event() ) {
-                if ( interrupt_called )
-                    wake = 1;
-            }
+            if ( get_ui_event() && interrupt_called )
+                wake = 1;
 
             if ( saturn.timer2 <= 0 ) {
-                if ( saturn.t2_ctrl & 0x04 ) {
+                if ( saturn.t2_ctrl & 0x04 )
                     wake = 1;
-                }
+
                 if ( saturn.t2_ctrl & 0x02 ) {
                     wake = 1;
                     saturn.t2_ctrl |= 0x08;
@@ -327,9 +315,9 @@ void do_shutdown( void ) {
 
             if ( saturn.timer1 <= 0 ) {
                 saturn.timer1 &= 0x0f;
-                if ( saturn.t1_ctrl & 0x04 ) {
+                if ( saturn.t1_ctrl & 0x04 )
                     wake = 1;
-                }
+
                 if ( saturn.t1_ctrl & 0x03 ) {
                     wake = 1;
                     saturn.t1_ctrl |= 0x08;
@@ -347,9 +335,9 @@ void do_shutdown( void ) {
             alarms++;
         }
 
-        if ( enter_debugger ) {
+        if ( enter_debugger )
             wake = 1;
-        }
+
     } while ( wake == 0 );
 
     stop_timer( IDLE_TIMER );
@@ -413,14 +401,13 @@ long pop_return_addr( void ) {
 
 char* make_hexstr( long addr, int n ) {
     static char str[ 44 ];
-    int i, t, trunc;
+    int t, trunc = 0;
 
-    trunc = 0;
     if ( n > 40 ) {
         n = 40;
         trunc = 1;
     }
-    for ( i = 0; i < n; i++ ) {
+    for ( int i = 0; i < n; i++ ) {
         t = read_nibble( addr + i );
         if ( t <= 9 )
             str[ i ] = '0' + t;
@@ -438,64 +425,56 @@ char* make_hexstr( long addr, int n ) {
 }
 
 void load_constant( unsigned char* reg, int n, long addr ) {
-    int i, p;
+    int p = saturn.P;
 
-    p = saturn.P;
-    for ( i = 0; i < n; i++ ) {
+    for ( int i = 0; i < n; i++ ) {
         reg[ p ] = read_nibble( addr + i );
         p = ( p + 1 ) & 0xf;
     }
 }
 
 void load_addr( word_20* dat, long addr, int n ) {
-    int i;
-
-    for ( i = 0; i < n; i++ ) {
+    for ( int i = 0; i < n; i++ ) {
         *dat &= ~nibble_masks[ i ];
         *dat |= read_nibble( addr + i ) << ( i * 4 );
     }
 }
 
 void load_address( unsigned char* reg, long addr, int n ) {
-    int i;
-
-    for ( i = 0; i < n; i++ ) {
+    for ( int i = 0; i < n; i++ )
         reg[ i ] = read_nibble( addr + i );
-    }
 }
 
 void register_to_address( unsigned char* reg, word_20* dat, int s ) {
-    int i, n;
+    int n;
 
     if ( s )
         n = 4;
     else
         n = 5;
-    for ( i = 0; i < n; i++ ) {
+    for ( int i = 0; i < n; i++ ) {
         *dat &= ~nibble_masks[ i ];
         *dat |= ( reg[ i ] & 0x0f ) << ( i * 4 );
     }
 }
 
 void address_to_register( word_20 dat, unsigned char* reg, int s ) {
-    int i, n;
+    int n;
 
     if ( s )
         n = 4;
     else
         n = 5;
-    for ( i = 0; i < n; i++ ) {
+    for ( int i = 0; i < n; i++ ) {
         reg[ i ] = dat & 0x0f;
         dat >>= 4;
     }
 }
 
 long dat_to_addr( unsigned char* dat ) {
-    int i;
-    long addr;
+    long addr = 0;
 
-    addr = 0;
-    for ( i = 4; i >= 0; i-- ) {
+    for ( int i = 4; i >= 0; i-- ) {
         addr <<= 4;
         addr |= ( dat[ i ] & 0xf );
     }
@@ -503,9 +482,7 @@ long dat_to_addr( unsigned char* dat ) {
 }
 
 void addr_to_dat( long addr, unsigned char* dat ) {
-    int i;
-
-    for ( i = 0; i < 5; i++ ) {
+    for ( int i = 0; i < 5; i++ ) {
         dat[ i ] = ( addr & 0xf );
         addr >>= 4;
     }
@@ -530,53 +507,43 @@ static int end_fields[] = { -1, -1, 2,  2,  15, 14, 1, 15, -1, -1,
 static inline int get_start( int code ) {
     int s;
 
-    if ( ( s = start_fields[ code ] ) == -1 ) {
+    if ( ( s = start_fields[ code ] ) == -1 )
         s = saturn.P;
-    }
-    return s;
+
+    return s; /* FIXME: potentially return uninitialized s ? */
 }
 
 static inline int get_end( int code ) {
     int e;
 
-    if ( ( e = end_fields[ code ] ) == -1 ) {
+    if ( ( e = end_fields[ code ] ) == -1 )
         e = saturn.P;
-    }
-    return e;
+
+    return e; /* FIXME: potentially return uninitialized e ? */
 }
 
 void store( word_20 dat, unsigned char* reg, int code ) {
-    int i, s, e;
+    int s = get_start( code );
+    int e = get_end( code );
 
-    s = get_start( code );
-    e = get_end( code );
-    for ( i = s; i <= e; i++ ) {
+    for ( int i = s; i <= e; i++ )
         write_nibble( dat++, reg[ i ] );
-    }
 }
 
 void store_n( word_20 dat, unsigned char* reg, int n ) {
-    int i;
-
-    for ( i = 0; i < n; i++ ) {
+    for ( int i = 0; i < n; i++ )
         write_nibble( dat++, reg[ i ] );
-    }
 }
 
 void recall( unsigned char* reg, word_20 dat, int code ) {
-    int i, s, e;
+    int s = get_start( code );
+    int e = get_end( code );
 
-    s = get_start( code );
-    e = get_end( code );
-    for ( i = s; i <= e; i++ ) {
+    for ( int i = s; i <= e; i++ )
         reg[ i ] = read_nibble_crc( dat++ );
-    }
 }
 
 void recall_n( unsigned char* reg, word_20 dat, int n ) {
-    int i;
-
-    for ( i = 0; i < n; i++ ) {
+    for ( int i = 0; i < n; i++ )
         reg[ i ] = read_nibble_crc( dat++ );
-    }
 }

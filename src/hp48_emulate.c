@@ -2218,9 +2218,10 @@ inline int step_instruction( void ) {
             break;
     }
     instructions++;
-    if ( stop ) {
+
+    if ( stop )
         enter_debugger |= ILLEGAL_INSTRUCTION;
-    }
+
     return stop;
 }
 
@@ -2234,15 +2235,15 @@ inline void schedule( void ) {
     old_sched_instr = instructions;
 
     if ( ( sched_timer2 -= steps ) <= 0 ) {
-        if ( !saturn.intenable ) {
+        if ( !saturn.intenable )
             sched_timer2 = SCHED_TIMER2;
-        } else {
+        else
             sched_timer2 = saturn.t2_tick;
-        }
+
         saturn.t2_instr += steps;
-        if ( saturn.t2_ctrl & 0x01 ) {
+        if ( saturn.t2_ctrl & 0x01 )
             saturn.timer2--;
-        }
+
         if ( saturn.timer2 == 0 && ( saturn.t2_ctrl & 0x02 ) ) {
             saturn.t2_ctrl |= 0x08;
             do_interupt();
@@ -2270,9 +2271,8 @@ inline void schedule( void ) {
 
     if ( ( sched_receive -= steps ) <= 0 ) {
         sched_receive = SCHED_RECEIVE;
-        if ( ( saturn.rcs & 0x01 ) == 0 ) {
+        if ( ( saturn.rcs & 0x01 ) == 0 )
             receive_char();
-        }
     }
     if ( sched_receive < schedule_event )
         schedule_event = sched_receive;
@@ -2315,11 +2315,11 @@ inline void schedule( void ) {
         schedule_event = sched_adjtime;
 
     if ( ( sched_timer1 -= steps ) <= 0 ) {
-        if ( !saturn.intenable ) {
+        if ( !saturn.intenable )
             sched_timer1 = SCHED_TIMER1;
-        } else {
+        else
             sched_timer1 = saturn.t1_tick;
-        }
+
         saturn.t1_instr += steps;
         saturn.timer1 = ( saturn.timer1 - 1 ) & 0xf;
         if ( saturn.timer1 == 0 && ( saturn.t1_ctrl & 0x02 ) ) {
@@ -2429,8 +2429,7 @@ void emulate( void ) {
             fprintf( stderr, "bug" );
             schedule_event = 0;
         }
-        if ( schedule_event-- <= 0 ) {
+        if ( schedule_event-- <= 0 )
             schedule();
-        }
     } while ( !enter_debugger );
 }

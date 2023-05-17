@@ -440,14 +440,11 @@ void receive_char( void ) {
     if ( saturn.ir_ctrl & 0x04 ) {
         if ( ir_fd == -1 )
             return;
-    } else {
-        if ( wire_fd == -1 )
-            return;
-    }
-
-    if ( saturn.rcs & 0x01 ) {
+    } else if ( wire_fd == -1 )
         return;
-    }
+
+    if ( saturn.rcs & 0x01 )
+        return;
 
     if ( nrd == 0 ) {
         tout.tv_sec = 0;
@@ -470,9 +467,9 @@ void receive_char( void ) {
                         return;
                     }
                     bp = 0;
-                } else {
+                } else
                     return;
-                }
+
             } else {
                 if ( FD_ISSET( wire_fd, &rfds ) ) {
                     nrd = read( wire_fd, buf, NR_BUFFER );
@@ -481,17 +478,15 @@ void receive_char( void ) {
                         return;
                     }
                     bp = 0;
-                } else {
+                } else
                     return;
-                }
             }
-        } else {
+        } else
             return;
-        }
     }
-    if ( nrd == 0 ) {
+    if ( nrd == 0 )
         return;
-    }
+
     if ( !( saturn.io_ctrl & 0x08 ) ) {
         nrd = 0;
         return;
@@ -499,7 +494,7 @@ void receive_char( void ) {
     saturn.rbr = buf[ bp++ ];
     nrd--;
     saturn.rcs |= 0x01;
-    if ( saturn.io_ctrl & 0x02 ) {
+
+    if ( saturn.io_ctrl & 0x02 )
         do_interupt();
-    }
 }

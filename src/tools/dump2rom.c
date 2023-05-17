@@ -134,9 +134,9 @@ int main( int argc, char** argv ) {
         }
     }
 
-    if ( !gx )
-        if ( core[ 0x29 ] == 0x0 )
-            gx = 1;
+    if ( !gx && core[ 0x29 ] == 0x0 )
+        gx = 1;
+
     if ( gx )
         size = 0x100000;
     else

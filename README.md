@@ -20,8 +20,9 @@ See https://github.com/gwenhael-le-moine/x48ng/issues
 
 1. clean-up further.
 2. split the core emulator in a lib and have the GUI use that to cleanly separate the two.
-3. have a more modern GUI: SDL2 or gosu or?…
-4. support the HP49g ROM?
+3. have a more modern GUI in gtk4
+4. can something be merged from droid48? [ https://github.com/shagr4th/droid48 ]
+99. support the HP49g ROM?
 
 ## Compilation
 

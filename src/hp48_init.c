@@ -395,10 +395,7 @@ int read_rom( const char* fname ) {
 
     dev_memory_init();
 
-    if ( opt_gx )
-        ram_size = RAM_SIZE_GX;
-    else
-        ram_size = RAM_SIZE_SX;
+    ram_size = opt_gx ? RAM_SIZE_GX : RAM_SIZE_SX;
 
     if ( NULL == ( saturn.ram = ( word_4* )malloc( ram_size ) ) ) {
         if ( verbose )
@@ -427,9 +424,9 @@ void get_home_directory( char* path ) {
     char* p;
     struct passwd* pwd;
 
-    if ( homeDirectory[ 0 ] == '/' ) {
+    if ( homeDirectory[ 0 ] == '/' )
         strcpy( path, homeDirectory );
-    } else {
+    else {
         p = getenv( "HOME" );
         if ( p ) {
             strcpy( path, p );
@@ -523,9 +520,8 @@ int read_files( void ) {
                 if ( verbose )
                     fprintf( stderr, "can\'t handle %s\n", fnam );
                 init_saturn();
-            } else if ( verbose ) {
+            } else if ( verbose )
                 printf( "read %s\n", fnam );
-            }
         }
     }
     fclose( fp );
@@ -917,9 +913,9 @@ int write_files( void ) {
 
 int init_emulator( void ) {
     if ( !initialize && read_files() ) {
-      if ( resetOnStartup )
-        saturn.PC = 0x00000;
-      return 0;
+        if ( resetOnStartup )
+            saturn.PC = 0x00000;
+        return 0;
     }
 
     init_saturn();

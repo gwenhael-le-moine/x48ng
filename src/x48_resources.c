@@ -174,8 +174,8 @@ int get_mnemonic_resource( char* name, char* class ) {
         return HP_MNEMONICS;
     if ( !strcmp( buf, "class" ) )
         return CLASS_MNEMONICS;
-    fprintf( stderr, "%s must be one of \'HP\' or \'class\', not %s.\n",
-             name, buf );
+    fprintf( stderr, "%s must be one of \'HP\' or \'class\', not %s.\n", name,
+             buf );
     return CLASS_MNEMONICS;
 }
 
