@@ -2749,10 +2749,7 @@ void DrawMore( unsigned int w, unsigned int h, unsigned int offset_y,
     pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )hp_bits,
                                  hp_width, hp_height );
 
-    if ( opt_gx )
-        x = DISPLAY_OFFSET_X - 6;
-    else
-        x = DISPLAY_OFFSET_X;
+    x = opt_gx ? DISPLAY_OFFSET_X - 6 : DISPLAY_OFFSET_X;
 
     XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, hp_width, hp_height, x, 10,
                 1 );
