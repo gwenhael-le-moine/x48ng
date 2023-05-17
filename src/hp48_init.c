@@ -24,6 +24,33 @@ long port2_size;
 long port2_mask;
 short port2_is_ram;
 
+void get_home_directory( char* path ) {
+    char* p;
+    struct passwd* pwd;
+
+    if ( homeDirectory[ 0 ] == '/' )
+        strcpy( path, homeDirectory );
+    else {
+        p = getenv( "HOME" );
+        if ( p ) {
+            strcpy( path, p );
+            strcat( path, "/" );
+        } else {
+            pwd = getpwuid( getuid() );
+            if ( pwd ) {
+                strcpy( path, pwd->pw_dir );
+                strcat( path, "/" );
+            } else {
+                if ( verbose )
+                    fprintf( stderr, "can\'t figure out your home directory, "
+                                     "trying /tmp\n" );
+                strcpy( path, "/tmp" );
+            }
+        }
+        strcat( path, homeDirectory );
+    }
+}
+
 void saturn_config_init( void ) {
     saturn.version[ 0 ] = VERSION_MAJOR;
     saturn.version[ 1 ] = VERSION_MINOR;
@@ -72,6 +99,31 @@ void init_saturn( void ) {
     }
     dev_memory_init();
 }
+
+int init_emulator( void ) {
+    if ( !initialize && read_files() ) {
+        if ( resetOnStartup )
+            saturn.PC = 0x00000;
+        return 0;
+    }
+
+    init_saturn();
+
+    if ( !read_rom( romFileName ) )
+        exit( 1 );
+
+    return 0;
+}
+
+int exit_emulator( void ) {
+    write_files();
+
+    return 1;
+}
+
+/***********************************************/
+/* READING ~/.x48ng/{rom,ram,hp48,port1,port2} */
+/***********************************************/
 
 int read_8( FILE* fp, word_8* var ) {
     unsigned char tmp;
@@ -420,33 +472,6 @@ int read_rom( const char* fname ) {
     return 1;
 }
 
-void get_home_directory( char* path ) {
-    char* p;
-    struct passwd* pwd;
-
-    if ( homeDirectory[ 0 ] == '/' )
-        strcpy( path, homeDirectory );
-    else {
-        p = getenv( "HOME" );
-        if ( p ) {
-            strcpy( path, p );
-            strcat( path, "/" );
-        } else {
-            pwd = getpwuid( getuid() );
-            if ( pwd ) {
-                strcpy( path, pwd->pw_dir );
-                strcat( path, "/" );
-            } else {
-                if ( verbose )
-                    fprintf( stderr, "can\'t figure out your home directory, "
-                                     "trying /tmp\n" );
-                strcpy( path, "/tmp" );
-            }
-        }
-        strcat( path, homeDirectory );
-    }
-}
-
 int read_files( void ) {
     char path[ 1024 ];
     char fnam[ 1024 ];
@@ -459,17 +484,23 @@ int read_files( void ) {
     get_home_directory( path );
     strcat( path, "/" );
 
+    /*************************************************/
+    /* 1. read ROM from ~/.x48ng/rom into saturn.rom */
+    /*************************************************/
     saturn.rom = ( word_4* )NULL;
     strcpy( fnam, path );
     strcat( fnam, "rom" );
     if ( !read_rom_file( fnam, &saturn.rom, &rom_size ) )
-        return 0;
+      return 0;
 
     if ( verbose )
         printf( "read %s\n", fnam );
 
     rom_is_new = 0;
 
+    /**************************************************/
+    /* 2. read saved state from ~/.x48ng/hp48 into fp */
+    /**************************************************/
     strcpy( fnam, path );
     strcat( fnam, "hp48" );
     if ( NULL == ( fp = fopen( fnam, "r" ) ) ) {
@@ -530,10 +561,7 @@ int read_files( void ) {
 
     saturn_config_init();
 
-    if ( opt_gx )
-        ram_size = RAM_SIZE_GX;
-    else
-        ram_size = RAM_SIZE_SX;
+    ram_size = opt_gx ? RAM_SIZE_GX : RAM_SIZE_SX;
 
     saturn.ram = ( word_4* )NULL;
     if ( NULL == ( saturn.ram = ( word_4* )malloc( ram_size ) ) ) {
@@ -542,6 +570,9 @@ int read_files( void ) {
         exit( 1 );
     }
 
+    /*************************************************/
+    /* 3. read RAM from ~/.x48ng/ram into saturn.ram */
+    /*************************************************/
     strcpy( fnam, path );
     strcat( fnam, "ram" );
     if ( ( fp = fopen( fnam, "r" ) ) == NULL ) {
@@ -552,8 +583,14 @@ int read_files( void ) {
     if ( !read_mem_file( fnam, saturn.ram, ram_size ) )
         return 0;
 
+    /**************************************/
+    /* Onto reading port1 and port2 cards */
+    /**************************************/
     saturn.card_status = 0;
 
+    /********************************************************/
+    /* 4. read card 1 from ~/.x48ng/port1 into saturn.port1 */
+    /********************************************************/
     port1_size = 0;
     port1_mask = 0;
     port1_is_ram = 0;
@@ -585,6 +622,9 @@ int read_files( void ) {
         saturn.card_status |= port1_is_ram ? 4 : 0;
     }
 
+    /********************************************************/
+    /* 5. read card 2 from ~/.x48ng/port2 into saturn.port2 */
+    /********************************************************/
     port2_size = 0;
     port2_mask = 0;
     port2_is_ram = 0;
@@ -618,8 +658,15 @@ int read_files( void ) {
         saturn.card_status |= port2_is_ram ? 8 : 0;
     }
 
+    /************************/
+    /* All files are loaded */
+    /************************/
     return 1;
 }
+
+/***********************************************/
+/* WRITING ~/.x48ng/{rom,ram,hp48,port1,port2} */
+/***********************************************/
 
 int write_8( FILE* fp, word_8* var ) {
     unsigned char tmp;
@@ -907,27 +954,6 @@ int write_files( void ) {
         if ( !write_mem_file( fnam, saturn.port2, port2_size ) )
             return 0;
     }
-
-    return 1;
-}
-
-int init_emulator( void ) {
-    if ( !initialize && read_files() ) {
-        if ( resetOnStartup )
-            saturn.PC = 0x00000;
-        return 0;
-    }
-
-    init_saturn();
-
-    if ( !read_rom( romFileName ) )
-        exit( 1 );
-
-    return 0;
-}
-
-int exit_emulator( void ) {
-    write_files();
 
     return 1;
 }
