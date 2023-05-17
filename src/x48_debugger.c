@@ -13,8 +13,6 @@
 #include "timer.h"
 #include "x48.h" /* for exit_x48() */
 #include "x48_debugger.h"
-#include "x48_debugger_disasm.h"
-#include "x48_debugger_rpl.h"
 #include "x48_resources.h"
 
 #define MAX_ARGS 16
