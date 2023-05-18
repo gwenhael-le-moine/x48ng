@@ -5,7 +5,10 @@
 #include "hp48emu.h"
 #include "timer.h"
 #include "x48.h"
-#include "x48_debugger.h"
+
+#if defined( WITH_DEBUGGER )
+#include "x48_debugger.h" /* enter_debugger, TRAP_INSTRUCTION, ILLEGAL_INSTRUCTION */
+#endif
 
 extern int throttle;
 
@@ -2195,7 +2198,9 @@ inline int step_instruction( void ) {
                 op3 = read_nibbles( saturn.PC + 4, 1 );
                 saturn.PC += 5;
                 if ( op3 != 0 ) {
+#if defined( WITH_DEBUGGER )
                     enter_debugger |= TRAP_INSTRUCTION;
+#endif
                     return 1;
                 }
             } else {
@@ -2219,8 +2224,10 @@ inline int step_instruction( void ) {
     }
     instructions++;
 
+#if defined( WITH_DEBUGGER )
     if ( stop )
         enter_debugger |= ILLEGAL_INSTRUCTION;
+#endif
 
     return stop;
 }
@@ -2430,5 +2437,11 @@ void emulate( void ) {
         }
         if ( schedule_event-- <= 0 )
             schedule();
-    } while ( !enter_debugger );
+    } while (
+#if defined( WITH_DEBUGGER )
+    !enter_debugger
+#else
+  1
+#endif
+             );
 }

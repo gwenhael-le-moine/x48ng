@@ -4,9 +4,15 @@
 #include <unistd.h>
 #include <ctype.h>
 
-#include "x48_debugger.h" /* `disassembler_mode` & `CLASS_MNEMONICS` */
 #include "x48_errors.h"
 #include "x48_resources.h"
+
+#if defined( WITH_DEBUGGER )
+#include "x48_debugger.h" /* `disassembler_mode` & `CLASS_MNEMONICS` */
+#else
+#define HP_MNEMONICS 0
+#define CLASS_MNEMONICS 1
+#endif
 
 int verbose;
 int useTerminal;
@@ -363,8 +369,10 @@ void get_resources( void ) {
     useSerial = 0;
     initialize = 0;
     resetOnStartup = 0;
+#if defined( WITH_DEBUGGER )
     useDebugger = 1;
     disassembler_mode = CLASS_MNEMONICS; // HP_MNEMONICS
+#endif
     netbook = 0;
     throttle = 0;
 
@@ -390,9 +398,11 @@ void get_resources( void ) {
     romFileName = get_string_resource( "romFileName", "RomFileName" );
     homeDirectory = get_string_resource( "homeDirectory", "HomeDirectory" );
 
+#if defined( WITH_DEBUGGER )
     useDebugger = get_boolean_resource( "useDebugger", "UseDebugger" );
     disassembler_mode = get_mnemonic_resource( "disassemblerMnemonics",
                                                "DisassemblerMnemonics" );
+#endif
 
     netbook = get_boolean_resource( "netbook", "Netbook" );
 

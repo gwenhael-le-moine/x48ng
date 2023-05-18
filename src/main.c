@@ -11,8 +11,11 @@
 
 #include "hp48.h"
 #include "x48.h"
-#include "x48_debugger.h"
 #include "x48_resources.h"
+
+#if defined( WITH_DEBUGGER )
+#include "x48_debugger.h"	/* enter_debugger, USER_INTERRUPT, exec_flags, emulate_debug, debug */
+#endif
 
 #if defined( GUI_IS_X11 )
 char* progname;
@@ -23,9 +26,11 @@ char** saved_argv;
 
 void signal_handler( int sig ) {
     switch ( sig ) {
+#if defined( WITH_DEBUGGER )
         case SIGINT: /* Ctrl-C */
             enter_debugger |= USER_INTERRUPT;
             break;
+#endif
         case SIGALRM:
             got_alarm = 1;
             break;
@@ -107,6 +112,7 @@ int main( int argc, char** argv ) {
 #endif
     sigaction( SIGALRM, &sa, ( struct sigaction* )0 );
 
+#if defined( WITH_DEBUGGER )
     sigemptyset( &set );
     sigaddset( &set, SIGINT );
     sa.sa_handler = signal_handler;
@@ -115,6 +121,7 @@ int main( int argc, char** argv ) {
     sa.sa_flags = SA_RESTART;
 #endif
     sigaction( SIGINT, &sa, ( struct sigaction* )0 );
+#endif
 
     sigemptyset( &set );
     sigaddset( &set, SIGPIPE );
@@ -149,12 +156,16 @@ int main( int argc, char** argv ) {
     /* Start emulation loop */
     /************************/
     do {
+#if defined( WITH_DEBUGGER )
         if ( !exec_flags )
+#endif
             emulate();
+#if defined( WITH_DEBUGGER )
         else
             emulate_debug();
 
         debug();
+#endif
     } while ( 1 );
 
     return 0;
