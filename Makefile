@@ -1,5 +1,11 @@
 # Makefile to build x48ng without autotools
 
+# possible values: x11, sdl1
+GUI = x11
+
+# possible values: yes, no
+WITH_DEBUGGER = yes
+
 VERSION_MAJOR = 0
 VERSION_MINOR = 11
 PATCHLEVEL = 0
@@ -9,12 +15,6 @@ CC = gcc
 
 CFLAGS = -g -O2 -I./src/ -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DPATCHLEVEL=$(PATCHLEVEL) -DCOMPILE_VERSION=$(COMPILE_VERSION)
 LIBS = -lm -lhistory -lreadline
-
-# possible values: x11, sdl1
-GUI = x11
-
-# possible values: yes, no
-WITH_DEBUGGER = no
 
 ifeq ($(GUI), x11)
 	CFLAGS += $(shell pkg-config --cflags x11 xext readline) -D_GNU_SOURCE=1 -DGUI_IS_X11=1
