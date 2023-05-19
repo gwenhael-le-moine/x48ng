@@ -733,11 +733,11 @@ int read_nibble_sx( long addr ) {
         case 0xf:
             if ( saturn.mem_cntl[ MCTL_SysRAM_SX ].config[ 0 ] == 0xf0000 )
                 return saturn.ram[ addr - 0xf0000 ];
-            if ( saturn.mem_cntl[ MCTL_PORT1_SX ].config[ 0 ] == 0xc0000 ) {
-                return saturn.port1[ ( addr - 0xc0000 ) & port1_mask ];
+            if ( saturn.mem_cntl[ MCTL_PORT1_SX ].config[ 0 ] == 0xf0000 ) {
+                return saturn.port1[ ( addr - 0xf0000 ) & port1_mask ];
             }
-            if ( saturn.mem_cntl[ MCTL_PORT2_SX ].config[ 0 ] == 0xc0000 ) {
-                return saturn.port2[ ( addr - 0xc0000 ) & port2_mask ];
+            if ( saturn.mem_cntl[ MCTL_PORT2_SX ].config[ 0 ] == 0xf0000 ) {
+                return saturn.port2[ ( addr - 0xf0000 ) & port2_mask ];
             }
             return 0x00;
     }
