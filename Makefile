@@ -14,15 +14,15 @@ COMPILE_VERSION = 0
 CC = gcc
 
 CFLAGS = -g -O2 -I./src/ -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DPATCHLEVEL=$(PATCHLEVEL) -DCOMPILE_VERSION=$(COMPILE_VERSION)
-LIBS = -lm -lhistory -lreadline
+LIBS = -lm
 
 ifeq ($(GUI), x11)
-	CFLAGS += $(shell pkg-config --cflags x11 xext readline) -D_GNU_SOURCE=1 -DGUI_IS_X11=1
-	LIBS += $(shell pkg-config --libs x11 xext readline)
+	CFLAGS += $(shell pkg-config --cflags x11 xext) -D_GNU_SOURCE=1 -DGUI_IS_X11=1
+	LIBS += $(shell pkg-config --libs x11 xext)
 endif
 ifeq ($(GUI), sdl1)
-	CFLAGS += $(shell pkg-config --cflags SDL_gfx sdl12_compat readline) -DGUI_IS_SDL1=1
-	LIBS += $(shell pkg-config --libs SDL_gfx sdl12_compat readline)
+	CFLAGS += $(shell pkg-config --cflags SDL_gfx sdl12_compat) -DGUI_IS_SDL1=1
+	LIBS += $(shell pkg-config --libs SDL_gfx sdl12_compat)
 endif
 
 FULL_WARNINGS = no
@@ -48,7 +48,8 @@ ifeq ($(WITH_DEBUGGER), yes)
 	DOTOS += src/x48_debugger.o \
 		 src/x48_debugger_disasm.o \
 		 src/x48_debugger_rpl.o
-	CFLAGS += -DWITH_DEBUGGER=1
+	CFLAGS += $(shell pkg-config --cflags readline) -DWITH_DEBUGGER=1
+	LIBS += $(shell pkg-config --libs readline history)
 endif
 
 .PHONY: all clean clean-all pretty-code install
