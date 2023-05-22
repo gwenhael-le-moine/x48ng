@@ -950,7 +950,7 @@ char* get_stack( void ) {
     saturn.mem_cntl[ 1 ].config[ 0 ] = ram_base;
     saturn.mem_cntl[ 1 ].config[ 1 ] = ram_mask;
 
-    return 0;
+    return "";
 }
 
 static void do_stack( int argc, char** argv ) {
