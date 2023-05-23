@@ -8,12 +8,20 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/utsname.h>
+#if defined( GUI_IS_X11 )
+#include <X11/cursorfont.h>
+#endif
 
 #include "hp48.h"
 #include "romio.h"
 #include "x48.h"
 #include "x48_errors.h"
 #include "x48_resources.h"
+
+disp_t disp;
+
+keypad_t keypad;
+color_t* colors;
 
 #if defined( GUI_IS_X11 )
 static XrmOptionDescRec options[] = {
@@ -122,14 +130,7 @@ Colormap cmap;
 GC gc;
 Window mainW;
 Window iconW = 0;
-#endif
 
-disp_t disp;
-
-keypad_t keypad;
-color_t* colors;
-
-#if defined( GUI_IS_X11 )
 Atom wm_delete_window, wm_save_yourself, wm_protocols;
 Atom ol_decor_del, ol_decor_icon_name;
 Atom atom_type;
@@ -1822,8 +1823,6 @@ int DrawSmallString( Display* the_dpy, Drawable d, GC the_gc, int x, int y,
     }
     return 0;
 }
-
-#include <X11/cursorfont.h>
 
 void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small,
                    XFontStruct* f_med, XFontStruct* f_big ) {
@@ -5143,18 +5142,12 @@ SDL_Surface* sdlwindow;
 SDL_Surface* sdlsurface;
 
 void SDLInit( void ) {
-    SDL_version compiled;
-
     // Initialize SDL
     if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
         printf( "Couldn't initialize SDL: %s\n", SDL_GetError() );
         exit( 1 );
     }
-    SDL_VERSION( &compiled );
-    printf( "Compiled version: %d.%d.%d\n", compiled.major, compiled.minor,
-            compiled.patch );
-    printf( "Linked version: %d.%d.%d\n", SDL_Linked_Version()->major,
-            SDL_Linked_Version()->minor, SDL_Linked_Version()->patch );
+
     // On exit: clean SDL
     atexit( SDL_Quit );
 
