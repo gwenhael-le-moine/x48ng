@@ -1,30 +1,55 @@
 # Makefile to build x48ng without autotools
 
+# possible values: x11, sdl1
+GUI = x11
+
+# possible values: yes, no
+WITH_DEBUGGER = yes
+
 VERSION_MAJOR = 0
-VERSION_MINOR = 11
+VERSION_MINOR = 12
 PATCHLEVEL = 0
 COMPILE_VERSION = 0
 
 CC = gcc
 
 CFLAGS = -g -O2 -I./src/ -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DPATCHLEVEL=$(PATCHLEVEL) -DCOMPILE_VERSION=$(COMPILE_VERSION)
-LIBS = -lm -lhistory -lreadline
-
-#possible values: x11, sdl1
-GUI = x11
+LIBS = -lm
 
 ifeq ($(GUI), x11)
-	CFLAGS += $(shell pkg-config --cflags x11 xext readline) -D_GNU_SOURCE=1 -DGUI_IS_X11=1
-	LIBS += $(shell pkg-config --libs x11 xext readline)
+	CFLAGS += $(shell pkg-config --cflags x11 xext) -D_GNU_SOURCE=1 -DGUI_IS_X11=1
+	LIBS += $(shell pkg-config --libs x11 xext)
 endif
 ifeq ($(GUI), sdl1)
-	CFLAGS += $(shell pkg-config --cflags SDL_gfx sdl12_compat readline) -DGUI_IS_SDL1=1
-	LIBS += $(shell pkg-config --libs SDL_gfx sdl12_compat readline)
+	CFLAGS += $(shell pkg-config --cflags SDL_gfx sdl12_compat) -DGUI_IS_SDL1=1
+	LIBS += $(shell pkg-config --libs SDL_gfx sdl12_compat)
 endif
 
 FULL_WARNINGS = no
 ifeq ($(FULL_WARNINGS), yes)
 	CFLAGS += -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-function -Wconversion -Wdouble-promotion -Wno-sign-conversion -fsanitize=undefined -fsanitize-trap
+endif
+
+DOTOS = src/main.o \
+	src/hp48_device.o \
+	src/hp48_emulate.o \
+	src/hp48_init.o \
+	src/hp48_serial.o \
+	src/hp48emu_actions.o \
+	src/hp48emu_memory.o \
+	src/hp48emu_register.o \
+	src/romio.o \
+	src/timer.o \
+	src/x48_errors.o \
+	src/x48_resources.o \
+	src/x48.o
+
+ifeq ($(WITH_DEBUGGER), yes)
+	DOTOS += src/x48_debugger.o \
+		 src/x48_debugger_disasm.o \
+		 src/x48_debugger_rpl.o
+	CFLAGS += $(shell pkg-config --cflags readline) -DWITH_DEBUGGER=1
+	LIBS += $(shell pkg-config --libs readline history)
 endif
 
 .PHONY: all clean clean-all pretty-code install
@@ -41,22 +66,7 @@ dist/dump2rom: src/tools/dump2rom.o
 dist/checkrom: src/tools/checkrom.o src/romio.o
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
-dist/x48ng: src/main.o \
-	src/hp48emu_actions.o \
-	src/x48_debugger.o \
-	src/hp48_device.o \
-	src/x48_debugger_disasm.o \
-	src/hp48_emulate.o \
-	src/x48_errors.o \
-	src/hp48_init.o \
-	src/hp48emu_memory.o \
-	src/hp48emu_register.o \
-	src/x48_resources.o \
-	src/romio.o \
-	src/x48_debugger_rpl.o \
-	src/hp48_serial.o \
-	src/timer.o \
-	src/x48.o
+dist/x48ng: $(DOTOS)
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
 
 # Cleaning

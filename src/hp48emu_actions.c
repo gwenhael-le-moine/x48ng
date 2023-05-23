@@ -7,7 +7,10 @@
 #include "romio.h"
 #include "timer.h"
 #include "x48.h"
-#include "x48_debugger.h"
+
+#if defined( WITH_DEBUGGER )
+#include "x48_debugger.h"	/* in_debugger, enter_debugger */
+#endif
 
 static int interrupt_called = 0;
 extern long nibble_masks[ 16 ];
@@ -272,9 +275,11 @@ void do_shutdown( void ) {
         saturn.int_pending = 0;
     }
 
+#if defined( WITH_DEBUGGER )
     if ( in_debugger )
         wake = 1;
     else
+#endif
         wake = 0;
 
     alarms = 0;
@@ -335,9 +340,10 @@ void do_shutdown( void ) {
             alarms++;
         }
 
+#if defined( WITH_DEBUGGER )
         if ( enter_debugger )
             wake = 1;
-
+#endif
     } while ( wake == 0 );
 
     stop_timer( IDLE_TIMER );
