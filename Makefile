@@ -58,16 +58,16 @@ all: dist/mkcard dist/checkrom dist/dump2rom dist/x48ng
 
 # Binaries
 dist/mkcard: src/tools/mkcard.o
-	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
+	$(CC) $^ -o $@ $(CFLAGS) $(LIBS)
 
 dist/dump2rom: src/tools/dump2rom.o
-	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
+	$(CC) $^ -o $@ $(CFLAGS) $(LIBS)
 
 dist/checkrom: src/tools/checkrom.o src/romio.o
-	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
+	$(CC) $^ -o $@ $(CFLAGS) $(LIBS)
 
 dist/x48ng: $(DOTOS)
-	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
+	$(CC) $^ -o $@ $(CFLAGS) $(LIBS)
 
 # Cleaning
 clean:
