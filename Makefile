@@ -49,7 +49,7 @@ ifeq ($(WITH_DEBUGGER), yes)
 		 src/x48_debugger_disasm.o \
 		 src/x48_debugger_rpl.o
 	CFLAGS += $(shell pkg-config --cflags readline) -DWITH_DEBUGGER=1
-	LIBS += $(shell pkg-config --libs readline history)
+	LIBS += $(shell pkg-config --libs readline)
 endif
 
 .PHONY: all clean clean-all pretty-code install
