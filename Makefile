@@ -1,10 +1,10 @@
 # Makefile to build x48ng without autotools
 
 # possible values: x11, sdl1
-GUI = x11
+GUI ?= x11
 
 # possible values: yes, no
-WITH_DEBUGGER = yes
+WITH_DEBUGGER ?= yes
 
 VERSION_MAJOR = 0
 VERSION_MINOR = 12
