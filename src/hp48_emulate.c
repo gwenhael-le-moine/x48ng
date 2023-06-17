@@ -2439,9 +2439,9 @@ void emulate( void ) {
             schedule();
     } while (
 #if defined( WITH_DEBUGGER )
-    !enter_debugger
+        !enter_debugger
 #else
-  1
+        1
 #endif
-             );
+    );
 }

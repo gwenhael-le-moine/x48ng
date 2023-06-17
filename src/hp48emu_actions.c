@@ -9,7 +9,7 @@
 #include "x48.h"
 
 #if defined( WITH_DEBUGGER )
-#include "x48_debugger.h"	/* in_debugger, enter_debugger */
+#include "x48_debugger.h" /* in_debugger, enter_debugger */
 #endif
 
 static int interrupt_called = 0;

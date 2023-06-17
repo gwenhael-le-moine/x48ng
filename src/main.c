@@ -14,7 +14,7 @@
 #include "x48_resources.h"
 
 #if defined( WITH_DEBUGGER )
-#include "x48_debugger.h"	/* enter_debugger, USER_INTERRUPT, exec_flags, emulate_debug, debug */
+#include "x48_debugger.h" /* enter_debugger, USER_INTERRUPT, exec_flags, emulate_debug, debug */
 #endif
 
 #if defined( GUI_IS_X11 )

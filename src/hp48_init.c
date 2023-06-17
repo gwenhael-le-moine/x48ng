@@ -366,7 +366,7 @@ int read_mem_file( char* name, word_4* mem, int size ) {
 
     if ( NULL == ( fp = fopen( name, "r" ) ) ) {
         if ( verbose )
-            fprintf( stderr, "ct open %s\n" );
+            fprintf( stderr, "ct open %s\n", name );
         return 0;
     }
 

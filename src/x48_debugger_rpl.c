@@ -510,7 +510,7 @@ char* dec_string( word_20* addr, char* string ) {
         c = read_nibbles( *addr, 2 );
         *addr += 2;
         if ( hp48_trans_tbl[ c ].trans ) {
-            sprintf( p, hp48_trans_tbl[ c ].trans );
+            sprintf( p, "%s", hp48_trans_tbl[ c ].trans );
             p += strlen( p );
         } else
             *p++ = c;
@@ -691,7 +691,7 @@ char* dec_library( word_20* addr, char* string ) {
     for ( i = 0; i < libidsize; i++ ) {
         c = read_nibbles( *addr + 2 * i + 7, 2 );
         if ( hp48_trans_tbl[ c ].trans ) {
-            sprintf( p, hp48_trans_tbl[ c ].trans );
+            sprintf( p, "%s", hp48_trans_tbl[ c ].trans );
             p += strlen( p );
         } else
             *p++ = c;
@@ -798,7 +798,7 @@ char* dec_local_ident( word_20* addr, char* string ) {
         c = read_nibbles( *addr, 2 );
         *addr += 2;
         if ( hp48_trans_tbl[ c ].trans ) {
-            sprintf( p, hp48_trans_tbl[ c ].trans );
+            sprintf( p, "%s", hp48_trans_tbl[ c ].trans );
             p += strlen( p );
         } else
             *p++ = c;
@@ -830,7 +830,7 @@ char* dec_global_ident( word_20* addr, char* string ) {
         c = read_nibbles( *addr, 2 );
         *addr += 2;
         if ( hp48_trans_tbl[ c ].trans ) {
-            sprintf( p, hp48_trans_tbl[ c ].trans );
+            sprintf( p, "%s", hp48_trans_tbl[ c ].trans );
             p += strlen( p );
         } else
             *p++ = c;
@@ -979,7 +979,7 @@ char* xlib_name( int lib, int command, char* string ) {
                             c = read_nibbles( name_addr, 2 );
                             name_addr += 2;
                             if ( hp48_trans_tbl[ c ].trans ) {
-                                sprintf( p, hp48_trans_tbl[ c ].trans );
+                                sprintf( p, "%s", hp48_trans_tbl[ c ].trans );
                                 p += strlen( p );
                             } else
                                 *p++ = c;
@@ -1117,7 +1117,7 @@ char* dec_char( word_20* addr, char* string ) {
 
     *p++ = '\'';
     if ( hp48_trans_tbl[ c ].trans ) {
-        sprintf( p, hp48_trans_tbl[ c ].trans );
+        sprintf( p, "%s", hp48_trans_tbl[ c ].trans );
         p += strlen( p );
     } else
         *p++ = c;

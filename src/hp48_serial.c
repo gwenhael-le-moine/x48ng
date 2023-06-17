@@ -123,7 +123,7 @@ int serial_init( void ) {
 
     ir_fd = -1;
     if ( useSerial ) {
-        sprintf( tty_dev_name, serialLine );
+        sprintf( tty_dev_name, "%s", serialLine );
         if ( ( ir_fd = open( tty_dev_name, O_RDWR | O_NDELAY ) ) >= 0 ) {
             if ( verbose )
                 printf( "IR connection on %s\n", tty_dev_name );

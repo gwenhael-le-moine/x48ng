@@ -322,7 +322,7 @@ t1_t2_ticks get_t1_t2( void ) {
 #else
     if ( adj_time_pending ) {
 #endif
-         /*
+        /*
          * We have been inside an interrupt for very long, maybe
          * or we are sleeping in the debugger.
          * Don't adjust the time, can't come from user, anyhow.
@@ -349,7 +349,7 @@ t1_t2_ticks get_t1_t2( void ) {
     diff_time = saturn.timer2;
 
     adj_time = access_time - diff_time;
-    delta = abs( adj_time );
+    delta = labs( adj_time );
 
     if ( delta > 0x3c000 ) /* Half a minute */
     {
