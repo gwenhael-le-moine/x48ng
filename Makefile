@@ -16,6 +16,7 @@ CC = gcc
 CFLAGS = -g -O2 -I./src/ -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DPATCHLEVEL=$(PATCHLEVEL) -DCOMPILE_VERSION=$(COMPILE_VERSION)
 LIBS = -lm
 
+OS_TYPE=unix
 ifeq ($(GUI), x11)
 	CFLAGS += $(shell pkg-config --cflags x11 xext) -D_GNU_SOURCE=1 -DGUI_IS_X11=1
 	LIBS += $(shell pkg-config --libs x11 xext)
@@ -24,25 +25,33 @@ ifeq ($(GUI), sdl1)
 	CFLAGS += $(shell pkg-config --cflags SDL_gfx sdl12_compat) -DGUI_IS_SDL1=1
 	LIBS += $(shell pkg-config --libs SDL_gfx sdl12_compat)
 endif
+ifeq ($(GUI), baremetal)
+	CC = riscv64-unknown-elf-gcc
+	CFLAGS += -march=rv32e -mabi=ilp32e --specs=picolibc.specs -DGUI_IS_BAREMETAL=1
+	LIBS += -Wl,--print-memory-usage
+	LIBS +=-T baremetal.ld
+	OS_TYPE=baremetal
+	WITH_DEBUGGER=no
+endif
 
 FULL_WARNINGS = no
 ifeq ($(FULL_WARNINGS), yes)
 	CFLAGS += -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-function -Wconversion -Wdouble-promotion -Wno-sign-conversion -fsanitize=undefined -fsanitize-trap
 endif
 
-DOTOS = src/main.o \
+DOTOS = src/main_$(OS_TYPE).o \
 	src/hp48_device.o \
 	src/hp48_emulate.o \
-	src/hp48_init.o \
-	src/hp48_serial.o \
+	src/hp48_init_$(OS_TYPE).o \
+	src/hp48_serial_$(OS_TYPE).o \
 	src/hp48emu_actions.o \
 	src/hp48emu_memory.o \
 	src/hp48emu_register.o \
 	src/romio.o \
-	src/timer.o \
+	src/timer_$(OS_TYPE).o \
 	src/x48_errors.o \
 	src/x48_resources.o \
-	src/x48.o
+	src/x48_$(OS_TYPE).o
 
 ifeq ($(WITH_DEBUGGER), yes)
 	DOTOS += src/x48_debugger.o \
@@ -54,7 +63,10 @@ endif
 
 .PHONY: all clean clean-all pretty-code install
 
-all: dist/mkcard dist/checkrom dist/dump2rom dist/x48ng
+all: dist/x48ng
+ifneq ($(GUI), baremetal)
+all: dist/mkcard dist/checkrom dist/dump2rom
+endif
 
 # Binaries
 dist/mkcard: src/tools/mkcard.o
