@@ -32,6 +32,7 @@ ifeq ($(GUI), baremetal)
 	LIBS += -Wl,--print-memory-usage
 	LIBS +=-T baremetal.ld
 	OS_TYPE=baremetal
+# There is no readline in baremetal
 	WITH_DEBUGGER=no
 endif
 
