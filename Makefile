@@ -70,6 +70,12 @@ ifneq ($(GUI), baremetal)
 all: dist/mkcard dist/checkrom dist/dump2rom
 endif
 
+GEN_SRCS = src/hp48_rom.c src/hp48_rom.h
+ifeq ($(GUI), baremetal)
+DOTOS += src/hp48_rom.o
+src/hp48_init_$(OS_TYPE).o: src/hp48_rom.o
+endif
+
 # Binaries
 dist/mkcard: src/tools/mkcard.o
 	$(CC) $^ -o $@ $(CFLAGS) $(LIBS)
@@ -85,7 +91,7 @@ dist/x48ng: $(DOTOS)
 
 # Cleaning
 clean:
-	rm -f src/*.o src/tools/*.o
+	rm -f src/*.o src/tools/*.o $(GEN_SRCS)
 
 clean-all: clean
 	rm -f dist/mkcard dist/checkrom dist/dump2rom dist/x48ng
@@ -124,3 +130,6 @@ install: all
 
 	install -m 755 -d -- $(DESTDIR)/etc/X11/app-defaults
 	install -c -m 644 dist/X48NG.ad $(DESTDIR)/etc/X11/app-defaults/X48NG
+
+$(GEN_SRCS):
+	srec_cat dist/ROMs/sxrom-j -binary -o src/hp48_rom.c -c-array hp48_rom -include

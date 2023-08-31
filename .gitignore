@@ -1,5 +1,6 @@
 src/*.o
 src/tools/*.o
+src/hp48_rom.*
 
 dist/checkrom
 dist/dump2rom
