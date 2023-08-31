@@ -22,6 +22,6 @@ jobs:
     - name: make sdl1
       run: make clean && make GUI=sdl1
     - name: install baremetal deps
-      run: sudo apt-get -y install gcc-riscv64-unknown-elf picolibc-riscv64-unknown-elf
+      run: sudo apt-get -y install gcc-riscv64-unknown-elf picolibc-riscv64-unknown-elf srecord
     - name: make baremetal
       run: make clean && make GUI=baremetal

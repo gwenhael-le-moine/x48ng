@@ -131,5 +131,8 @@ install: all
 	install -m 755 -d -- $(DESTDIR)/etc/X11/app-defaults
 	install -c -m 644 dist/X48NG.ad $(DESTDIR)/etc/X11/app-defaults/X48NG
 
-$(GEN_SRCS):
-	srec_cat dist/ROMs/sxrom-j -binary -o src/hp48_rom.c -c-array hp48_rom -include
+dist/ROMs/%: dist/ROMs/%.bz2
+	bunzip2 -k $<
+
+$(GEN_SRCS): dist/ROMs/sxrom-j
+	srec_cat $< -binary -o src/hp48_rom.c -c-array hp48_rom -include
