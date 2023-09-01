@@ -136,3 +136,4 @@ dist/ROMs/%: dist/ROMs/%.bz2
 
 $(GEN_SRCS): dist/ROMs/sxrom-j
 	srec_cat $< -binary -o src/hp48_rom.c -c-array hp48_rom -include
+.INTERMEDIATE: dist/ROMs/sxrom-j
