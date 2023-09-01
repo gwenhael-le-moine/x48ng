@@ -71,7 +71,7 @@ all: dist/mkcard dist/checkrom dist/dump2rom
 endif
 
 ROM=sxrom-j
-GEN_SRCS = src/hp48_rom_$(ROM).c src/hp48_rom_$(ROM).h
+GEN_SRCS = src/hp48_rom_$(ROM).c
 ifeq ($(GUI), baremetal)
 DOTOS += src/hp48_rom_$(ROM).o
 src/hp48_init_$(OS_TYPE).o: src/hp48_rom_$(ROM).o
@@ -138,4 +138,4 @@ dist/ROMs/%: dist/ROMs/%.bz2
 .INTERMEDIATE: dist/ROMs/$(ROM)
 
 $(GEN_SRCS): dist/ROMs/$(ROM)
-	srec_cat $< -binary -o src/hp48_rom_$(ROM).c -c-array hp48_rom -include
+	srec_cat $< -binary -o src/hp48_rom_$(ROM).c -c-array hp48_rom
