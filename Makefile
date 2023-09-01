@@ -26,11 +26,16 @@ ifeq ($(GUI), sdl1)
 	CFLAGS += $(shell pkg-config --cflags SDL_gfx sdl12_compat) -DGUI_IS_SDL1=1
 	LIBS += $(shell pkg-config --libs SDL_gfx sdl12_compat)
 endif
-ifeq ($(GUI), baremetal)
+
+ifeq ($(TARGET), rv32e)
 	CC = riscv64-unknown-elf-gcc
-	CFLAGS += -march=rv32e -mabi=ilp32e --specs=picolibc.specs -DGUI_IS_BAREMETAL=1
-	LIBS += -Wl,--print-memory-usage
+	CFLAGS += -march=rv32e -mabi=ilp32e --specs=picolibc.specs
 	LIBS +=-T baremetal.ld
+endif
+
+ifeq ($(GUI), baremetal)
+	CFLAGS += -DGUI_IS_BAREMETAL=1
+	LIBS += -Wl,--print-memory-usage
 	OS_TYPE=baremetal
 # There is no readline in baremetal
 	WITH_DEBUGGER=no

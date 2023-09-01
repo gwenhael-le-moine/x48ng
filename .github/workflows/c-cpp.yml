@@ -21,7 +21,11 @@ jobs:
       run: make clean && make GUI=x11
     - name: make sdl1
       run: make clean && make GUI=sdl1
-    - name: install baremetal deps
-      run: sudo apt-get -y install gcc-riscv64-unknown-elf picolibc-riscv64-unknown-elf srecord
-    - name: make baremetal
+    - name: install baremetal native deps
+      run: sudo apt-get -y install srecord
+    - name: make baremetal native
       run: make clean && make GUI=baremetal
+    - name: install baremetal rv32e deps
+      run: sudo apt-get -y install gcc-riscv64-unknown-elf picolibc-riscv64-unknown-elf
+    - name: make baremetal rv32e
+      run: make clean && make GUI=baremetal TARGET=rv32e

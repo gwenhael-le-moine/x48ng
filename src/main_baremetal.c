@@ -17,12 +17,14 @@ sample_getc(FILE *file)
 	return EOF;
 }
 
+#ifdef _PICOLIBC_MINOR__
 static FILE __stdio = FDEV_SETUP_STREAM(sample_putc,
 					sample_getc,
 					NULL,
 					_FDEV_SETUP_RW);
 
 FILE *const __iob[3] = { &__stdio, &__stdio, &__stdio };
+#endif // _PICOLIBC_MINOR__
 
 #if _PICOLIBC_MINOR__ >= 7
 FILE *const stdin = __iob[0];
