@@ -70,10 +70,11 @@ ifneq ($(GUI), baremetal)
 all: dist/mkcard dist/checkrom dist/dump2rom
 endif
 
-GEN_SRCS = src/hp48_rom.c src/hp48_rom.h
+ROM=sxrom-j
+GEN_SRCS = src/hp48_rom_$(ROM).c src/hp48_rom_$(ROM).h
 ifeq ($(GUI), baremetal)
-DOTOS += src/hp48_rom.o
-src/hp48_init_$(OS_TYPE).o: src/hp48_rom.o
+DOTOS += src/hp48_rom_$(ROM).o
+src/hp48_init_$(OS_TYPE).o: src/hp48_rom_$(ROM).o
 endif
 
 # Binaries
@@ -91,7 +92,7 @@ dist/x48ng: $(DOTOS)
 
 # Cleaning
 clean:
-	rm -f src/*.o src/tools/*.o $(GEN_SRCS)
+	rm -f src/*.o src/tools/*.o src/hp48_rom_*
 
 clean-all: clean
 	rm -f dist/mkcard dist/checkrom dist/dump2rom dist/x48ng
@@ -134,6 +135,7 @@ install: all
 dist/ROMs/%: dist/ROMs/%.bz2
 	bunzip2 -k $<
 
-$(GEN_SRCS): dist/ROMs/sxrom-j
-	srec_cat $< -binary -o src/hp48_rom.c -c-array hp48_rom -include
-.INTERMEDIATE: dist/ROMs/sxrom-j
+.INTERMEDIATE: dist/ROMs/$(ROM)
+
+$(GEN_SRCS): dist/ROMs/$(ROM)
+	srec_cat $< -binary -o src/hp48_rom_$(ROM).c -c-array hp48_rom -include
