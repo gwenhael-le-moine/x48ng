@@ -49,7 +49,7 @@ ifeq ($(FULL_WARNINGS), yes)
 endif
 
 DOTOS = src/main_$(OS_TYPE).o \
-	src/hp48_device.o \
+	src/hp48_device_$(OS_TYPE).o \
 	src/hp48_emulate.o \
 	src/hp48_init_$(OS_TYPE).o \
 	src/hp48_serial_$(OS_TYPE).o \
