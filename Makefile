@@ -55,6 +55,7 @@ DOTOS = src/main_$(OS_TYPE).o \
 	src/hp48_serial_$(OS_TYPE).o \
 	src/hp48emu_actions.o \
 	src/hp48emu_memory.o \
+	src/hp48emu_rom_$(OS_TYPE).o \
 	src/hp48emu_register.o \
 	src/romio.o \
 	src/timer_$(OS_TYPE).o \

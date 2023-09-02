@@ -16,6 +16,8 @@ extern void write_nibbles( long addr, long val,
                            int len ); /* hp48emu_memory.c */
 extern void dev_memory_init( void );  /* hp48emu_memory.c */
 
+extern long read_nibble_from_rom( long addr ); /* hp48emu_memory_*.c */
+
 extern void set_program_stat( int n );   /* hp48emu_actions.c */
 extern void clear_program_stat( int n ); /* hp48emu_actions.c */
 extern int get_program_stat( int n );    /* hp48emu_actions.c */
