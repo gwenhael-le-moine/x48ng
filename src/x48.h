@@ -1243,8 +1243,6 @@ extern SDL_Surface* sdlsurface;
 /* Functions' prototypes */
 /*************************/
 
-extern int InitDisplay( int argc, char** argv );
-
 extern int get_ui_event( void );
 extern void adjust_contrast( int contrast );
 
@@ -1253,6 +1251,8 @@ extern void ShowConnections( char* w, char* i );
 extern void exit_x48( int tell_x11 );
 
 #if defined( GUI_IS_X11 )
+
+extern int InitDisplay( int argc, char** argv );
 
 extern void save_options( int argc, char** argv );
 extern void refresh_icon( void );
