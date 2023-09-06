@@ -8,7 +8,7 @@
 #include "x48_resources.h"
 
 #if defined( WITH_DEBUGGER )
-#include "x48_debugger.h" /* `disassembler_mode` & `CLASS_MNEMONICS` */
+#include "debugger.h" /* `disassembler_mode` & `CLASS_MNEMONICS` */
 #else
 #define HP_MNEMONICS 0
 #define CLASS_MNEMONICS 1

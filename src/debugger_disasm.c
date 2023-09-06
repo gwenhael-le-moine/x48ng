@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "hp48.h"
-#include "x48_debugger.h"
+#include "debugger.h"
 
 #define TAB_SKIP 8
 

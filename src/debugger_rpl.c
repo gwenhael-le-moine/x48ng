@@ -6,7 +6,7 @@
 #include "hp48.h"
 #include "hp48emu.h"
 #include "romio.h"
-#include "x48_debugger.h"
+#include "debugger.h"
 
 /* #ifndef _HP48CHAR_H */
 /* #define _HP48CHAR_H 1 */

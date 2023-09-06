@@ -47,9 +47,9 @@ DOTOS = src/main.o \
 	src/x48.o
 
 ifeq ($(WITH_DEBUGGER), yes)
-	DOTOS += src/x48_debugger.o \
-		 src/x48_debugger_disasm.o \
-		 src/x48_debugger_rpl.o
+	DOTOS += src/debugger.o \
+		 src/debugger_disasm.o \
+		 src/debugger_rpl.o
 	CFLAGS += $(shell pkg-config --cflags readline) -DWITH_DEBUGGER=1
 	LIBS += $(shell pkg-config --libs readline)
 endif
@@ -75,8 +75,10 @@ dist/x48ng: $(DOTOS)
 clean:
 	rm -f src/*.o src/tools/*.o
 
-clean-all: clean
+mrproper: clean
 	rm -f dist/mkcard dist/checkrom dist/dump2rom dist/x48ng
+
+clean-all: mrproper
 
 # Formatting
 pretty-code:

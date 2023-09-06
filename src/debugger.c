@@ -12,7 +12,7 @@
 #include "romio.h"
 #include "timer.h"
 #include "x48.h" /* for exit_x48() */
-#include "x48_debugger.h"
+#include "debugger.h"
 #include "x48_resources.h"
 
 #define MAX_ARGS 16

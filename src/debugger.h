@@ -25,7 +25,7 @@ extern int step_instruction( void );
 extern char* str_nibbles( word_20 addr, int n );
 
 /*************************/
-/* x48_debugger_disasm.h */
+/* debugger_disasm.h */
 /*************************/
 
 /* #ifndef _DISASM_H */
@@ -46,7 +46,7 @@ extern word_20 disassemble( word_20 addr, char* out );
 /* #endif /\* !_DISASM_H *\/ */
 
 /*************************/
-/* x48_debugger_rpl.h */
+/* debugger_rpl.h */
 /*************************/
 
 /* #ifndef _RPL_H */

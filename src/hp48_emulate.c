@@ -7,7 +7,7 @@
 #include "x48.h"
 
 #if defined( WITH_DEBUGGER )
-#include "x48_debugger.h" /* enter_debugger, TRAP_INSTRUCTION, ILLEGAL_INSTRUCTION */
+#include "debugger.h" /* enter_debugger, TRAP_INSTRUCTION, ILLEGAL_INSTRUCTION */
 #endif
 
 extern int throttle;
