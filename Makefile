@@ -3,9 +3,6 @@
 # possible values: x11, sdl1
 GUI ?= x11
 
-# possible values: yes, no
-WITH_DEBUGGER ?= yes
-
 VERSION_MAJOR = 0
 VERSION_MINOR = 12
 PATCHLEVEL = 1
@@ -46,13 +43,13 @@ DOTOS = src/main.o \
 	src/x48_resources.o \
 	src/x48.o
 
-ifeq ($(WITH_DEBUGGER), yes)
-	DOTOS += src/debugger.o \
-		 src/debugger_disasm.o \
-		 src/debugger_rpl.o
-	CFLAGS += $(shell pkg-config --cflags readline) -DWITH_DEBUGGER=1
-	LIBS += $(shell pkg-config --libs readline)
-endif
+### debugger
+DOTOS += src/debugger.o \
+	src/debugger_disasm.o \
+	src/debugger_rpl.o
+CFLAGS += $(shell pkg-config --cflags readline)
+LIBS += $(shell pkg-config --libs readline)
+### /debugger
 
 .PHONY: all clean clean-all pretty-code install
 

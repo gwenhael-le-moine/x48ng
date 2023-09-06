@@ -6389,14 +6389,12 @@ int get_ui_event( void ) {
                                 }
                             }
                         }
-#if defined( WITH_DEBUGGER )
                         else if ( xev.xbutton.button == Button3 ) {
                             /* TODO Make cut from the screen work. */
                             get_stack();
-                        } else {
-                            /* printf("In display %d\n", xev.xbutton.button); */
-                        }
-#endif
+                        } /* else {
+                            printf("In display %d\n", xev.xbutton.button);
+                        } */
                     } else {
                         if ( xev.xbutton.button == Button1 ||
                              xev.xbutton.button == Button2 ||
