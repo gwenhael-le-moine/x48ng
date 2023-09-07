@@ -4,7 +4,7 @@
 #include "hp48.h"
 #include "hp48emu.h"
 #include "timer.h"
-#include "x48.h"                /* disp; refresh_display(); get_ui_event() */
+#include "x48.h" /* disp; refresh_display(); get_ui_event() */
 
 extern int throttle;
 
@@ -2425,5 +2425,5 @@ void emulate( void ) {
         }
         if ( schedule_event-- <= 0 )
             schedule();
-    } while (1);
+    } while ( 1 );
 }

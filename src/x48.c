@@ -72,29 +72,32 @@ static XrmOptionDescRec options[] = {
     { "+throttle", "*throttle", XrmoptionNoArg, ( void* )"True" },
 };
 
-static char* defaults[] = {
-    "*iconic:			False",
-    "*visual:			Default",
-    "*mono:			False",
-    "*gray:			False",
-    "*monoIcon:			False",
-    "*useXShm:			True",
-    "*smallLabelFont:		-*-fixed-bold-r-normal-*-14-*-*-*-*-*-iso8859-1",
-    "*mediumLabelFont:		-*-fixed-bold-r-normal-*-15-*-*-*-*-*-iso8859-1",
-    "*largeLabelFont:		-*-fixed-medium-r-normal-*-20-*-*-*-*-*-iso8859-1",
-    "*connectionFont:		-*-fixed-medium-r-normal-*-12-*-*-*-*-*-iso8859-1",
-    "*verbose:			False",
-    "*printVersion:		False",
-    "*printCopyright:		False",
-    "*printWarranty:		False",
-    "*useTerminal:		True",
-    "*useSerial:		False",
-    "*serialLine:		/dev/ttyS0",
-    "*completeInitialize:	False",
-    "*resetOnStartup:		False",
-    "*romFileName:		rom.dump",
-    "*homeDirectory:		.x48ng",
-    0 };
+static char* defaults[] = { "*iconic:			False",
+                            "*visual:			Default",
+                            "*mono:			False",
+                            "*gray:			False",
+                            "*monoIcon:			False",
+                            "*useXShm:			True",
+                            "*smallLabelFont:		"
+                            "-*-fixed-bold-r-normal-*-14-*-*-*-*-*-iso8859-1",
+                            "*mediumLabelFont:		"
+                            "-*-fixed-bold-r-normal-*-15-*-*-*-*-*-iso8859-1",
+                            "*largeLabelFont:		"
+                            "-*-fixed-medium-r-normal-*-20-*-*-*-*-*-iso8859-1",
+                            "*connectionFont:		"
+                            "-*-fixed-medium-r-normal-*-12-*-*-*-*-*-iso8859-1",
+                            "*verbose:			False",
+                            "*printVersion:		False",
+                            "*printCopyright:		False",
+                            "*printWarranty:		False",
+                            "*useTerminal:		True",
+                            "*useSerial:		False",
+                            "*serialLine:		/dev/ttyS0",
+                            "*completeInitialize:	False",
+                            "*resetOnStartup:		False",
+                            "*romFileName:		rom.dump",
+                            "*homeDirectory:		.x48ng",
+                            0 };
 
 static int CompletionType = -1;
 
@@ -127,369 +130,255 @@ int does_backing_store;
 int color_mode;
 int icon_color_mode;
 
-color_t colors_sx[] = { { "white",
-                          255,
-                          255,
-                          255
-                          ,
-                          255,
-                          255,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "left",
-                          255,
-                          166,
-                          0
-                          ,
-                          255,
-                          230,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "right",
-                          0,
-                          210,
-                          255
-                          ,
-                          255,
-                          169,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "but_top",
-                          109,
-                          93,
-                          93
-                          ,
-                          0,
-                          91,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "button",
-                          90,
-                          77,
-                          77
-                          ,
-                          0,
-                          81,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "but_bot",
-                          76,
-                          65,
-                          65
-                          ,
-                          0,
-                          69,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "lcd_col",
-                          202,
-                          221,
-                          92
-                          ,
-                          255,
-                          205,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "pix_col",
-                          0,
-                          0,
-                          128
-                          ,
-                          0,
-                          20,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "pad_top",
-                          109,
-                          78,
-                          78
-                          ,
-                          0,
-                          88,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "pad",
-                          90,
-                          64,
-                          64
-                          ,
-                          0,
-                          73,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "pad_bot",
-                          76,
-                          54,
-                          54
-                          ,
-                          0,
-                          60,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "disp_pad_top",
-                          155,
-                          118,
-                          84
-                          ,
-                          0,
-                          124,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "disp_pad",
-                          124,
-                          94,
-                          67
-                          ,
-                          0,
-                          99,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "disp_pad_bot",
-                          100,
-                          75,
-                          53
-                          ,
-                          0,
-                          79,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "logo",
-                          204,
-                          169,
-                          107
-                          ,
-                          255,
-                          172,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "logo_back",
-                          64,
-                          64,
-                          64
-                          ,
-                          0,
-                          65,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "label",
-                          202,
-                          184,
-                          144
-                          ,
-                          255,
-                          185,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "frame",
-                          0,
-                          0,
-                          0
-                          ,
-                          255,
-                          0,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "underlay",
-                          60,
-                          42,
-                          42
-                          ,
-                          0,
-                          48,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "black",
-                          0,
-                          0,
-                          0
-                          ,
-                          0,
-                          0,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { 0 } };
+color_t colors_sx[] = {
+    { "white",
+      255,
+      255,
+      255,
+      255,
+      255,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "left",
+      255,
+      166,
+      0,
+      255,
+      230,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "right",
+      0,
+      210,
+      255,
+      255,
+      169,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "but_top",
+      109,
+      93,
+      93,
+      0,
+      91,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "button",
+      90,
+      77,
+      77,
+      0,
+      81,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "but_bot",
+      76,
+      65,
+      65,
+      0,
+      69,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "lcd_col",
+      202,
+      221,
+      92,
+      255,
+      205,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "pix_col",
+      0,
+      0,
+      128,
+      0,
+      20,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "pad_top",
+      109,
+      78,
+      78,
+      0,
+      88,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "pad", 90, 64, 64, 0, 73, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "pad_bot",
+      76,
+      54,
+      54,
+      0,
+      60,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "disp_pad_top",
+      155,
+      118,
+      84,
+      0,
+      124,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "disp_pad",
+      124,
+      94,
+      67,
+      0,
+      99,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "disp_pad_bot",
+      100,
+      75,
+      53,
+      0,
+      79,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "logo",
+      204,
+      169,
+      107,
+      255,
+      172,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "logo_back",
+      64,
+      64,
+      64,
+      0,
+      65,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "label",
+      202,
+      184,
+      144,
+      255,
+      185,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "frame", 0, 0, 0, 255, 0, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "underlay",
+      60,
+      42,
+      42,
+      0,
+      48,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "black", 0, 0, 0, 0, 0, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { 0 } };
 
-color_t colors_gx[] = { { "white",
-                          255,
-                          255,
-                          255
-                          ,
-                          255,
-                          255,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "left",
-                          255,
-                          186,
-                          255
-                          ,
-                          255,
-                          220,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "right",
-                          0,
-                          255,
-                          204
-                          ,
-                          255,
-                          169,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "but_top",
-                          104,
-                          104,
-                          104
-                          ,
-                          0,
-                          104,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "button",
-                          88,
-                          88,
-                          88
-                          ,
-                          0,
-                          88,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "but_bot",
-                          74,
-                          74,
-                          74
-                          ,
-                          0,
-                          74,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "lcd_col",
-                          202,
-                          221,
-                          92
-                          ,
-                          255,
-                          205,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "pix_col",
-                          0,
-                          0,
-                          128
-                          ,
-                          0,
-                          20,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "pad_top",
-                          88,
-                          88,
-                          88
-                          ,
-                          0,
-                          88,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "pad",
-                          74,
-                          74,
-                          74
-                          ,
-                          0,
-                          74,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "pad_bot",
-                          64,
-                          64,
-                          64
-                          ,
-                          0,
-                          64,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "disp_pad_top",
-                          128,
-                          128,
-                          138
-                          ,
-                          0,
-                          128,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "disp_pad",
-                          104,
-                          104,
-                          110
-                          ,
-                          0,
-                          104,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "disp_pad_bot",
-                          84,
-                          84,
-                          90
-                          ,
-                          0,
-                          84,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "logo",
-                          176,
-                          176,
-                          184
-                          ,
-                          255,
-                          176,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "logo_back",
-                          104,
-                          104,
-                          110
-                          ,
-                          0,
-                          104,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "label",
-                          240,
-                          240,
-                          240
-                          ,
-                          255,
-                          240,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "frame",
-                          0,
-                          0,
-                          0
-                          ,
-                          255,
-                          0,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "underlay",
-                          104,
-                          104,
-                          110
-                          ,
-                          0,
-                          104,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { "black",
-                          0,
-                          0,
-                          0
-                          ,
-                          0,
-                          0,
-                          { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }
-                        },
-                        { 0 } };
+color_t colors_gx[] = {
+    { "white",
+      255,
+      255,
+      255,
+      255,
+      255,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "left",
+      255,
+      186,
+      255,
+      255,
+      220,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "right",
+      0,
+      255,
+      204,
+      255,
+      169,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "but_top",
+      104,
+      104,
+      104,
+      0,
+      104,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "button",
+      88,
+      88,
+      88,
+      0,
+      88,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "but_bot",
+      74,
+      74,
+      74,
+      0,
+      74,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "lcd_col",
+      202,
+      221,
+      92,
+      255,
+      205,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "pix_col",
+      0,
+      0,
+      128,
+      0,
+      20,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "pad_top",
+      88,
+      88,
+      88,
+      0,
+      88,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "pad", 74, 74, 74, 0, 74, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "pad_bot",
+      64,
+      64,
+      64,
+      0,
+      64,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "disp_pad_top",
+      128,
+      128,
+      138,
+      0,
+      128,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "disp_pad",
+      104,
+      104,
+      110,
+      0,
+      104,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "disp_pad_bot",
+      84,
+      84,
+      90,
+      0,
+      84,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "logo",
+      176,
+      176,
+      184,
+      255,
+      176,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "logo_back",
+      104,
+      104,
+      110,
+      0,
+      104,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "label",
+      240,
+      240,
+      240,
+      255,
+      240,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "frame", 0, 0, 0, 255, 0, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "underlay",
+      104,
+      104,
+      110,
+      0,
+      104,
+      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { "black", 0, 0, 0, 0, 0, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
+    { 0 } };
 
 #elif defined( GUI_IS_SDL1 )
 
@@ -499,208 +388,48 @@ unsigned KEYBOARD_HEIGHT, KEYBOARD_WIDTH, TOP_SKIP, SIDE_SKIP, BOTTOM_SKIP,
     DISPLAY_OFFSET_Y, DISP_FRAME, KEYBOARD_OFFSET_X, KEYBOARD_OFFSET_Y,
     KBD_UPLINE;
 
-color_t colors_sx[] = { { "white",
-                          255,
-                          255,
-                          255
-                        },
-                        { "left",
-                          255,
-                          166,
-                          0
-                        },
-                        { "right",
-                          0,
-                          210,
-                          255
-                        },
-                        { "but_top",
-                          109,
-                          93,
-                          93
-                        },
-                        { "button",
-                          90,
-                          77,
-                          77
-                        },
-                        { "but_bot",
-                          76,
-                          65,
-                          65
-                        },
-                        { "lcd_col",
-                          202,
-                          221,
-                          92
-                        },
-                        { "pix_col",
-                          0,
-                          0,
-                          128
-                        },
-                        { "pad_top",
-                          109,
-                          78,
-                          78
-                        },
-                        { "pad",
-                          90,
-                          64,
-                          64
-                        },
-                        { "pad_bot",
-                          76,
-                          54,
-                          54
-                        },
-                        { "disp_pad_top",
-                          155,
-                          118,
-                          84
-                        },
-                        { "disp_pad",
-                          124,
-                          94,
-                          67
-                        },
-                        { "disp_pad_bot",
-                          100,
-                          75,
-                          53
-                        },
-                        { "logo",
-                          204,
-                          169,
-                          107
-                        },
-                        { "logo_back",
-                          64,
-                          64,
-                          64
-                        },
-                        { "label",
-                          202,
-                          184,
-                          144
-                        },
-                        { "frame",
-                          0,
-                          0,
-                          0
-                        },
-                        { "underlay",
-                          60,
-                          42,
-                          42
-                        },
-                        { "black",
-                          0,
-                          0,
-                          0
-                        },
+color_t colors_sx[] = { { "white", 255, 255, 255 },
+                        { "left", 255, 166, 0 },
+                        { "right", 0, 210, 255 },
+                        { "but_top", 109, 93, 93 },
+                        { "button", 90, 77, 77 },
+                        { "but_bot", 76, 65, 65 },
+                        { "lcd_col", 202, 221, 92 },
+                        { "pix_col", 0, 0, 128 },
+                        { "pad_top", 109, 78, 78 },
+                        { "pad", 90, 64, 64 },
+                        { "pad_bot", 76, 54, 54 },
+                        { "disp_pad_top", 155, 118, 84 },
+                        { "disp_pad", 124, 94, 67 },
+                        { "disp_pad_bot", 100, 75, 53 },
+                        { "logo", 204, 169, 107 },
+                        { "logo_back", 64, 64, 64 },
+                        { "label", 202, 184, 144 },
+                        { "frame", 0, 0, 0 },
+                        { "underlay", 60, 42, 42 },
+                        { "black", 0, 0, 0 },
                         { 0 } };
 
-color_t colors_gx[] = { { "white",
-                          255,
-                          255,
-                          255
-                        },
-                        { "left",
-                          255,
-                          186,
-                          255
-                        },
-                        { "right",
-                          0,
-                          255,
-                          204
-                        },
-                        { "but_top",
-                          104,
-                          104,
-                          104
-                        },
-                        { "button",
-                          88,
-                          88,
-                          88
-                        },
-                        { "but_bot",
-                          74,
-                          74,
-                          74
-                        },
-                        { "lcd_col",
-                          202,
-                          221,
-                          92
-                        },
-                        { "pix_col",
-                          0,
-                          0,
-                          128
-                        },
-                        { "pad_top",
-                          88,
-                          88,
-                          88
-                        },
-                        { "pad",
-                          74,
-                          74,
-                          74
-                        },
-                        { "pad_bot",
-                          64,
-                          64,
-                          64
-                        },
-                        { "disp_pad_top",
-                          128,
-                          128,
-                          138
-                        },
-                        { "disp_pad",
-                          104,
-                          104,
-                          110
-                        },
-                        { "disp_pad_bot",
-                          84,
-                          84,
-                          90
-                        },
-                        { "logo",
-                          176,
-                          176,
-                          184
-                        },
-                        { "logo_back",
-                          104,
-                          104,
-                          110
-                        },
-                        { "label",
-                          240,
-                          240,
-                          240
-                        },
-                        { "frame",
-                          0,
-                          0,
-                          0
-                        },
-                        { "underlay",
-                          104,
-                          104,
-                          110
-                        },
-                        { "black",
-                          0,
-                          0,
-                          0
-                        },
+color_t colors_gx[] = { { "white", 255, 255, 255 },
+                        { "left", 255, 186, 255 },
+                        { "right", 0, 255, 204 },
+                        { "but_top", 104, 104, 104 },
+                        { "button", 88, 88, 88 },
+                        { "but_bot", 74, 74, 74 },
+                        { "lcd_col", 202, 221, 92 },
+                        { "pix_col", 0, 0, 128 },
+                        { "pad_top", 88, 88, 88 },
+                        { "pad", 74, 74, 74 },
+                        { "pad_bot", 64, 64, 64 },
+                        { "disp_pad_top", 128, 128, 138 },
+                        { "disp_pad", 104, 104, 110 },
+                        { "disp_pad_bot", 84, 84, 90 },
+                        { "logo", 176, 176, 184 },
+                        { "logo_back", 104, 104, 110 },
+                        { "label", 240, 240, 240 },
+                        { "frame", 0, 0, 0 },
+                        { "underlay", 104, 104, 110 },
+                        { "black", 0, 0, 0 },
                         { 0 } };
 
 // Control how the screen update is performed: at regular intervals (delayed)
@@ -4249,7 +3978,7 @@ void ShowConnections( char* wire, char* ir ) {
     conn_top = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 18;
 
     XTextExtents( finfo, "TEST", ( int )strlen( "TEST" ), &dir, &fa, &fd,
-                 &xchar );
+                  &xchar );
     w = DISPLAY_WIDTH;
     h = fa + fd;
 
@@ -4275,7 +4004,7 @@ void ShowConnections( char* wire, char* ir ) {
     x = DISPLAY_OFFSET_X;
     y = conn_top;
     XCopyArea( dpy, pix, keypad.pixmap, gc, 0, 0, w, h, x,
-              y ); /* FIXME keypad? */
+               y ); /* FIXME keypad? */
 
     DrawKeypad( &keypad );
 
@@ -4321,591 +4050,591 @@ int get_ui_event( void ) {
 
             switch ( ( int )xev.type ) {
 
-            case KeyPress:
+                case KeyPress:
 
-                release_pending = 0;
-                if ( ( xev.xkey.time - last_release_time ) <= 1 ) {
                     release_pending = 0;
+                    if ( ( xev.xkey.time - last_release_time ) <= 1 ) {
+                        release_pending = 0;
+                        break;
+                    }
+
+                    i = XLookupString( &xev.xkey, buf, bufs, &sym, NULL );
+                    wake = decode_key( &xev, sym, buf, i );
+                    first_key = 1;
                     break;
-                }
 
-                i = XLookupString( &xev.xkey, buf, bufs, &sym, NULL );
-                wake = decode_key( &xev, sym, buf, i );
-                first_key = 1;
-                break;
+                case KeyRelease:
 
-            case KeyRelease:
+                    i = XLookupString( &xev.xkey, buf, bufs, &sym, NULL );
+                    first_key = 0;
+                    release_pending = 1;
+                    last_release_time = xev.xkey.time;
+                    memcpy( &release_event, &xev, sizeof( XKeyEvent ) );
+                    break;
 
-                i = XLookupString( &xev.xkey, buf, bufs, &sym, NULL );
-                first_key = 0;
-                release_pending = 1;
-                last_release_time = xev.xkey.time;
-                memcpy( &release_event, &xev, sizeof( XKeyEvent ) );
-                break;
+                case NoExpose:
 
-            case NoExpose:
+                    break;
 
-                break;
+                case Expose:
 
-            case Expose:
-
-                if ( xev.xexpose.count == 0 ) {
-                    if ( xev.xexpose.window == disp.win ) {
-                        DrawDisp();
-                    } else if ( xev.xexpose.window == iconW ) {
-                        DrawIcon();
-                    } else if ( xev.xexpose.window == mainW ) {
-                        DrawKeypad( &keypad );
-                    } else
+                    if ( xev.xexpose.count == 0 ) {
+                        if ( xev.xexpose.window == disp.win ) {
+                            DrawDisp();
+                        } else if ( xev.xexpose.window == iconW ) {
+                            DrawIcon();
+                        } else if ( xev.xexpose.window == mainW ) {
+                            DrawKeypad( &keypad );
+                        } else
                             for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
                                 if ( xev.xexpose.window == buttons[ i ].xwin ) {
                                     DrawButton( i );
                                     break;
                                 }
                             }
-                }
-                break;
-            case UnmapNotify:
+                    }
+                    break;
+                case UnmapNotify:
 
-                disp.mapped = 0;
-                break;
+                    disp.mapped = 0;
+                    break;
 
-            case MapNotify:
+                case MapNotify:
 
-                if ( !disp.mapped ) {
-                    disp.mapped = 1;
-                    update_display();
-                    redraw_annunc();
-                }
-                break;
+                    if ( !disp.mapped ) {
+                        disp.mapped = 1;
+                        update_display();
+                        redraw_annunc();
+                    }
+                    break;
 
-            case ButtonPress:
+                case ButtonPress:
 
-                if ( xev.xbutton.subwindow == disp.win ) {
-                    if ( xev.xbutton.button == Button2 ) {
-                        if ( xev.xbutton.subwindow == disp.win ) {
-                            int x;
-                            int flag = 0;
-                            char* paste_in = XFetchBuffer( dpy, &x, 0 );
+                    if ( xev.xbutton.subwindow == disp.win ) {
+                        if ( xev.xbutton.button == Button2 ) {
+                            if ( xev.xbutton.subwindow == disp.win ) {
+                                int x;
+                                int flag = 0;
+                                char* paste_in = XFetchBuffer( dpy, &x, 0 );
 
-                            char* p = paste_in;
-                            if ( x > MAX_PASTE ) {
-                                x = 0;
-                                printf( "input too long. limit is %d "
-                                        "characters\n",
-                                       MAX_PASTE );
-                            }
-                            paste_count = 0;
-                            paste_size = 0;
-                            while ( x-- ) {
-                                char c = *p++;
-                                switch ( c ) {
-                                case '.':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_PERIOD;
-                                    break;
-                                case '0':
-                                    paste[ paste_size++ ] = BUTTON_0;
-                                    break;
-                                case '1':
-                                    paste[ paste_size++ ] = BUTTON_1;
-                                    break;
-                                case '2':
-                                    paste[ paste_size++ ] = BUTTON_2;
-                                    break;
-                                case '3':
-                                    paste[ paste_size++ ] = BUTTON_3;
-                                    break;
-                                case '4':
-                                    paste[ paste_size++ ] = BUTTON_4;
-                                    break;
-                                case '5':
-                                    paste[ paste_size++ ] = BUTTON_5;
-                                    break;
-                                case '6':
-                                    paste[ paste_size++ ] = BUTTON_6;
-                                    break;
-                                case '7':
-                                    paste[ paste_size++ ] = BUTTON_7;
-                                    break;
-                                case '8':
-                                    paste[ paste_size++ ] = BUTTON_8;
-                                    break;
-                                case '9':
-                                    paste[ paste_size++ ] = BUTTON_9;
-                                    break;
-                                case '\n':
-                                    paste[ paste_size++ ] = BUTTON_SHR;
-                                    paste[ paste_size++ ] =
-                                        BUTTON_PERIOD;
-                                    break;
-                                case '!':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    paste[ paste_size++ ] = BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_DEL;
-                                    break;
-                                case '+':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    paste[ paste_size++ ] = BUTTON_PLUS;
-                                    break;
-                                case '-':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    paste[ paste_size++ ] =
-                                        BUTTON_MINUS;
-                                    break;
-                                case '*':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    paste[ paste_size++ ] = BUTTON_MUL;
-                                    break;
-                                case '/':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    paste[ paste_size++ ] = BUTTON_DIV;
-                                    break;
-                                case ' ':
-                                    paste[ paste_size++ ] = 47;
-                                    break;
-                                case '(':
-                                    paste[ paste_size++ ] = BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_DIV;
-                                    break;
-                                case '[':
-                                    paste[ paste_size++ ] = BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_MUL;
-                                    break;
-                                case '<':
-                                    if ( x > 1 && *p == '<' ) {
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                        paste[ paste_size++ ] =
-                                            BUTTON_MINUS;
-                                        x--;
-                                        p++;
-                                    } else {
-                                        paste[ paste_size++ ] =
-                                            BUTTON_ALPHA;
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                        paste[ paste_size++ ] =
-                                            BUTTON_2;
+                                char* p = paste_in;
+                                if ( x > MAX_PASTE ) {
+                                    x = 0;
+                                    printf( "input too long. limit is %d "
+                                            "characters\n",
+                                            MAX_PASTE );
+                                }
+                                paste_count = 0;
+                                paste_size = 0;
+                                while ( x-- ) {
+                                    char c = *p++;
+                                    switch ( c ) {
+                                        case '.':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_PERIOD;
+                                            break;
+                                        case '0':
+                                            paste[ paste_size++ ] = BUTTON_0;
+                                            break;
+                                        case '1':
+                                            paste[ paste_size++ ] = BUTTON_1;
+                                            break;
+                                        case '2':
+                                            paste[ paste_size++ ] = BUTTON_2;
+                                            break;
+                                        case '3':
+                                            paste[ paste_size++ ] = BUTTON_3;
+                                            break;
+                                        case '4':
+                                            paste[ paste_size++ ] = BUTTON_4;
+                                            break;
+                                        case '5':
+                                            paste[ paste_size++ ] = BUTTON_5;
+                                            break;
+                                        case '6':
+                                            paste[ paste_size++ ] = BUTTON_6;
+                                            break;
+                                        case '7':
+                                            paste[ paste_size++ ] = BUTTON_7;
+                                            break;
+                                        case '8':
+                                            paste[ paste_size++ ] = BUTTON_8;
+                                            break;
+                                        case '9':
+                                            paste[ paste_size++ ] = BUTTON_9;
+                                            break;
+                                        case '\n':
+                                            paste[ paste_size++ ] = BUTTON_SHR;
+                                            paste[ paste_size++ ] =
+                                                BUTTON_PERIOD;
+                                            break;
+                                        case '!':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_DEL;
+                                            break;
+                                        case '+':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_PLUS;
+                                            break;
+                                        case '-':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] =
+                                                BUTTON_MINUS;
+                                            break;
+                                        case '*':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_MUL;
+                                            break;
+                                        case '/':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_DIV;
+                                            break;
+                                        case ' ':
+                                            paste[ paste_size++ ] = 47;
+                                            break;
+                                        case '(':
+                                            paste[ paste_size++ ] = BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_DIV;
+                                            break;
+                                        case '[':
+                                            paste[ paste_size++ ] = BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_MUL;
+                                            break;
+                                        case '<':
+                                            if ( x > 1 && *p == '<' ) {
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_MINUS;
+                                                x--;
+                                                p++;
+                                            } else {
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_ALPHA;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_2;
+                                            }
+                                            break;
+                                        case '{':
+                                            paste[ paste_size++ ] = BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_PLUS;
+                                            break;
+                                        case ')':
+                                        case ']':
+                                        case '}':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_RIGHT;
+                                            break;
+                                        case '>':
+                                            if ( x > 1 && *p == '>' ) {
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_RIGHT;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_RIGHT;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_RIGHT;
+                                                x--;
+                                                p++;
+                                            } else {
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_ALPHA;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHR;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_2;
+                                            }
+                                            break;
+                                        case '#':
+                                            paste[ paste_size++ ] = BUTTON_SHR;
+                                            paste[ paste_size++ ] = BUTTON_DIV;
+                                            break;
+                                        case '_':
+                                            paste[ paste_size++ ] = BUTTON_SHR;
+                                            paste[ paste_size++ ] = BUTTON_MUL;
+                                            break;
+                                        case '"':
+                                            if ( flag & 1 ) {
+                                                flag &= ~1;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_RIGHT;
+                                            } else {
+                                                flag |= 1;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHR;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_MINUS;
+                                            }
+                                            break;
+                                        case ':':
+                                            if ( flag & 2 ) {
+                                                flag &= ~2;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_RIGHT;
+                                            } else {
+                                                flag |= 2;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHR;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_PLUS;
+                                            }
+                                            break;
+                                        case '\'':
+                                            if ( flag & 4 ) {
+                                                flag &= ~4;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_RIGHT;
+                                            } else {
+                                                flag |= 4;
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_COLON;
+                                            }
+                                            break;
+                                        case 'a':
+                                        case 'A':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_A;
+                                            break;
+                                        case 'b':
+                                        case 'B':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_B;
+                                            break;
+                                        case 'c':
+                                        case 'C':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_C;
+                                            break;
+                                        case 'd':
+                                        case 'D':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_D;
+                                            break;
+                                        case 'e':
+                                        case 'E':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_E;
+                                            break;
+                                        case 'f':
+                                        case 'F':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_F;
+                                            break;
+                                        case 'g':
+                                        case 'G':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_MTH;
+                                            break;
+                                        case 'h':
+                                        case 'H':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_PRG;
+                                            break;
+                                        case 'i':
+                                        case 'I':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_CST;
+                                            break;
+                                        case 'j':
+                                        case 'J':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_VAR;
+                                            break;
+                                        case 'k':
+                                        case 'K':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_UP;
+                                            break;
+                                        case 'l':
+                                        case 'L':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_NXT;
+                                            break;
+
+                                        case 'm':
+                                        case 'M':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] =
+                                                BUTTON_COLON;
+                                            break;
+                                        case 'n':
+                                        case 'N':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_STO;
+                                            break;
+                                        case 'o':
+                                        case 'O':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_EVAL;
+                                            break;
+                                        case 'p':
+                                        case 'P':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_LEFT;
+                                            break;
+                                        case 'q':
+                                        case 'Q':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_DOWN;
+                                            break;
+                                        case 'r':
+                                        case 'R':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] =
+                                                BUTTON_RIGHT;
+                                            break;
+                                        case 's':
+                                        case 'S':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_SIN;
+                                            break;
+                                        case 't':
+                                        case 'T':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_COS;
+                                            break;
+                                        case 'u':
+                                        case 'U':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_TAN;
+                                            break;
+                                        case 'v':
+                                        case 'V':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_SQRT;
+                                            break;
+                                        case 'w':
+                                        case 'W':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] =
+                                                BUTTON_POWER;
+                                            break;
+                                        case 'x':
+                                        case 'X':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_INV;
+                                            break;
+                                        case 'y':
+                                        case 'Y':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_NEG;
+                                            break;
+                                        case 'z':
+                                        case 'Z':
+                                            paste[ paste_size++ ] =
+                                                BUTTON_ALPHA;
+                                            if ( islower( c ) )
+                                                paste[ paste_size++ ] =
+                                                    BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_EEX;
+                                            break;
+                                        default:
+                                            printf( "unknown %c %d\n", c, *p );
+                                            break;
                                     }
-                                    break;
-                                case '{':
-                                    paste[ paste_size++ ] = BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_PLUS;
-                                    break;
-                                case ')':
-                                case ']':
-                                case '}':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_RIGHT;
-                                    break;
-                                case '>':
-                                    if ( x > 1 && *p == '>' ) {
-                                        paste[ paste_size++ ] =
-                                            BUTTON_RIGHT;
-                                        paste[ paste_size++ ] =
-                                            BUTTON_RIGHT;
-                                        paste[ paste_size++ ] =
-                                            BUTTON_RIGHT;
-                                        x--;
-                                        p++;
-                                    } else {
-                                        paste[ paste_size++ ] =
-                                            BUTTON_ALPHA;
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHR;
-                                        paste[ paste_size++ ] =
-                                            BUTTON_2;
-                                    }
-                                    break;
-                                case '#':
-                                    paste[ paste_size++ ] = BUTTON_SHR;
-                                    paste[ paste_size++ ] = BUTTON_DIV;
-                                    break;
-                                case '_':
-                                    paste[ paste_size++ ] = BUTTON_SHR;
-                                    paste[ paste_size++ ] = BUTTON_MUL;
-                                    break;
-                                case '"':
-                                    if ( flag & 1 ) {
-                                        flag &= ~1;
-                                        paste[ paste_size++ ] =
-                                            BUTTON_RIGHT;
-                                    } else {
-                                        flag |= 1;
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHR;
-                                        paste[ paste_size++ ] =
-                                            BUTTON_MINUS;
-                                    }
-                                    break;
-                                case ':':
-                                    if ( flag & 2 ) {
-                                        flag &= ~2;
-                                        paste[ paste_size++ ] =
-                                            BUTTON_RIGHT;
-                                    } else {
-                                        flag |= 2;
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHR;
-                                        paste[ paste_size++ ] =
-                                            BUTTON_PLUS;
-                                    }
-                                    break;
-                                case '\'':
-                                    if ( flag & 4 ) {
-                                        flag &= ~4;
-                                        paste[ paste_size++ ] =
-                                            BUTTON_RIGHT;
-                                    } else {
-                                        flag |= 4;
-                                        paste[ paste_size++ ] =
-                                            BUTTON_COLON;
-                                    }
-                                    break;
-                                case 'a':
-                                case 'A':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_A;
-                                    break;
-                                case 'b':
-                                case 'B':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_B;
-                                    break;
-                                case 'c':
-                                case 'C':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_C;
-                                    break;
-                                case 'd':
-                                case 'D':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_D;
-                                    break;
-                                case 'e':
-                                case 'E':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_E;
-                                    break;
-                                case 'f':
-                                case 'F':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_F;
-                                    break;
-                                case 'g':
-                                case 'G':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_MTH;
-                                    break;
-                                case 'h':
-                                case 'H':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_PRG;
-                                    break;
-                                case 'i':
-                                case 'I':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_CST;
-                                    break;
-                                case 'j':
-                                case 'J':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_VAR;
-                                    break;
-                                case 'k':
-                                case 'K':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_UP;
-                                    break;
-                                case 'l':
-                                case 'L':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_NXT;
-                                    break;
-
-                                case 'm':
-                                case 'M':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] =
-                                        BUTTON_COLON;
-                                    break;
-                                case 'n':
-                                case 'N':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_STO;
-                                    break;
-                                case 'o':
-                                case 'O':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_EVAL;
-                                    break;
-                                case 'p':
-                                case 'P':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_LEFT;
-                                    break;
-                                case 'q':
-                                case 'Q':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_DOWN;
-                                    break;
-                                case 'r':
-                                case 'R':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] =
-                                        BUTTON_RIGHT;
-                                    break;
-                                case 's':
-                                case 'S':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_SIN;
-                                    break;
-                                case 't':
-                                case 'T':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_COS;
-                                    break;
-                                case 'u':
-                                case 'U':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_TAN;
-                                    break;
-                                case 'v':
-                                case 'V':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_SQRT;
-                                    break;
-                                case 'w':
-                                case 'W':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] =
-                                        BUTTON_POWER;
-                                    break;
-                                case 'x':
-                                case 'X':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_INV;
-                                    break;
-                                case 'y':
-                                case 'Y':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_NEG;
-                                    break;
-                                case 'z':
-                                case 'Z':
-                                    paste[ paste_size++ ] =
-                                        BUTTON_ALPHA;
-                                    if ( islower( c ) )
-                                        paste[ paste_size++ ] =
-                                            BUTTON_SHL;
-                                    paste[ paste_size++ ] = BUTTON_EEX;
-                                    break;
-                                default:
-                                    printf( "unknown %c %d\n", c, *p );
-                                    break;
+                                }
+                                if ( paste_in )
+                                    XFree( paste_in );
+                                if ( paste_size ) {
+                                    return 1;
                                 }
                             }
-                            if ( paste_in )
-                                XFree( paste_in );
-                            if ( paste_size ) {
-                                return 1;
-                            }
                         }
-                    }
-                } else {
-                    if ( xev.xbutton.button == Button1 ||
-                         xev.xbutton.button == Button2 ||
-                         xev.xbutton.button == Button3 ) {
-                        for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
-                            if ( xev.xbutton.subwindow ==
-                                 buttons[ i ].xwin ) {
-                                if ( buttons[ i ].pressed ) {
-                                    if ( xev.xbutton.button == Button3 ) {
-                                        button_released( i );
+                    } else {
+                        if ( xev.xbutton.button == Button1 ||
+                             xev.xbutton.button == Button2 ||
+                             xev.xbutton.button == Button3 ) {
+                            for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
+                                if ( xev.xbutton.subwindow ==
+                                     buttons[ i ].xwin ) {
+                                    if ( buttons[ i ].pressed ) {
+                                        if ( xev.xbutton.button == Button3 ) {
+                                            button_released( i );
+                                            DrawButton( i );
+                                        }
+                                    } else {
+                                        last_button = i;
+                                        button_pressed( i );
+                                        wake = 1;
+                                        first_key = 1;
                                         DrawButton( i );
                                     }
-                                } else {
-                                    last_button = i;
-                                    button_pressed( i );
-                                    wake = 1;
-                                    first_key = 1;
-                                    DrawButton( i );
+                                    break;
                                 }
-                                break;
                             }
                         }
                     }
-                }
-                break;
+                    break;
 
-            case ButtonRelease:
+                case ButtonRelease:
 
-                first_key = 0;
-                if ( xev.xbutton.button == Button1 ) {
+                    first_key = 0;
+                    if ( xev.xbutton.button == Button1 ) {
+                        button_release_all();
+                    }
+                    if ( xev.xbutton.button == Button2 ) {
+                        if ( last_button >= 0 ) {
+                            button_released( last_button );
+                            DrawButton( last_button );
+                        }
+                        last_button = -1;
+                    }
+                    break;
+
+                case FocusOut:
+                    first_key = 0;
                     button_release_all();
-                }
-                if ( xev.xbutton.button == Button2 ) {
-                    if ( last_button >= 0 ) {
-                        button_released( last_button );
-                        DrawButton( last_button );
-                    }
-                    last_button = -1;
-                }
-                break;
-
-            case FocusOut:
-                first_key = 0;
-                button_release_all();
-                break;
-
-            case MappingNotify:
-
-                switch ( xev.xmapping.request ) {
-                case MappingModifier:
-                case MappingKeyboard:
-                    XRefreshKeyboardMapping( &xev.xmapping );
                     break;
-                case MappingPointer:
+
+                case MappingNotify:
+
+                    switch ( xev.xmapping.request ) {
+                        case MappingModifier:
+                        case MappingKeyboard:
+                            XRefreshKeyboardMapping( &xev.xmapping );
+                            break;
+                        case MappingPointer:
+                        default:
+                            break;
+                    }
+                    break;
+
+                case EnterNotify:
+                case LeaveNotify:
+
+                    break;
+
+                case ClientMessage:
+
+                    cm = ( XClientMessageEvent* )&xev;
+
+                    if ( cm->message_type == wm_protocols ) {
+                        if ( cm->data.l[ 0 ] == wm_delete_window ) {
+                            /*
+                             * Quit selected from window managers menu
+                             */
+                            exit_x48( 1 );
+                        }
+
+                        if ( cm->data.l[ 0 ] == wm_save_yourself ) {
+                            save_command_line();
+                        }
+                    }
+                    break;
+
                 default:
+
+                case KeymapNotify:
+                case ConfigureNotify:
+                case ReparentNotify:
                     break;
-                }
-                break;
-
-            case EnterNotify:
-            case LeaveNotify:
-
-                break;
-
-            case ClientMessage:
-
-                cm = ( XClientMessageEvent* )&xev;
-
-                if ( cm->message_type == wm_protocols ) {
-                    if ( cm->data.l[ 0 ] == wm_delete_window ) {
-                        /*
-                         * Quit selected from window managers menu
-                         */
-                        exit_x48( 1 );
-                    }
-
-                    if ( cm->data.l[ 0 ] == wm_save_yourself ) {
-                        save_command_line();
-                    }
-                }
-                break;
-
-            default:
-
-            case KeymapNotify:
-            case ConfigureNotify:
-            case ReparentNotify:
-                break;
             }
         }
     } while ( first_key > 1 );

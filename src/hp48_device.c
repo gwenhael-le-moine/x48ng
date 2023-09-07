@@ -11,7 +11,7 @@
 #include "hp48.h"
 #include "hp48emu.h"
 #include "timer.h"
-#include "x48.h"                /* adjust_contrast(); ann_struct_t; DISP_ROWS; NIBS_PER_BUFFER_ROW */
+#include "x48.h" /* adjust_contrast(); ann_struct_t; DISP_ROWS; NIBS_PER_BUFFER_ROW */
 
 saturn_t saturn;
 
@@ -187,7 +187,7 @@ static inline void draw_nibble( int c, int r, int val ) {
 
     if ( r <= display.lines )
         x -= disp.offset;
-    y = r;         // y: start in pixels
+    y = r; // y: start in pixels
 
     val &= 0x0f;
     if ( val != lcd_buffer[ r ][ c ] ) {
@@ -417,7 +417,6 @@ void draw_annunc( void ) {
         else
             XClearArea( dpy, disp.win, ann_tbl[ i ].x, ann_tbl[ i ].y,
                         ann_tbl[ i ].width, ann_tbl[ i ].height, False );
-
     }
 
     refresh_icon();
@@ -444,19 +443,17 @@ void update_display( void ) {
     if ( display.on ) {
         addr = display.disp_start;
         if ( display.offset != old_offset ) {
-            memset(
-                   disp_buf, 0xf0,
-                   ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
-            memset(
-                   lcd_buffer, 0xf0,
-                   ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
+            memset( disp_buf, 0xf0,
+                    ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
+            memset( lcd_buffer, 0xf0,
+                    ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
             old_offset = display.offset;
         }
         if ( display.lines != old_lines ) {
             memset( &disp_buf[ 56 ][ 0 ], 0xf0,
-                   ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
+                    ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
             memset( &lcd_buffer[ 56 ][ 0 ], 0xf0,
-                   ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
+                    ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
             old_lines = display.lines;
         }
         for ( i = 0; i <= display.lines; i++ ) {

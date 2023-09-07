@@ -10,7 +10,7 @@
 #include "options.h"
 #include "hp48.h"
 #include "hp48emu.h"
-#include "x48.h"                /* ShowConnections() */
+#include "x48.h" /* ShowConnections() */
 
 static int wire_fd;
 static int ir_fd;

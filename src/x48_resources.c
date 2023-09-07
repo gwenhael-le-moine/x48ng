@@ -360,7 +360,7 @@ void get_resources( void ) {
     resetOnStartup = 0;
     throttle = 0;
 
-    serialLine = "/dev/ttyS0" ;
+    serialLine = "/dev/ttyS0";
 
     romFileName = "rom.dump";
 
