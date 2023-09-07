@@ -39,7 +39,7 @@ DOTOS = src/main.o \
 	src/options.o \
 	src/romio.o \
 	src/timer.o \
-	src/x48_errors.o \
+	src/error_handling.o \
 	src/x48_resources.o \
 	src/x48.o
 

@@ -5,7 +5,7 @@
 #include <ctype.h>
 
 #include "options.h"
-#include "x48_errors.h"
+#include "error_handling.h"
 #include "x48_resources.h"
 
 #if defined( GUI_IS_X11 )

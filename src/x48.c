@@ -16,7 +16,7 @@
 #include "hp48.h"
 #include "romio.h"
 #include "x48.h"
-#include "x48_errors.h"
+#include "error_handling.h"
 #include "x48_resources.h"
 
 disp_t disp;
