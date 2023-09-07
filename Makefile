@@ -43,14 +43,6 @@ DOTOS = src/main.o \
 	src/x48_resources.o \
 	src/x48.o
 
-### debugger
-DOTOS += src/debugger.o \
-	src/debugger_disasm.o \
-	src/debugger_rpl.o
-CFLAGS += $(shell pkg-config --cflags readline)
-LIBS += $(shell pkg-config --libs readline)
-### /debugger
-
 .PHONY: all clean clean-all pretty-code install
 
 all: dist/mkcard dist/checkrom dist/dump2rom dist/x48ng

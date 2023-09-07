@@ -7,13 +7,10 @@
 #include "x48_errors.h"
 #include "x48_resources.h"
 
-#include "debugger.h" /* `disassembler_mode` & `CLASS_MNEMONICS` */
-
 int verbose;
 int useTerminal;
 int useSerial;
 int useXShm;
-int useDebugger;
 int netbook;
 int throttle;
 int initialize;
@@ -67,7 +64,6 @@ where options include:\n\
     -/+terminal                  turn on/off pseudo terminal interface\n\
     -/+serial                    turn on/off serial interface\n\
     -line       <devicename>     use serial line <devicename> for IR connection\n\
-    -/+debug                     turn on/off debugger\n\
     -disasm     <string>         use <string> (\'HP\' or \'class\') mnemonics\n\
     -reset                       perform a reset (PC = 0) on startup\n\
     -initialize                  force initialization x48ng from ROM-dump\n\
@@ -93,7 +89,7 @@ void show_copyright( void ) {
     fprintf( stdout, "\n\
                                COPYRIGHT\n\
 \n\
-x48ng is an Emulator/Debugger for the HP-48 Handheld Calculator.\n\
+x48ng is an Emulator for the HP-48 Handheld Calculator.\n\
 \n\
 This program is free software; you can redistribute it and/or modify\n\
 it under the terms of the GNU General Public License as published by\n\
@@ -157,27 +153,6 @@ char* get_string_resource_from_db( XrmDatabase db, char* name, char* class ) {
 
 char* get_string_resource( char* name, char* class ) {
     return get_string_resource_from_db( rdb, name, class );
-}
-
-int get_mnemonic_resource( char* name, char* class ) {
-    char *tmp, buf[ 100 ];
-    char* s = get_string_resource( name, class );
-    char* os = s;
-
-    if ( !s )
-        return CLASS_MNEMONICS;
-    for ( tmp = buf; *s; s++ )
-        *tmp++ = isupper( *s ) ? tolower( *s ) : *s;
-    *tmp = 0;
-    free( os );
-
-    if ( !strcmp( buf, "hp" ) )
-        return HP_MNEMONICS;
-    if ( !strcmp( buf, "class" ) )
-        return CLASS_MNEMONICS;
-    fprintf( stderr, "%s must be one of \'HP\' or \'class\', not %s.\n", name,
-             buf );
-    return CLASS_MNEMONICS;
 }
 
 int get_boolean_resource( char* name, char* class ) {
@@ -364,8 +339,6 @@ void get_resources( void ) {
     useSerial = 0;
     initialize = 0;
     resetOnStartup = 0;
-    useDebugger = 1;
-    disassembler_mode = CLASS_MNEMONICS; // HP_MNEMONICS
     netbook = 0;
     throttle = 0;
 
@@ -390,10 +363,6 @@ void get_resources( void ) {
     resetOnStartup = get_boolean_resource( "resetOnStartup", "ResetOnStartup" );
     romFileName = get_string_resource( "romFileName", "RomFileName" );
     homeDirectory = get_string_resource( "homeDirectory", "HomeDirectory" );
-
-    useDebugger = get_boolean_resource( "useDebugger", "UseDebugger" );
-    disassembler_mode = get_mnemonic_resource( "disassemblerMnemonics",
-                                               "DisassemblerMnemonics" );
 
     netbook = get_boolean_resource( "netbook", "Netbook" );
 

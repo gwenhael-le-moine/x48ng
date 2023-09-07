@@ -6,7 +6,6 @@
 
 #include "romio.h"
 #include "timer.h"
-#include "debugger.h" /* used for in_debugger */
 
 typedef struct x48_timer_t {
     word_1 run;
@@ -317,10 +316,9 @@ t1_t2_ticks get_t1_t2( void ) {
 
     access_time -= stop;
 
-    if ( adj_time_pending || in_debugger ) {
+    if ( adj_time_pending ) {
         /*
          * We have been inside an interrupt for very long, maybe
-         * or we are sleeping in the debugger.
          * Don't adjust the time, can't come from user, anyhow.
          */
 

@@ -10,7 +10,6 @@ extern int verbose;
 extern int useTerminal;
 extern int useSerial;
 extern int useXShm;
-extern int useDebugger;
 extern int netbook;
 extern int throttle;
 extern int initialize;
@@ -40,7 +39,6 @@ extern char* get_string_resource_from_db( XrmDatabase db, char* name,
                                           char* class );
 extern char* get_string_resource( char* name, char* class );
 extern int get_boolean_resource( char* name, char* class );
-extern int get_mnemonic_resource( char* name, char* class );
 extern Visual* get_visual_resource( Display* dpy, char* name, char* class,
                                     unsigned int* depth );
 extern XFontStruct* get_font_resource( Display* dpy, char* res_name,

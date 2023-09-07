@@ -63,10 +63,6 @@ static XrmOptionDescRec options[] = {
     { "-rom", "*romFileName", XrmoptionSepArg, ( void* )0 },
     { "-home", "*homeDirectory", XrmoptionSepArg, ( void* )0 },
 
-    { "-debug", "*useDebugger", XrmoptionNoArg, ( void* )"False" },
-    { "+debug", "*useDebugger", XrmoptionNoArg, ( void* )"True" },
-    { "-disasm", "*disassemblerMnemonics", XrmoptionSepArg, ( void* )0 },
-
     { "-xrm", ( char* )0, XrmoptionResArg, ( void* )0 },
     { "-netbook", "*netbook", XrmoptionNoArg, ( void* )"False" },
     { "+netbook", "*netbook", XrmoptionNoArg, ( void* )"True" },
@@ -114,8 +110,6 @@ static char* defaults[] = {
     "*resetOnStartup:	False",
     "*romFileName:	rom.dump",
     "*homeDirectory:		.x48ng",
-    "*useDebugger:	True",
-    "*disassemblerMnemonics:	class",
     0 };
 
 static int CompletionType = -1;
@@ -1181,8 +1175,6 @@ int paste_last_key = 0;
 int first_key = 0;
 
 int last_button = -1;
-
-extern char* get_stack();
 
 #if defined( GUI_IS_X11 )
 typedef struct icon_t {
@@ -6389,12 +6381,6 @@ int get_ui_event( void ) {
                                 }
                             }
                         }
-                        else if ( xev.xbutton.button == Button3 ) {
-                            /* TODO Make cut from the screen work. */
-                            get_stack();
-                        } /* else {
-                            printf("In display %d\n", xev.xbutton.button);
-                        } */
                     } else {
                         if ( xev.xbutton.button == Button1 ||
                              xev.xbutton.button == Button2 ||

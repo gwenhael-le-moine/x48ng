@@ -11,7 +11,7 @@ This is my fork of x48-0.6.4 where I deviate from the original code and do my ow
 2. removed the code supporting Solaris, HP-UX, etc.
 3. removed the autotools-based build system and wrote a simple Makefile instead
 4. added a x48ng.desktop file and an icon
-5. make including the debugger an option at compilation
+5. removed the debugger (use the original x48 if you need it)
 
 ## Bugs to fix
 

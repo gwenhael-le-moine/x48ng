@@ -13,8 +13,6 @@
 #include "x48.h"
 #include "x48_resources.h"
 
-#include "debugger.h" /* enter_debugger, USER_INTERRUPT, exec_flags, emulate_debug, debug */
-
 #if defined( GUI_IS_X11 )
 char* progname;
 #endif
@@ -24,9 +22,6 @@ char** saved_argv;
 
 void signal_handler( int sig ) {
     switch ( sig ) {
-        case SIGINT: /* Ctrl-C */
-            enter_debugger |= USER_INTERRUPT;
-            break;
         case SIGALRM:
             got_alarm = 1;
             break;
@@ -150,12 +145,7 @@ int main( int argc, char** argv ) {
     /* Start emulation loop */
     /************************/
     do {
-        if ( !exec_flags )
-            emulate();
-        else
-            emulate_debug();
-
-        debug();
+        emulate();
     } while ( 1 );
 
     return 0;

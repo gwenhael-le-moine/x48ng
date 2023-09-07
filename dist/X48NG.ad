@@ -37,9 +37,3 @@
 *resetOnStartup:	False
 *romFileName:		rom.dump
 *homeDirectory:		.x48ng
-
-!
-! resources controlling the debugger
-!
-*useDebugger:		True
-*disassemblerMnemonics:	class
