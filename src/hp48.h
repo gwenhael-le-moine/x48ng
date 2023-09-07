@@ -153,7 +153,7 @@ typedef struct mem_cntl_t {
 
 typedef struct saturn_t {
     unsigned long magic;
-    char version[ 4 ];
+    char version[ 3 ];
 
     unsigned char A[ 16 ], B[ 16 ], C[ 16 ], D[ 16 ];
 
