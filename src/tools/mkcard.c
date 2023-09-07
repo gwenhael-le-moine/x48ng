@@ -53,9 +53,8 @@ int main( int argc, char** argv ) {
     else if ( !strcmp( asize, "4M" ) )
         size = 0x400000;
     else {
-        fprintf(
-            stderr,
-            "size must be one of 32K, 128K, 256K, 512K, 1M, 2M, or 4M\n" );
+        fprintf( stderr,
+                 "size must be one of 32K, 128K, 256K, 512K, 1M, 2M, or 4M\n" );
         exit( 1 );
     }
 

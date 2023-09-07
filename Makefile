@@ -71,7 +71,7 @@ clean-all: mrproper
 
 # Formatting
 pretty-code:
-	clang-format -i src/*.c src/*.h
+	clang-format -i src/*.c src/*.h src/tools/*.c
 
 # Installing
 PREFIX = /usr
