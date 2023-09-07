@@ -1883,15 +1883,6 @@ void adjust_contrast( int contrast ) {
         }
     }
 }
-#elif defined( GUI_IS_SDL1 )
-void adjust_contrast( int contrast ) {
-    SDLCreateColors();
-    SDLCreateAnnunc();
-    redraw_display();
-}
-#endif
-
-#if defined( GUI_IS_X11 )
 
 void exit_x48( int tell_x11 ) {
     exit_emulator();
@@ -4926,6 +4917,12 @@ int get_ui_event( void ) {
 }
 
 #elif defined( GUI_IS_SDL1 )
+
+void adjust_contrast( int contrast ) {
+    SDLCreateColors();
+    SDLCreateAnnunc();
+    redraw_display();
+}
 
 void exit_x48( int tell_x11 ) {
     exit_emulator();
