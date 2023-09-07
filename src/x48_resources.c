@@ -64,7 +64,6 @@ where options include:\n\
     -/+terminal                  turn on/off pseudo terminal interface\n\
     -/+serial                    turn on/off serial interface\n\
     -line       <devicename>     use serial line <devicename> for IR connection\n\
-    -disasm     <string>         use <string> (\'HP\' or \'class\') mnemonics\n\
     -reset                       perform a reset (PC = 0) on startup\n\
     -initialize                  force initialization x48ng from ROM-dump\n\
     -rom        <filename>       if initializing, read ROM from <filename>\n\
