@@ -1130,44 +1130,35 @@ static letter_t small_font[] = {
 
 /* #endif /\* !_SMALL_H *\/ */
 
+#if defined( GUI_IS_X11 )
+
 typedef struct color_t {
     const char* name;
     int r, g, b;
-#if defined( GUI_IS_X11 )
     int mono_rgb;
     int gray_rgb;
     XColor xcolor;
-#endif
 } color_t;
-
-extern color_t* colors;
 
 typedef struct keypad_t {
     unsigned int width;
     unsigned int height;
-#if defined( GUI_IS_X11 )
     Pixmap pixmap;
-#endif
 } keypad_t;
 
 typedef struct disp_t {
     unsigned int w, h;
-#if defined( GUI_IS_X11 )
     Window win;
     GC gc;
-#endif
     short mapped;
     int offset;
     int lines;
-#if defined( GUI_IS_X11 )
     int display_update;
     XShmSegmentInfo disp_info;
     XImage* disp_image;
     XShmSegmentInfo menu_info;
     XImage* menu_image;
-#endif
 } disp_t;
-extern disp_t disp;
 
 typedef struct button_t {
     const char* name;
@@ -1191,15 +1182,66 @@ typedef struct button_t {
     const char* right;
     const char* sub;
 
-#if defined( GUI_IS_X11 )
     Pixmap map;
     Pixmap down;
     Window xwin;
+} button_t;
+
+typedef struct ann_struct {
+    int bit;
+    int x;
+    int y;
+    unsigned int width;
+    unsigned int height;
+    unsigned char* bits;
+
+    Pixmap pixmap;
+} ann_struct_t;
+
 #elif defined( GUI_IS_SDL1 )
+
+typedef struct color_t {
+    const char* name;
+    int r, g, b;
+} color_t;
+
+typedef struct keypad_t {
+    unsigned int width;
+    unsigned int height;
+} keypad_t;
+
+typedef struct disp_t {
+    unsigned int w, h;
+    short mapped;
+    int offset;
+    int lines;
+} disp_t;
+
+typedef struct button_t {
+    const char* name;
+    short pressed;
+    short extra;
+
+    int code;
+    int x, y;
+    unsigned int w, h;
+
+    int lc;
+    const char* label;
+    short font_size;
+    unsigned int lw, lh;
+    unsigned char* lb;
+
+    const char* letter;
+
+    const char* left;
+    short is_menu;
+    const char* right;
+    const char* sub;
+
     SDL_Surface* surfaceup;
     SDL_Surface* surfacedown;
     int __dummy;
-#endif
 } button_t;
 
 // This mimicks the structure formerly lcd.c, except with SDL surfaces instead
@@ -1212,21 +1254,19 @@ typedef struct ann_struct {
     unsigned int height;
     unsigned char* bits;
 
-#if defined( GUI_IS_X11 )
-    Pixmap pixmap;
-#elif defined( GUI_IS_SDL1 )
     SDL_Surface* surfaceon;
     SDL_Surface* surfaceoff;
-#endif
 } ann_struct_t;
-extern ann_struct_t ann_tbl[];
 
-#if defined( GUI_IS_SDL1 )
 typedef struct SDLWINDOW {
     SDL_Surface *oldsurf, *surf;
     int x, y;
 } SDLWINDOW_t;
 #endif
+
+extern color_t* colors;
+extern disp_t disp;
+extern ann_struct_t ann_tbl[];
 
 #if defined( GUI_IS_X11 )
 extern int shm_flag;
