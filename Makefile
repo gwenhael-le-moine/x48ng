@@ -36,6 +36,7 @@ DOTOS = src/main.o \
 	src/hp48emu_actions.o \
 	src/hp48emu_memory.o \
 	src/hp48emu_register.o \
+	src/options.o \
 	src/romio.o \
 	src/timer.o \
 	src/x48_errors.o \

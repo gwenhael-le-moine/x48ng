@@ -4,27 +4,10 @@
 #if defined( GUI_IS_X11 )
 #include <X11/Xlib.h>
 #include <X11/Xresource.h>
-#endif
 
-extern int verbose;
-extern int useTerminal;
-extern int useSerial;
 extern int useXShm;
 extern int netbook;
-extern int throttle;
-extern int initialize;
-extern int resetOnStartup;
-#if defined( GUI_IS_X11 )
-extern char* serialLine;
-extern char* romFileName;
-extern char* homeDirectory;
-#elif defined( GUI_IS_SDL1 )
-extern char serialLine[];
-extern char romFileName[];
-extern char homeDirectory[];
-#endif
 
-#if defined( GUI_IS_X11 )
 extern char* progname;
 extern char* res_name;
 extern char* res_class;

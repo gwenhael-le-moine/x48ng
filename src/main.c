@@ -9,6 +9,7 @@
 #include <langinfo.h>
 #include <locale.h>
 
+#include "options.h"
 #include "hp48.h"
 #include "x48.h"
 #include "x48_resources.h"

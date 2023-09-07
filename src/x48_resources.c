@@ -4,33 +4,19 @@
 #include <unistd.h>
 #include <ctype.h>
 
+#include "options.h"
 #include "x48_errors.h"
 #include "x48_resources.h"
-
-int verbose;
-int useTerminal;
-int useSerial;
-int useXShm;
-int netbook;
-int throttle;
-int initialize;
-int resetOnStartup;
-#if defined( GUI_IS_X11 )
-char* serialLine;
-char* romFileName;
-char* homeDirectory;
-char* res_name;
-char* res_class;
-#elif defined( GUI_IS_SDL1 )
-char serialLine[ 1024 ];
-char romFileName[ 1024 ];
-char homeDirectory[ 1024 ];
-#endif
 
 #if defined( GUI_IS_X11 )
 #include <X11/Xlib.h>
 #include <X11/Xresource.h>
 #include <X11/Xutil.h>
+
+int useXShm;
+int netbook;
+char* res_name;
+char* res_class;
 
 XrmDatabase rdb = ( XrmDatabase )0;
 
@@ -330,7 +316,6 @@ XFontStruct* get_font_resource( Display* dpy, char* name, char* class ) {
     }
     return f;
 }
-#endif
 
 void get_resources( void ) {
     verbose = 0;
@@ -341,7 +326,6 @@ void get_resources( void ) {
     netbook = 0;
     throttle = 0;
 
-#if defined( GUI_IS_X11 )
     if ( get_boolean_resource( "printVersion", "PrintVersion" ) )
         show_version();
     if ( get_boolean_resource( "printCopyright", "PrintCopyright" ) )
@@ -366,10 +350,21 @@ void get_resources( void ) {
     netbook = get_boolean_resource( "netbook", "Netbook" );
 
     throttle = get_boolean_resource( "throttle", "Throttle" );
+}
 #elif defined( GUI_IS_SDL1 )
-    strcpy( serialLine, "/dev/ttyS0" );
+void get_resources( void ) {
+    verbose = 0;
+    useTerminal = 1;
+    useSerial = 0;
+    initialize = 0;
+    resetOnStartup = 0;
+    throttle = 0;
+
+    serialLine = "/dev/ttyS0" ;
+
+    romFileName = "rom.dump";
 
     // Have homeDirectory in the user's home
-    strcpy( homeDirectory, ".x48ng" ); // live files are stored in ~/.x48ng
-#endif
+    homeDirectory = ".x48ng"; // live files are stored in ~/.x48ng
 }
+#endif

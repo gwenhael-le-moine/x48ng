@@ -180,53 +180,6 @@ unsigned char nibbles[ 16 ][ 2 ] = {
 };
 
 static unsigned char nibble_bitmap[ 16 ];
-
-void init_nibble_maps( void ) {
-    int i;
-
-    for ( i = 0; i < 16; i++ ) {
-        nibble_maps[ i ] =
-            XCreateBitmapFromData( dpy, disp.win, ( char* )nibbles[ i ], 8, 2 );
-    }
-
-    if ( shm_flag ) {
-        if ( disp.disp_image->bitmap_bit_order == MSBFirst ) {
-            nibble_bitmap[ 0x0 ] = 0x00; /* ---- */
-            nibble_bitmap[ 0x1 ] = 0xc0; /* *--- */
-            nibble_bitmap[ 0x2 ] = 0x30; /* -*-- */
-            nibble_bitmap[ 0x3 ] = 0xf0; /* **-- */
-            nibble_bitmap[ 0x4 ] = 0x0c; /* --*- */
-            nibble_bitmap[ 0x5 ] = 0xcc; /* *-*- */
-            nibble_bitmap[ 0x6 ] = 0x3c; /* -**- */
-            nibble_bitmap[ 0x7 ] = 0xfc; /* ***- */
-            nibble_bitmap[ 0x8 ] = 0x03; /* ---* */
-            nibble_bitmap[ 0x9 ] = 0xc3; /* *--* */
-            nibble_bitmap[ 0xa ] = 0x33; /* -*-* */
-            nibble_bitmap[ 0xb ] = 0xf3; /* **-* */
-            nibble_bitmap[ 0xc ] = 0x0f; /* --** */
-            nibble_bitmap[ 0xd ] = 0xcf; /* *-** */
-            nibble_bitmap[ 0xe ] = 0x3f; /* -*** */
-            nibble_bitmap[ 0xf ] = 0xff; /* **** */
-        } else {
-            nibble_bitmap[ 0x0 ] = 0x00; /* ---- */
-            nibble_bitmap[ 0x1 ] = 0x03; /* *--- */
-            nibble_bitmap[ 0x2 ] = 0x0c; /* -*-- */
-            nibble_bitmap[ 0x3 ] = 0x0f; /* **-- */
-            nibble_bitmap[ 0x4 ] = 0x30; /* --*- */
-            nibble_bitmap[ 0x5 ] = 0x33; /* *-*- */
-            nibble_bitmap[ 0x6 ] = 0x3c; /* -**- */
-            nibble_bitmap[ 0x7 ] = 0x3f; /* ***- */
-            nibble_bitmap[ 0x8 ] = 0xc0; /* ---* */
-            nibble_bitmap[ 0x9 ] = 0xc3; /* *--* */
-            nibble_bitmap[ 0xa ] = 0xcc; /* -*-* */
-            nibble_bitmap[ 0xb ] = 0xcf; /* **-* */
-            nibble_bitmap[ 0xc ] = 0xf0; /* --** */
-            nibble_bitmap[ 0xd ] = 0xf3; /* *-** */
-            nibble_bitmap[ 0xe ] = 0xfc; /* -*** */
-            nibble_bitmap[ 0xf ] = 0xff; /* **** */
-        }
-    }
-}
 #endif
 
 ann_struct_t ann_tbl[] = {
@@ -275,40 +228,93 @@ void init_display( void ) {
     memset( lcd_buffer, 0xf0, sizeof( lcd_buffer ) );
 
 #if defined( GUI_IS_X11 )
-    init_nibble_maps();
+    /* init nibble_maps */
+    int i;
+
+    for ( i = 0; i < 16; i++ ) {
+        nibble_maps[ i ] =
+            XCreateBitmapFromData( dpy, disp.win, ( char* )nibbles[ i ], 8, 2 );
+    }
+
+    if ( shm_flag ) {
+        if ( disp.disp_image->bitmap_bit_order == MSBFirst ) {
+            nibble_bitmap[ 0x0 ] = 0x00; /* ---- */
+            nibble_bitmap[ 0x1 ] = 0xc0; /* *--- */
+            nibble_bitmap[ 0x2 ] = 0x30; /* -*-- */
+            nibble_bitmap[ 0x3 ] = 0xf0; /* **-- */
+            nibble_bitmap[ 0x4 ] = 0x0c; /* --*- */
+            nibble_bitmap[ 0x5 ] = 0xcc; /* *-*- */
+            nibble_bitmap[ 0x6 ] = 0x3c; /* -**- */
+            nibble_bitmap[ 0x7 ] = 0xfc; /* ***- */
+            nibble_bitmap[ 0x8 ] = 0x03; /* ---* */
+            nibble_bitmap[ 0x9 ] = 0xc3; /* *--* */
+            nibble_bitmap[ 0xa ] = 0x33; /* -*-* */
+            nibble_bitmap[ 0xb ] = 0xf3; /* **-* */
+            nibble_bitmap[ 0xc ] = 0x0f; /* --** */
+            nibble_bitmap[ 0xd ] = 0xcf; /* *-** */
+            nibble_bitmap[ 0xe ] = 0x3f; /* -*** */
+            nibble_bitmap[ 0xf ] = 0xff; /* **** */
+        } else {
+            nibble_bitmap[ 0x0 ] = 0x00; /* ---- */
+            nibble_bitmap[ 0x1 ] = 0x03; /* *--- */
+            nibble_bitmap[ 0x2 ] = 0x0c; /* -*-- */
+            nibble_bitmap[ 0x3 ] = 0x0f; /* **-- */
+            nibble_bitmap[ 0x4 ] = 0x30; /* --*- */
+            nibble_bitmap[ 0x5 ] = 0x33; /* *-*- */
+            nibble_bitmap[ 0x6 ] = 0x3c; /* -**- */
+            nibble_bitmap[ 0x7 ] = 0x3f; /* ***- */
+            nibble_bitmap[ 0x8 ] = 0xc0; /* ---* */
+            nibble_bitmap[ 0x9 ] = 0xc3; /* *--* */
+            nibble_bitmap[ 0xa ] = 0xcc; /* -*-* */
+            nibble_bitmap[ 0xb ] = 0xcf; /* **-* */
+            nibble_bitmap[ 0xc ] = 0xf0; /* --** */
+            nibble_bitmap[ 0xd ] = 0xf3; /* *-** */
+            nibble_bitmap[ 0xe ] = 0xfc; /* -*** */
+            nibble_bitmap[ 0xf ] = 0xff; /* **** */
+        }
+    }
 #endif
 }
 
+#if defined( GUI_IS_X11 )
 static inline void draw_nibble( int c, int r, int val ) {
     int x, y;
 
-#if defined( GUI_IS_X11 )
     x = ( c * 8 ) + 5;
-#elif defined( GUI_IS_SDL1 )
-    x = ( c * 4 ); // x: start in pixels
-#endif
+
     if ( r <= display.lines )
         x -= disp.offset;
-#if defined( GUI_IS_X11 )
     y = ( r * 2 ) + 20;
-#elif defined( GUI_IS_SDL1 )
-    y = r;         // y: start in pixels
-#endif
+
     val &= 0x0f;
     if ( val != lcd_buffer[ r ][ c ] ) {
-#if defined( GUI_IS_X11 )
         XCopyPlane( dpy, nibble_maps[ val ], disp.win, disp.gc, 0, 0, 8, 2, x,
                     y, 1 );
-#endif
+        lcd_buffer[ r ][ c ] = val;
+    }
+    if ( val != lcd_buffer[ r ][ c ] )
+        lcd_buffer[ r ][ c ] = val;
+}
+#elif defined( GUI_IS_SDL1 )
+static inline void draw_nibble( int c, int r, int val ) {
+    int x, y;
+
+    x = ( c * 4 ); // x: start in pixels
+
+    if ( r <= display.lines )
+        x -= disp.offset;
+    y = r;         // y: start in pixels
+
+    val &= 0x0f;
+    if ( val != lcd_buffer[ r ][ c ] ) {
         lcd_buffer[ r ][ c ] = val;
     }
     if ( val != lcd_buffer[ r ][ c ] )
         lcd_buffer[ r ][ c ] = val;
 
-#if defined( GUI_IS_SDL1 )
     SDLDrawNibble( x, y, val );
-#endif
 }
+#endif
 
 static inline void draw_row( long addr, int row ) {
     int i, v;

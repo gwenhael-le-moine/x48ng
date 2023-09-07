@@ -7,10 +7,10 @@
 #include <termios.h>
 #include <unistd.h>
 
+#include "options.h"
 #include "hp48.h"
 #include "hp48emu.h"
-#include "x48.h"
-#include "x48_resources.h"
+#include "x48.h"                /* ShowConnections() */
 
 static int wire_fd;
 static int ir_fd;
