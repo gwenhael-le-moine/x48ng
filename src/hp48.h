@@ -306,8 +306,6 @@ extern void load_addr( word_20* dat, long addr, int n ); /* hp48_emulate.c */
 
 /* #ifndef _DEVICE_H */
 /* #define _DEVICE_H 1 */
-extern void check_devices( void ); /* hp48_device.c */
-
 extern void init_display( void );                         /* hp48_device.c */
 extern void update_display( void );                       /* hp48_device.c */
 extern void redraw_display( void );                       /* hp48_device.c */
