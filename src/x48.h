@@ -1,6 +1,8 @@
 #ifndef _X48_GUI_H
 #define _X48_GUI_H 1
 
+#include "hp48.h"               /* word_20, word_4 */
+
 #if defined( GUI_IS_X11 )
 #include <X11/Xlib.h>
 #include <X11/Xresource.h>
@@ -1289,6 +1291,17 @@ extern void adjust_contrast( int contrast );
 extern void ShowConnections( char* w, char* i );
 
 extern void exit_x48( int tell_x11 );
+
+/* #ifndef _DEVICE_H */
+/* #define _DEVICE_H 1 */
+extern void init_display( void );                         /* x48_lcd.c */
+extern void update_display( void );                       /* x48_lcd.c */
+extern void redraw_display( void );                       /* x48_lcd.c */
+extern void disp_draw_nibble( word_20 addr, word_4 val ); /* x48_lcd.c */
+extern void menu_draw_nibble( word_20 addr, word_4 val ); /* x48_lcd.c */
+extern void draw_annunc( void );                          /* x48_lcd.c */
+extern void redraw_annunc( void );                        /* x48_lcd.c */
+/* #endif /\* !_DEVICE_H *\/ */
 
 #if defined( GUI_IS_X11 )
 

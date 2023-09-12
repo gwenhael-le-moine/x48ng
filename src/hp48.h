@@ -303,15 +303,4 @@ extern int read_files( void );            /* hp48_init.c */
 extern int write_files( void );           /* hp48_init.c */
 
 extern void load_addr( word_20* dat, long addr, int n ); /* hp48_emulate.c */
-
-/* #ifndef _DEVICE_H */
-/* #define _DEVICE_H 1 */
-extern void init_display( void );                         /* hp48_device.c */
-extern void update_display( void );                       /* hp48_device.c */
-extern void redraw_display( void );                       /* hp48_device.c */
-extern void disp_draw_nibble( word_20 addr, word_4 val ); /* hp48_device.c */
-extern void menu_draw_nibble( word_20 addr, word_4 val ); /* hp48_device.c */
-extern void draw_annunc( void );                          /* hp48_device.c */
-extern void redraw_annunc( void );                        /* hp48_device.c */
-/* #endif /\* !_DEVICE_H *\/ */
 #endif /* !_HP48_H */

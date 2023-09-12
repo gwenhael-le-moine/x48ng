@@ -57,6 +57,12 @@ word_64 run;
 static word_20 jumpmasks[] = { 0xffffffff, 0xfffffff0, 0xffffff00, 0xfffff000,
                                0xffff0000, 0xfff00000, 0xff000000, 0xf0000000 };
 
+saturn_t saturn;
+
+extern int device_check;
+
+device_t device;
+
 int decode_group_80( void ) {
     int t, op3, op4, op5, op6;
     unsigned char* REG;

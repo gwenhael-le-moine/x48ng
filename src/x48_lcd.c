@@ -13,12 +13,6 @@
 #include "timer.h"
 #include "x48.h" /* adjust_contrast(); ann_struct_t; DISP_ROWS; NIBS_PER_BUFFER_ROW */
 
-saturn_t saturn;
-
-extern int device_check;
-
-device_t device;
-
 /*******/
 /* LCD */
 /*******/
