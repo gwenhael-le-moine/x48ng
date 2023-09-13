@@ -2538,12 +2538,13 @@ static int button_release_all( void ) {
 }
 
 void ShowConnections() {
+    char text[1024];
+
     if (verbose) {
         fprintf( stderr, "wire_name: %s\n", wire_name );
         fprintf( stderr, "ir_name: %s\n", ir_name );
     }
 
-    char text[1024];
     if (wire_name) {
         strcat( text, "wire: " );
         strcat( text, wire_name );

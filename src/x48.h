@@ -4,7 +4,7 @@
 #include "hp48.h" /* word_20, word_4 */
 
 #include <SDL/SDL.h>
-#include <SDL/SDL_gfxPrimitives.h>
+#include <SDL/SDL_gfxPrimitives.h> /* lineColor(); pixelColor(); rectangleColor();stringColor(); */
 
 // Colors
 #define WHITE 0
