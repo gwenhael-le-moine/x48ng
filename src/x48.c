@@ -941,9 +941,6 @@ void adjust_contrast() {
 }
 
 void SDLCreateHP( void ) {
-    unsigned int width, height;
-    int cut;
-
     // we allocate memory for the buttons because we need to modify
     // their coordinates, and we don't want to change the original buttons_gx or
     // buttons_sx
@@ -963,11 +960,12 @@ void SDLCreateHP( void ) {
         colors = colors_sx;
     }
 
-    SDLCreateColors();
+    unsigned int width = KEYBOARD_WIDTH + 2 * SIDE_SKIP;
+    unsigned int height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP +
+                          KEYBOARD_HEIGHT + BOTTOM_SKIP;
+    int cut = buttons[ BUTTON_MTH ].y + KEYBOARD_OFFSET_Y - 19;
 
-    width = KEYBOARD_WIDTH + 2 * SIDE_SKIP;
-    height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP +
-             KEYBOARD_HEIGHT + BOTTOM_SKIP;
+    SDLCreateColors();
 
     disp.mapped = 1;
     disp.w = DISPLAY_WIDTH;
@@ -976,7 +974,6 @@ void SDLCreateHP( void ) {
     keypad.width = width;
     keypad.height = height;
 
-    cut = buttons[ BUTTON_MTH ].y + KEYBOARD_OFFSET_Y - 19;
     SDLDrawBackground( width, cut, width, height );
     SDLDrawMore( cut, KEYBOARD_OFFSET_Y, keypad.width, keypad.height );
     SDLDrawLogo();
@@ -1631,7 +1628,6 @@ void SDLDrawKeyLabelRight( void ) {
     unsigned colorbg, colorfg;
 
     // draw the right labels
-
     for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
         if ( buttons[ i ].right == ( char* )0 )
             continue;

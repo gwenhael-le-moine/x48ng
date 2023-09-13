@@ -188,25 +188,8 @@ int main( int argc, char** argv ) {
     /**********/
     parse_args( argc, argv );
 
-    /*
-     * initialize emulator stuff
-     */
-    init_emulator();
-
-    serial_init();
-
-    // SDL Initialization
-    SDLInit();
-
-    /*
-     *  Create the HP-48 window
-     */
-    SDLCreateHP();
-
-    init_display();
-
     /*****************************************/
-    /* handlers for SIGALRM, SIGINT, SIGPIPE */
+    /* handlers for SIGALRM, SIGPIPE */
     /*****************************************/
     sigset_t set;
     struct sigaction sa;
@@ -247,6 +230,23 @@ int main( int argc, char** argv ) {
     flags &= ~O_NDELAY;
     flags &= ~O_NONBLOCK;
     fcntl( STDIN_FILENO, F_SETFL, flags );
+
+    /*
+     * initialize emulator stuff
+     */
+    init_emulator();
+
+    serial_init();
+
+    // SDL Initialization
+    SDLInit();
+
+    /*
+     *  Create the HP-48 window
+     */
+    SDLCreateHP();
+
+    init_display();
 
     /************************/
     /* Start emulation loop */
