@@ -19,11 +19,18 @@ See https://github.com/gwenhael-le-moine/x48ng/issues
 
 ## What more I would like to do:
 
-1. clean-up further.
-2. split the core emulator in a lib and have the GUI use that to cleanly separate the two.
-3. have a more modern GUI in gtk4
-4. can something be merged from droid48? [ https://github.com/shagr4th/droid48 ]
-99. support the HP49g ROM?
+### short term
+
+- clean-up further.
+- split the core emulator in a lib and have the GUI use that to cleanly separate the two.
+- port from sdl1.2 to sdl2
+- bring back the debugger?
+- can something be merged from droid48? [ https://github.com/shagr4th/droid48 ]
+
+### long(er) term
+
+- GUI in gtk(4)?
+- support the HP49g ROM?
 
 ## Compilation
 
@@ -40,5 +47,5 @@ This branch is SDL1 only.
 ## Development
 
 - `make FULL_WARNINGS=yes` to compile with all warnings
-- `make clean` and `make clean-all` to clean between compilation runs
+- `make clean` and `make mrproper` to clean between compilation runs
 - `make pretty-code` to format the code using `clang-format` and the provided `.clang-format`
