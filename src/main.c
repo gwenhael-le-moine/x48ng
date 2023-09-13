@@ -14,7 +14,6 @@
 #include "options.h"
 #include "hp48.h"
 #include "x48.h"
-#include "x48_resources.h"
 
 char* progname;
 
@@ -33,7 +32,6 @@ void signal_handler( int sig ) {
             break;
     }
 }
-
 
 int parse_args( int argc, char* argv[] ) {
     int option_index;
@@ -72,14 +70,10 @@ int parse_args( int argc, char* argv[] ) {
         "\t-V --verbose :\n\t\t be verbose\n"
         "\t-t --use-terminal\n"
         "\t-s --use-serial\n"
-        "\t-i --initialize :\n\t\t initialize the config and content of x48ng's home\n"
+        "\t-i --initialize :\n\t\t initialize the config and content of "
+        "x48ng's home\n"
         "\t-R --reset\n"
-        "\t-T --throttle :\n\t\t try to emulate real speed\n"
-        "\t-n --netbook :\n\t\t horizontal GUI\n"
-        "\t-g --gray :\n\t\t grayscale GUI\n"
-        "\t-m --mono :\n\t\t monochrome GUI\n"
-        "\t-x --use-xshm\n"
-        ;
+        "\t-T --throttle :\n\t\t try to emulate real speed\n";
 
     while ( c != EOF ) {
         c = getopt_long( argc, argv, optstring, long_options, &option_index );
@@ -99,9 +93,50 @@ int parse_args( int argc, char* argv[] ) {
                 exit( 0 );
                 break;
             case 'v':
-                show_version();
-                show_copyright();
-                show_warranty();
+                fprintf( stdout, "\nx48ng %d.%d.%d", VERSION_MAJOR,
+                         VERSION_MINOR, PATCHLEVEL );
+
+                fprintf( stdout, "\n\
+                               COPYRIGHT\n\
+\n\
+x48ng is an Emulator for the HP-48 Handheld Calculator.\n\
+\n\
+This program is free software; you can redistribute it and/or modify\n\
+it under the terms of the GNU General Public License as published by\n\
+the Free Software Foundation; either version 2 of the License, or\n\
+(at your option) any later version.\n\
+\n\
+This program is distributed in the hope that it will be useful,\n\
+but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n\
+GNU General Public License for more details.\n\
+\n\
+You should have received a copy of the GNU General Public License\n\
+along with this program; if not, write to the Free Software\n\
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.\n\n" );
+
+                fprintf( stdout, "\n\
+                              NO WARRANTY\n\
+\n\
+      BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY\n\
+FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.  EXCEPT WHEN\n\
+OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES\n\
+PROVIDE THE PROGRAM \"AS IS\" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED\n\
+OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF\n\
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE RISK AS\n\
+TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.  SHOULD THE\n\
+PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING,\n\
+REPAIR OR CORRECTION.\n\
+\n\
+      IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING\n\
+WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR\n\
+REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES,\n\
+INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING\n\
+OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED\n\
+TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY\n\
+YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER\n\
+PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE\n\
+POSSIBILITY OF SUCH DAMAGES.\n\n" );
                 break;
             case 'V':
                 verbose = 1;
@@ -144,10 +179,10 @@ int parse_args( int argc, char* argv[] ) {
     }
 
     if ( optind < argc ) {
-        fprintf(stderr, "Invalid arguments : ");
+        fprintf( stderr, "Invalid arguments : " );
         while ( optind < argc )
-            fprintf(stderr, "%s\n", argv[ optind++ ]);
-        fprintf(stderr, "\n");
+            fprintf( stderr, "%s\n", argv[ optind++ ] );
+        fprintf( stderr, "\n" );
     }
 
     return ( optind );
@@ -170,28 +205,8 @@ int main( int argc, char** argv ) {
     /**********/
     parse_args( argc, argv );
 
-#if defined( GUI_IS_X11 )
-    /*
-     * save command line options
-     */
-    /* save_options( argc, argv ); */
-
-    /*
-     *  Open up the display
-     */
-    if ( InitDisplay( argc, argv ) < 0 )
-        {
-            fprintf( stderr, "cannot InitDisplay" );
-            exit( 1 );
-        }
-
-#elif defined( GUI_IS_SDL1 )
     // SDL Initialization
     SDLInit();
-
-    // Global parameter initialization
-    get_resources();
-#endif
 
     /*
      * initialize emulator stuff
@@ -201,16 +216,7 @@ int main( int argc, char** argv ) {
     /*
      *  Create the HP-48 window
      */
-#if defined( GUI_IS_X11 )
-    if ( CreateWindows( argc, argv ) < 0 ) {
-        fprintf( stderr, "can\'t create window\n" );
-        exit( 1 );
-    }
-
-    init_annunc();
-#elif defined( GUI_IS_SDL1 )
     SDLCreateHP();
-#endif
 
     serial_init();
 

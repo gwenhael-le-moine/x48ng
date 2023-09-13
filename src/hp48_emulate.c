@@ -2427,11 +2427,6 @@ inline void schedule( void ) {
     if ( got_alarm ) {
         got_alarm = 0;
 
-#if defined( GUI_IS_X11 )
-        if ( disp.display_update )
-            refresh_display();
-#endif
-
         get_ui_event();
     }
 }

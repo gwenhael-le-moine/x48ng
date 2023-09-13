@@ -257,10 +257,6 @@ void do_shutdown( void ) {
     if ( device.display_touched ) {
         device.display_touched = 0;
         update_display();
-#if defined( GUI_IS_X11 )
-        if ( disp.display_update )
-            refresh_display();
-#endif
     }
 
     stop_timer( RUN_TIMER );
@@ -281,11 +277,6 @@ void do_shutdown( void ) {
 
         if ( got_alarm ) {
             got_alarm = 0;
-
-#if defined( GUI_IS_X11 )
-            if ( disp.display_update )
-                refresh_display();
-#endif
 
             ticks = get_t1_t2();
             if ( saturn.t2_ctrl & 0x01 )

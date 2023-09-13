@@ -1,8 +1,5 @@
 # Makefile to build x48ng without autotools
 
-# possible values: x11, sdl1
-GUI ?= x11
-
 VERSION_MAJOR = 0
 VERSION_MINOR = 13
 PATCHLEVEL = 0
@@ -14,14 +11,8 @@ CC = gcc
 CFLAGS = -g -O2 -I./src/ -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DPATCHLEVEL=$(PATCHLEVEL)
 LIBS = -lm
 
-ifeq ($(GUI), x11)
-	CFLAGS += $(shell pkg-config --cflags x11 xext) -D_GNU_SOURCE=1 -DGUI_IS_X11=1
-	LIBS += $(shell pkg-config --libs x11 xext)
-endif
-ifeq ($(GUI), sdl1)
-	CFLAGS += $(shell pkg-config --cflags SDL_gfx sdl12_compat) -DGUI_IS_SDL1=1
-	LIBS += $(shell pkg-config --libs SDL_gfx sdl12_compat)
-endif
+CFLAGS += $(shell pkg-config --cflags SDL_gfx sdl12_compat)
+LIBS += $(shell pkg-config --libs SDL_gfx sdl12_compat)
 
 FULL_WARNINGS = no
 ifeq ($(FULL_WARNINGS), yes)
@@ -39,7 +30,6 @@ DOTOS = src/main.o \
 	src/romio.o \
 	src/timer.o \
 	src/error_handling.o \
-	src/x48_resources.o \
 	src/x48_lcd.o \
 	src/x48.o
 
@@ -100,6 +90,3 @@ install: all
 
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/share/applications
 	sed "s|@PREFIX@|$(PREFIX)|g" dist/x48ng.desktop > $(DESTDIR)$(PREFIX)/share/applications/x48ng.desktop
-
-	install -m 755 -d -- $(DESTDIR)/etc/X11/app-defaults
-	install -c -m 644 dist/X48NG.ad $(DESTDIR)/etc/X11/app-defaults/X48NG
