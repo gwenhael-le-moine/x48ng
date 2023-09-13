@@ -7,8 +7,7 @@ ROM=${ROM:-@PREFIX@/share/x48ng/ROMs/gxrom-r}
 [ -d ~/${DOTX48NG} ] && rm -fr ~/${DOTX48NG}
 mkdir -p ~/${DOTX48NG}
 
-cp $ROM ~/${DOTX48NG}/rom.dump
-cp ~/${DOTX48NG}/rom.dump ~/${DOTX48NG}/rom
+cp $ROM ~/${DOTX48NG}/rom
 cd ~/${DOTX48NG}
 
 PORT1_SIZE=128K
@@ -22,4 +21,4 @@ fi
 @PREFIX@/share/x48ng/mkcard $PORT2_SIZE port2
 
 cd ~/${DOTX48NG}/
-@PREFIX@/bin/x48ng -home ${DOTX48NG} -verbose -initialize
+@PREFIX@/bin/x48ng --config-dir=${DOTX48NG} --verbose --initialize
