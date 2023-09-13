@@ -22,6 +22,7 @@ See https://github.com/gwenhael-le-moine/x48ng/issues
 ### short term
 
 - clean-up further.
+- update manpage for sdl version
 - split the core emulator in a lib and have the GUI use that to cleanly separate the two.
 - port from sdl1.2 to sdl2
 - bring back the debugger?
