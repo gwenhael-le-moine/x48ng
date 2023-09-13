@@ -20,8 +20,6 @@ See https://github.com/gwenhael-le-moine/x48ng/issues
 ## What more I would like to do:
 
 1. clean-up further.
-   - drop use of the `verbose` variable
-   - use seperate files for x11 and sdl1 specific code
 2. split the core emulator in a lib and have the GUI use that to cleanly separate the two.
 3. have a more modern GUI in gtk4
 4. can something be merged from droid48? [ https://github.com/shagr4th/droid48 ]
@@ -31,11 +29,7 @@ See https://github.com/gwenhael-le-moine/x48ng/issues
 
 ### GUI
 
-By default the X11 version is built. It is the most complete UI-wise.
-
-To build the X11 version run `make GUI=x11`
-
-To build the SDL1 version run `make GUI=sdl1`
+This branch is SDL1 only.
 
 ## Installation
 
