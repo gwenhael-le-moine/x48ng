@@ -20,13 +20,16 @@ unsigned char disp_buf[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
 unsigned char lcd_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
 
 ann_struct_t ann_tbl[] = {
-    { ANN_LEFT, 16, 4, ann_left_width, ann_left_height, ann_left_bitmap },
-    { ANN_RIGHT, 61, 4, ann_right_width, ann_right_height, ann_right_bitmap },
-    { ANN_ALPHA, 106, 4, ann_alpha_width, ann_alpha_height, ann_alpha_bitmap },
+    { ANN_LEFT, 16, 4, ann_left_width, ann_left_height, ann_left_bitmap, 0, 0 },
+    { ANN_RIGHT, 61, 4, ann_right_width, ann_right_height, ann_right_bitmap, 0,
+      0 },
+    { ANN_ALPHA, 106, 4, ann_alpha_width, ann_alpha_height, ann_alpha_bitmap, 0,
+      0 },
     { ANN_BATTERY, 151, 4, ann_battery_width, ann_battery_height,
-      ann_battery_bitmap },
-    { ANN_BUSY, 196, 4, ann_busy_width, ann_busy_height, ann_busy_bitmap },
-    { ANN_IO, 241, 4, ann_io_width, ann_io_height, ann_io_bitmap },
+      ann_battery_bitmap, 0, 0 },
+    { ANN_BUSY, 196, 4, ann_busy_width, ann_busy_height, ann_busy_bitmap, 0,
+      0 },
+    { ANN_IO, 241, 4, ann_io_width, ann_io_height, ann_io_bitmap, 0, 0 },
     { 0 } };
 
 static inline void init_nibble_maps( void ) {}

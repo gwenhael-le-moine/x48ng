@@ -10,7 +10,6 @@
 #include "options.h"
 #include "hp48.h"
 #include "hp48emu.h"
-#include "x48.h" /* ShowConnections() */
 
 static int wire_fd;
 static int ir_fd;
@@ -18,8 +17,8 @@ static int ttyp;
 
 extern int rece_instr;
 
-static char* wire_name = ( char* )0;
-static char* ir_name = ( char* )0;
+char* wire_name = ( char* )0;
+char* ir_name = ( char* )0;
 
 void update_connection_display( void ) {
     if ( wire_fd == -1 ) {
@@ -32,7 +31,6 @@ void update_connection_display( void ) {
             free( ir_name );
         ir_name = ( char* )0;
     }
-    ShowConnections( wire_name, ir_name );
 }
 
 int serial_init( void ) {

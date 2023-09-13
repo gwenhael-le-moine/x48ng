@@ -2270,7 +2270,7 @@ inline void schedule( void ) {
 
         if ( device.contrast_touched ) {
             device.contrast_touched = 0;
-            adjust_contrast( display.contrast );
+            adjust_contrast();
         }
 
         if ( device.ann_touched ) {

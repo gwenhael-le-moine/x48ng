@@ -268,6 +268,9 @@ extern int adj_time_pending;
 extern long sched_adjtime;
 extern long schedule_event;
 
+extern char* wire_name;
+extern char* ir_name;
+
 /* #ifndef _DEVICE_H */
 /* #define _DEVICE_H 1 */
 

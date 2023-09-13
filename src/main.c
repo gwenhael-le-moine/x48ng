@@ -15,18 +15,13 @@
 #include "hp48.h"
 #include "x48.h"
 
-char* progname;
-
-int saved_argc;
-char** saved_argv;
-
 void signal_handler( int sig ) {
     switch ( sig ) {
         case SIGALRM:
             got_alarm = 1;
             break;
         case SIGPIPE:
-            exit_x48( 0 );
+            exit_emulator();
             exit( 0 );
         default:
             break;
@@ -37,7 +32,7 @@ int parse_args( int argc, char* argv[] ) {
     int option_index;
     char c = '?';
 
-    char* optstring = "c:r:S:hvVtsiRTnxgm";
+    char* optstring = "c:r:S:hvVtsiRT";
     static struct option long_options[] = {
         { "config-dir", required_argument, NULL, 'c' },
         { "rom", required_argument, NULL, 'r' },
@@ -53,15 +48,11 @@ int parse_args( int argc, char* argv[] ) {
         { "initialize", no_argument, NULL, 'i' },
         { "reset", no_argument, NULL, 'R' },
         { "throttle", no_argument, NULL, 'T' },
-        { "netbook", no_argument, NULL, 'n' },
-        { "use-xshm", no_argument, NULL, 'x' },
-        { "gray", no_argument, NULL, 'g' },
-        { "mono", no_argument, NULL, 'm' },
 
         { 0, 0, 0, 0 } };
 
     char* help_text =
-        "ngstar [options]\n"
+        "x48ng [options]\n"
         "\t-h --help :\n\t\t what you are reading\n"
         "\t-v --version :\n\t\t show version\n"
         "\t-c<path> --config-dir=<path> :\n\t\t use <path> as x48ng's home\n"
@@ -156,18 +147,6 @@ POSSIBILITY OF SUCH DAMAGES.\n\n" );
             case 'T':
                 throttle = 1;
                 break;
-            case 'n':
-                netbook = 1;
-                break;
-            case 'g':
-                gray = 1;
-                break;
-            case 'm':
-                mono = 1;
-                break;
-            case 'x':
-                useXShm = 1;
-                break;
 
             case '?':
             case ':':
@@ -185,40 +164,44 @@ POSSIBILITY OF SUCH DAMAGES.\n\n" );
         fprintf( stderr, "\n" );
     }
 
+    if ( verbose ) {
+        fprintf( stderr, "verbose = %i\n", verbose );
+        fprintf( stderr, "useTerminal = %i\n", useTerminal );
+        fprintf( stderr, "useSerial = %i\n", useSerial );
+        fprintf( stderr, "throttle = %i\n", throttle );
+        fprintf( stderr, "initialize = %i\n", initialize );
+        fprintf( stderr, "resetOnStartup = %i\n", resetOnStartup );
+
+        fprintf( stderr, "serialLine = %s\n", serialLine );
+        fprintf( stderr, "romFileName = %s\n", romFileName );
+        fprintf( stderr, "homeDirectory = %s\n", homeDirectory );
+    }
+
     return ( optind );
 }
 
 int main( int argc, char** argv ) {
     setlocale( LC_ALL, "C" );
 
-    /*
-     *  Get the name we are called.
-     */
-    progname = strrchr( argv[ 0 ], '/' );
-    if ( progname == NULL )
-        progname = argv[ 0 ];
-    else
-        progname++;
-
     /**********/
     /* getopt */
     /**********/
     parse_args( argc, argv );
-
-    // SDL Initialization
-    SDLInit();
 
     /*
      * initialize emulator stuff
      */
     init_emulator();
 
+    serial_init();
+
+    // SDL Initialization
+    SDLInit();
+
     /*
      *  Create the HP-48 window
      */
     SDLCreateHP();
-
-    serial_init();
 
     init_display();
 

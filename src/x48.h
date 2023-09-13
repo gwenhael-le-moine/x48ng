@@ -922,8 +922,6 @@ static letter_t small_font[] = {
 typedef struct color_t {
     const char* name;
     int r, g, b;
-    int mono_rgb;
-    int gray_rgb;
 } color_t;
 
 typedef struct keypad_t {
@@ -936,7 +934,6 @@ typedef struct disp_t {
     short mapped;
     int offset;
     int lines;
-    int display_update;
 } disp_t;
 
 typedef struct button_t {
@@ -963,7 +960,6 @@ typedef struct button_t {
 
     SDL_Surface* surfaceup;
     SDL_Surface* surfacedown;
-    int __dummy;
 } button_t;
 
 // This mimicks the structure formerly lcd.c, except with SDL surfaces instead
@@ -998,11 +994,9 @@ extern SDL_Surface* sdlsurface;
 /*************************/
 
 extern int get_ui_event( void );
-extern void adjust_contrast( int contrast );
+extern void adjust_contrast();
 
-extern void ShowConnections( char* w, char* i );
-
-extern void exit_x48( int tell_x11 );
+extern void ShowConnections();
 
 /* #ifndef _DEVICE_H */
 /* #define _DEVICE_H 1 */
@@ -1036,14 +1030,10 @@ extern void SDLDrawSmallString( int x, int y, const char* string,
 extern void SDLCreateColors( void );
 extern void SDLDrawKeyLetter( void );
 extern unsigned SDLBGRA2ARGB( unsigned color );
-extern void SDLDrawBezel( unsigned int width, unsigned int height,
-                          unsigned int offset_y, unsigned int offset_x );
-extern void SDLDrawMore( unsigned int w, unsigned int h, unsigned int cut,
-                         unsigned int offset_y, unsigned int offset_x,
+extern void SDLDrawBezel();
+extern void SDLDrawMore( unsigned int cut, unsigned int offset_y,
                          int keypad_width, int keypad_height );
-extern void SDLDrawLogo( unsigned int w, unsigned int h, unsigned int cut,
-                         unsigned int offset_y, unsigned int offset_x,
-                         int keypad_width, int keypad_height );
+extern void SDLDrawLogo();
 extern void SDLDrawBackground( int width, int height, int w_top, int h_top );
 extern void SDLUIShowKey( int hpkey );
 extern void SDLUIHideKey( void );
