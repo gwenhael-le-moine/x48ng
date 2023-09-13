@@ -816,6 +816,49 @@ sdltohpkeymap_t sdltohpkeymap[] = {
     // end marker
     { ( SDLKey )0, ( SDLKey )0 } };
 
+SDL_Surface* sdlwindow;
+
+void SDLInit( void ) {
+    // Initialize SDL
+    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
+        printf( "Couldn't initialize SDL: %s\n", SDL_GetError() );
+        exit( 1 );
+    }
+
+    // On exit: clean SDL
+    atexit( SDL_Quit );
+
+    // Initialize the geometric values
+    KEYBOARD_HEIGHT = _KEYBOARD_HEIGHT;
+    KEYBOARD_WIDTH = _KEYBOARD_WIDTH;
+    TOP_SKIP = _TOP_SKIP;
+    SIDE_SKIP = _SIDE_SKIP;
+    BOTTOM_SKIP = _BOTTOM_SKIP;
+    DISP_KBD_SKIP = _DISP_KBD_SKIP;
+    DISPLAY_WIDTH = _DISPLAY_WIDTH;
+    DISPLAY_HEIGHT = _DISPLAY_HEIGHT;
+    DISPLAY_OFFSET_X = _DISPLAY_OFFSET_X;
+    DISPLAY_OFFSET_Y = _DISPLAY_OFFSET_Y;
+    DISP_FRAME = _DISP_FRAME;
+    KEYBOARD_OFFSET_X = _KEYBOARD_OFFSET_X;
+    KEYBOARD_OFFSET_Y = _KEYBOARD_OFFSET_Y;
+    KBD_UPLINE = _KBD_UPLINE;
+
+    unsigned width =
+        ( buttons_gx[ LAST_BUTTON ].x + buttons_gx[ LAST_BUTTON ].w ) +
+        2 * SIDE_SKIP;
+    unsigned height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP +
+                      buttons_gx[ LAST_BUTTON ].y +
+                      buttons_gx[ LAST_BUTTON ].h + BOTTOM_SKIP;
+
+    sdlwindow = SDL_SetVideoMode( width, height, 32, SDL_SWSURFACE );
+
+    if ( sdlwindow == NULL ) {
+        printf( "Couldn't set video mode: %s\n", SDL_GetError() );
+        exit( 1 );
+    }
+}
+
 int SmallTextWidth( const char* string, unsigned int length ) {
     unsigned int i;
     int w;
@@ -898,10 +941,10 @@ void adjust_contrast() {
 }
 
 void SDLCreateHP( void ) {
-    /* int x, y, w, h; */
     unsigned int width, height;
+    int cut;
 
-    // SDL port: we allocate memory for the buttons because we need to modify
+    // we allocate memory for the buttons because we need to modify
     // their coordinates, and we don't want to change the original buttons_gx or
     // buttons_sx
     if ( buttons ) {
@@ -920,11 +963,6 @@ void SDLCreateHP( void ) {
         colors = colors_sx;
     }
 
-    int cut;
-
-    ///////////////////////////////////////////////
-    // SDL PORT
-    ///////////////////////////////////////////////
     SDLCreateColors();
 
     width = KEYBOARD_WIDTH + 2 * SIDE_SKIP;
@@ -1963,50 +2001,6 @@ void SDLDrawBackground( int width, int height, int w_top, int h_top ) {
     rect.w = DISPLAY_WIDTH;
     rect.h = DISPLAY_HEIGHT;
     SDL_FillRect( sdlwindow, &rect, ARGBColors[ LCD ] );
-}
-
-SDL_Surface* sdlwindow;
-SDL_Surface* sdlsurface;
-
-void SDLInit( void ) {
-    // Initialize SDL
-    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
-        printf( "Couldn't initialize SDL: %s\n", SDL_GetError() );
-        exit( 1 );
-    }
-
-    // On exit: clean SDL
-    atexit( SDL_Quit );
-
-    // Initialize the geometric values
-    KEYBOARD_HEIGHT = _KEYBOARD_HEIGHT;
-    KEYBOARD_WIDTH = _KEYBOARD_WIDTH;
-    TOP_SKIP = _TOP_SKIP;
-    SIDE_SKIP = _SIDE_SKIP;
-    BOTTOM_SKIP = _BOTTOM_SKIP;
-    DISP_KBD_SKIP = _DISP_KBD_SKIP;
-    DISPLAY_WIDTH = _DISPLAY_WIDTH;
-    DISPLAY_HEIGHT = _DISPLAY_HEIGHT;
-    DISPLAY_OFFSET_X = _DISPLAY_OFFSET_X;
-    DISPLAY_OFFSET_Y = _DISPLAY_OFFSET_Y;
-    DISP_FRAME = _DISP_FRAME;
-    KEYBOARD_OFFSET_X = _KEYBOARD_OFFSET_X;
-    KEYBOARD_OFFSET_Y = _KEYBOARD_OFFSET_Y;
-    KBD_UPLINE = _KBD_UPLINE;
-
-    unsigned width =
-        ( buttons_gx[ LAST_BUTTON ].x + buttons_gx[ LAST_BUTTON ].w ) +
-        2 * SIDE_SKIP;
-    unsigned height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP +
-                      buttons_gx[ LAST_BUTTON ].y +
-                      buttons_gx[ LAST_BUTTON ].h + BOTTOM_SKIP;
-
-    sdlwindow = SDL_SetVideoMode( width, height, 32, SDL_SWSURFACE );
-
-    if ( sdlwindow == NULL ) {
-        printf( "Couldn't set video mode: %s\n", SDL_GetError() );
-        exit( 1 );
-    }
 }
 
 // This should be called once to setup the surfaces. Calling it multiple

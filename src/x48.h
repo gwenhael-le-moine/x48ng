@@ -987,7 +987,6 @@ extern ann_struct_t ann_tbl[];
 
 extern unsigned int ARGBColors[ BLACK + 1 ];
 extern SDL_Surface* sdlwindow;
-extern SDL_Surface* sdlsurface;
 
 /*************************/
 /* Functions' prototypes */

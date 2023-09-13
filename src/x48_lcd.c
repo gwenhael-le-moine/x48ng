@@ -32,8 +32,6 @@ ann_struct_t ann_tbl[] = {
     { ANN_IO, 241, 4, ann_io_width, ann_io_height, ann_io_bitmap, 0, 0 },
     { 0 } };
 
-static inline void init_nibble_maps( void ) {}
-
 static inline void draw_nibble( int c, int r, int val ) {
     int x, y;
 
@@ -217,6 +215,4 @@ void init_display( void ) {
 
     memset( disp_buf, 0xf0, sizeof( disp_buf ) );
     memset( lcd_buffer, 0xf0, sizeof( lcd_buffer ) );
-
-    init_nibble_maps();
 }
