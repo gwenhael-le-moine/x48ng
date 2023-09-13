@@ -2551,15 +2551,26 @@ static int button_release_all( void ) {
 }
 
 void ShowConnections() {
-    fprintf( stderr, "wire_name: %s\n", wire_name );
-    fprintf( stderr, "ir_name: %s\n", ir_name );
+    if (verbose) {
+        fprintf( stderr, "wire_name: %s\n", wire_name );
+        fprintf( stderr, "ir_name: %s\n", ir_name );
+    }
 
-    /* if (wire_name) */
-    /*     SDLDrawSmallString(10, 10, wire_name, strlen( wire_name ),
-     * 0xffffffff, 0x00000000 ); */
-    /* if (ir_name) */
-    /*     SDLDrawSmallString(10, 20, ir_name, strlen( ir_name ), 0xffffffff,
-     * 0x00000000 ); */
+    char text[1024];
+    if (wire_name) {
+        strcat( text, "wire: " );
+        strcat( text, wire_name );
+    }
+    if (ir_name) {
+        if (strlen(text) > 0)
+            strcat( text, " | " );
+
+        strcat( text, "ir: " );
+        strcat( text, ir_name );
+    }
+
+    if (strlen(text) > 0)
+        stringColor( sdlwindow, 10, 240, text, 0xffffffff );
 }
 
 int get_ui_event( void ) {
