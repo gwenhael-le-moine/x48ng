@@ -2181,14 +2181,14 @@ unsigned SDLBGRA2ARGB( unsigned color ) {
 // State to displayed zoomed last pressed key
 SDL_Surface* showkeylastsurf = 0;
 int showkeylastx, showkeylasty, showkeylastkey;
+
 // Show the hp key which is being pressed
 void SDLUIShowKey( int hpkey ) {
     SDL_Rect /* rect,  */ srect, drect;
     SDL_Surface *ssurf, *zsurf;
     int x;
     int y;
-    // double zoomfactor = 1.5;
-    double zoomfactor = 3;
+    double zoomfactor = 0.9;
 
     // If we're called with the same key as before, do nothing
     if ( showkeylastkey == hpkey )
