@@ -5,7 +5,7 @@
 #include "hp48.h"
 #include "hp48emu.h"
 #include "timer.h"
-#include "x48.h" /* disp; refresh_display(); get_ui_event() */
+#include "x48.h" /* get_ui_event() */
 
 static long jumpaddr;
 
