@@ -2286,31 +2286,31 @@ void SDLUIFeedback( void ) {
     // This function should give some UI feedback to indicate that a key was
     // pressed E.g. by beeping, vibrating or flashing something
 
-    SDL_Surface *surf1, *surf2;
-    surf1 =
-        SDL_CreateRGBSurface( SDL_SWSURFACE, sdlwindow->w, sdlwindow->h, 32,
-                              0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 );
-    surf2 =
-        SDL_CreateRGBSurface( SDL_SWSURFACE, sdlwindow->w, sdlwindow->h, 32,
-                              0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 );
+    /* SDL_Surface *surf1, *surf2; */
+    /* surf1 = */
+    /*     SDL_CreateRGBSurface( SDL_SWSURFACE, sdlwindow->w, sdlwindow->h, 32, */
+    /*                           0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 ); */
+    /* surf2 = */
+    /*     SDL_CreateRGBSurface( SDL_SWSURFACE, sdlwindow->w, sdlwindow->h, 32, */
+    /*                           0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 ); */
 
-    // Copy screen
-    SDL_BlitSurface( sdlwindow, 0, surf1, 0 );
+    /* // Copy screen */
+    /* SDL_BlitSurface( sdlwindow, 0, surf1, 0 ); */
 
-    // Overlay something
-    SDL_FillRect( surf2, 0, 0x80000000 );
-    SDL_BlitSurface( surf2, 0, sdlwindow, 0 );
-    SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 );
+    /* // Overlay something */
+    /* SDL_FillRect( surf2, 0, 0x80000000 ); */
+    /* SDL_BlitSurface( surf2, 0, sdlwindow, 0 ); */
+    /* SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 ); */
 
-    SDL_Delay( 20 );
+    /* SDL_Delay( 20 ); */
 
-    // Restore screen
-    SDL_BlitSurface( surf1, 0, sdlwindow, 0 );
+    /* // Restore screen */
+    /* SDL_BlitSurface( surf1, 0, sdlwindow, 0 ); */
 
-    SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 );
+    /* SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 ); */
 
-    SDL_FreeSurface( surf1 );
-    SDL_FreeSurface( surf2 );
+    /* SDL_FreeSurface( surf1 ); */
+    /* SDL_FreeSurface( surf2 ); */
 }
 
 // Simple 'show window' function
