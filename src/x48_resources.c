@@ -13,8 +13,6 @@
 #include <X11/Xresource.h>
 #include <X11/Xutil.h>
 
-int useXShm;
-int netbook;
 char* res_name;
 char* res_class;
 

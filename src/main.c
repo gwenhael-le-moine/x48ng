@@ -9,14 +9,14 @@
 #include <langinfo.h>
 #include <locale.h>
 
+#include <getopt.h>
+
 #include "options.h"
 #include "hp48.h"
 #include "x48.h"
 #include "x48_resources.h"
 
-#if defined( GUI_IS_X11 )
 char* progname;
-#endif
 
 int saved_argc;
 char** saved_argv;
@@ -34,10 +34,128 @@ void signal_handler( int sig ) {
     }
 }
 
+
+int parse_args( int argc, char* argv[] ) {
+    int option_index;
+    char c = '?';
+
+    char* optstring = "c:r:S:hvVtsiRTnxgm";
+    static struct option long_options[] = {
+        { "config-dir", required_argument, NULL, 'c' },
+        { "rom", required_argument, NULL, 'r' },
+        { "serial-line", required_argument, NULL, 'S' },
+
+        { "help", no_argument, NULL, 'h' },
+        { "version", no_argument, NULL, 'v' },
+        { "verbose", no_argument, NULL, 'V' },
+
+        { "use-terminal", no_argument, NULL, 't' },
+        { "use-serial", no_argument, NULL, 's' },
+
+        { "initialize", no_argument, NULL, 'i' },
+        { "reset", no_argument, NULL, 'R' },
+        { "throttle", no_argument, NULL, 'T' },
+        { "netbook", no_argument, NULL, 'n' },
+        { "use-xshm", no_argument, NULL, 'x' },
+        { "gray", no_argument, NULL, 'g' },
+        { "mono", no_argument, NULL, 'm' },
+
+        { 0, 0, 0, 0 } };
+
+    char* help_text =
+        "ngstar [options]\n"
+        "\t-h --help :\n\t\t what you are reading\n"
+        "\t-v --version :\n\t\t show version\n"
+        "\t-c<path> --config-dir=<path> :\n\t\t use <path> as x48ng's home\n"
+        "\t-r<filename> --rom=<filename> :\n\t\t use <filename> as ROM\n"
+        "\t-S<path> --serial-line=<path> :\n\t\t use <path> as serial device\n"
+        "\t-V --verbose :\n\t\t be verbose\n"
+        "\t-t --use-terminal\n"
+        "\t-s --use-serial\n"
+        "\t-i --initialize :\n\t\t initialize the config and content of x48ng's home\n"
+        "\t-R --reset\n"
+        "\t-T --throttle :\n\t\t try to emulate real speed\n"
+        "\t-n --netbook :\n\t\t horizontal GUI\n"
+        "\t-g --gray :\n\t\t grayscale GUI\n"
+        "\t-m --mono :\n\t\t monochrome GUI\n"
+        "\t-x --use-xshm\n"
+        ;
+
+    while ( c != EOF ) {
+        c = getopt_long( argc, argv, optstring, long_options, &option_index );
+
+        switch ( c ) {
+            case 'c':
+                homeDirectory = optarg;
+                break;
+            case 'r':
+                romFileName = optarg;
+                break;
+            case 'S':
+                serialLine = optarg;
+                break;
+            case 'h':
+                fprintf( stdout, "%s", help_text );
+                exit( 0 );
+                break;
+            case 'v':
+                show_version();
+                show_copyright();
+                show_warranty();
+                break;
+            case 'V':
+                verbose = 1;
+                break;
+            case 't':
+                useTerminal = 1;
+                break;
+            case 's':
+                useSerial = 1;
+                break;
+            case 'i':
+                initialize = 1;
+                break;
+            case 'R':
+                resetOnStartup = 1;
+                break;
+            case 'T':
+                throttle = 1;
+                break;
+            case 'n':
+                netbook = 1;
+                break;
+            case 'g':
+                gray = 1;
+                break;
+            case 'm':
+                mono = 1;
+                break;
+            case 'x':
+                useXShm = 1;
+                break;
+
+            case '?':
+            case ':':
+                exit( 0 );
+                break;
+            default:
+                break;
+        }
+    }
+
+    if ( optind < argc ) {
+        fprintf(stderr, "Invalid arguments : ");
+        while ( optind < argc )
+            fprintf(stderr, "%s\n", argv[ optind++ ]);
+        fprintf(stderr, "\n");
+    }
+
+    return ( optind );
+}
+
 int main( int argc, char** argv ) {
     setlocale( LC_ALL, "C" );
 
-#if defined( GUI_IS_X11 )
     /*
      *  Get the name we are called.
      */
@@ -47,16 +165,25 @@ int main( int argc, char** argv ) {
     else
         progname++;
 
+    /**********/
+    /* getopt */
+    /**********/
+    parse_args( argc, argv );
+
+#if defined( GUI_IS_X11 )
     /*
      * save command line options
      */
-    save_options( argc, argv );
+    /* save_options( argc, argv ); */
 
     /*
      *  Open up the display
      */
     if ( InitDisplay( argc, argv ) < 0 )
-        exit( 1 );
+        {
+            fprintf( stderr, "cannot InitDisplay" );
+            exit( 1 );
+        }
 
 #elif defined( GUI_IS_SDL1 )
     // SDL Initialization
@@ -71,18 +198,17 @@ int main( int argc, char** argv ) {
      */
     init_emulator();
 
-#if defined( GUI_IS_X11 )
     /*
      *  Create the HP-48 window
      */
-    if ( CreateWindows( saved_argc, saved_argv ) < 0 ) {
+#if defined( GUI_IS_X11 )
+    if ( CreateWindows( argc, argv ) < 0 ) {
         fprintf( stderr, "can\'t create window\n" );
         exit( 1 );
     }
 
     init_annunc();
 #elif defined( GUI_IS_SDL1 )
-    // Create the HP-48 window
     SDLCreateHP();
 #endif
 

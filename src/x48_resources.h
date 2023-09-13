@@ -5,9 +5,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xresource.h>
 
-extern int useXShm;
-extern int netbook;
-
 extern char* progname;
 extern char* res_name;
 extern char* res_class;
