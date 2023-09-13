@@ -2185,10 +2185,9 @@ int showkeylastx, showkeylasty, showkeylastkey;
 // Show the hp key which is being pressed
 void SDLUIShowKey( int hpkey ) {
     SDL_Rect /* rect,  */ srect, drect;
-    SDL_Surface *ssurf, *zsurf;
+    SDL_Surface *ssurf;
     int x;
     int y;
-    double zoomfactor = 0.9;
 
     // If we're called with the same key as before, do nothing
     if ( showkeylastkey == hpkey )
@@ -2208,29 +2207,26 @@ void SDLUIShowKey( int hpkey ) {
     else
         ssurf = buttons[ hpkey ].surfaceup;
 
-    // Zoomed surface
-    zsurf = zoomSurface( ssurf, zoomfactor, zoomfactor, 0 );
-
     // Background backup
     showkeylastsurf =
-        SDL_CreateRGBSurface( SDL_SWSURFACE, zsurf->w, zsurf->h, 32, 0x00ff0000,
+        SDL_CreateRGBSurface( SDL_SWSURFACE, ssurf->w, ssurf->h, 32, 0x00ff0000,
                               0x0000ff00, 0x000000ff, 0xff000000 );
 
     // Where to
     x = KEYBOARD_OFFSET_X + buttons[ hpkey ].x -
-        ( zsurf->w - ssurf->w + 1 ) / 2;
+        ( ssurf->w - ssurf->w + 1 ) / 2;
     y = KEYBOARD_OFFSET_Y + buttons[ hpkey ].y -
-        ( zsurf->h - ssurf->h + 1 ) / 2;
+        ( ssurf->h - ssurf->h + 1 ) / 2;
     // blitting does not clip to screen, so if we are out of the screen we
     // shift the button to fit
     if ( x < 0 )
         x = 0;
     if ( y < 0 )
         y = 0;
-    if ( x + zsurf->w > sdlwindow->w )
-        x = sdlwindow->w - zsurf->w;
-    if ( y + zsurf->h > sdlwindow->h )
-        y = sdlwindow->h - zsurf->h;
+    if ( x + ssurf->w > sdlwindow->w )
+        x = sdlwindow->w - ssurf->w;
+    if ( y + ssurf->h > sdlwindow->h )
+        y = sdlwindow->h - ssurf->h;
 
     // Backup where to
     showkeylastx = x;
@@ -2239,22 +2235,19 @@ void SDLUIShowKey( int hpkey ) {
     // Backup old surface
     srect.x = x;
     srect.y = y;
-    srect.w = zsurf->w;
-    srect.h = zsurf->h;
+    srect.w = ssurf->w;
+    srect.h = ssurf->h;
     drect.x = 0;
     drect.y = 0;
     SDL_BlitSurface( sdlwindow, &srect, showkeylastsurf, &drect );
 
-    // Blit the zoomed button
+    // Blit the button
     drect.x = x;
     drect.y = y;
-    SDL_BlitSurface( zsurf, 0, sdlwindow, &drect );
-
-    // Free zoomed surface
-    SDL_FreeSurface( zsurf );
+    SDL_BlitSurface( ssurf, 0, sdlwindow, &drect );
 
     // Update
-    SDL_UpdateRect( sdlwindow, x, y, zsurf->w, zsurf->h );
+    SDL_UpdateRect( sdlwindow, x, y, ssurf->w, ssurf->h );
 }
 
 void SDLUIHideKey( void ) {
