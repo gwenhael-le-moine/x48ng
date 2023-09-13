@@ -1,7 +1,7 @@
 #ifndef _X48_GUI_H
 #define _X48_GUI_H 1
 
-#include "hp48.h"               /* word_20, word_4 */
+#include "hp48.h" /* word_20, word_4 */
 
 #if defined( GUI_IS_X11 )
 #include <X11/Xlib.h>

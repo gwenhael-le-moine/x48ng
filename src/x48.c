@@ -14,6 +14,7 @@
 
 #include "options.h"
 #include "hp48.h"
+#include "hp48emu.h"
 #include "romio.h"
 #include "x48.h"
 #include "error_handling.h"

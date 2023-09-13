@@ -1,12 +1,11 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#include "options.h"
 #include "hp48.h"
 #include "hp48emu.h"
 #include "timer.h"
 #include "x48.h" /* disp; refresh_display(); get_ui_event() */
-
-extern int throttle;
 
 static long jumpaddr;
 

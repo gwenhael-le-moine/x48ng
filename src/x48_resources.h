@@ -18,6 +18,7 @@ extern void usage( void );
 extern void show_version( void );
 extern void show_copyright( void );
 extern void show_warranty( void );
+
 extern char* get_string_resource_from_db( XrmDatabase db, char* name,
                                           char* class );
 extern char* get_string_resource( char* name, char* class );

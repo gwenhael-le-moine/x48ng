@@ -29,7 +29,6 @@ ifeq ($(FULL_WARNINGS), yes)
 endif
 
 DOTOS = src/main.o \
-	src/x48_lcd.o \
 	src/hp48_emulate.o \
 	src/hp48_init.o \
 	src/hp48_serial.o \
@@ -41,6 +40,7 @@ DOTOS = src/main.o \
 	src/timer.o \
 	src/error_handling.o \
 	src/x48_resources.o \
+	src/x48_lcd.o \
 	src/x48.o
 
 .PHONY: all clean clean-all pretty-code install
