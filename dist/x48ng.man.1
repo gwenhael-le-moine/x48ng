@@ -42,114 +42,86 @@
 .if n .sp 1
 .if t .sp .5
 ..
-.TH X48NG 1 "05 May 2023" "Version @VERSION@" "X48NG Manual Pages"
+.TH X48NG 1 "14 September 2023" "Version @VERSION@" "X48NG Manual Pages"
 .SH NAME
-x48ng \- scientific calculator for X and an HP 48 emulator
+x48ng \- scientific calculator and an HP 48 emulator
 .SH SYNOPSIS
 .B x48ng
-[\-options ...]
+[\--options ...]
 
 where options include:
 .br
-    [\-help]                     print out this message
+        \-h \-\-help			 what you are reading
 .br
-    [\-display  <displayname>]   X server to contact
+        \-v \-\-version			 show version
 .br
-    [\-name	<string>]        set application name to <string>
+           \-\-config\-dir=<path>		 use <path> as x48ng's home (default: ~/.x48ng/)
 .br
-    [\-title    <string>]        set window title to <string>
+           \-\-rom\-file=<filename>	 use <filename> (relative to <config\-dir>) as ROM (default: rom)
 .br
-    [\-geometry <geometry>]      position of window
+           \-\-ram\-file=<filename>	 use <filename> (relative to <config\-dir>) as RAM (default: ram)
 .br
-    [\-iconGeom <geometry>]      position of icon window
+           \-\-state\-file=<filename>	 use <filename> (relative to <config\-dir>) as STATE (default: hp48)
 .br
-    [\-iconic]                   start iconic
+           \-\-port1\-file=<filename>	 use <filename> (relative to <config\-dir>) as PORT1 (default: port1)
 .br
-    [\-visual   <visualname>]    use visual <visualname>
+           \-\-port2\-file=<filename>	 use <filename> (relative to <config\-dir>) as PORT2 (default: port2)
 .br
-    [\-mono]                     force monochrome
+           \-\-serial\-line=<path>		 use <path> as serial device default: /dev/ttyS0)
 .br
-    [\-gray]                     force grayscale
+        \-V \-\-verbose			 be verbose (default: false)
 .br
-    [\-monoIcon]                 force monochrome icon
+        \-t \-\-use\-terminal		 activate pseudo terminal interface (default: true)
 .br
-    [\-smallFont  <fontname>]    <fontname> to draw small labels (MTH - DEL)
+        \-s \-\-use\-serial			 activate serial interface (default: false)
 .br
-    [\-mediumFont <fontname>]    <fontname> to draw medium label (ENTER)
+        \-i \-\-initialize			 initialize the content of <config\-dir>
 .br
-    [\-largeFont  <fontname>]    <fontname> to draw large labels (Numbers)
+        \-r \-\-reset			 perform a reset on startup
 .br
-    [\-connFont   <fontname>]    <fontname> to display wire & IR connections
-.br
-    [\-/+xshm]                   turn on/off XShm extension
-.br
-    [\-version]                  print out version information
-.br
-    [\-copyright]                print out copyright information
-.br
-    [\-warranty]                 print out warranty information
-.br
-    [\-verbose]                  run verbosive
-.br
-    [\-/+terminal]               turn on/off pseudo terminal interface
-.br
-    [\-/+serial]                 turn on/off serial interface
-.br
-    [\-line       <devicename>]  use serial line <devicename> for IR connection
-.br
-    [\-reset                     perform a reset (PC = 0) on startup
-.br
-    [\-initialize                force initialization x48ng from ROM-dump
-.br
-    [\-rom        <filename>     if initializing, read ROM from <filename>
-.br
-    [\-home       <directory>    use directory ~/<directory> to save x48ng files
-.br
-    [\-xrm        <resource>     set Xresource <resource>
-.br
-    [\-/+netbook                 Enable/Disable netbook look
+        \-T \-\-throttle			 try to emulate real speed (default: false)
 
 
 .SH DESCRIPTION
 .I x48ng
 is a scientific calculator desktop accessory that emulate an HP\-48 SX
 or an HP\-48 GX.
-.SH OPTIONS
-.PP
-\fIx48ng\fP accepts all of the standard toolkit command line options along
-with several additional options:
-.PP
-.TP 8
-.B \-help
-Show a list of options.
-.PP
-.TP 8
-.B \-version
-This  causes  x48ng  to  print a version number to the standard output.
-.PP
-.TP 8
-.B \-iconic
-Start iconic
-.SH OPERATION
+\" .SH OPTIONS
+\" .PP
+\" \fIx48ng\fP accepts all of the standard toolkit command line options along
+\" with several additional options:
+\" .PP
+\" .TP 8
+\" .B \-help
+\" Show a list of options.
+\" .PP
+\" .TP 8
+\" .B \-version
+\" This  causes  x48ng  to  print a version number to the standard output.
+\" .PP
+\" .TP 8
+\" .B \-iconic
+\" Start iconic
+\" .SH OPERATION
 
 .PP
 x48ng emulates an HP 48 calculator. This manual does not attempt to
 describe the operation of the HP calulator, but only the user interface
 to the emulator.
 
-.I Pointer Usage:
-When mouse button one is press on an x48ng key the key is depress until
-the mouse button is released.  If you wish to have more than one key
-press at a time mouse button 3 may be used.  Button pressed with mouse
-button 3 will remain pressed until mouse button 1 is used.  For example
-to reset the calulator you can press the A key and the F key with mouse
-button 3 and then press the on button with mouse button 1.
+\" .I Pointer Usage:
+\" When mouse button one is press on an x48ng key the key is depress until
+\" the mouse button is released.  If you wish to have more than one key
+\" press at a time mouse button 3 may be used.  Button pressed with mouse
+\" button 3 will remain pressed until mouse button 1 is used.  For example
+\" to reset the calulator you can press the A key and the F key with mouse
+\" button 3 and then press the on button with mouse button 1.
 
-Mouse button 2 will paste the text in the cut buffer to the calculator
-if it is press in the display area of the calculator. See notes on
-pasting text into the calculator below.
+\" Mouse button 2 will paste the text in the cut buffer to the calculator
+\" if it is press in the display area of the calculator. See notes on
+\" pasting text into the calculator below.
 
-Use of mouse elsewhere on the image of the calculator is undefined.
+\" Use of mouse elsewhere on the image of the calculator is undefined.
 
 .SH ACCELERATORS
 
@@ -163,110 +135,21 @@ The @code{ENTER} button is attached to the Enter key, the delete key
 to the <-/DROP button and Divide, multiply, subtract and add buttons to
 the /, *, -, and + keys on the key board.
 
-Note that only the DELETE key will auto repeat just like on the HP48
-calculator.
-
-.SH CUSTOMIZATION
-.SH WIDGET HIERARCHY
-.SH APPLICATION RESOURCES
-The  program  understands  all of the core X Toolkit resource names and
-classes.  Application specific resources (e.g., "\fBX48NG\fR.\fINAME\fR") follow:
-.TP
-.B .display: <diplayname>
-Specifies the display to use.
-.TP
-.B *geometry: {+|-}x{+|-}y
-You can not change the size of \fIx48ng\fR, but you can set the location of \fIx48ng\fR.
-.TP
-.B *iconGeom: <geometrystring>
-
-.TP
-.B *iconName: <name>
-
-.TP
-.B *iconic: <true|false>
-
-.TP
-.B *title: <name>
-
-.TP
-.B *useXShm: <true|false>
-
-.TP
-.B *visual: <default|staticgray|staticcolor|truecolor|grayscale|pseudocolor|directcolor|\fI0xnn\fR|\fInn\fR>
-
-.TP
-.B *mono: <true|false>
-
-.TP
-.B *gray: <true|false>
-
-.TP
-.B *monoIcon: <true|false>
-
-.TP
-.B *printVersion: <true|false>
-
-.TP
-.B *printCopyright:
-
-.TP
-.B *printWarranty:
-
-.TP
-.B *smallLabelFont: <font>
-
-.TP
-.B *mediumLabelFont:
-
-.TP
-.B *largeLabelFont:
-
-.TP
-.B *connectionFont:
-
-.TP
-.B *verbose:
-
-.TP
-.B *useTerminal:
-
-.TP
-.B *useSerial:
-
-.TP
-.B *serialLine:
-
-.TP
-.B *completeInitialize: <true|false>
-
-.TP
-.B *resetOnStartup:
-
-.TP
-.B *romFileName:
-
-.TP
-.B *homeDirectory:
-
-.TP
-.B *Netbook:
-
 .SH COLORS
 The x48ng is trying to look like a particular device.
 The colors are therefore not selectable.
 .br
-.SH "ENVIRONMENT"
-XUSERFILESEARCHPATH
-.SH "SEE ALSO"
-X(7x), xrdb(1)
+\" .SH "ENVIRONMENT"
+\" XUSERFILESEARCHPATH
+\" .SH "SEE ALSO"
+\" X(7x), xrdb(1)
 .SH BUGS
 .PP
 Bugs can be found and reported at: https://github.com/gwenhael-le-moine/x48ng
 .SH COPYRIGHT
 Copyright \(co 1994-2005 Eddie C. Dost
 .br
-Copyright \(co 2023 Gwenhael Le Moine
+Copyright \(co 2023- Gwenhael Le Moine
 .br
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
