@@ -5,30 +5,13 @@
 
 #define NR_MCTL 6
 
-#define MCTL_MMIO_SX 0
-#define MCTL_SysRAM_SX 1
-#define MCTL_PORT1_SX 2
-#define MCTL_PORT2_SX 3
-#define MCTL_EXTRA_SX 4
-#define MCTL_SysROM_SX 5
-
-#define MCTL_MMIO_GX 0
-#define MCTL_SysRAM_GX 1
-#define MCTL_BANK_GX 2
-#define MCTL_PORT1_GX 3
-#define MCTL_PORT2_GX 4
-#define MCTL_SysROM_GX 5
-
-#define RAM_SIZE_SX 0x10000
-#define RAM_SIZE_GX 0x40000
-
-#define P_FIELD 0
-#define WP_FIELD 1
-#define XS_FIELD 2
-#define X_FIELD 3
-#define S_FIELD 4
-#define M_FIELD 5
-#define B_FIELD 6
+#define P_FIELD 0  /* unused? */
+#define WP_FIELD 1 /* unused? */
+#define XS_FIELD 2 /* unused? */
+#define X_FIELD 3  /* unused? */
+#define S_FIELD 4  /* unused? */
+#define M_FIELD 5  /* unused? */
+#define B_FIELD 6  /* unused? */
 #define W_FIELD 7
 #define A_FIELD 15
 #define IN_FIELD 16
@@ -40,15 +23,6 @@
 
 #define NR_RSTK 8
 #define NR_PSTAT 16
-
-#define DISP_INSTR_OFF 0x10
-
-#define ANN_LEFT 0x81
-#define ANN_RIGHT 0x82
-#define ANN_ALPHA 0x84
-#define ANN_BATTERY 0x88
-#define ANN_BUSY 0x90
-#define ANN_IO 0xa0
 
 typedef struct device_t {
     int display_touched;

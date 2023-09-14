@@ -10,6 +10,22 @@
 #include "x48.h" /* disp; disp_draw_nibble(); menu_draw_nibble(); */
 #include "options.h"
 
+#define MCTL_MMIO_SX 0
+#define MCTL_SysRAM_SX 1
+#define MCTL_PORT1_SX 2
+#define MCTL_PORT2_SX 3
+#define MCTL_EXTRA_SX 4
+#define MCTL_SysROM_SX 5
+
+#define MCTL_MMIO_GX 0
+#define MCTL_SysRAM_GX 1
+#define MCTL_BANK_GX 2
+#define MCTL_PORT1_GX 3
+#define MCTL_PORT2_GX 4
+#define MCTL_SysROM_GX 5
+
+#define DISP_INSTR_OFF 0x10
+
 extern int device_check;
 extern short port1_is_ram;
 extern long port1_mask;

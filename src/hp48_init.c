@@ -15,6 +15,9 @@
 #define X48_MAGIC 0x48503438
 #define NR_CONFIG 8
 
+#define RAM_SIZE_SX 0x10000
+#define RAM_SIZE_GX 0x40000
+
 short rom_is_new = 1;
 long ram_size;
 long port1_size;

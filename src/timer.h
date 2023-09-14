@@ -6,7 +6,7 @@
 #define NR_TIMERS 4
 
 #define T1_TIMER 0
-#define T2_TIMER 1
+#define T2_TIMER 1 /* unused? */
 #define RUN_TIMER 2
 #define IDLE_TIMER 3
 

@@ -5,6 +5,9 @@
 
 #include "romio.h"
 
+#define ROM_SIZE_SX 0x080000
+#define ROM_SIZE_GX 0x100000
+
 unsigned int opt_gx = 0;
 unsigned int rom_size = 0;
 
