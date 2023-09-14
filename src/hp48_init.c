@@ -489,7 +489,7 @@ int read_files( void ) {
     /* 1. read ROM from ~/.x48ng/rom into saturn.rom */
     /*************************************************/
     saturn.rom = ( word_4* )NULL;
-    if (romFileName[0] == '/')
+    if ( romFileName[ 0 ] == '/' )
         strcpy( fnam, "" );
     else
         strcpy( fnam, config_dir );
@@ -505,7 +505,7 @@ int read_files( void ) {
     /**************************************************/
     /* 2. read saved state from ~/.x48ng/hp48 into fp */
     /**************************************************/
-    if (stateFileName[0] == '/')
+    if ( stateFileName[ 0 ] == '/' )
         strcpy( fnam, "" );
     else
         strcpy( fnam, config_dir );
@@ -579,7 +579,7 @@ int read_files( void ) {
     /*************************************************/
     /* 3. read RAM from ~/.x48ng/ram into saturn.ram */
     /*************************************************/
-    if (ramFileName[0] == '/')
+    if ( ramFileName[ 0 ] == '/' )
         strcpy( fnam, "" );
     else
         strcpy( fnam, config_dir );
@@ -605,7 +605,7 @@ int read_files( void ) {
     port1_is_ram = 0;
     saturn.port1 = ( unsigned char* )0;
 
-    if (port1FileName[0] == '/')
+    if ( port1FileName[ 0 ] == '/' )
         strcpy( fnam, "" );
     else
         strcpy( fnam, config_dir );
@@ -642,7 +642,7 @@ int read_files( void ) {
     port2_is_ram = 0;
     saturn.port2 = ( unsigned char* )0;
 
-    if (port2FileName[0] == '/')
+    if ( port2FileName[ 0 ] == '/' )
         strcpy( fnam, "" );
     else
         strcpy( fnam, config_dir );
@@ -779,7 +779,8 @@ int write_mem_file( char* name, word_4* mem, int size ) {
             tmp_mem[ i ] |= ( mem[ j++ ] << 4 ) & 0xf0;
         }
 
-        if ( fwrite( tmp_mem, 1, ( size_t )size / 2, fp ) != (unsigned long)size / 2 ) {
+        if ( fwrite( tmp_mem, 1, ( size_t )size / 2, fp ) !=
+             ( unsigned long )size / 2 ) {
             if ( verbose )
                 fprintf( stderr, "can\'t write %s\n", name );
             fclose( fp );
@@ -814,13 +815,15 @@ int write_files( void ) {
             make_dir = 1;
         } else {
             if ( verbose )
-                fprintf( stderr, "can\'t stat %s, saving to /tmp\n", config_dir );
+                fprintf( stderr, "can\'t stat %s, saving to /tmp\n",
+                         config_dir );
             strcpy( config_dir, "/tmp" );
         }
     } else {
         if ( !S_ISDIR( st.st_mode ) ) {
             if ( verbose )
-                fprintf( stderr, "%s is no directory, saving to /tmp\n", config_dir );
+                fprintf( stderr, "%s is no directory, saving to /tmp\n",
+                         config_dir );
             strcpy( config_dir, "/tmp" );
         }
     }
@@ -828,14 +831,15 @@ int write_files( void ) {
     if ( make_dir ) {
         if ( mkdir( config_dir, 0777 ) == -1 ) {
             if ( verbose )
-                fprintf( stderr, "can\'t mkdir %s, saving to /tmp\n", config_dir );
+                fprintf( stderr, "can\'t mkdir %s, saving to /tmp\n",
+                         config_dir );
             strcpy( config_dir, "/tmp" );
         }
     }
 
     strcat( config_dir, "/" );
 
-    if (stateFileName[0] == '/')
+    if ( stateFileName[ 0 ] == '/' )
         strcpy( fnam, "" );
     else
         strcpy( fnam, config_dir );
@@ -954,7 +958,7 @@ int write_files( void ) {
     else
         ram_size = RAM_SIZE_SX;
 
-    if (ramFileName[0] == '/')
+    if ( ramFileName[ 0 ] == '/' )
         strcpy( fnam, "" );
     else
         strcpy( fnam, config_dir );
@@ -963,7 +967,7 @@ int write_files( void ) {
         return 0;
 
     if ( ( port1_size > 0 ) && port1_is_ram ) {
-        if (port1FileName[0] == '/')
+        if ( port1FileName[ 0 ] == '/' )
             strcpy( fnam, "" );
         else
             strcpy( fnam, config_dir );
@@ -973,7 +977,7 @@ int write_files( void ) {
     }
 
     if ( ( port2_size > 0 ) && port2_is_ram ) {
-        if (port2FileName[0] == '/')
+        if ( port2FileName[ 0 ] == '/' )
             strcpy( fnam, "" );
         else
             strcpy( fnam, config_dir );

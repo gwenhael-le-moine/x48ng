@@ -52,35 +52,44 @@ int parse_args( int argc, char* argv[] ) {
         { 0, 0, 0, 0 } };
 
     char* help_text =
-      "usage: %s [options]\n"
-      "options:\n"
-      "\t-h --help\t\t\t what you are reading\n"
-      "\t-v --version\t\t\t show version\n"
-      "\t   --config-dir=<path>\t\t use <path> as x48ng's home (default: ~/.x48ng/)\n"
-      "\t   --rom-file=<filename>\t use <filename> (absolute or relative to <config-dir>) as ROM (default: rom)\n"
-      "\t   --ram-file=<filename>\t use <filename> (absolute or relative to <config-dir>) as RAM (default: ram)\n"
-      "\t   --state-file=<filename>\t use <filename> (absolute or relative to <config-dir>) as STATE (default: hp48)\n"
-      "\t   --port1-file=<filename>\t use <filename> (absolute or relative to <config-dir>) as PORT1 (default: port1)\n"
-      "\t   --port2-file=<filename>\t use <filename> (absolute or relative to <config-dir>) as PORT2 (default: port2)\n"
-      "\t   --serial-line=<path>\t\t use <path> as serial device default: %s)\n"
-      "\t-V --verbose\t\t\t be verbose (default: false)\n"
-      "\t-t --use-terminal\t\t activate pseudo terminal interface (default: true)\n"
-      "\t-s --use-serial\t\t\t activate serial interface (default: false)\n"
-      "\t-i --initialize\t\t\t initialize the content of <config-dir>\n"
-      "\t-r --reset\t\t\t perform a reset on startup\n"
-      "\t-T --throttle\t\t\t try to emulate real speed (default: false)\n";
+        "usage: %s [options]\n"
+        "options:\n"
+        "\t-h --help\t\t\t what you are reading\n"
+        "\t-v --version\t\t\t show version\n"
+        "\t   --config-dir=<path>\t\t use <path> as x48ng's home (default: "
+        "~/.x48ng/)\n"
+        "\t   --rom-file=<filename>\t use <filename> (absolute or relative to "
+        "<config-dir>) as ROM (default: rom)\n"
+        "\t   --ram-file=<filename>\t use <filename> (absolute or relative to "
+        "<config-dir>) as RAM (default: ram)\n"
+        "\t   --state-file=<filename>\t use <filename> (absolute or relative "
+        "to <config-dir>) as STATE (default: hp48)\n"
+        "\t   --port1-file=<filename>\t use <filename> (absolute or relative "
+        "to <config-dir>) as PORT1 (default: port1)\n"
+        "\t   --port2-file=<filename>\t use <filename> (absolute or relative "
+        "to <config-dir>) as PORT2 (default: port2)\n"
+        "\t   --serial-line=<path>\t\t use <path> as serial device default: "
+        "%s)\n"
+        "\t-V --verbose\t\t\t be verbose (default: false)\n"
+        "\t-t --use-terminal\t\t activate pseudo terminal interface (default: "
+        "true)\n"
+        "\t-s --use-serial\t\t\t activate serial interface (default: false)\n"
+        "\t-i --initialize\t\t\t initialize the content of <config-dir>\n"
+        "\t-r --reset\t\t\t perform a reset on startup\n"
+        "\t-T --throttle\t\t\t try to emulate real speed (default: false)\n";
 
     while ( c != EOF ) {
         c = getopt_long( argc, argv, optstring, long_options, &option_index );
 
         switch ( c ) {
             case 'h':
-              fprintf( stdout, help_text, progname, serialLine );
+                fprintf( stdout, help_text, progname, serialLine );
                 exit( 0 );
                 break;
             case 'v':
-                fprintf( stdout, "\nx48ng %d.%d.%d", VERSION_MAJOR,
+                fprintf( stdout, "%s %d.%d.%d\n", progname, VERSION_MAJOR,
                          VERSION_MINOR, PATCHLEVEL );
+                exit( 0 );
                 break;
             case 1000:
                 homeDirectory = optarg;
