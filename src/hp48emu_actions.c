@@ -6,7 +6,7 @@
 #include "hp48emu.h"
 #include "romio.h"
 #include "timer.h"
-#include "x48.h" /* get_ui_event() */
+#include "x48.h" /* get_ui_event(); update_display(); */
 
 static int interrupt_called = 0;
 extern long nibble_masks[ 16 ];

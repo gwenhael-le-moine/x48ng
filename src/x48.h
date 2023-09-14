@@ -981,7 +981,7 @@ typedef struct SDLWINDOW {
 } SDLWINDOW_t;
 
 extern color_t* colors;
-extern disp_t disp;
+extern disp_t disp; /* PUBLIC API( hp48emu_memory.c ) */
 extern ann_struct_t ann_tbl[];
 
 extern unsigned int ARGBColors[ BLACK + 1 ];
@@ -991,24 +991,28 @@ extern SDL_Surface* sdlwindow;
 /* Functions' prototypes */
 /*************************/
 
-extern int get_ui_event( void );
-extern void adjust_contrast();
+extern int
+get_ui_event( void ); /* PUBLIC API( hp48emu_actions.c, hp48_emulate.c ) */
+extern void adjust_contrast(); /* PUBLIC API( hp48_emulate.c ) */
 
 extern void ShowConnections();
 
 /* #ifndef _DEVICE_H */
 /* #define _DEVICE_H 1 */
-extern void init_display( void );                         /* x48_lcd.c */
-extern void update_display( void );                       /* x48_lcd.c */
-extern void redraw_display( void );                       /* x48_lcd.c */
-extern void disp_draw_nibble( word_20 addr, word_4 val ); /* x48_lcd.c */
-extern void menu_draw_nibble( word_20 addr, word_4 val ); /* x48_lcd.c */
-extern void draw_annunc( void );                          /* x48_lcd.c */
-extern void redraw_annunc( void );                        /* x48_lcd.c */
+extern void init_display( void ); /* PUBLIC API( main.c ) */
+extern void
+update_display( void ); /* PUBLIC API( hp48emu_actions.c, hp48_emulate.c ) */
+extern void redraw_display( void );
+extern void disp_draw_nibble( word_20 addr,
+                              word_4 val ); /* PUBLIC API( hp48emu_memory.c ) */
+extern void menu_draw_nibble( word_20 addr,
+                              word_4 val ); /* PUBLIC API( hp48emu_memory.c ) */
+extern void draw_annunc( void );            /* PUBLIC API( hp48_emulate.c ) */
+extern void redraw_annunc( void );
 /* #endif /\* !_DEVICE_H *\/ */
 
-extern void SDLCreateHP( void );
-extern void SDLInit( void );
+extern void SDLCreateHP( void ); /* PUBLIC API( main.c ) */
+extern void SDLInit( void );     /* PUBLIC API( main.c ) */
 extern void SDLDrawAnnunc( char* annunc );
 
 extern void SDLCreateAnnunc( void );

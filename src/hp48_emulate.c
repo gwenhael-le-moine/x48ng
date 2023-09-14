@@ -5,7 +5,7 @@
 #include "hp48.h"
 #include "hp48emu.h"
 #include "timer.h"
-#include "x48.h" /* get_ui_event() */
+#include "x48.h" /* get_ui_event(); adjust_contrast(); update_display(); draw_annunc(); */
 
 static long jumpaddr;
 
@@ -2260,6 +2260,8 @@ inline void schedule( void ) {
                 device.display_touched = 1;
         }
 
+        /* check_device() */
+        /* UI */
         if ( device.display_touched > 0 && device.display_touched-- == 1 ) {
             device.display_touched = 0;
             update_display();
@@ -2278,6 +2280,7 @@ inline void schedule( void ) {
             draw_annunc();
         }
 
+        /* serial */
         if ( device.baud_touched ) {
             device.baud_touched = 0;
             serial_baud( saturn.baud );
@@ -2312,6 +2315,7 @@ inline void schedule( void ) {
             sched_timer2 = saturn.t2_tick;
             device.t2_touched = 0;
         }
+        /* end check_device() */
 
         sched_display = SCHED_NEVER;
         if ( device.display_touched ) {

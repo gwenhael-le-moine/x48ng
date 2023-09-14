@@ -32,7 +32,6 @@ DOTOS = src/main.o \
 	src/romio.o \
 	src/timer.o \
 	src/error_handling.o \
-	src/x48_lcd.o \
 	src/x48.o
 
 .PHONY: all clean clean-all pretty-code install

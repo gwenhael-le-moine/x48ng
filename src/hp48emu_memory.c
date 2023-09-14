@@ -7,7 +7,7 @@
 #include "hp48.h"
 #include "hp48emu.h"
 #include "romio.h"
-#include "x48.h" /* disp */
+#include "x48.h" /* disp; disp_draw_nibble(); menu_draw_nibble(); */
 #include "options.h"
 
 extern int device_check;
