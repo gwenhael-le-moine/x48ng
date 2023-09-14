@@ -2387,10 +2387,6 @@ inline void schedule( void ) {
     if ( ( sched_statistics -= steps ) <= 0 ) {
         sched_statistics = SCHED_STATISTICS;
         run = get_timer( RUN_TIMER );
-#ifndef SIMPLE_64
-        s_1 = ( run.hi << 19 ) | ( run.lo >> 13 );
-        s_16 = ( run.hi << 23 ) | ( run.lo >> 9 );
-#endif
         delta_t_1 = s_1 - old_s_1;
         delta_t_16 = s_16 - old_s_16;
         old_s_1 = s_1;

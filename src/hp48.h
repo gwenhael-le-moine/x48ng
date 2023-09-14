@@ -121,7 +121,6 @@ typedef unsigned short word_16;
 typedef long word_20;
 typedef long word_32;
 
-#define SIMPLE_64
 typedef int64_t word_64;
 
 typedef struct keystate_t {
