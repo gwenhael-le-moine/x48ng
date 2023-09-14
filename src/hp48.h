@@ -1,11 +1,7 @@
 #ifndef _HP48_H
 #define _HP48_H 1
 
-#include <stdint.h>
-#include <sys/time.h>
-
-/* #ifndef _MMU_H */
-/* #define _MMU_H 1 */
+#include <stdint.h> /* int64_t */
 
 #define NR_MCTL 6
 
@@ -22,8 +18,6 @@
 #define MCTL_PORT1_GX 3
 #define MCTL_PORT2_GX 4
 #define MCTL_SysROM_GX 5
-
-/* #endif /\* !_MMU_H *\/ */
 
 #define RAM_SIZE_SX 0x10000
 #define RAM_SIZE_GX 0x40000
@@ -46,9 +40,6 @@
 
 #define NR_RSTK 8
 #define NR_PSTAT 16
-
-/* #ifndef _DEVICE_H */
-/* #define _DEVICE_H 1 */
 
 #define DISP_INSTR_OFF 0x10
 
@@ -110,8 +101,6 @@ typedef struct device_t {
     char t1_touched;
     char t2_touched;
 } device_t;
-
-/* #endif /\* !_DEVICE_H *\/ */
 
 typedef unsigned char word_1;
 typedef unsigned char word_4;
@@ -270,33 +259,28 @@ extern long schedule_event;
 extern char* wire_name;
 extern char* ir_name;
 
-/* #ifndef _DEVICE_H */
-/* #define _DEVICE_H 1 */
-
 extern device_t device;
 extern display_t display;
-
-/* #endif /\* !_DEVICE_H *\/ */
 
 extern saturn_t saturn;
 
 /***************/
 /* hp48_init.c */
 /***************/
-extern void init_saturn( void );
+void init_saturn( void );
 extern int init_emulator( void );
-extern int exit_emulator( void );
-extern int read_rom( const char* fname );
-extern int read_files( void );
-extern int write_files( void );
+int exit_emulator( void );
+int read_rom( const char* fname );
+int read_files( void );
+int write_files( void );
 
 /*****************/
 /* hp48_serial.c */
 /*****************/
 extern int serial_init( void );
-extern void serial_baud( int baud );
-extern void transmit_char( void );
-extern void receive_char( void );
+void serial_baud( int baud );
+void transmit_char( void );
+void receive_char( void );
 
 /********************/
 /* hp48emu_memory.c */
@@ -308,9 +292,9 @@ extern int ( *read_nibble_crc )( long addr );
 /******************/
 /* hp48_emulate.c */
 /******************/
-extern void emulate( void );
-extern int step_instruction( void );
-extern void schedule( void );
-extern void load_addr( word_20* dat, long addr, int n );
+void emulate( void );
+int step_instruction( void );
+void schedule( void );
+void load_addr( word_20* dat, long addr, int n );
 
 #endif /* !_HP48_H */

@@ -9,7 +9,7 @@
 
 #include "options.h"
 #include "hp48.h"
-#include "hp48emu.h"
+#include "hp48emu.h" /* dev_memory_init(); */
 #include "romio.h"
 
 #define X48_MAGIC 0x48503438

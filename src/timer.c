@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <assert.h>
 
+#include <sys/time.h>
+
 #include "romio.h"
 #include "timer.h"
 

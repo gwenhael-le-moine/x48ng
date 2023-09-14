@@ -1,7 +1,7 @@
 #ifndef _TIMER_H
 #define _TIMER_H 1
 
-#include "hp48.h"
+#include "hp48.h"               /* word_64 */
 
 #define NR_TIMERS 4
 
