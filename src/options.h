@@ -12,4 +12,6 @@ extern char* serialLine;
 extern char* romFileName;
 extern char* homeDirectory;
 
+extern int parse_args( int argc, char* argv[] );
+
 #endif /* !_OPTIONS_H */
