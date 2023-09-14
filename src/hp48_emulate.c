@@ -2338,11 +2338,9 @@ inline void schedule( void ) {
         sched_adjtime = SCHED_ADJTIME;
 
         if ( saturn.PC < SrvcIoStart || saturn.PC > SrvcIoEnd ) {
-
             ticks = get_t1_t2();
-            if ( saturn.t2_ctrl & 0x01 ) {
+            if ( saturn.t2_ctrl & 0x01 )
                 saturn.timer2 = ticks.t2_ticks;
-            }
 
             if ( ( saturn.t2_ctrl & 0x08 ) == 0 && saturn.timer2 <= 0 ) {
                 if ( saturn.t2_ctrl & 0x02 ) {
@@ -2360,8 +2358,8 @@ inline void schedule( void ) {
                     do_interupt();
                 }
             }
-            saturn.timer1 &= 0x0f;
 
+            saturn.timer1 &= 0x0f;
         } else
             adj_time_pending = 1;
     }

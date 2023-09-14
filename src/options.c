@@ -16,7 +16,6 @@ char* serialLine = "/dev/ttyS0";
 char* romFileName = "rom";
 char* homeDirectory = ".x48ng";
 
-
 int parse_args( int argc, char* argv[] ) {
     int option_index;
     char c = '?';
