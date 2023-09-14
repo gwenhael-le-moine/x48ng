@@ -1093,7 +1093,9 @@ int button_released( int b ) {
 void adjust_contrast() {
     SDLCreateColors();
     SDLCreateAnnunc();
+
     redraw_display();
+    redraw_annunc();
 }
 
 void SDLCreateHP( void ) {
@@ -1313,6 +1315,7 @@ void SDLDrawLogo() {
         x = DISPLAY_OFFSET_X - 6;
     else
         x = DISPLAY_OFFSET_X;
+
     SDL_Rect srect;
     SDL_Rect drect;
     srect.x = 0;
