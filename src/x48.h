@@ -230,20 +230,22 @@ void SDLShowInformation( void );
 /**************/
 /* public API */
 /**************/
-extern disp_t disp; /* used in: hp48emu_memory.c */
+ /* used in: hp48emu_memory.c */
+extern disp_t disp;
+extern void disp_draw_nibble( word_20 addr, word_4 val );
+extern void menu_draw_nibble( word_20 addr, word_4 val );
 
-extern int get_ui_event( void );          /* used in: hp48emu_actions.c, hp48_emulate.c */
-extern void adjust_contrast(); /* used in: hp48_emulate.c */
+/* used in: hp48emu_actions.c, hp48_emulate.c */
+extern int get_ui_event( void );
+extern void update_display( void );
 
-extern void init_display( void ); /* used in: main.c */
-extern void update_display( void ); /* used in: hp48emu_actions.c, hp48_emulate.c */
-extern void disp_draw_nibble( word_20 addr,
-                              word_4 val ); /* used in: hp48emu_memory.c */
-extern void menu_draw_nibble( word_20 addr,
-                              word_4 val ); /* used in: hp48emu_memory.c */
-extern void draw_annunc( void );            /* used in: hp48_emulate.c */
+ /* used in: hp48_emulate.c */
+extern void adjust_contrast();
+extern void draw_annunc( void );
 
-extern void SDLCreateHP( void ); /* used in: main.c */
-extern void SDLInit( void );     /* used in: main.c */
+/* used in: main.c */
+extern void SDLInit( void );
+extern void SDLCreateHP( void );
+extern void init_display( void );
 
 #endif /* !_X48_GUI_H */
