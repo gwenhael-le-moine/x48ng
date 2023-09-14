@@ -193,7 +193,7 @@ int read_u_long( FILE* fp, unsigned long* var ) {
     return 1;
 }
 
-int read_hp48_file( FILE* fp ) {
+int read_state_file( FILE* fp ) {
     int i;
 
     /*
@@ -474,7 +474,7 @@ int read_rom( const char* fname ) {
 }
 
 int read_files( void ) {
-    char path[ 1024 ];
+    char config_dir[ 1024 ];
     char fnam[ 1024 ];
     unsigned long v1, v2;
     int i, read_version;
@@ -482,14 +482,17 @@ int read_files( void ) {
     struct stat st;
     FILE* fp;
 
-    get_home_directory( path );
-    strcat( path, "/" );
+    get_home_directory( config_dir );
+    strcat( config_dir, "/" );
 
     /*************************************************/
     /* 1. read ROM from ~/.x48ng/rom into saturn.rom */
     /*************************************************/
     saturn.rom = ( word_4* )NULL;
-    strcpy( fnam, path );
+    if (romFileName[0] == '/')
+        strcpy( fnam, "" );
+    else
+        strcpy( fnam, config_dir );
     strcat( fnam, romFileName );
     if ( !read_rom_file( fnam, &saturn.rom, &rom_size ) )
         return 0;
@@ -502,7 +505,10 @@ int read_files( void ) {
     /**************************************************/
     /* 2. read saved state from ~/.x48ng/hp48 into fp */
     /**************************************************/
-    strcpy( fnam, path );
+    if (stateFileName[0] == '/')
+        strcpy( fnam, "" );
+    else
+        strcpy( fnam, config_dir );
     strcat( fnam, stateFileName );
     if ( NULL == ( fp = fopen( fnam, "r" ) ) ) {
         if ( verbose )
@@ -547,7 +553,7 @@ int read_files( void ) {
             /*
              * try to read latest version file
              */
-            if ( !read_hp48_file( fp ) ) {
+            if ( !read_state_file( fp ) ) {
                 if ( verbose )
                     fprintf( stderr, "can\'t handle %s\n", fnam );
                 init_saturn();
@@ -573,7 +579,10 @@ int read_files( void ) {
     /*************************************************/
     /* 3. read RAM from ~/.x48ng/ram into saturn.ram */
     /*************************************************/
-    strcpy( fnam, path );
+    if (ramFileName[0] == '/')
+        strcpy( fnam, "" );
+    else
+        strcpy( fnam, config_dir );
     strcat( fnam, ramFileName );
     if ( ( fp = fopen( fnam, "r" ) ) == NULL ) {
         if ( verbose )
@@ -596,7 +605,10 @@ int read_files( void ) {
     port1_is_ram = 0;
     saturn.port1 = ( unsigned char* )0;
 
-    strcpy( fnam, path );
+    if (port1FileName[0] == '/')
+        strcpy( fnam, "" );
+    else
+        strcpy( fnam, config_dir );
     strcat( fnam, port1FileName );
     if ( stat( fnam, &st ) >= 0 ) {
         port1_size = 2 * st.st_size;
@@ -630,7 +642,10 @@ int read_files( void ) {
     port2_is_ram = 0;
     saturn.port2 = ( unsigned char* )0;
 
-    strcpy( fnam, path );
+    if (port2FileName[0] == '/')
+        strcpy( fnam, "" );
+    else
+        strcpy( fnam, config_dir );
     strcat( fnam, port2FileName );
     if ( stat( fnam, &st ) >= 0 ) {
         port2_size = 2 * st.st_size;
@@ -764,7 +779,7 @@ int write_mem_file( char* name, word_4* mem, int size ) {
             tmp_mem[ i ] |= ( mem[ j++ ] << 4 ) & 0xf0;
         }
 
-        if ( fwrite( tmp_mem, 1, ( size_t )size / 2, fp ) != size / 2 ) {
+        if ( fwrite( tmp_mem, 1, ( size_t )size / 2, fp ) != (unsigned long)size / 2 ) {
             if ( verbose )
                 fprintf( stderr, "can\'t write %s\n", name );
             fclose( fp );
@@ -784,7 +799,7 @@ int write_mem_file( char* name, word_4* mem, int size ) {
 }
 
 int write_files( void ) {
-    char path[ 1024 ];
+    char config_dir[ 1024 ];
     char fnam[ 1024 ];
     struct stat st;
     int i, make_dir;
@@ -792,35 +807,38 @@ int write_files( void ) {
     FILE* fp;
 
     make_dir = 0;
-    get_home_directory( path );
+    get_home_directory( config_dir );
 
-    if ( stat( path, &st ) == -1 ) {
+    if ( stat( config_dir, &st ) == -1 ) {
         if ( errno == ENOENT ) {
             make_dir = 1;
         } else {
             if ( verbose )
-                fprintf( stderr, "can\'t stat %s, saving to /tmp\n", path );
-            strcpy( path, "/tmp" );
+                fprintf( stderr, "can\'t stat %s, saving to /tmp\n", config_dir );
+            strcpy( config_dir, "/tmp" );
         }
     } else {
         if ( !S_ISDIR( st.st_mode ) ) {
             if ( verbose )
-                fprintf( stderr, "%s is no directory, saving to /tmp\n", path );
-            strcpy( path, "/tmp" );
+                fprintf( stderr, "%s is no directory, saving to /tmp\n", config_dir );
+            strcpy( config_dir, "/tmp" );
         }
     }
 
     if ( make_dir ) {
-        if ( mkdir( path, 0777 ) == -1 ) {
+        if ( mkdir( config_dir, 0777 ) == -1 ) {
             if ( verbose )
-                fprintf( stderr, "can\'t mkdir %s, saving to /tmp\n", path );
-            strcpy( path, "/tmp" );
+                fprintf( stderr, "can\'t mkdir %s, saving to /tmp\n", config_dir );
+            strcpy( config_dir, "/tmp" );
         }
     }
 
-    strcat( path, "/" );
+    strcat( config_dir, "/" );
 
-    strcpy( fnam, path );
+    if (stateFileName[0] == '/')
+        strcpy( fnam, "" );
+    else
+        strcpy( fnam, config_dir );
     strcat( fnam, stateFileName );
     if ( ( fp = fopen( fnam, "w" ) ) == NULL ) {
         if ( verbose )
@@ -925,7 +943,7 @@ int write_files( void ) {
         printf( "wrote %s\n", fnam );
 
     if ( rom_is_new ) {
-        strcpy( fnam, path );
+        strcpy( fnam, config_dir );
         strcat( fnam, romFileName );
         if ( !write_mem_file( fnam, saturn.rom, rom_size ) )
             return 0;
@@ -936,20 +954,29 @@ int write_files( void ) {
     else
         ram_size = RAM_SIZE_SX;
 
-    strcpy( fnam, path );
+    if (ramFileName[0] == '/')
+        strcpy( fnam, "" );
+    else
+        strcpy( fnam, config_dir );
     strcat( fnam, ramFileName );
     if ( !write_mem_file( fnam, saturn.ram, ram_size ) )
         return 0;
 
     if ( ( port1_size > 0 ) && port1_is_ram ) {
-        strcpy( fnam, path );
+        if (port1FileName[0] == '/')
+            strcpy( fnam, "" );
+        else
+            strcpy( fnam, config_dir );
         strcat( fnam, port1FileName );
         if ( !write_mem_file( fnam, saturn.port1, port1_size ) )
             return 0;
     }
 
     if ( ( port2_size > 0 ) && port2_is_ram ) {
-        strcpy( fnam, path );
+        if (port2FileName[0] == '/')
+            strcpy( fnam, "" );
+        else
+            strcpy( fnam, config_dir );
         strcat( fnam, port2FileName );
         if ( !write_mem_file( fnam, saturn.port2, port2_size ) )
             return 0;
