@@ -490,7 +490,7 @@ int read_files( void ) {
     /*************************************************/
     saturn.rom = ( word_4* )NULL;
     strcpy( fnam, path );
-    strcat( fnam, "rom" );
+    strcat( fnam, romFileName );
     if ( !read_rom_file( fnam, &saturn.rom, &rom_size ) )
         return 0;
 
@@ -503,7 +503,7 @@ int read_files( void ) {
     /* 2. read saved state from ~/.x48ng/hp48 into fp */
     /**************************************************/
     strcpy( fnam, path );
-    strcat( fnam, "hp48" );
+    strcat( fnam, stateFileName );
     if ( NULL == ( fp = fopen( fnam, "r" ) ) ) {
         if ( verbose )
             fprintf( stderr, "can\'t open %s\n", fnam );
@@ -574,7 +574,7 @@ int read_files( void ) {
     /* 3. read RAM from ~/.x48ng/ram into saturn.ram */
     /*************************************************/
     strcpy( fnam, path );
-    strcat( fnam, "ram" );
+    strcat( fnam, ramFileName );
     if ( ( fp = fopen( fnam, "r" ) ) == NULL ) {
         if ( verbose )
             fprintf( stderr, "can\'t open %s\n", fnam );
@@ -597,7 +597,7 @@ int read_files( void ) {
     saturn.port1 = ( unsigned char* )0;
 
     strcpy( fnam, path );
-    strcat( fnam, "port1" );
+    strcat( fnam, port1FileName );
     if ( stat( fnam, &st ) >= 0 ) {
         port1_size = 2 * st.st_size;
         if ( ( port1_size == 0x10000 ) || ( port1_size == 0x40000 ) ) {
@@ -631,7 +631,7 @@ int read_files( void ) {
     saturn.port2 = ( unsigned char* )0;
 
     strcpy( fnam, path );
-    strcat( fnam, "port2" );
+    strcat( fnam, port2FileName );
     if ( stat( fnam, &st ) >= 0 ) {
         port2_size = 2 * st.st_size;
         if ( ( opt_gx && ( ( port2_size % 0x40000 ) == 0 ) ) ||
@@ -821,7 +821,7 @@ int write_files( void ) {
     strcat( path, "/" );
 
     strcpy( fnam, path );
-    strcat( fnam, "hp48" );
+    strcat( fnam, stateFileName );
     if ( ( fp = fopen( fnam, "w" ) ) == NULL ) {
         if ( verbose )
             fprintf( stderr, "can\'t open %s, no saving done\n", fnam );
@@ -926,7 +926,7 @@ int write_files( void ) {
 
     if ( rom_is_new ) {
         strcpy( fnam, path );
-        strcat( fnam, "rom" );
+        strcat( fnam, romFileName );
         if ( !write_mem_file( fnam, saturn.rom, rom_size ) )
             return 0;
     }
@@ -937,20 +937,20 @@ int write_files( void ) {
         ram_size = RAM_SIZE_SX;
 
     strcpy( fnam, path );
-    strcat( fnam, "ram" );
+    strcat( fnam, ramFileName );
     if ( !write_mem_file( fnam, saturn.ram, ram_size ) )
         return 0;
 
     if ( ( port1_size > 0 ) && port1_is_ram ) {
         strcpy( fnam, path );
-        strcat( fnam, "port1" );
+        strcat( fnam, port1FileName );
         if ( !write_mem_file( fnam, saturn.port1, port1_size ) )
             return 0;
     }
 
     if ( ( port2_size > 0 ) && port2_is_ram ) {
         strcpy( fnam, path );
-        strcat( fnam, "port2" );
+        strcat( fnam, port2FileName );
         if ( !write_mem_file( fnam, saturn.port2, port2_size ) )
             return 0;
     }

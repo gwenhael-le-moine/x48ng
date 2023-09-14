@@ -5,6 +5,8 @@
 
 #include "options.h"
 
+char* progname = "x48ng";
+
 int verbose = 0;
 int useTerminal = 1;
 int useSerial = 0;
@@ -13,109 +15,93 @@ int initialize = 0;
 int resetOnStartup = 0;
 
 char* serialLine = "/dev/ttyS0";
-char* romFileName = "rom";
 char* homeDirectory = ".x48ng";
+
+char* romFileName = "rom";
+char* ramFileName = "ram";
+char* stateFileName = "hp48";
+char* port1FileName = "port1";
+char* port2FileName = "port2";
 
 int parse_args( int argc, char* argv[] ) {
     int option_index;
-    char c = '?';
+    int c = '?';
 
-    char* optstring = "c:r:S:hvVtsiRT";
+    char* optstring = "c:S:hvVtsirT";
     static struct option long_options[] = {
-        { "config-dir", required_argument, NULL, 'c' },
-        { "rom", required_argument, NULL, 'r' },
-        { "serial-line", required_argument, NULL, 'S' },
+        { "config-dir", required_argument, NULL, 1000 },
+        { "rom-file", required_argument, NULL, 1010 },
+        { "ram-file", required_argument, NULL, 1011 },
+        { "state-file", required_argument, NULL, 1012 },
+        { "port1-file", required_argument, NULL, 1013 },
+        { "port2-file", required_argument, NULL, 1014 },
+
+        { "serial-line", required_argument, NULL, 1015 },
 
         { "help", no_argument, NULL, 'h' },
         { "version", no_argument, NULL, 'v' },
-        { "verbose", no_argument, NULL, 'V' },
 
-        { "use-terminal", no_argument, NULL, 't' },
-        { "use-serial", no_argument, NULL, 's' },
+        { "verbose", no_argument, &verbose, 1 },
+        { "use-terminal", no_argument, &useTerminal, 1 },
+        { "use-serial", no_argument, &useSerial, 1 },
 
-        { "initialize", no_argument, NULL, 'i' },
-        { "reset", no_argument, NULL, 'R' },
-        { "throttle", no_argument, NULL, 'T' },
+        { "initialize", no_argument, &initialize, 1 },
+        { "reset", no_argument, &resetOnStartup, 1 },
+        { "throttle", no_argument, &throttle, 1 },
 
         { 0, 0, 0, 0 } };
 
     char* help_text =
-        "x48ng [options]\n"
-        "\t-h --help :\n\t\t what you are reading\n"
-        "\t-v --version :\n\t\t show version\n"
-        "\t-c<path> --config-dir=<path> :\n\t\t use <path> as x48ng's home\n"
-        "\t-r<filename> --rom=<filename> :\n\t\t use <filename> as ROM\n"
-        "\t-S<path> --serial-line=<path> :\n\t\t use <path> as serial device\n"
-        "\t-V --verbose :\n\t\t be verbose\n"
-        "\t-t --use-terminal\n"
-        "\t-s --use-serial\n"
-        "\t-i --initialize :\n\t\t initialize the config and content of "
-        "x48ng's home\n"
-        "\t-R --reset\n"
-        "\t-T --throttle :\n\t\t try to emulate real speed\n";
+      "usage: %s [options]\n"
+      "options:\n"
+      "\t-h --help\t\t\t what you are reading\n"
+      "\t-v --version\t\t\t show version\n"
+      "\t   --config-dir=<path>\t\t use <path> as x48ng's home (default: ~/.x48ng/)\n"
+      "\t   --rom-file=<filename>\t use <filename> (relative to <config-dir>) as ROM (default: rom)\n"
+      "\t   --ram-file=<filename>\t use <filename> (relative to <config-dir>) as RAM (default: ram)\n"
+      "\t   --state-file=<filename>\t use <filename> (relative to <config-dir>) as STATE (default: hp48)\n"
+      "\t   --port1-file=<filename>\t use <filename> (relative to <config-dir>) as PORT1 (default: port1)\n"
+      "\t   --port2-file=<filename>\t use <filename> (relative to <config-dir>) as PORT2 (default: port2)\n"
+      "\t   --serial-line=<path>\t\t use <path> as serial device default: %s)\n"
+      "\t-V --verbose\t\t\t be verbose (default: false)\n"
+      "\t-t --use-terminal\t\t activate pseudo terminal interface (default: true)\n"
+      "\t-s --use-serial\t\t\t activate serial interface (default: false)\n"
+      "\t-i --initialize\t\t\t initialize the content of <config-dir>\n"
+      "\t-r --reset\t\t\t perform a reset on startup\n"
+      "\t-T --throttle\t\t\t try to emulate real speed (default: false)\n";
 
     while ( c != EOF ) {
         c = getopt_long( argc, argv, optstring, long_options, &option_index );
 
         switch ( c ) {
-            case 'c':
-                homeDirectory = optarg;
-                break;
-            case 'r':
-                romFileName = optarg;
-                break;
-            case 'S':
-                serialLine = optarg;
-                break;
             case 'h':
-                fprintf( stdout, "%s", help_text );
+              fprintf( stdout, help_text, progname, serialLine );
                 exit( 0 );
                 break;
             case 'v':
                 fprintf( stdout, "\nx48ng %d.%d.%d", VERSION_MAJOR,
                          VERSION_MINOR, PATCHLEVEL );
-
-                fprintf( stdout, "\n\
-                               COPYRIGHT\n\
-\n\
-x48ng is an Emulator for the HP-48 Handheld Calculator.\n\
-\n\
-This program is free software; you can redistribute it and/or modify\n\
-it under the terms of the GNU General Public License as published by\n\
-the Free Software Foundation; either version 2 of the License, or\n\
-(at your option) any later version.\n\
-\n\
-This program is distributed in the hope that it will be useful,\n\
-but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n\
-GNU General Public License for more details.\n\
-\n\
-You should have received a copy of the GNU General Public License\n\
-along with this program; if not, write to the Free Software\n\
-Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.\n\n" );
-
-                fprintf( stdout, "\n\
-                              NO WARRANTY\n\
-\n\
-      BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY\n\
-FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.  EXCEPT WHEN\n\
-OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES\n\
-PROVIDE THE PROGRAM \"AS IS\" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED\n\
-OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF\n\
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE RISK AS\n\
-TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.  SHOULD THE\n\
-PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING,\n\
-REPAIR OR CORRECTION.\n\
-\n\
-      IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING\n\
-WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR\n\
-REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES,\n\
-INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING\n\
-OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED\n\
-TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY\n\
-YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER\n\
-PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE\n\
-POSSIBILITY OF SUCH DAMAGES.\n\n" );
+                break;
+            case 1000:
+                homeDirectory = optarg;
+                break;
+            case 1010:
+                romFileName = optarg;
+                break;
+            case 1011:
+                ramFileName = optarg;
+                break;
+            case 1012:
+                stateFileName = optarg;
+                break;
+            case 1013:
+                port1FileName = optarg;
+                break;
+            case 1014:
+                port2FileName = optarg;
+                break;
+            case 1015:
+                serialLine = optarg;
                 break;
             case 'V':
                 verbose = 1;
@@ -129,7 +115,7 @@ POSSIBILITY OF SUCH DAMAGES.\n\n" );
             case 'i':
                 initialize = 1;
                 break;
-            case 'R':
+            case 'r':
                 resetOnStartup = 1;
                 break;
             case 'T':
