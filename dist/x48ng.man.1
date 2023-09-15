@@ -51,35 +51,37 @@ x48ng \- scientific calculator and an HP 48 emulator
 
 where options include:
 .br
-        \-h \-\-help			 what you are reading
+        \-h \-\-help                    what you are reading
 .br
-        \-v \-\-version			 show version
+        \-v \-\-version                 show version
 .br
-           \-\-config\-dir=<path>		 use <path> as x48ng's home (default: ~/.x48ng/)
+           \-\-config\-dir=<path>       use <path> as x48ng's home (default: ~/.x48ng/)
 .br
-           \-\-rom\-file=<filename>	 use <filename> (relative to <config\-dir>) as ROM (default: rom)
+           \-\-rom\-file=<filename>     use <filename> (relative to <config\-dir>) as ROM (default: rom)
 .br
-           \-\-ram\-file=<filename>	 use <filename> (relative to <config\-dir>) as RAM (default: ram)
+           \-\-ram\-file=<filename>     use <filename> (relative to <config\-dir>) as RAM (default: ram)
 .br
-           \-\-state\-file=<filename>	 use <filename> (relative to <config\-dir>) as STATE (default: hp48)
+           \-\-state\-file=<filename>   use <filename> (relative to <config\-dir>) as STATE (default: hp48)
 .br
-           \-\-port1\-file=<filename>	 use <filename> (relative to <config\-dir>) as PORT1 (default: port1)
+           \-\-port1\-file=<filename>   use <filename> (relative to <config\-dir>) as PORT1 (default: port1)
 .br
-           \-\-port2\-file=<filename>	 use <filename> (relative to <config\-dir>) as PORT2 (default: port2)
+           \-\-port2\-file=<filename>   use <filename> (relative to <config\-dir>) as PORT2 (default: port2)
 .br
-           \-\-serial\-line=<path>		 use <path> as serial device default: /dev/ttyS0)
+           \-\-serial\-line=<path>      use <path> as serial device default: /dev/ttyS0)
 .br
-        \-V \-\-verbose			 be verbose (default: false)
+        \-V \-\-verbose                 be verbose (default: false)
 .br
-        \-t \-\-use\-terminal		 activate pseudo terminal interface (default: true)
+        \-t \-\-use\-terminal            activate pseudo terminal interface (default: true)
 .br
-        \-s \-\-use\-serial			 activate serial interface (default: false)
+        \-s \-\-use\-serial              activate serial interface (default: false)
 .br
-        \-i \-\-initialize			 initialize the content of <config\-dir>
+           \-\-no\-debug                disable the debugger
 .br
-        \-r \-\-reset			 perform a reset on startup
+        \-i \-\-initialize              initialize the content of <config\-dir>
 .br
-        \-T \-\-throttle			 try to emulate real speed (default: false)
+        \-r \-\-reset                   perform a reset on startup
+.br
+        \-T \-\-throttle                try to emulate real speed (default: false)
 
 
 .SH DESCRIPTION

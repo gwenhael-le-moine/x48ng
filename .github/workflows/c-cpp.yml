@@ -16,6 +16,6 @@ jobs:
     - name: update deps
       run: sudo apt-get -y update
     - name: install deps
-      run: sudo apt install pkgconf libsdl1.2-compat-dev libsdl-gfx1.2-dev
-    - name: make sdl1
-      run: make clean && make
+      run: sudo apt install pkgconf libreadline-dev libsdl1.2-compat-dev libsdl-gfx1.2-dev
+    - name: make
+      run: make clean-all && make

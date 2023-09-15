@@ -12,9 +12,13 @@
 #include "options.h"
 #include "hp48.h"
 #include "x48.h" /* SDLInit(); SDLCreateHP(); init_display(); */
+#include "debugger.h"
 
 void signal_handler( int sig ) {
     switch ( sig ) {
+        case SIGINT: /* Ctrl-C */
+            enter_debugger |= USER_INTERRUPT;
+            break;
         case SIGALRM:
             got_alarm = 1;
             break;
@@ -107,7 +111,12 @@ int main( int argc, char** argv ) {
     /* Start emulation loop */
     /************************/
     do {
-        emulate();
+        if ( !exec_flags )
+            emulate();
+        else
+            emulate_debug();
+
+        debug();
     } while ( 1 );
 
     return 0;

@@ -8,6 +8,8 @@
 #include "timer.h"
 #include "x48.h" /* get_ui_event(); update_display(); */
 
+#include "debugger.h" /* in_debugger, enter_debugger */
+
 static int interrupt_called = 0;
 extern long nibble_masks[ 16 ];
 
@@ -267,7 +269,10 @@ void do_shutdown( void ) {
         saturn.int_pending = 0;
     }
 
-    wake = 0;
+    if ( in_debugger )
+        wake = 1;
+    else
+        wake = 0;
 
     alarms = 0;
 
@@ -321,6 +326,9 @@ void do_shutdown( void ) {
 
             alarms++;
         }
+
+        if ( enter_debugger )
+            wake = 1;
     } while ( wake == 0 );
 
     stop_timer( IDLE_TIMER );

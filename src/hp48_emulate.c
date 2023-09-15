@@ -8,6 +8,7 @@
 #include "hp48emu.h"
 #include "timer.h"
 #include "x48.h" /* get_ui_event(); adjust_contrast(); update_display(); draw_annunc(); */
+#include "debugger.h" /* enter_debugger, TRAP_INSTRUCTION, ILLEGAL_INSTRUCTION */
 
 static long jumpaddr;
 
@@ -2201,6 +2202,7 @@ inline int step_instruction( void ) {
                 op3 = read_nibbles( saturn.PC + 4, 1 );
                 saturn.PC += 5;
                 if ( op3 != 0 ) {
+                    enter_debugger |= TRAP_INSTRUCTION;
                     return 1;
                 }
             } else {
@@ -2223,6 +2225,9 @@ inline int step_instruction( void ) {
             break;
     }
     instructions++;
+
+    if ( stop )
+        enter_debugger |= ILLEGAL_INSTRUCTION;
 
     return stop;
 }
@@ -2475,5 +2480,5 @@ void emulate( void ) {
         }
         if ( schedule_event-- <= 0 )
             schedule();
-    } while ( 1 );
+    } while ( !enter_debugger );
 }

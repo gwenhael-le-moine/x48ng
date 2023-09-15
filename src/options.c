@@ -10,6 +10,7 @@ char* progname = "x48ng";
 int verbose = 0;
 int useTerminal = 1;
 int useSerial = 0;
+int useDebugger = 1;
 int throttle = 0;
 int initialize = 0;
 int resetOnStartup = 0;
@@ -49,6 +50,8 @@ int parse_args( int argc, char* argv[] ) {
         { "reset", no_argument, &resetOnStartup, 1 },
         { "throttle", no_argument, &throttle, 1 },
 
+        { "no-debug", no_argument, &useDebugger, 0 },
+
         { 0, 0, 0, 0 } };
 
     char* help_text =
@@ -74,6 +77,7 @@ int parse_args( int argc, char* argv[] ) {
         "\t-t --use-terminal\t\t activate pseudo terminal interface (default: "
         "true)\n"
         "\t-s --use-serial\t\t\t activate serial interface (default: false)\n"
+        "\t   --no-debug\t\t\t disable the debugger\n"
         "\t-i --initialize\t\t\t initialize the content of <config-dir>\n"
         "\t-r --reset\t\t\t perform a reset on startup\n"
         "\t-T --throttle\t\t\t try to emulate real speed (default: false)\n";
