@@ -136,6 +136,13 @@
 #define _KEYBOARD_OFFSET_X SIDE_SKIP
 #define _KEYBOARD_OFFSET_Y ( TOP_SKIP + DISPLAY_HEIGHT + DISP_KBD_SKIP )
 
+// Control how the screen update is performed: at regular intervals (delayed)
+// or immediatly Note: this is only for the LCD. The annunciators and the
+// buttons are always immediately updated
+// #define DELAYEDDISPUPDATE
+// Interval in millisecond between screen updates
+#define DISPUPDATEINTERVAL 200
+
 /***********/
 /* typedef */
 /***********/
@@ -199,52 +206,14 @@ typedef struct SDLWINDOW {
     int x, y;
 } SDLWINDOW_t;
 
-/*************************/
-/* Functions' prototypes */
-/*************************/
-void redraw_annunc( void );
-void redraw_LCD( void );
+typedef struct sdltohpkeymap_t {
+    SDLKey sdlkey;
+    int hpkey;
+} sdltohpkeymap_t;
 
-void ShowConnections();
-void SDLDrawAnnunc( char* annunc );
-void SDLCreateAnnunc( void );
-void SDLDrawNibble( int nx, int ny, int val );
-void SDLDrawKeypad( void );
-void SDLDrawButtons( void );
-SDL_Surface* SDLCreateSurfFromData( unsigned int w, unsigned int h,
-                                    unsigned char* data, unsigned int coloron,
-                                    unsigned int coloroff );
-SDL_Surface* SDLCreateARGBSurfFromData( unsigned int w, unsigned int h,
-                                        unsigned char* data,
-                                        unsigned int xpcolor );
-void SDLDrawSmallString( int x, int y, const char* string, unsigned int length,
-                         unsigned int coloron, unsigned int coloroff );
-void SDLCreateColors( void );
-void SDLDrawKeyLetter( void );
-unsigned SDLBGRA2ARGB( unsigned color );
-void SDLDrawBezel();
-void SDLDrawMore( unsigned int cut, unsigned int offset_y, int keypad_width,
-                  int keypad_height );
-void SDLDrawLogo();
-void SDLDrawBackground( int width, int height, int w_top, int h_top );
-void SDLUIShowKey( int hpkey );
-void SDLUIHideKey( void );
-void SDLUIFeedback( void );
-SDLWINDOW_t SDLCreateWindow( int x, int y, int w, int h, unsigned color,
-                             int framewidth, int inverted );
-void SDLShowWindow( SDLWINDOW_t* win );
-void SDLSHideWindow( SDLWINDOW_t* win );
-void SDLARGBTo( unsigned color, unsigned* a, unsigned* r, unsigned* g,
-                unsigned* b );
-unsigned SDLToARGB( unsigned a, unsigned r, unsigned g, unsigned b );
-void SDLMessageBox( int w, int h, const char* title, const char* text[],
-                    unsigned color, unsigned colortext, int center );
-void SDLEventWaitClickOrKey( void );
-void SDLShowInformation( void );
-
-void SDLInit( void );
-void SDLCreateHP( void );
-
+/*************/
+/* variables */
+/*************/
 disp_t disp;
 
 keypad_t keypad;
@@ -429,13 +398,6 @@ unsigned KEYBOARD_HEIGHT, KEYBOARD_WIDTH, TOP_SKIP, SIDE_SKIP, BOTTOM_SKIP,
     DISP_KBD_SKIP, DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_OFFSET_X,
     DISPLAY_OFFSET_Y, DISP_FRAME, KEYBOARD_OFFSET_X, KEYBOARD_OFFSET_Y,
     KBD_UPLINE;
-
-// Control how the screen update is performed: at regular intervals (delayed)
-// or immediatly Note: this is only for the LCD. The annunciators and the
-// buttons are always immediately updated
-// #define DELAYEDDISPUPDATE
-// Interval in millisecond between screen updates
-#define DISPUPDATEINTERVAL 200
 
 unsigned int ARGBColors[ BLACK + 1 ];
 
@@ -1111,11 +1073,6 @@ ann_struct_t ann_tbl[] = {
     { 0 } };
 /* \ x48_lcd.c */
 
-typedef struct sdltohpkeymap_t {
-    SDLKey sdlkey;
-    int hpkey;
-} sdltohpkeymap_t;
-
 sdltohpkeymap_t sdltohpkeymap[] = {
     // Numbers
     { SDLK_0, BUTTON_0 },
@@ -1199,6 +1156,55 @@ sdltohpkeymap_t sdltohpkeymap[] = {
 
 SDL_Surface* sdlwindow;
 
+/*************************/
+/* Functions' prototypes */
+/*************************/
+void redraw_annunc( void );
+void redraw_LCD( void );
+
+void SDLDrawSerialDevices();
+void SDLDrawAnnunc( char* annunc );
+void SDLCreateAnnunc( void );
+void SDLDrawNibble( int nx, int ny, int val );
+void SDLDrawKeypad( void );
+void SDLDrawButtons( void );
+SDL_Surface* SDLCreateSurfFromData( unsigned int w, unsigned int h,
+                                    unsigned char* data, unsigned int coloron,
+                                    unsigned int coloroff );
+SDL_Surface* SDLCreateARGBSurfFromData( unsigned int w, unsigned int h,
+                                        unsigned char* data,
+                                        unsigned int xpcolor );
+void SDLDrawSmallString( int x, int y, const char* string, unsigned int length,
+                         unsigned int coloron, unsigned int coloroff );
+void SDLCreateColors( void );
+void SDLDrawKeyLetter( void );
+unsigned SDLBGRA2ARGB( unsigned color );
+void SDLDrawBezel();
+void SDLDrawMore( unsigned int cut, unsigned int offset_y, int keypad_width,
+                  int keypad_height );
+void SDLDrawLogo();
+void SDLDrawBackground( int width, int height, int w_top, int h_top );
+void SDLUIShowKey( int hpkey );
+void SDLUIHideKey( void );
+void SDLUIFeedback( void );
+SDLWINDOW_t SDLCreateWindow( int x, int y, int w, int h, unsigned color,
+                             int framewidth, int inverted );
+void SDLShowWindow( SDLWINDOW_t* win );
+void SDLSHideWindow( SDLWINDOW_t* win );
+void SDLARGBTo( unsigned color, unsigned* a, unsigned* r, unsigned* g,
+                unsigned* b );
+unsigned SDLToARGB( unsigned a, unsigned r, unsigned g, unsigned b );
+void SDLMessageBox( int w, int h, const char* title, const char* text[],
+                    unsigned color, unsigned colortext, int center );
+void SDLEventWaitClickOrKey( void );
+void SDLShowInformation( void );
+
+void SDLInit( void );
+void SDLCreateHP( void );
+
+/****************************/
+/* functions implementation */
+/****************************/
 void SDLInit( void ) {
     // Initialize SDL
     if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
@@ -1363,7 +1369,7 @@ void SDLCreateHP( void ) {
     SDLDrawBezel();
     SDLDrawKeypad();
 
-    ShowConnections();
+    SDLDrawSerialDevices();
 
     SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 );
 }
@@ -2921,7 +2927,7 @@ static int button_release_all( void ) {
     return 0;
 }
 
-void ShowConnections() {
+void SDLDrawSerialDevices() {
     char text[ 1024 ];
 
     if ( verbose ) {

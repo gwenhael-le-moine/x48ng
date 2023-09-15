@@ -25,7 +25,7 @@ extern int ui__get_event( void );
 extern void ui__update_LCD( void );
 
 /* used in: hp48_emulate.c */
-extern void ui__adjust_contrast();
+extern void ui__adjust_contrast( void );
 extern void ui__draw_annunc( void );
 
 /* used in: debugger.c, ui_sdl.c */
