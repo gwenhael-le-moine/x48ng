@@ -49,6 +49,15 @@ int main( int argc, char** argv ) {
     sigaction( SIGALRM, &sa, ( struct sigaction* )0 );
 
     sigemptyset( &set );
+    sigaddset( &set, SIGINT );
+    sa.sa_handler = signal_handler;
+    sa.sa_mask = set;
+#ifdef SA_RESTART
+    sa.sa_flags = SA_RESTART;
+#endif
+    sigaction( SIGINT, &sa, ( struct sigaction* )0 );
+
+    sigemptyset( &set );
     sigaddset( &set, SIGPIPE );
     sa.sa_handler = signal_handler;
     sa.sa_mask = set;
