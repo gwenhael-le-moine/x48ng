@@ -3,8 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "hp48.h"
-#include "hp48emu.h"
+#include "emulator.h"
 #include "romio.h"
 #include "debugger.h"
 

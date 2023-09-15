@@ -8,8 +8,7 @@
 #include <unistd.h>
 
 #include "options.h"
-#include "hp48.h"
-#include "hp48emu.h"
+#include "emulator.h"
 
 static int wire_fd;
 static int ir_fd;
@@ -33,7 +32,7 @@ void update_connection_display( void ) {
     }
 }
 
-int serial_init( void ) {
+int serial__init( void ) {
     int c;
     int n;
     char tty_dev_name[ 128 ];

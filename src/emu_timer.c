@@ -7,7 +7,7 @@
 #include <sys/time.h>
 
 #include "romio.h"
-#include "timer.h"
+#include "emulator.h"
 #include "debugger.h" /* used for in_debugger */
 
 typedef struct x48_timer_t {

@@ -14,10 +14,8 @@
 
 #include "options.h"
 #include "error_handling.h"
-#include "hp48.h"
-#include "hp48emu.h" /* do_kbd_int(); */
+#include "emulator.h"
 #include "romio.h"
-#include "timer.h"
 #include "ui.h"
 #include "ui_bitmaps.h"
 
@@ -205,7 +203,7 @@ typedef struct SDLWINDOW {
 /* Functions' prototypes */
 /*************************/
 void redraw_annunc( void );
-void redraw_display( void );
+void redraw_LCD( void );
 
 void ShowConnections();
 void SDLDrawAnnunc( char* annunc );
@@ -243,6 +241,9 @@ void SDLMessageBox( int w, int h, const char* title, const char* text[],
                     unsigned color, unsigned colortext, int center );
 void SDLEventWaitClickOrKey( void );
 void SDLShowInformation( void );
+
+void SDLInit( void );
+void SDLCreateHP( void );
 
 disp_t disp;
 
@@ -1314,11 +1315,11 @@ int button_released( int b ) {
     return 0;
 }
 
-void adjust_contrast() {
+void ui__adjust_contrast() {
     SDLCreateColors();
     SDLCreateAnnunc();
 
-    redraw_display();
+    redraw_LCD();
     redraw_annunc();
 }
 
@@ -2944,7 +2945,7 @@ void ShowConnections() {
         stringColor( sdlwindow, 10, 240, text, 0xffffffff );
 }
 
-int get_ui_event( void ) {
+int ui__get_event( void ) {
     SDL_Event event;
     int hpkey;
     int rv;
@@ -3172,7 +3173,7 @@ static inline void draw_row( long addr, int row ) {
     }
 }
 
-void update_display( void ) {
+void ui__update_LCD( void ) {
     int i, j;
     long addr;
     static int old_offset = -1;
@@ -3218,13 +3219,13 @@ void update_display( void ) {
     }
 }
 
-void redraw_display( void ) {
+void redraw_LCD( void ) {
     memset( disp_buf, 0, sizeof( disp_buf ) );
     memset( lcd_buffer, 0, sizeof( lcd_buffer ) );
-    update_display();
+    ui__update_LCD();
 }
 
-void disp_draw_nibble( word_20 addr, word_4 val ) {
+void ui__disp_draw_nibble( word_20 addr, word_4 val ) {
     long offset;
     int x, y;
 
@@ -3250,7 +3251,7 @@ void disp_draw_nibble( word_20 addr, word_4 val ) {
     }
 }
 
-void menu_draw_nibble( word_20 addr, word_4 val ) {
+void ui__menu_draw_nibble( word_20 addr, word_4 val ) {
     long offset;
     int x, y;
 
@@ -3263,7 +3264,7 @@ void menu_draw_nibble( word_20 addr, word_4 val ) {
     }
 }
 
-void draw_annunc( void ) {
+void ui__draw_annunc( void ) {
     int val;
 
     val = display.annunc;
@@ -3283,10 +3284,10 @@ void draw_annunc( void ) {
 
 void redraw_annunc( void ) {
     last_annunc_state = -1;
-    draw_annunc();
+    ui__draw_annunc();
 }
 
-void init_display( void ) {
+void ui__init_LCD( void ) {
     display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
 
     display.disp_start = ( saturn.disp_addr & 0xffffe );
@@ -3322,3 +3323,15 @@ void init_display( void ) {
     memset( lcd_buffer, 0xf0, sizeof( lcd_buffer ) );
 }
 /* \ x48_lcd.c */
+
+void ui__init( void ) {
+      // SDL Initialization
+    SDLInit();
+
+    /*
+     *  Create the HP-48 window
+     */
+    SDLCreateHP();
+
+    ui__init_LCD();
+}

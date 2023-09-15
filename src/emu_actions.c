@@ -2,11 +2,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "hp48.h"
-#include "hp48emu.h"
+#include "emulator.h"
 #include "romio.h"
-#include "timer.h"
-#include "ui.h" /* get_ui_event(); update_display(); */
+#include "ui.h" /* ui__get_event(); ui__update_LCD(); */
 
 #include "debugger.h" /* in_debugger, enter_debugger */
 
@@ -253,12 +251,12 @@ int get_identification( void ) {
 }
 
 void do_shutdown( void ) {
-    int wake, alarms;
+    int wake;
     t1_t2_ticks ticks;
 
     if ( device.display_touched ) {
         device.display_touched = 0;
-        update_display();
+        ui__update_LCD();
     }
 
     stop_timer( RUN_TIMER );
@@ -273,8 +271,6 @@ void do_shutdown( void ) {
         wake = 1;
     else
         wake = 0;
-
-    alarms = 0;
 
     do {
 
@@ -291,7 +287,7 @@ void do_shutdown( void ) {
             set_t1 = ticks.t1_ticks;
 
             interrupt_called = 0;
-            if ( get_ui_event() && interrupt_called )
+            if ( ui__get_event() && interrupt_called )
                 wake = 1;
 
             if ( saturn.timer2 <= 0 ) {
@@ -323,8 +319,6 @@ void do_shutdown( void ) {
                 if ( interrupt_called )
                     wake = 1;
             }
-
-            alarms++;
         }
 
         if ( enter_debugger )

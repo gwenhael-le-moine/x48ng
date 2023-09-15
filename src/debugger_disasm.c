@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "hp48.h"
+#include "emulator.h"
 #include "debugger.h"
 
 #define TAB_SKIP 8

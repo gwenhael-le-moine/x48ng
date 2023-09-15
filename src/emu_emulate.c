@@ -4,10 +4,8 @@
 #include <sys/time.h>
 
 #include "options.h" /* throttle */
-#include "hp48.h" /* word_20; register_to_address(); exchange_reg(); add_address(); store(); recall(); store_n(); recall_n(); */
-#include "hp48emu.h"
-#include "timer.h"
-#include "ui.h" /* get_ui_event(); adjust_contrast(); update_display(); draw_annunc(); */
+#include "emulator.h" /* word_20; register_to_address(); exchange_reg(); add_address(); store(); recall(); store_n(); recall_n(); */
+#include "ui.h" /* ui__get_event(); ui__adjust_contrast(); ui__update_LCD(); ui__draw_annunc(); */
 #include "debugger.h" /* enter_debugger, TRAP_INSTRUCTION, ILLEGAL_INSTRUCTION */
 
 static long jumpaddr;
@@ -2271,7 +2269,7 @@ inline void schedule( void ) {
         /* UI */
         if ( device.display_touched > 0 && device.display_touched-- == 1 ) {
             device.display_touched = 0;
-            update_display();
+            ui__update_LCD();
         }
 
         if ( device.display_touched > 0 )
@@ -2279,12 +2277,12 @@ inline void schedule( void ) {
 
         if ( device.contrast_touched ) {
             device.contrast_touched = 0;
-            adjust_contrast();
+            ui__adjust_contrast();
         }
 
         if ( device.ann_touched ) {
             device.ann_touched = 0;
-            draw_annunc();
+            ui__draw_annunc();
         }
 
         /* serial */
@@ -2432,7 +2430,7 @@ inline void schedule( void ) {
     if ( got_alarm ) {
         got_alarm = 0;
 
-        get_ui_event();
+        ui__get_event();
     }
 }
 

@@ -10,9 +10,9 @@
 #include <locale.h>
 
 #include "options.h"
-#include "hp48.h"
-#include "ui.h" /* SDLInit(); SDLCreateHP(); init_display(); */
+#include "emulator.h"
 #include "debugger.h"
+#include "ui.h" /* ui__init(); */
 
 void signal_handler( int sig ) {
     switch ( sig ) {
@@ -90,22 +90,12 @@ int main( int argc, char** argv ) {
     flags &= ~O_NONBLOCK;
     fcntl( STDIN_FILENO, F_SETFL, flags );
 
-    /*
-     * initialize emulator stuff
-     */
-    init_emulator();
-
-    serial_init();
-
-    // SDL Initialization
-    SDLInit();
-
-    /*
-     *  Create the HP-48 window
-     */
-    SDLCreateHP();
-
-    init_display();
+    /*****************************/
+    /* initialize emulator stuff */
+    /*****************************/
+    emulator__init();
+    serial__init();
+    ui__init();
 
     /************************/
     /* Start emulation loop */

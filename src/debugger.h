@@ -1,7 +1,7 @@
 #ifndef _DEBUGGER_H
 #define _DEBUGGER_H 1
 
-#include "hp48.h"
+#include "emulator.h"
 
 #define USER_INTERRUPT 1
 #define ILLEGAL_INSTRUCTION 2

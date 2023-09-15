@@ -4,10 +4,9 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#include "hp48.h"
-#include "hp48emu.h"
+#include "emulator.h"
 #include "romio.h"
-#include "ui.h" /* disp; disp_draw_nibble(); menu_draw_nibble(); */
+#include "ui.h" /* disp; ui__disp_draw_nibble(); ui__menu_draw_nibble(); */
 #include "options.h"
 
 #define MCTL_MMIO_SX 0
@@ -495,12 +494,12 @@ void write_nibble_sx( long addr, int val ) {
     if ( device.display_touched || !disp.mapped )
         return;
     if ( addr >= display.disp_start && addr < display.disp_end ) {
-        disp_draw_nibble( addr, val );
+        ui__disp_draw_nibble( addr, val );
     }
     if ( display.lines == 63 )
         return;
     if ( addr >= display.menu_start && addr < display.menu_end ) {
-        menu_draw_nibble( addr, val );
+        ui__menu_draw_nibble( addr, val );
     }
 }
 
@@ -686,12 +685,12 @@ void write_nibble_gx( long addr, int val ) {
     if ( device.display_touched || !disp.mapped )
         return;
     if ( addr >= display.disp_start && addr < display.disp_end ) {
-        disp_draw_nibble( addr, val );
+        ui__disp_draw_nibble( addr, val );
     }
     if ( display.lines == 63 )
         return;
     if ( addr >= display.menu_start && addr < display.menu_end ) {
-        menu_draw_nibble( addr, val );
+        ui__menu_draw_nibble( addr, val );
     }
 }
 

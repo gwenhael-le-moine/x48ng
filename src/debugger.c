@@ -8,10 +8,9 @@
 #include <readline/readline.h>
 
 #include "options.h"
-#include "hp48.h"
+#include "emulator.h"
 #include "romio.h"
-#include "timer.h"
-#include "ui.h" /* init_display(); update_display(); */
+#include "ui.h" /* ui__init_LCD(); ui__update_LCD(); */
 #include "debugger.h"
 
 #define MAX_ARGS 16
@@ -56,23 +55,23 @@ bkpt_tbl[ MAX_BREAKPOINTS + 1 ];
 /*
  * command functions
  */
-static void do_break( int, char** );
-static void do_continue( int, char** );
-static void do_delete( int, char** );
-static void do_exit( int, char** );
-static void do_go( int, char** );
-static void do_help( int, char** );
-static void do_load( int, char** );
-static void do_mode( int, char** );
-static void do_quit( int, char** );
-static void do_regs( int, char** );
-static void do_save( int, char** );
-static void do_stack( int, char** );
-static void do_stat( int, char** );
-static void do_step( int, char** );
-static void do_ram( int, char** );
-static void do_reset( int, char** );
-static void do_rstk( int, char** );
+static void cmd_break( int, char** );
+static void cmd_continue( int, char** );
+static void cmd_delete( int, char** );
+static void cmd_exit( int, char** );
+static void cmd_go( int, char** );
+static void cmd_help( int, char** );
+static void cmd_load( int, char** );
+static void cmd_mode( int, char** );
+static void cmd_quit( int, char** );
+static void cmd_regs( int, char** );
+static void cmd_save( int, char** );
+static void cmd_stack( int, char** );
+static void cmd_stat( int, char** );
+static void cmd_step( int, char** );
+static void cmd_ram( int, char** );
+static void cmd_reset( int, char** );
+static void cmd_rstk( int, char** );
 
 struct cmd {
     const char* name;
@@ -81,61 +80,61 @@ struct cmd {
 }
 
 cmd_tbl[] = {
-    { "break", do_break,
+    { "break", cmd_break,
       "break [address]            Set breakpoint at `address\' or show "
       "breakpoints" },
-    { "b", do_break, 0 },
+    { "b", cmd_break, 0 },
 
-    { "cont", do_continue, "cont                       Continue execution" },
-    { "c", do_continue, 0 },
+    { "cont", cmd_continue, "cont                       Continue execution" },
+    { "c", cmd_continue, 0 },
 
-    { "delete", do_delete,
+    { "delete", cmd_delete,
       "delete [all | n]           Delete breakpoint or watchpoint number "
       "`n\',\n                           all breakpoints, or current "
       "breakpoint" },
-    { "d", do_delete, 0 },
+    { "d", cmd_delete, 0 },
 
-    { "exit", do_exit,
+    { "exit", cmd_exit,
       "exit                       Exit the emulator without saving" },
 
-    { "go", do_go, "go address                 Set PC to `address\'" },
+    { "go", cmd_go, "go address                 Set PC to `address\'" },
 
-    { "help", do_help, "help                       Display this information" },
-    { "h", do_help, 0 },
-    { "?", do_help, 0 },
+    { "help", cmd_help, "help                       Display this information" },
+    { "h", cmd_help, 0 },
+    { "?", cmd_help, 0 },
 
-    { "load", do_load,
+    { "load", cmd_load,
       "load                       Load emulator-state from files" },
 
-    { "mode", do_mode,
+    { "mode", cmd_mode,
       "mode [hp | class]          Show or set disassembler mode" },
 
-    { "quit", do_quit,
+    { "quit", cmd_quit,
       "quit                       Exit the emulator after saving its state" },
-    { "q", do_quit, 0 },
+    { "q", cmd_quit, 0 },
 
-    { "ram", do_ram, "ram                        Show RAM layout" },
+    { "ram", cmd_ram, "ram                        Show RAM layout" },
 
-    { "reg", do_regs,
+    { "reg", cmd_regs,
       "reg [register [hexvalue]]  Display or set register value" },
-    { "r", do_regs, 0 },
+    { "r", cmd_regs, 0 },
 
-    { "reset", do_reset,
+    { "reset", cmd_reset,
       "reset                      Set the HP48\'s PC to ZERO" },
 
-    { "save", do_save,
+    { "save", cmd_save,
       "save                       Save emulator-state to files" },
 
-    { "stack", do_stack, "stack                      Display RPL stack" },
+    { "stack", cmd_stack, "stack                      Display RPL stack" },
 
-    { "stat", do_stat,
+    { "stat", cmd_stat,
       "stat                       Display statistics for the emulator" },
 
-    { "step", do_step,
+    { "step", cmd_step,
       "step [n]                   Step one or n Instruction(s)" },
-    { "s", do_step, 0 },
+    { "s", cmd_step, 0 },
 
-    { "where", do_rstk, "where                      Show ML return stack" },
+    { "where", cmd_rstk, "where                      Show ML return stack" },
 
     { 0, 0, 0 } };
 
@@ -341,7 +340,7 @@ static int confirm( const char* prompt ) {
     }
 }
 
-static void do_break( int argc, char** argv ) {
+static void cmd_break( int argc, char** argv ) {
     int i;
     word_20 addr;
 
@@ -379,9 +378,9 @@ static void do_break( int argc, char** argv ) {
     }
 }
 
-static void do_continue( int argc, char** argv ) { continue_flag = 1; }
+static void cmd_continue( int argc, char** argv ) { continue_flag = 1; }
 
-static void do_delete( int argc, char** argv ) {
+static void cmd_delete( int argc, char** argv ) {
     int num;
 
     if ( argc == 1 ) {
@@ -440,14 +439,14 @@ static void do_delete( int argc, char** argv ) {
     }
 }
 
-static void do_exit( int argc, char** argv ) {
+static void cmd_exit( int argc, char** argv ) {
     if ( confirm( "Exit the emulator WITHOUT saving its state?" ) ) {
         printf( "Exit.\n" );
         exit( 0 );
     }
 }
 
-static void do_go( int argc, char** argv ) {
+static void cmd_go( int argc, char** argv ) {
     word_20 addr;
 
     str_to_upper( argv[ 1 ] );
@@ -457,7 +456,7 @@ static void do_go( int argc, char** argv ) {
     }
 }
 
-static void do_help( int argc, char** argv ) {
+static void cmd_help( int argc, char** argv ) {
     int i;
 
     for ( i = 0; cmd_tbl[ i ].name; i++ ) {
@@ -467,52 +466,57 @@ static void do_help( int argc, char** argv ) {
     }
 }
 
-static void do_load( int argc, char** argv ) {
+static void cmd_load( int argc, char** argv ) {
     saturn_t tmp_saturn;
     device_t tmp_device;
 
-    if ( confirm( "Load emulator-state from files?" ) ) {
-        memcpy( &tmp_saturn, &saturn, sizeof( saturn ) );
-        memcpy( &tmp_device, &device, sizeof( device ) );
-        memset( &saturn, 0, sizeof( saturn ) );
-        if ( read_files() ) {
-            printf( "Loading done.\n" );
-            enter_debugger &= ~ILLEGAL_INSTRUCTION;
-            if ( tmp_saturn.rom ) {
-                free( tmp_saturn.rom );
-            }
-            if ( tmp_saturn.ram ) {
-                free( tmp_saturn.ram );
-            }
-            if ( tmp_saturn.port1 ) {
-                free( tmp_saturn.port1 );
-            }
-            if ( tmp_saturn.port2 ) {
-                free( tmp_saturn.port2 );
-            }
-            init_display();
-            update_display();
-        } else {
-            printf( "Loading emulator-state from files failed.\n" );
-            if ( saturn.rom ) {
-                free( saturn.rom );
-            }
-            if ( saturn.ram ) {
-                free( saturn.ram );
-            }
-            if ( saturn.port1 ) {
-                free( saturn.port1 );
-            }
-            if ( saturn.port2 ) {
-                free( saturn.port2 );
-            }
-            memcpy( &saturn, &tmp_saturn, sizeof( saturn ) );
-            memcpy( &device, &tmp_device, sizeof( device ) );
-        }
+    if ( !confirm( "Load emulator-state from files?" ) )
+        return;
+
+    memcpy( &tmp_saturn, &saturn, sizeof( saturn ) );
+    memcpy( &tmp_device, &device, sizeof( device ) );
+    memset( &saturn, 0, sizeof( saturn ) );
+
+    if ( read_files() ) {
+        printf( "Loading done.\n" );
+
+        enter_debugger &= ~ILLEGAL_INSTRUCTION;
+        if ( tmp_saturn.rom )
+            free( tmp_saturn.rom );
+
+        if ( tmp_saturn.ram )
+            free( tmp_saturn.ram );
+
+        if ( tmp_saturn.port1 )
+            free( tmp_saturn.port1 );
+
+        if ( tmp_saturn.port2 )
+            free( tmp_saturn.port2 );
+
+        /* After reloading state we need to refresh the UI's LCD */
+        ui__init_LCD();
+        ui__update_LCD();
+    } else {
+        printf( "Loading emulator-state from files failed.\n" );
+        if ( saturn.rom )
+            free( saturn.rom );
+
+        if ( saturn.ram )
+            free( saturn.ram );
+
+        if ( saturn.port1 )
+            free( saturn.port1 );
+
+        if ( saturn.port2 )
+            free( saturn.port2 );
+
+        memcpy( &saturn, &tmp_saturn, sizeof( saturn ) );
+        memcpy( &device, &tmp_device, sizeof( device ) );
     }
 }
 
-static void do_mode( int argc, char** argv ) {
+
+static void cmd_mode( int argc, char** argv ) {
     if ( argc < 2 ) {
         printf( "Disassembler uses %s mnemonics.\n",
                 mode_name[ disassembler_mode ] );
@@ -529,7 +533,7 @@ static void do_mode( int argc, char** argv ) {
     }
 }
 
-static void do_quit( int argc, char** argv ) {
+static void cmd_quit( int argc, char** argv ) {
     if ( confirm( "Quit the emulator and save its state?" ) ) {
         printf( "Exit.\n" );
         exit_emulator();
@@ -625,7 +629,7 @@ static const char* mctl_str_gx[] = { "MMIO       ", "SysRAM     ",
 static const char* mctl_str_sx[] = { "MMIO  ", "SysRAM", "Port 1",
                                      "Port 2", "Extra ", "SysROM" };
 
-static void do_ram( int argc, char** argv ) {
+static void cmd_ram( int argc, char** argv ) {
     int i;
 
     for ( i = 0; i < 5; i++ ) {
@@ -646,7 +650,7 @@ static void do_ram( int argc, char** argv ) {
         printf( "Port 2      switched to bank %d\n", saturn.bank_switch );
 }
 
-static void do_regs( int argc, char** argv ) {
+static void cmd_regs( int argc, char** argv ) {
     int i;
     word_64 val;
 
@@ -818,7 +822,7 @@ static void do_regs( int argc, char** argv ) {
     }
 }
 
-static void do_save( int argc, char** argv ) {
+static void cmd_save( int argc, char** argv ) {
     if ( write_files() ) {
         printf( "Saving done.\n" );
     } else {
@@ -881,7 +885,7 @@ char* get_stack( void ) {
     return "";
 }
 
-static void do_stack( int argc, char** argv ) {
+static void cmd_stack( int argc, char** argv ) {
     word_20 dsktop, dskbot;
     word_20 sp = 0, end = 0, ent = 0;
     word_20 ram_base, ram_mask;
@@ -951,13 +955,13 @@ static void do_stack( int argc, char** argv ) {
     saturn.mem_cntl[ 1 ].config[ 1 ] = ram_mask;
 }
 
-static void do_stat( int argc, char** argv ) {
+static void cmd_stat( int argc, char** argv ) {
     printf( "Instructions/s: %ld\n", saturn.i_per_s );
     printf( "Timer 1 I/TICK: %d\n", saturn.t1_tick );
     printf( "Timer 2 I/TICK: %d\n", saturn.t2_tick );
 }
 
-static void do_step( int argc, char** argv ) {
+static void cmd_step( int argc, char** argv ) {
     word_20 next_instr;
     word_32 n;
     int leave;
@@ -1020,14 +1024,14 @@ static void do_step( int argc, char** argv ) {
     }
 }
 
-static void do_reset( int argc, char** argv ) {
+static void cmd_reset( int argc, char** argv ) {
     if ( confirm( "Do a RESET (PC = 00000)?" ) ) {
         saturn.PC = 0;
         enter_debugger &= ~ILLEGAL_INSTRUCTION;
     }
 }
 
-static void do_rstk( int argc, char** argv ) {
+static void cmd_rstk( int argc, char** argv ) {
     int i, j;
 
     disassemble( saturn.PC, instr );
@@ -1085,7 +1089,7 @@ int debug( void ) {
      */
     if ( device.display_touched ) {
         device.display_touched = 0;
-        update_display();
+        ui__update_LCD();
     }
 
     /*

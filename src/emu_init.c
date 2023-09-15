@@ -8,8 +8,7 @@
 #include <sys/types.h>
 
 #include "options.h"
-#include "hp48.h"
-#include "hp48emu.h" /* dev_memory_init(); */
+#include "emulator.h"
 #include "romio.h"
 
 #define X48_MAGIC 0x48503438
@@ -101,7 +100,7 @@ void init_saturn( void ) {
     dev_memory_init();
 }
 
-int init_emulator( void ) {
+int emulator__init( void ) {
     if ( !initialize && read_files() ) {
         if ( resetOnStartup )
             saturn.PC = 0x00000;

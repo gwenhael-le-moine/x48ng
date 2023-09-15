@@ -21,18 +21,18 @@ ifeq ($(FULL_WARNINGS), yes)
 	CFLAGS += -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-function -Wconversion -Wdouble-promotion -Wno-sign-conversion -fsanitize=undefined -fsanitize-trap
 endif
 
-DOTOS = src/main.o \
-	src/hp48_emulate.o \
-	src/hp48_init.o \
-	src/hp48_serial.o \
-	src/hp48emu_actions.o \
-	src/hp48emu_memory.o \
-	src/hp48emu_register.o \
+DOTOS = src/emu_serial.o \
+	src/emu_emulate.o \
+	src/emu_init.o \
+	src/emu_actions.o \
+	src/emu_memory.o \
+	src/emu_register.o \
+	src/emu_timer.o \
 	src/options.o \
 	src/romio.o \
-	src/timer.o \
 	src/error_handling.o \
-	src/ui_sdl.o
+	src/ui_sdl.o \
+	src/main.o
 
 ### debugger
 DOTOS += src/debugger.o \
