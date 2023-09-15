@@ -11,6 +11,7 @@ This is my fork of x48-0.6.4 where I deviate from the original code and do my ow
 2. removed the code supporting Solaris, HP-UX, etc.
 3. removed the autotools-based build system and wrote a simple Makefile instead
 4. added a x48ng.desktop file and an icon
+5. refactoring as a way to explore/understand the codebase
 
 ## Bugs to fix
 
@@ -20,23 +21,22 @@ See https://github.com/gwenhael-le-moine/x48ng/issues
 
 ### short term
 
-- clean-up further.
-- update manpage for sdl version
-- split the core emulator in a lib and have the GUI use that to cleanly separate the two.
 - port from sdl1.2 to sdl2
-- bring back the debugger?
-- can something be merged from droid48? [ https://github.com/shagr4th/droid48 ]
 
 ### long(er) term
 
 - GUI in gtk(4)?
 - support the HP49g ROM?
+- split the core emulator in a lib and have the GUI use that to cleanly separate the two.
+- can something be merged from droid48? [ https://github.com/shagr4th/droid48 ]
 
 ## Compilation
 
-### GUI
+### Dependencies (see .github/workflows/c-cpp.yml for debian packages names)
 
-This branch is SDL1 only.
+- readline
+- SDL_gfx1
+- SDL 1.2
 
 ## Installation
 
