@@ -11,7 +11,7 @@
 #include "hp48.h"
 #include "romio.h"
 #include "timer.h"
-#include "x48.h" /* init_display(); update_display(); */
+#include "ui.h" /* init_display(); update_display(); */
 #include "debugger.h"
 
 #define MAX_ARGS 16

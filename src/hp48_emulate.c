@@ -7,7 +7,7 @@
 #include "hp48.h" /* word_20; register_to_address(); exchange_reg(); add_address(); store(); recall(); store_n(); recall_n(); */
 #include "hp48emu.h"
 #include "timer.h"
-#include "x48.h" /* get_ui_event(); adjust_contrast(); update_display(); draw_annunc(); */
+#include "ui.h" /* get_ui_event(); adjust_contrast(); update_display(); draw_annunc(); */
 #include "debugger.h" /* enter_debugger, TRAP_INSTRUCTION, ILLEGAL_INSTRUCTION */
 
 static long jumpaddr;

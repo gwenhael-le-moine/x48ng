@@ -7,7 +7,7 @@
 #include "hp48.h"
 #include "hp48emu.h"
 #include "romio.h"
-#include "x48.h" /* disp; disp_draw_nibble(); menu_draw_nibble(); */
+#include "ui.h" /* disp; disp_draw_nibble(); menu_draw_nibble(); */
 #include "options.h"
 
 #define MCTL_MMIO_SX 0

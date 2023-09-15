@@ -6,7 +6,7 @@
 #include "hp48emu.h"
 #include "romio.h"
 #include "timer.h"
-#include "x48.h" /* get_ui_event(); update_display(); */
+#include "ui.h" /* get_ui_event(); update_display(); */
 
 #include "debugger.h" /* in_debugger, enter_debugger */
 

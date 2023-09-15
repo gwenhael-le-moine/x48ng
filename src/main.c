@@ -11,7 +11,7 @@
 
 #include "options.h"
 #include "hp48.h"
-#include "x48.h" /* SDLInit(); SDLCreateHP(); init_display(); */
+#include "ui.h" /* SDLInit(); SDLCreateHP(); init_display(); */
 #include "debugger.h"
 
 void signal_handler( int sig ) {

@@ -32,7 +32,7 @@ DOTOS = src/main.o \
 	src/romio.o \
 	src/timer.o \
 	src/error_handling.o \
-	src/x48.o
+	src/ui_sdl.o
 
 ### debugger
 DOTOS += src/debugger.o \
