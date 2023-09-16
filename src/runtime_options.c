@@ -8,6 +8,7 @@
 char* progname = "x48ng";
 
 int verbose = 0;
+int show_ui_chrome = 1;
 int useTerminal = 1;
 int useSerial = 0;
 int useDebugger = 1;
@@ -43,6 +44,7 @@ int parse_args( int argc, char* argv[] ) {
         { "version", no_argument, NULL, 'v' },
 
         { "verbose", no_argument, &verbose, 1 },
+        { "no-chrome", no_argument, &show_ui_chrome, 0 },
         { "use-terminal", no_argument, &useTerminal, 1 },
         { "use-serial", no_argument, &useSerial, 1 },
 
@@ -74,6 +76,7 @@ int parse_args( int argc, char* argv[] ) {
         "\t   --serial-line=<path>\t\t use <path> as serial device default: "
         "%s)\n"
         "\t-V --verbose\t\t\t be verbose (default: false)\n"
+        "\t   --no-chrome\t\t\t only display the LCD (default: false)\n"
         "\t-t --use-terminal\t\t activate pseudo terminal interface (default: "
         "true)\n"
         "\t-s --use-serial\t\t\t activate serial interface (default: false)\n"

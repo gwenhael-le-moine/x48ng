@@ -1183,6 +1183,7 @@ void SDLDrawMore( unsigned int cut, unsigned int offset_y, int keypad_width,
                   int keypad_height );
 void SDLDrawLogo();
 void SDLDrawBackground( int width, int height, int w_top, int h_top );
+void SDLDrawBackgroundLCD();
 void SDLUIShowKey( int hpkey );
 void SDLUIHideKey( void );
 void SDLUIFeedback( void );
@@ -1205,6 +1206,8 @@ void SDLCreateHP( void );
 /* functions implementation */
 /****************************/
 void SDLInit( void ) {
+    unsigned int width, height;
+
     // Initialize SDL
     if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
         printf( "Couldn't initialize SDL: %s\n", SDL_GetError() );
@@ -1230,12 +1233,18 @@ void SDLInit( void ) {
     KEYBOARD_OFFSET_Y = _KEYBOARD_OFFSET_Y;
     KBD_UPLINE = _KBD_UPLINE;
 
-    unsigned width =
-        ( buttons_gx[ LAST_BUTTON ].x + buttons_gx[ LAST_BUTTON ].w ) +
-        2 * SIDE_SKIP;
-    unsigned height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP +
-                      buttons_gx[ LAST_BUTTON ].y +
-                      buttons_gx[ LAST_BUTTON ].h + BOTTOM_SKIP;
+    if ( show_ui_chrome ) {
+        width = ( buttons_gx[ LAST_BUTTON ].x + buttons_gx[ LAST_BUTTON ].w ) +
+                2 * SIDE_SKIP;
+        height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP +
+                 buttons_gx[ LAST_BUTTON ].y + buttons_gx[ LAST_BUTTON ].h +
+                 BOTTOM_SKIP;
+    } else {
+        width = DISPLAY_WIDTH;
+        height = DISPLAY_HEIGHT;
+        DISPLAY_OFFSET_X = 0;
+        DISPLAY_OFFSET_Y = 0;
+    }
 
     sdlwindow = SDL_SetVideoMode( width, height, 32, SDL_SWSURFACE );
 
@@ -1326,51 +1335,6 @@ void ui__adjust_contrast() {
 
     redraw_LCD();
     redraw_annunc();
-}
-
-void SDLCreateHP( void ) {
-    // we allocate memory for the buttons because we need to modify
-    // their coordinates, and we don't want to change the original buttons_gx or
-    // buttons_sx
-    if ( buttons ) {
-        free( buttons );
-        buttons = 0;
-    }
-    buttons = ( button_t* )malloc( sizeof( buttons_gx ) );
-
-    if ( opt_gx ) {
-        // buttons = buttons_gx;
-        memcpy( buttons, buttons_gx, sizeof( buttons_gx ) );
-        colors = colors_gx;
-    } else {
-        // buttons = buttons_sx;
-        memcpy( buttons, buttons_sx, sizeof( buttons_sx ) );
-        colors = colors_sx;
-    }
-
-    unsigned int width = KEYBOARD_WIDTH + 2 * SIDE_SKIP;
-    unsigned int height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP +
-                          KEYBOARD_HEIGHT + BOTTOM_SKIP;
-    int cut = buttons[ BUTTON_MTH ].y + KEYBOARD_OFFSET_Y - 19;
-
-    SDLCreateColors();
-
-    disp.mapped = 1;
-    disp.w = DISPLAY_WIDTH;
-    disp.h = DISPLAY_HEIGHT;
-
-    keypad.width = width;
-    keypad.height = height;
-
-    SDLDrawBackground( width, cut, width, height );
-    SDLDrawMore( cut, KEYBOARD_OFFSET_Y, keypad.width, keypad.height );
-    SDLDrawLogo();
-    SDLDrawBezel();
-    SDLDrawKeypad();
-
-    SDLDrawSerialDevices();
-
-    SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 );
 }
 
 // Find which key is pressed, if any.
@@ -2379,8 +2343,11 @@ void SDLDrawBackground( int width, int height, int w_top, int h_top ) {
     rect.w = width;
     rect.h = height;
     SDL_FillRect( sdlwindow, &rect, ARGBColors[ DISP_PAD ] );
+}
 
-    // LCD
+void SDLDrawBackgroundLCD() {
+    SDL_Rect rect;
+
     rect.x = DISPLAY_OFFSET_X;
     rect.y = DISPLAY_OFFSET_Y;
     rect.w = DISPLAY_WIDTH;
@@ -3112,7 +3079,8 @@ int ui__get_event( void ) {
     }
 
     // Display button being pressed, if any
-    SDLUIShowKey( keyispressed );
+    if ( show_ui_chrome )
+        SDLUIShowKey( keyispressed );
 
     // If we press long, then the button releases makes SDLUIShowKey restore
     // the old key, but rv does not indicate that we need to update the
@@ -3143,6 +3111,7 @@ int ui__get_event( void ) {
 }
 
 /* x48_lcd.c */
+
 static inline void draw_nibble( int c, int r, int val ) {
     int x, y;
 
@@ -3161,6 +3130,8 @@ static inline void draw_nibble( int c, int r, int val ) {
 
     SDLDrawNibble( x, y, val );
 }
+
+void ui__draw_nibble( int c, int r, int val ) { draw_nibble( c, r, val ); }
 
 static inline void draw_row( long addr, int row ) {
     int i, v;
@@ -3329,8 +3300,62 @@ void ui__init_LCD( void ) {
 }
 /* \ x48_lcd.c */
 
+void SDLCreateHP( void ) {
+    unsigned int width, height;
+
+    if ( show_ui_chrome ) {
+        width = KEYBOARD_WIDTH + 2 * SIDE_SKIP;
+        height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP +
+                 KEYBOARD_HEIGHT + BOTTOM_SKIP;
+    } else {
+        width = KEYBOARD_WIDTH;
+        height = DISPLAY_HEIGHT;
+    }
+
+    disp.mapped = 1;
+    disp.w = DISPLAY_WIDTH;
+    disp.h = DISPLAY_HEIGHT;
+
+    keypad.width = width;
+    keypad.height = height;
+
+    colors = opt_gx ? colors_gx : colors_sx;
+
+    // we allocate memory for the buttons because we need to modify
+    // their coordinates, and we don't want to change the original buttons_gx or
+    // buttons_sx
+    if ( buttons ) {
+        free( buttons );
+        buttons = 0;
+    }
+    buttons = ( button_t* )malloc( sizeof( buttons_gx ) );
+
+    if ( opt_gx )
+        memcpy( buttons, buttons_gx, sizeof( buttons_gx ) );
+    else
+        memcpy( buttons, buttons_sx, sizeof( buttons_sx ) );
+
+    SDLCreateColors();
+
+    if ( show_ui_chrome ) {
+        int cut = buttons[ BUTTON_MTH ].y + KEYBOARD_OFFSET_Y - 19;
+
+        SDLDrawBackground( width, cut, width, height );
+        SDLDrawMore( cut, KEYBOARD_OFFSET_Y, keypad.width, keypad.height );
+        SDLDrawLogo();
+        SDLDrawBezel();
+        SDLDrawKeypad();
+
+        SDLDrawSerialDevices();
+    }
+
+    SDLDrawBackgroundLCD();
+
+    SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 );
+}
+
 void ui__init( void ) {
-      // SDL Initialization
+    // SDL Initialization
     SDLInit();
 
     /*

@@ -515,7 +515,6 @@ static void cmd_load( int argc, char** argv ) {
     }
 }
 
-
 static void cmd_mode( int argc, char** argv ) {
     if ( argc < 2 ) {
         printf( "Disassembler uses %s mnemonics.\n",
