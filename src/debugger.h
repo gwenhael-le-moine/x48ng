@@ -8,49 +8,8 @@
 #define BREAKPOINT_HIT 4
 #define TRAP_INSTRUCTION 8
 
-/*
- * exec_flags values
- */
-#define EXEC_BKPT 1
-
-extern int enter_debugger;
-extern int in_debugger;
-extern int exec_flags;
-
-extern void init_debugger( void );
-extern int debug( void );
-extern void emulate_debug( void );
-
-extern int step_instruction( void );
-extern char* str_nibbles( word_20 addr, int n );
-
-/*************************/
-/* debugger_disasm.h */
-/*************************/
-
-/* #ifndef _DISASM_H */
-/* #define _DISASM_H 1 */
-
 #define HP_MNEMONICS 0
 #define CLASS_MNEMONICS 1
-
-extern int disassembler_mode;
-extern const char* mode_name[];
-
-extern char* append_str( char* buf, const char* string );
-extern char* append_tab( char* buf );
-extern char* append_tab_16( char* buf );
-
-extern word_20 disassemble( word_20 addr, char* out );
-
-/* #endif /\* !_DISASM_H *\/ */
-
-/*************************/
-/* debugger_rpl.h */
-/*************************/
-
-/* #ifndef _RPL_H */
-/* #define _RPL_H 1 */
 
 /*
  * Addresses in SX ROM
@@ -104,6 +63,18 @@ extern word_20 disassemble( word_20 addr, char* out );
 #define UM_PRE 0x10b7c /* Unit Operator prefix */
 #define UM_END 0x10b86 /* Unit Operator _	*/
 
+/*
+ * exec_flags values
+ */
+#define EXEC_BKPT 1
+
+extern int enter_debugger;
+extern int in_debugger;
+extern int exec_flags;
+
+extern int disassembler_mode;
+extern const char* mode_name[];
+
 typedef struct hp_real {
     word_20 x;
     word_32 ml;
@@ -112,6 +83,28 @@ typedef struct hp_real {
     word_1 s;
 } hp_real;
 
+/**************/
+/* debugger.c */
+/**************/
+extern void init_debugger( void );
+extern int debug( void );
+extern void emulate_debug( void );
+
+extern int step_instruction( void );
+extern char* str_nibbles( word_20 addr, int n );
+
+/*********************/
+/* debugger_disasm.c */
+/*********************/
+extern char* append_str( char* buf, const char* string );
+extern char* append_tab( char* buf );
+extern char* append_tab_16( char* buf );
+
+extern word_20 disassemble( word_20 addr, char* out );
+
+/******************/
+/* debugger_rpl.c */
+/******************/
 extern char* decode_rpl_obj( word_20 addr, char* buf );
 extern void decode_rpl_obj_2( word_20 addr, char* typ, char* dat );
 
