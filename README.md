@@ -22,13 +22,12 @@ See https://github.com/gwenhael-le-moine/x48ng/issues
 ### short term
 
 - port from sdl1.2 to sdl2
+- add an text UI (ncurses & drawille)
 
 ### long(er) term
 
 - GUI in gtk(4)?
 - support the HP49g ROM?
-- split the core emulator in a lib and have the GUI use that to cleanly separate the two.
-- can something be merged from droid48? [ https://github.com/shagr4th/droid48 ]
 
 ## Compilation
 
@@ -49,3 +48,11 @@ See https://github.com/gwenhael-le-moine/x48ng/issues
 - `make FULL_WARNINGS=yes` to compile with all warnings
 - `make clean` and `make mrproper` to clean between compilation runs
 - `make pretty-code` to format the code using `clang-format` and the provided `.clang-format`
+
+## Friends and inspiration
+
+- https://github.com/gwenhael-le-moine/x48 (original x48 slightly touched but not too much)
+- https://github.com/shagr4th/droid48 (x48 ported to Android)
+- https://hp.giesselink.com/emu48.htm (The Emu48)
+- https://github.com/dgis/emu48android (Emu48 ported to Android)
+- https://github.com/gwenhael-le-moine/jsEmu48 (another HP 48 emulator)
