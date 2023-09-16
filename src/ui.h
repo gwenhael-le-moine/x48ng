@@ -18,6 +18,8 @@ extern disp_t disp;
 extern void ui__disp_draw_nibble( word_20 addr, word_4 val );
 extern void ui__menu_draw_nibble( word_20 addr, word_4 val );
 
+/* extern void ui__draw_nibble( int c, int r, int val ); */
+
 /* used in: emu_actions.c, emu_emulate.c */
 extern int ui__get_event( void );
 

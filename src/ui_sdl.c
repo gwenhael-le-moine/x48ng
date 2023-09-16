@@ -3135,7 +3135,7 @@ static inline void draw_nibble( int c, int r, int val ) {
     SDLDrawNibble( x, y, val );
 }
 
-void ui__draw_nibble( int c, int r, int val ) { draw_nibble( c, r, val ); }
+/* void ui__draw_nibble( int c, int r, int val ) { draw_nibble( c, r, val ); } */
 
 static inline void draw_row( long addr, int row ) {
     int i, v;
