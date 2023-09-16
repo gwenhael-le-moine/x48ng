@@ -32,7 +32,7 @@ void update_connection_display( void ) {
     }
 }
 
-int serial__init( void ) {
+int init_serial( void ) {
     int c;
     int n;
     char tty_dev_name[ 128 ];

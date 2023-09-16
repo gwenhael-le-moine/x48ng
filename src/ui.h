@@ -34,6 +34,6 @@ extern void ui__draw_annunc( void );
 extern void ui__init_LCD( void );
 
 /* used in: main.c */
-extern void ui__init( void );
+extern void init_ui( void );
 
 #endif /* !_X48_GUI_H */

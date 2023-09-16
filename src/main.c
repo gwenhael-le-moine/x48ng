@@ -12,7 +12,7 @@
 #include "runtime_options.h"
 #include "emulator.h"
 #include "debugger.h"
-#include "ui.h" /* ui__init(); */
+#include "ui.h" /* init_ui(); */
 
 void signal_handler( int sig ) {
     switch ( sig ) {
@@ -93,9 +93,9 @@ int main( int argc, char** argv ) {
     /*****************************/
     /* initialize emulator stuff */
     /*****************************/
-    emulator__init();
-    serial__init();
-    ui__init();
+    init_emulator();
+    init_serial();
+    init_ui();
 
     /************************/
     /* Start emulation loop */

@@ -2998,7 +2998,7 @@ void SDLCreateHP( void ) {
     SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 );
 }
 
-void ui__init( void ) {
+void init_ui( void ) {
     // SDL Initialization
     SDLInit();
 

@@ -253,7 +253,7 @@ extern saturn_t saturn;
 /**************/
 /* emu_init.c */
 /**************/
-extern int emulator__init( void );
+extern int init_emulator( void );
 void init_saturn( void );
 int exit_emulator( void );
 int read_rom( const char* fname );
@@ -371,7 +371,7 @@ int is_greater_or_equal_register( unsigned char* r1, unsigned char* r2,
 /****************/
 /* emu_serial.c */
 /****************/
-extern int serial__init( void );
+extern int init_serial( void );
 extern void serial_baud( int baud );
 extern void transmit_char( void );
 extern void receive_char( void );

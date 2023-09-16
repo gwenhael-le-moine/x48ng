@@ -100,7 +100,7 @@ void init_saturn( void ) {
     dev_memory_init();
 }
 
-int emulator__init( void ) {
+int init_emulator( void ) {
     if ( !initialize && read_files() ) {
         if ( resetOnStartup )
             saturn.PC = 0x00000;
