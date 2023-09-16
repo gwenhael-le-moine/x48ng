@@ -7,7 +7,7 @@
 #include <string.h>
 #include <sys/types.h>
 
-#include "options.h"
+#include "runtime_options.h"
 #include "emulator.h"
 #include "romio.h"
 

@@ -7,7 +7,7 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 
-#include "options.h"
+#include "runtime_options.h"
 #include "emulator.h"
 #include "romio.h"
 #include "ui.h" /* ui__init_LCD(); ui__update_LCD(); */

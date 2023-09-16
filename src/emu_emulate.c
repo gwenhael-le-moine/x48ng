@@ -3,7 +3,7 @@
 
 #include <sys/time.h>
 
-#include "options.h" /* throttle */
+#include "runtime_options.h" /* throttle */
 #include "emulator.h" /* word_20; register_to_address(); exchange_reg(); add_address(); store(); recall(); store_n(); recall_n(); */
 #include "ui.h" /* ui__get_event(); ui__adjust_contrast(); ui__update_LCD(); ui__draw_annunc(); */
 #include "debugger.h" /* enter_debugger, TRAP_INSTRUCTION, ILLEGAL_INSTRUCTION */

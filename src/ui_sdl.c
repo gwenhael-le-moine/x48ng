@@ -12,8 +12,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_gfxPrimitives.h> /* lineColor(); pixelColor(); rectangleColor();stringColor(); */
 
-#include "options.h"
-#include "error_handling.h"
+#include "runtime_options.h"
 #include "emulator.h"
 #include "romio.h"
 #include "ui.h"

@@ -28,9 +28,8 @@ DOTOS = src/emu_serial.o \
 	src/emu_memory.o \
 	src/emu_register.o \
 	src/emu_timer.o \
-	src/options.o \
+	src/runtime_options.o \
 	src/romio.o \
-	src/error_handling.o \
 	src/ui_sdl.o \
 	src/main.o
 

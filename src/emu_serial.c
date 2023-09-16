@@ -7,7 +7,7 @@
 #include <termios.h>
 #include <unistd.h>
 
-#include "options.h"
+#include "runtime_options.h"
 #include "emulator.h"
 
 static int wire_fd;

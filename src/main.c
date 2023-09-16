@@ -9,7 +9,7 @@
 #include <langinfo.h>
 #include <locale.h>
 
-#include "options.h"
+#include "runtime_options.h"
 #include "emulator.h"
 #include "debugger.h"
 #include "ui.h" /* ui__init(); */

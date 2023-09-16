@@ -3,7 +3,7 @@
 
 #include <getopt.h>
 
-#include "options.h"
+#include "runtime_options.h"
 
 char* progname = "x48ng";
 
