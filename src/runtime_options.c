@@ -9,6 +9,7 @@ char* progname = "x48ng";
 
 int verbose = 0;
 int show_ui_chrome = 1;
+int show_ui_fullscreen = 0;
 int useTerminal = 1;
 int useSerial = 0;
 int useDebugger = 1;
@@ -45,6 +46,7 @@ int parse_args( int argc, char* argv[] ) {
 
         { "verbose", no_argument, &verbose, 1 },
         { "no-chrome", no_argument, &show_ui_chrome, 0 },
+        { "fullscreen", no_argument, &show_ui_fullscreen, 1 },
         { "use-terminal", no_argument, &useTerminal, 1 },
         { "use-serial", no_argument, &useSerial, 1 },
 
@@ -59,31 +61,32 @@ int parse_args( int argc, char* argv[] ) {
     char* help_text =
         "usage: %s [options]\n"
         "options:\n"
-        "\t-h --help\t\t\t what you are reading\n"
-        "\t-v --version\t\t\t show version\n"
-        "\t   --config-dir=<path>\t\t use <path> as x48ng's home (default: "
+        "\t-h --help\t\t\twhat you are reading\n"
+        "\t-v --version\t\t\tshow version\n"
+        "\t   --config-dir=<path>\t\tuse <path> as x48ng's home (default: "
         "~/.x48ng/)\n"
-        "\t   --rom-file=<filename>\t use <filename> (absolute or relative to "
+        "\t   --rom-file=<filename>\tuse <filename> (absolute or relative to "
         "<config-dir>) as ROM (default: rom)\n"
-        "\t   --ram-file=<filename>\t use <filename> (absolute or relative to "
+        "\t   --ram-file=<filename>\tuse <filename> (absolute or relative to "
         "<config-dir>) as RAM (default: ram)\n"
-        "\t   --state-file=<filename>\t use <filename> (absolute or relative "
+        "\t   --state-file=<filename>\tuse <filename> (absolute or relative "
         "to <config-dir>) as STATE (default: hp48)\n"
-        "\t   --port1-file=<filename>\t use <filename> (absolute or relative "
+        "\t   --port1-file=<filename>\tuse <filename> (absolute or relative "
         "to <config-dir>) as PORT1 (default: port1)\n"
-        "\t   --port2-file=<filename>\t use <filename> (absolute or relative "
+        "\t   --port2-file=<filename>\tuse <filename> (absolute or relative "
         "to <config-dir>) as PORT2 (default: port2)\n"
-        "\t   --serial-line=<path>\t\t use <path> as serial device default: "
+        "\t   --serial-line=<path>\t\tuse <path> as serial device default: "
         "%s)\n"
-        "\t-V --verbose\t\t\t be verbose (default: false)\n"
-        "\t   --no-chrome\t\t\t only display the LCD (default: false)\n"
-        "\t-t --use-terminal\t\t activate pseudo terminal interface (default: "
+        "\t-V --verbose\t\t\tbe verbose (default: false)\n"
+        "\t   --no-chrome\t\t\tonly display the LCD (default: false)\n"
+        "\t   --fullscreen\t\t\tmake the UI fullscreen (default: false)\n"
+        "\t-t --use-terminal\t\tactivate pseudo terminal interface (default: "
         "true)\n"
-        "\t-s --use-serial\t\t\t activate serial interface (default: false)\n"
-        "\t   --no-debug\t\t\t disable the debugger\n"
-        "\t-i --initialize\t\t\t initialize the content of <config-dir>\n"
-        "\t-r --reset\t\t\t perform a reset on startup\n"
-        "\t-T --throttle\t\t\t try to emulate real speed (default: false)\n";
+        "\t-s --use-serial\t\t\tactivate serial interface (default: false)\n"
+        "\t   --no-debug\t\t\tdisable the debugger\n"
+        "\t-i --initialize\t\t\tinitialize the content of <config-dir>\n"
+        "\t-r --reset\t\t\tperform a reset on startup\n"
+        "\t-T --throttle\t\t\ttry to emulate real speed (default: false)\n";
 
     while ( c != EOF ) {
         c = getopt_long( argc, argv, optstring, long_options, &option_index );

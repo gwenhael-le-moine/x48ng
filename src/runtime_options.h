@@ -5,6 +5,7 @@ extern char* progname;
 
 extern int verbose;
 extern int show_ui_chrome;
+extern int show_ui_fullscreen;
 extern int useTerminal;
 extern int useSerial;
 extern int useDebugger;

@@ -1246,7 +1246,11 @@ void SDLInit( void ) {
         DISPLAY_OFFSET_Y = 0;
     }
 
-    sdlwindow = SDL_SetVideoMode( width, height, 32, SDL_SWSURFACE );
+    uint32_t sdl_window_flags = SDL_SWSURFACE | SDL_RESIZABLE;
+    if ( show_ui_fullscreen )
+        sdl_window_flags |= SDL_FULLSCREEN;
+
+    sdlwindow = SDL_SetVideoMode( width, height, 32, sdl_window_flags );
 
     if ( sdlwindow == NULL ) {
         printf( "Couldn't set video mode: %s\n", SDL_GetError() );
