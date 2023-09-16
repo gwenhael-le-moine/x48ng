@@ -1170,9 +1170,6 @@ void SDLDrawButtons( void );
 SDL_Surface* SDLCreateSurfFromData( unsigned int w, unsigned int h,
                                     unsigned char* data, unsigned int coloron,
                                     unsigned int coloroff );
-SDL_Surface* SDLCreateARGBSurfFromData( unsigned int w, unsigned int h,
-                                        unsigned char* data,
-                                        unsigned int xpcolor );
 void SDLDrawSmallString( int x, int y, const char* string, unsigned int length,
                          unsigned int coloron, unsigned int coloroff );
 void SDLCreateColors( void );
@@ -1189,15 +1186,9 @@ void SDLUIHideKey( void );
 void SDLUIFeedback( void );
 SDLWINDOW_t SDLCreateWindow( int x, int y, int w, int h, unsigned color,
                              int framewidth, int inverted );
-void SDLShowWindow( SDLWINDOW_t* win );
-void SDLSHideWindow( SDLWINDOW_t* win );
 void SDLARGBTo( unsigned color, unsigned* a, unsigned* r, unsigned* g,
                 unsigned* b );
 unsigned SDLToARGB( unsigned a, unsigned r, unsigned g, unsigned b );
-void SDLMessageBox( int w, int h, const char* title, const char* text[],
-                    unsigned color, unsigned colortext, int center );
-void SDLEventWaitClickOrKey( void );
-void SDLShowInformation( void );
 
 void SDLInit( void );
 void SDLCreateHP( void );
@@ -2492,40 +2483,6 @@ SDL_Surface* SDLCreateSurfFromData( unsigned int w, unsigned int h,
     return surf;
 }
 
-// Create a ARGB surface from RGB data. Allows to set a transparent color
-SDL_Surface* SDLCreateARGBSurfFromData( unsigned int w, unsigned int h,
-                                        unsigned char* data,
-                                        unsigned int xpcolor ) {
-    unsigned int x, y;
-    SDL_Surface* surf;
-
-    surf = SDL_CreateRGBSurface( SDL_SWSURFACE, w, h, 32, 0x00ff0000,
-                                 0x0000ff00, 0x000000ff, 0xff000000 );
-
-    SDL_LockSurface( surf );
-
-    unsigned char* pixels = ( unsigned char* )surf->pixels;
-    unsigned int pitch = surf->pitch;
-    for ( y = 0; y < h; y++ ) {
-        unsigned int* lineptr = ( unsigned int* )( pixels + y * pitch );
-        for ( x = 0; x < w; x++ ) {
-            unsigned r, g, b, color;
-            r = data[ y * w * 3 + x * 3 ];
-            g = data[ y * w * 3 + x * 3 + 1 ];
-            b = data[ y * w * 3 + x * 3 + 2 ];
-            color = SDLToARGB( 255, r, g, b );
-
-            // Set alpha to 0 for transparent colors
-            if ( ( color & 0xffffff ) == ( xpcolor & 0xffffff ) ) {
-                color = color & 0xffffff;
-            }
-            lineptr[ x ] = color;
-        }
-    }
-    SDL_UnlockSurface( surf );
-    return surf;
-}
-
 unsigned SDLBGRA2ARGB( unsigned color ) {
     unsigned a, r, g, b;
     SDLARGBTo( color, &a, &r, &g, &b );
@@ -2625,40 +2582,7 @@ void SDLUIHideKey( void ) {
     showkeylastsurf = 0;
 }
 
-void SDLUIFeedback( void ) {
-    // This function should give some UI feedback to indicate that a key was
-    // pressed E.g. by beeping, vibrating or flashing something
-
-    /* SDL_Surface *surf1, *surf2; */
-    /* surf1 = */
-    /*     SDL_CreateRGBSurface( SDL_SWSURFACE, sdlwindow->w, sdlwindow->h, 32,
-     */
-    /*                           0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000
-     * ); */
-    /* surf2 = */
-    /*     SDL_CreateRGBSurface( SDL_SWSURFACE, sdlwindow->w, sdlwindow->h, 32,
-     */
-    /*                           0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000
-     * ); */
-
-    /* // Copy screen */
-    /* SDL_BlitSurface( sdlwindow, 0, surf1, 0 ); */
-
-    /* // Overlay something */
-    /* SDL_FillRect( surf2, 0, 0x80000000 ); */
-    /* SDL_BlitSurface( surf2, 0, sdlwindow, 0 ); */
-    /* SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 ); */
-
-    /* SDL_Delay( 20 ); */
-
-    /* // Restore screen */
-    /* SDL_BlitSurface( surf1, 0, sdlwindow, 0 ); */
-
-    /* SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 ); */
-
-    /* SDL_FreeSurface( surf1 ); */
-    /* SDL_FreeSurface( surf2 ); */
-}
+void SDLUIFeedback( void ) {}
 
 // Simple 'show window' function
 SDLWINDOW_t SDLCreateWindow( int x, int y, int w, int h, unsigned color,
@@ -2739,45 +2663,6 @@ SDLWINDOW_t SDLCreateWindow( int x, int y, int w, int h, unsigned color,
     return win;
 }
 
-void SDLShowWindow( SDLWINDOW_t* win ) {
-    // Blit the window
-    SDL_Rect srect;
-    SDL_Rect drect;
-    srect.x = 0;
-    srect.y = 0;
-    srect.w = win->surf->w;
-    srect.h = win->surf->h;
-    drect.x = win->x;
-    drect.y = win->y;
-    drect.w = win->surf->w;
-    drect.h = win->surf->h;
-
-    SDL_BlitSurface( win->surf, &srect, sdlwindow, &drect );
-
-    SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 );
-}
-
-void SDLHideWindow( SDLWINDOW_t* win ) {
-    // Restore the screen
-    SDL_Rect srect;
-    SDL_Rect drect;
-    srect.x = 0;
-    srect.y = 0;
-    srect.w = win->oldsurf->w;
-    srect.h = win->oldsurf->h;
-    drect.x = win->x;
-    drect.y = win->y;
-    drect.w = win->oldsurf->w;
-    drect.h = win->oldsurf->h;
-
-    SDL_BlitSurface( win->oldsurf, &srect, sdlwindow, &drect );
-
-    SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 );
-    SDL_FreeSurface( win->surf );
-    SDL_FreeSurface( win->oldsurf );
-    win->surf = 0;
-}
-
 // Convert a 32-bit aarrggbb number to individual components
 void SDLARGBTo( unsigned color, unsigned* a, unsigned* r, unsigned* g,
                 unsigned* b ) {
@@ -2789,103 +2674,6 @@ void SDLARGBTo( unsigned color, unsigned* a, unsigned* r, unsigned* g,
 // Convert a,r,g,b to a 32-bit aarrggbb number
 unsigned SDLToARGB( unsigned a, unsigned r, unsigned g, unsigned b ) {
     return ( a << 24 ) | ( r << 16 ) | ( g << 8 ) | ( b );
-}
-
-void SDLMessageBox( int w, int h, const char* title, const char* text[],
-                    unsigned color, unsigned colortext, int center ) {
-    int x, y;
-    int framewidth = 3;
-    int texthspace = 9;
-
-    // Compute the coordinates of the window (center on screen)
-    x = ( sdlwindow->w - w ) / 2;
-    y = ( sdlwindow->h - h ) / 2;
-
-    SDLWINDOW_t win;
-    win = SDLCreateWindow( x, y, w, h, color, framewidth, 0 );
-
-    stringColor( win.surf, ( w - strlen( title ) * 8 ) / 2,
-                 framewidth + texthspace, title, SDLBGRA2ARGB( colortext ) );
-
-    int i, numlines;
-    for ( numlines = 0; text[ numlines ]; numlines++ )
-        ; // Count number of lines
-    for ( i = 0; text[ i ]; i++ ) {
-        if ( center )
-            x = ( w - strlen( text[ i ] ) * 8 ) / 2;
-        else
-            x = framewidth + 8;
-        if ( 0 )
-            stringColor( win.surf, x, framewidth + 8 + 16 + i * texthspace,
-                         text[ i ], SDLBGRA2ARGB( colortext ) );
-        else
-            stringColor( win.surf, x,
-                         ( h - numlines * texthspace ) / 2 + i * texthspace,
-                         text[ i ], SDLBGRA2ARGB( colortext ) );
-    }
-
-    SDLShowWindow( &win );
-    SDLEventWaitClickOrKey();
-    SDLHideWindow( &win );
-}
-
-void SDLEventWaitClickOrKey( void ) {
-    SDL_Event event;
-    while ( 1 ) {
-        SDL_WaitEvent( &event );
-        switch ( event.type ) {
-            case SDL_QUIT:
-                return;
-                break;
-
-            case SDL_MOUSEBUTTONDOWN:
-                return;
-                break;
-
-            case SDL_KEYDOWN:
-                return;
-                break;
-        }
-    }
-}
-
-void SDLShowInformation( void ) {
-    const char* info_title = "x48ng - HP48 emulator";
-
-    const char* info_text[] = { //"12345678901234567890123456789012345",
-                                "",
-                                "License: GPL",
-                                "",
-                                "In order to work the emulator needs",
-                                "the following files:",
-                                "  rom:   an HP48 rom dump",
-                                "  ram:   ram file",
-                                "  hp48:  HP state file",
-                                "",
-                                "The following files are optional:",
-                                "  port1: card 1 memory",
-                                "  port2: card 2 memory",
-                                "",
-                                "These files must be in ~/.x48ng",
-                                "",
-                                0 };
-    SDLMessageBox( 310, 280, info_title, info_text, 0xf0c0c0e0, 0xff000000, 0 );
-
-    const char* info_text2[] = { //"12345678901234567890123456789012345",
-                                 "",
-                                 "Do a long key press (about 1 sec)",
-                                 "to keep the key down (e.g. for",
-                                 "ON-C, ON-+, ON-A-F).",
-                                 "",
-                                 "There are issues with throttling",
-                                 "and key repeat rate. Therefore key",
-                                 "repeat for arrows and backspace is",
-                                 "disabled.",
-                                 "",
-                                 0 };
-
-    SDLMessageBox( 310, 280, info_title, info_text2, 0xf0c0c0e0, 0xff000000,
-                   0 );
 }
 
 static int button_release_all( void ) {
@@ -3006,17 +2794,6 @@ int ui__get_event( void ) {
 
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP:
-                // React only to left mouse button
-                if ( event.type == SDL_MOUSEBUTTONDOWN &&
-                     event.button.button == SDL_BUTTON_LEFT ) {
-
-                    if ( event.button.y < DISPLAY_OFFSET_Y ||
-                         event.button.y <
-                             48 ) // If we resized the screen, then there's
-                                  // no space above offset_y...clicking on
-                                  // the screen has to do something
-                        SDLShowInformation();
-                }
                 hpkey = SDLCoordinateToKey( event.button.x, event.button.y );
 
                 if ( hpkey !=
@@ -3053,12 +2830,8 @@ int ui__get_event( void ) {
                 break;
             case SDL_KEYDOWN:
             case SDL_KEYUP:
-                if ( event.type == SDL_KEYDOWN &&
-                     event.key.keysym.sym == SDLK_F1 ) {
-                    SDLShowInformation();
-                }
-
                 hpkey = SDLKeyToKey( event.key.keysym.sym );
+
                 if ( hpkey != -1 ) {
                     if ( event.type == SDL_KEYDOWN ) {
                         keyispressed = hpkey;
@@ -3135,7 +2908,8 @@ static inline void draw_nibble( int c, int r, int val ) {
     SDLDrawNibble( x, y, val );
 }
 
-/* void ui__draw_nibble( int c, int r, int val ) { draw_nibble( c, r, val ); } */
+/* void ui__draw_nibble( int c, int r, int val ) { draw_nibble( c, r, val ); }
+ */
 
 static inline void draw_row( long addr, int row ) {
     int i, v;
