@@ -489,16 +489,18 @@ void write_nibble_sx( long addr, int val ) {
             }
             return;
     }
+
     if ( device.display_touched )
         return;
-    if ( addr >= display.disp_start && addr < display.disp_end ) {
+
+    if ( addr >= display.disp_start && addr < display.disp_end )
         ui__disp_draw_nibble( addr, val );
-    }
+
     if ( display.lines == 63 )
         return;
-    if ( addr >= display.menu_start && addr < display.menu_end ) {
+
+    if ( addr >= display.menu_start && addr < display.menu_end )
         ui__menu_draw_nibble( addr, val );
-    }
 }
 
 void write_nibble_gx( long addr, int val ) {
@@ -600,14 +602,6 @@ void write_nibble_gx( long addr, int val ) {
                     saturn.port2[ ( ( saturn.bank_switch << 18 ) +
                                     ( addr - 0xb0000 ) ) &
                                   port2_mask ] = val;
-                /*
-                            if (port2_size > (saturn.bank_switch << 18))
-                              {
-                                if (port2_is_ram)
-                                  saturn.port2[(saturn.bank_switch << 18)
-                                               + (addr - 0xb0000)] = val;
-                              }
-                */
                 return;
             }
             return;
@@ -636,14 +630,6 @@ void write_nibble_gx( long addr, int val ) {
                     saturn.port2[ ( ( saturn.bank_switch << 18 ) +
                                     ( addr - 0xc0000 ) ) &
                                   port2_mask ] = val;
-                /*
-                            if (port2_size > (saturn.bank_switch << 18))
-                              {
-                                if (port2_is_ram)
-                                  saturn.port2[(saturn.bank_switch << 18)
-                                               + (addr - 0xc0000)] = val;
-                              }
-                */
                 return;
             }
             return;
@@ -668,28 +654,22 @@ void write_nibble_gx( long addr, int val ) {
                         saturn.port2[ ( ( saturn.bank_switch << 18 ) +
                                         ( addr - 0xc0000 ) ) &
                                       port2_mask ] = val;
-                    /*
-                                  if (port2_size > (saturn.bank_switch << 18))
-                                    {
-                                      if (port2_is_ram)
-                                        saturn.port2[(saturn.bank_switch << 18)
-                                                     + (addr - 0xc0000)] = val;
-                                    }
-                    */
                     return;
                 }
             return;
     }
+
     if ( device.display_touched )
         return;
-    if ( addr >= display.disp_start && addr < display.disp_end ) {
+
+    if ( addr >= display.disp_start && addr < display.disp_end )
         ui__disp_draw_nibble( addr, val );
-    }
+
     if ( display.lines == 63 )
         return;
-    if ( addr >= display.menu_start && addr < display.menu_end ) {
+
+    if ( addr >= display.menu_start && addr < display.menu_end )
         ui__menu_draw_nibble( addr, val );
-    }
 }
 
 int read_nibble_sx( long addr ) {
@@ -1155,13 +1135,6 @@ long read_nibbles( long addr, int len ) {
     return val;
 }
 
-void write_nibbles( long addr, long val, int len ) {
-    while ( len-- > 0 ) {
-        write_nibble( addr++, val );
-        val >>= 4;
-    }
-}
-
 void dev_memory_init( void ) {
     if ( opt_gx ) {
         read_nibble = read_nibble_gx;
@@ -1172,5 +1145,6 @@ void dev_memory_init( void ) {
         read_nibble_crc = read_nibble_crc_sx;
         write_nibble = write_nibble_sx;
     }
+
     memset( &device, 0, sizeof( device ) );
 }

@@ -283,7 +283,6 @@ extern int ( *read_nibble_crc )( long addr );
 /* emu_memory.c */
 /****************/
 extern long read_nibbles( long addr, int len );
-void write_nibbles( long addr, long val, int len );
 extern void dev_memory_init( void ); /*  */
 
 /*****************/
