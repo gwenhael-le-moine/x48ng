@@ -13,9 +13,6 @@ OPTIM ?= 2
 CFLAGS = -g -O$(OPTIM) -I./src/ -D_GNU_SOURCE=1 -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DPATCHLEVEL=$(PATCHLEVEL)
 LIBS = -lm
 
-CFLAGS += $(shell pkg-config --cflags SDL_gfx sdl12_compat)
-LIBS += $(shell pkg-config --libs SDL_gfx sdl12_compat)
-
 FULL_WARNINGS = no
 ifeq ($(FULL_WARNINGS), yes)
 	CFLAGS += -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-function -Wconversion -Wdouble-promotion -Wno-sign-conversion -fsanitize=undefined -fsanitize-trap
@@ -30,8 +27,14 @@ DOTOS = src/emu_serial.o \
 	src/emu_timer.o \
 	src/runtime_options.o \
 	src/romio.o \
-	src/ui_sdl.o \
 	src/main.o
+
+### SDL1.2 UI
+DOTOS += src/ui_sdl.o
+
+CFLAGS += $(shell pkg-config --cflags SDL_gfx sdl12_compat)
+LIBS += $(shell pkg-config --libs SDL_gfx sdl12_compat)
+### /SDL1.2 UI
 
 ### debugger
 DOTOS += src/debugger.o \
