@@ -1153,49 +1153,110 @@ sdltohpkeymap_t sdltohpkeymap[] = {
     // end marker
     { ( SDLKey )0, ( SDLKey )0 } };
 
+// State to displayed zoomed last pressed key
+SDL_Surface* showkeylastsurf = 0;
+int showkeylastx, showkeylasty, showkeylastkey;
+
 SDL_Surface* sdlwindow;
-
-/*************************/
-/* Functions' prototypes */
-/*************************/
-void redraw_annunc( void );
-void redraw_LCD( void );
-
-void SDLDrawSerialDevices();
-void SDLDrawAnnunc( char* annunc );
-void SDLCreateAnnunc( void );
-void SDLDrawNibble( int nx, int ny, int val );
-void SDLDrawKeypad( void );
-void SDLDrawButtons( void );
-SDL_Surface* SDLCreateSurfFromData( unsigned int w, unsigned int h,
-                                    unsigned char* data, unsigned int coloron,
-                                    unsigned int coloroff );
-void SDLDrawSmallString( int x, int y, const char* string, unsigned int length,
-                         unsigned int coloron, unsigned int coloroff );
-void SDLCreateColors( void );
-void SDLDrawKeyLetter( void );
-unsigned SDLBGRA2ARGB( unsigned color );
-void SDLDrawBezel();
-void SDLDrawMore( unsigned int cut, unsigned int offset_y, int keypad_width,
-                  int keypad_height );
-void SDLDrawLogo();
-void SDLDrawBackground( int width, int height, int w_top, int h_top );
-void SDLDrawBackgroundLCD();
-void SDLUIShowKey( int hpkey );
-void SDLUIHideKey( void );
-void SDLUIFeedback( void );
-SDLWINDOW_t SDLCreateWindow( int x, int y, int w, int h, unsigned color,
-                             int framewidth, int inverted );
-void SDLARGBTo( unsigned color, unsigned* a, unsigned* r, unsigned* g,
-                unsigned* b );
-unsigned SDLToARGB( unsigned a, unsigned r, unsigned g, unsigned b );
-
-void SDLInit( void );
-void SDLCreateHP( void );
 
 /****************************/
 /* functions implementation */
 /****************************/
+unsigned SDLBGRA2ARGB( unsigned color ) {
+    unsigned a = ( color >> 24 ) & 0xff, r = ( color >> 16 ) & 0xff,
+             g = ( color >> 8 ) & 0xff, b = color & 0xff;
+
+    color = a | ( r << 24 ) | ( g << 16 ) | ( b << 8 );
+    return color;
+}
+
+/*
+        Create a surface from binary bitmap data
+*/
+SDL_Surface* SDLCreateSurfFromData( unsigned int w, unsigned int h,
+                                    unsigned char* data, unsigned int coloron,
+                                    unsigned int coloroff ) {
+    unsigned int x, y;
+    SDL_Surface* surf;
+
+    surf = SDL_CreateRGBSurface( SDL_SWSURFACE, w, h, 32, 0x00ff0000,
+                                 0x0000ff00, 0x000000ff, 0xff000000 );
+
+    SDL_LockSurface( surf );
+
+    unsigned char* pixels = ( unsigned char* )surf->pixels;
+    unsigned int pitch = surf->pitch;
+    unsigned byteperline = w / 8;
+    if ( byteperline * 8 != w )
+        byteperline++;
+    for ( y = 0; y < h; y++ ) {
+        unsigned int* lineptr = ( unsigned int* )( pixels + y * pitch );
+        for ( x = 0; x < w; x++ ) {
+            // Address the correct byte
+            char c = data[ y * byteperline + ( x >> 3 ) ];
+            // Look for the bit in that byte
+            char b = c & ( 1 << ( x & 7 ) );
+            if ( b )
+                lineptr[ x ] = coloron;
+            else
+                lineptr[ x ] = coloroff;
+        }
+    }
+
+    SDL_UnlockSurface( surf );
+
+    return surf;
+}
+
+int SmallTextWidth( const char* string, unsigned int length ) {
+    unsigned int i;
+    int w;
+
+    w = 0;
+    for ( i = 0; i < length; i++ ) {
+        if ( small_font[ ( int )string[ i ] ].h != 0 ) {
+            w += small_font[ ( int )string[ i ] ].w + 1;
+        } else {
+            if ( verbose )
+                fprintf( stderr, "Unknown small letter 0x00%x\n",
+                         ( int )string[ i ] );
+            w += 5;
+        }
+    }
+
+    return w;
+}
+
+void SDLDrawSmallString( int x, int y, const char* string, unsigned int length,
+                         unsigned int coloron, unsigned int coloroff ) {
+    unsigned int i;
+
+    for ( i = 0; i < length; i++ ) {
+        if ( small_font[ ( int )string[ i ] ].h != 0 ) {
+            int w = small_font[ ( int )string[ i ] ].w;
+            int h = small_font[ ( int )string[ i ] ].h;
+
+            SDL_Surface* surf = SDLCreateSurfFromData(
+                w, h, small_font[ ( int )string[ i ] ].bits, coloron,
+                coloroff );
+
+            SDL_Rect srect;
+            SDL_Rect drect;
+            srect.x = 0;
+            srect.y = 0;
+            srect.w = w;
+            srect.h = h;
+            drect.x = x;
+            drect.y = ( int )( y - small_font[ ( int )string[ i ] ].h );
+            drect.w = w;
+            drect.h = h;
+            SDL_BlitSurface( surf, &srect, sdlwindow, &drect );
+            SDL_FreeSurface( surf );
+        }
+        x += SmallTextWidth( &string[ i ], 1 );
+    }
+}
+
 void SDLInit( void ) {
     unsigned int width, height;
 
@@ -1249,25 +1310,6 @@ void SDLInit( void ) {
     }
 }
 
-int SmallTextWidth( const char* string, unsigned int length ) {
-    unsigned int i;
-    int w;
-
-    w = 0;
-    for ( i = 0; i < length; i++ ) {
-        if ( small_font[ ( int )string[ i ] ].h != 0 ) {
-            w += small_font[ ( int )string[ i ] ].w + 1;
-        } else {
-            if ( verbose )
-                fprintf( stderr, "Unknown small letter 0x00%x\n",
-                         ( int )string[ i ] );
-            w += 5;
-        }
-    }
-
-    return w;
-}
-
 int button_pressed( int b ) {
     int code;
     int i, r, c;
@@ -1303,16 +1345,15 @@ int button_pressed( int b ) {
 int button_released( int b ) {
     int code;
 
-    if ( buttons[ b ].pressed ==
-         0 ) // Check not already released (not critical)
+    // Check not already released (not critical)
+    if ( buttons[ b ].pressed == 0 )
         return 0;
 
     buttons[ b ].pressed = 0;
 
     code = buttons[ b ].code;
     if ( code == 0x8000 ) {
-        int i;
-        for ( i = 0; i < 9; i++ )
+        for ( int i = 0; i < 9; i++ )
             saturn.keybuf.rows[ i ] &= ~0x8000;
     } else {
         int r, c;
@@ -1324,12 +1365,67 @@ int button_released( int b ) {
     return 0;
 }
 
+void SDLCreateColors( void ) {
+    unsigned i;
+
+    for ( i = WHITE; i < BLACK; i++ )
+        ARGBColors[ i ] = 0xff000000 | ( colors[ i ].r << 16 ) |
+                          ( colors[ i ].g << 8 ) | colors[ i ].b;
+
+    // Adjust the LCD color according to the contrast
+    int contrast, r, g, b;
+    contrast = display.contrast;
+
+    if ( contrast < 0x3 )
+        contrast = 0x3;
+    if ( contrast > 0x13 )
+        contrast = 0x13;
+
+    r = ( 0x13 - contrast ) * ( colors[ LCD ].r / 0x10 );
+    g = ( 0x13 - contrast ) * ( colors[ LCD ].g / 0x10 );
+    b = 128 - ( ( 0x13 - contrast ) * ( ( 128 - colors[ LCD ].b ) / 0x10 ) );
+    ARGBColors[ PIXEL ] = 0xff000000 | ( r << 16 ) | ( g << 8 ) | b;
+}
+
+// This should be called once to setup the surfaces. Calling it multiple
+// times is fine, it won't do anything on subsequent calls.
+void SDLCreateAnnunc( void ) {
+    for ( int i = 0; i < 6; i++ ) {
+        // If the SDL surface does not exist yet, we create it on the fly
+        if ( ann_tbl[ i ].surfaceon ) {
+            SDL_FreeSurface( ann_tbl[ i ].surfaceon );
+            ann_tbl[ i ].surfaceon = 0;
+        }
+
+        ann_tbl[ i ].surfaceon = SDLCreateSurfFromData(
+            ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits,
+            ARGBColors[ PIXEL ], ARGBColors[ LCD ] );
+
+        if ( ann_tbl[ i ].surfaceoff ) {
+            SDL_FreeSurface( ann_tbl[ i ].surfaceoff );
+            ann_tbl[ i ].surfaceoff = 0;
+        }
+
+        ann_tbl[ i ].surfaceoff = SDLCreateSurfFromData(
+            ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits,
+            ARGBColors[ LCD ], ARGBColors[ LCD ] );
+    }
+}
+
 void ui__adjust_contrast() {
     SDLCreateColors();
     SDLCreateAnnunc();
 
-    redraw_LCD();
-    redraw_annunc();
+    // redraw_LCD();
+    memset( disp_buf, 0, sizeof( disp_buf ) );
+    memset( lcd_buffer, 0, sizeof( lcd_buffer ) );
+
+    ui__update_LCD();
+
+    // redraw_annunc();
+    last_annunc_state = -1;
+
+    ui__draw_annunc();
 }
 
 // Find which key is pressed, if any.
@@ -1639,28 +1735,6 @@ void SDLDrawLogo() {
     }
 }
 
-void SDLCreateColors( void ) {
-    unsigned i;
-
-    for ( i = WHITE; i < BLACK; i++ )
-        ARGBColors[ i ] = 0xff000000 | ( colors[ i ].r << 16 ) |
-                          ( colors[ i ].g << 8 ) | colors[ i ].b;
-
-    // Adjust the LCD color according to the contrast
-    int contrast, r, g, b;
-    contrast = display.contrast;
-
-    if ( contrast < 0x3 )
-        contrast = 0x3;
-    if ( contrast > 0x13 )
-        contrast = 0x13;
-
-    r = ( 0x13 - contrast ) * ( colors[ LCD ].r / 0x10 );
-    g = ( 0x13 - contrast ) * ( colors[ LCD ].g / 0x10 );
-    b = 128 - ( ( 0x13 - contrast ) * ( ( 128 - colors[ LCD ].b ) / 0x10 ) );
-    ARGBColors[ PIXEL ] = 0xff000000 | ( r << 16 ) | ( g << 8 ) | b;
-}
-
 void SDLCreateKeys( void ) {
     unsigned i, x, y;
     unsigned pixel;
@@ -1885,7 +1959,7 @@ void SDLCreateKeys( void ) {
 }
 
 // Draw the left labels (violet on GX)
-void SDLDrawKeyLabelLeft( void ) {
+void SDLDrawKeysLabelsLeft( void ) {
     int i, x, y;
     unsigned int pw /* , ph */;
     int wl, wr, ws;
@@ -1967,7 +2041,7 @@ void SDLDrawKeyLabelLeft( void ) {
 }
 
 // Draw the right labels (green on GX)
-void SDLDrawKeyLabelRight( void ) {
+void SDLDrawKeysLabelsRight( void ) {
     int i, x, y;
     unsigned int pw /* , ph */;
     int wl, wr, ws;
@@ -2047,8 +2121,8 @@ void SDLDrawKeyLabelRight( void ) {
     } // for
 }
 
-// Draw the letter bottom right of the key
-void SDLDrawKeyLetter( void ) {
+// Draw the letter bottom right of the keys
+void SDLDrawKeysLetters( void ) {
     int i, x, y;
     int offset_y = KEYBOARD_OFFSET_Y;
     int offset_x = KEYBOARD_OFFSET_X;
@@ -2079,7 +2153,7 @@ void SDLDrawKeyLetter( void ) {
 }
 
 // Bottom label: the only one is the cancel button
-void SDLDrawKeyLabelBottom( void ) {
+void SDLDrawKeysLabelsBottom( void ) {
     int i, x, y;
     int offset_y = KEYBOARD_OFFSET_Y;
     int offset_x = KEYBOARD_OFFSET_X;
@@ -2181,42 +2255,12 @@ void SDLDrawButtons( void ) {
 
 void SDLDrawKeypad( void ) {
     SDLDrawKeyMenu();
-    SDLDrawKeyLetter();
-    SDLDrawKeyLabelBottom();
-    SDLDrawKeyLabelLeft();
-    SDLDrawKeyLabelRight();
+    SDLDrawKeysLetters();
+    SDLDrawKeysLabelsBottom();
+    SDLDrawKeysLabelsLeft();
+    SDLDrawKeysLabelsRight();
     SDLCreateKeys();
     SDLDrawButtons();
-}
-
-void SDLDrawSmallString( int x, int y, const char* string, unsigned int length,
-                         unsigned int coloron, unsigned int coloroff ) {
-    unsigned int i;
-
-    for ( i = 0; i < length; i++ ) {
-        if ( small_font[ ( int )string[ i ] ].h != 0 ) {
-            int w = small_font[ ( int )string[ i ] ].w;
-            int h = small_font[ ( int )string[ i ] ].h;
-
-            SDL_Surface* surf = SDLCreateSurfFromData(
-                w, h, small_font[ ( int )string[ i ] ].bits, coloron,
-                coloroff );
-
-            SDL_Rect srect;
-            SDL_Rect drect;
-            srect.x = 0;
-            srect.y = 0;
-            srect.w = w;
-            srect.h = h;
-            drect.x = x;
-            drect.y = ( int )( y - small_font[ ( int )string[ i ] ].h );
-            drect.w = w;
-            drect.h = h;
-            SDL_BlitSurface( surf, &srect, sdlwindow, &drect );
-            SDL_FreeSurface( surf );
-        }
-        x += SmallTextWidth( &string[ i ], 1 );
-    }
 }
 
 void SDLDrawBezel() {
@@ -2350,31 +2394,6 @@ void SDLDrawBackgroundLCD() {
     SDL_FillRect( sdlwindow, &rect, ARGBColors[ LCD ] );
 }
 
-// This should be called once to setup the surfaces. Calling it multiple
-// times is fine, it won't do anything on subsequent calls.
-void SDLCreateAnnunc( void ) {
-    for ( int i = 0; i < 6; i++ ) {
-        // If the SDL surface does not exist yet, we create it on the fly
-        if ( ann_tbl[ i ].surfaceon ) {
-            SDL_FreeSurface( ann_tbl[ i ].surfaceon );
-            ann_tbl[ i ].surfaceon = 0;
-        }
-
-        ann_tbl[ i ].surfaceon = SDLCreateSurfFromData(
-            ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits,
-            ARGBColors[ PIXEL ], ARGBColors[ LCD ] );
-
-        if ( ann_tbl[ i ].surfaceoff ) {
-            SDL_FreeSurface( ann_tbl[ i ].surfaceoff );
-            ann_tbl[ i ].surfaceoff = 0;
-        }
-
-        ann_tbl[ i ].surfaceoff = SDLCreateSurfFromData(
-            ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits,
-            ARGBColors[ LCD ], ARGBColors[ LCD ] );
-    }
-}
-
 void SDLDrawAnnunc( char* annunc ) {
     SDLCreateAnnunc();
 
@@ -2445,55 +2464,24 @@ void SDLDrawNibble( int nx, int ny, int val ) {
 #endif
 }
 
-/*
-        Create a surface from binary bitmap data
-*/
-SDL_Surface* SDLCreateSurfFromData( unsigned int w, unsigned int h,
-                                    unsigned char* data, unsigned int coloron,
-                                    unsigned int coloroff ) {
-    unsigned int x, y;
-    SDL_Surface* surf;
+void SDLUIHideKey( void ) {
+    SDL_Rect drect;
 
-    surf = SDL_CreateRGBSurface( SDL_SWSURFACE, w, h, 32, 0x00ff0000,
-                                 0x0000ff00, 0x000000ff, 0xff000000 );
+    if ( showkeylastsurf == 0 )
+        return;
 
-    SDL_LockSurface( surf );
+    drect.x = showkeylastx;
+    drect.y = showkeylasty;
+    SDL_BlitSurface( showkeylastsurf, 0, sdlwindow, &drect );
 
-    unsigned char* pixels = ( unsigned char* )surf->pixels;
-    unsigned int pitch = surf->pitch;
-    unsigned byteperline = w / 8;
-    if ( byteperline * 8 != w )
-        byteperline++;
-    for ( y = 0; y < h; y++ ) {
-        unsigned int* lineptr = ( unsigned int* )( pixels + y * pitch );
-        for ( x = 0; x < w; x++ ) {
-            // Address the correct byte
-            char c = data[ y * byteperline + ( x >> 3 ) ];
-            // Look for the bit in that byte
-            char b = c & ( 1 << ( x & 7 ) );
-            if ( b )
-                lineptr[ x ] = coloron;
-            else
-                lineptr[ x ] = coloroff;
-        }
-    }
+    // Update
+    SDL_UpdateRect( sdlwindow, showkeylastx, showkeylasty, showkeylastsurf->w,
+                    showkeylastsurf->h );
 
-    SDL_UnlockSurface( surf );
-
-    return surf;
+    // Free
+    SDL_FreeSurface( showkeylastsurf );
+    showkeylastsurf = 0;
 }
-
-unsigned SDLBGRA2ARGB( unsigned color ) {
-    unsigned a, r, g, b;
-    SDLARGBTo( color, &a, &r, &g, &b );
-
-    color = a | ( r << 24 ) | ( g << 16 ) | ( b << 8 );
-    return color;
-}
-
-// State to displayed zoomed last pressed key
-SDL_Surface* showkeylastsurf = 0;
-int showkeylastx, showkeylasty, showkeylastkey;
 
 // Show the hp key which is being pressed
 void SDLUIShowKey( int hpkey ) {
@@ -2563,118 +2551,7 @@ void SDLUIShowKey( int hpkey ) {
     SDL_UpdateRect( sdlwindow, x, y, ssurf->w, ssurf->h );
 }
 
-void SDLUIHideKey( void ) {
-    SDL_Rect drect;
-
-    if ( showkeylastsurf == 0 )
-        return;
-
-    drect.x = showkeylastx;
-    drect.y = showkeylasty;
-    SDL_BlitSurface( showkeylastsurf, 0, sdlwindow, &drect );
-
-    // Update
-    SDL_UpdateRect( sdlwindow, showkeylastx, showkeylasty, showkeylastsurf->w,
-                    showkeylastsurf->h );
-
-    // Free
-    SDL_FreeSurface( showkeylastsurf );
-    showkeylastsurf = 0;
-}
-
 void SDLUIFeedback( void ) {}
-
-// Simple 'show window' function
-SDLWINDOW_t SDLCreateWindow( int x, int y, int w, int h, unsigned color,
-                             int framewidth, int inverted ) {
-    SDLWINDOW_t win;
-
-    // Backup the screen
-    win.oldsurf = SDL_CreateRGBSurface( SDL_SWSURFACE, w, h, 32, 0x00ff0000,
-                                        0x0000ff00, 0x000000ff, 0xff000000 );
-    win.surf = SDL_CreateRGBSurface( SDL_SWSURFACE, w, h, 32, 0x00ff0000,
-                                     0x0000ff00, 0x000000ff, 0xff000000 );
-    win.x = x;
-    win.y = y;
-    // Copy screen
-    SDL_Rect srect;
-    SDL_Rect drect;
-    srect.x = x;
-    srect.y = y;
-    srect.w = w;
-    srect.h = h;
-    drect.x = 0;
-    drect.y = 0;
-    drect.w = w;
-    drect.h = h;
-    SDL_BlitSurface( sdlwindow, &srect, win.oldsurf, &drect );
-
-    // Draw window background
-    SDL_FillRect( win.surf, &drect, color );
-
-    // Compute the frame color
-    int a, r, g, b;
-    int r2, g2, b2;
-    int contrast = 5;
-    unsigned colorlight, colordark;
-    SDLARGBTo( color, ( unsigned* )&a, ( unsigned* )&r, ( unsigned* )&g,
-               ( unsigned* )&b );
-    r2 = r + r / contrast;
-    g2 = g + g / contrast;
-    b2 = b + b / contrast;
-    if ( r2 > 255 )
-        r2 = 255;
-    if ( g2 > 255 )
-        g2 = 255;
-    if ( b2 > 255 )
-        b2 = 255;
-    colorlight = SDLToARGB( a, r2, g2, b2 );
-    r2 = r - r / contrast;
-    g2 = g - g / contrast;
-    b2 = b - b / contrast;
-    if ( r2 < 0 )
-        r2 = 0;
-    if ( g2 < 0 )
-        g2 = 0;
-    if ( b2 < 0 )
-        b2 = 0;
-    colordark = SDLToARGB( a, r2, g2, b2 );
-
-    if ( inverted ) {
-        unsigned t = colorlight;
-        colorlight = colordark;
-        colordark = t;
-    }
-
-    // Draw the frame
-    int i;
-    for ( i = 0; i < framewidth; i++ ) {
-        lineColor( win.surf, 0, i, w - 2 - i, i,
-                   SDLBGRA2ARGB( colorlight ) ); // Horizontal top
-        lineColor( win.surf, i, 0, i, h - 2 - i,
-                   SDLBGRA2ARGB( colorlight ) ); // Vertical left
-
-        lineColor( win.surf, 1 + i, h - 1 - i, w - 1, h - 1 - i,
-                   SDLBGRA2ARGB( colordark ) ); // Horizontal bottom
-        lineColor( win.surf, w - 1 - i, 1 + i, w - 1 - i, h - 1,
-                   SDLBGRA2ARGB( colordark ) ); // Vertical right
-    }
-
-    return win;
-}
-
-// Convert a 32-bit aarrggbb number to individual components
-void SDLARGBTo( unsigned color, unsigned* a, unsigned* r, unsigned* g,
-                unsigned* b ) {
-    *a = ( color >> 24 ) & 0xff;
-    *r = ( color >> 16 ) & 0xff;
-    *g = ( color >> 8 ) & 0xff;
-    *b = color & 0xff;
-}
-// Convert a,r,g,b to a 32-bit aarrggbb number
-unsigned SDLToARGB( unsigned a, unsigned r, unsigned g, unsigned b ) {
-    return ( a << 24 ) | ( r << 16 ) | ( g << 8 ) | ( b );
-}
 
 static int button_release_all( void ) {
     for ( int b = BUTTON_A; b <= LAST_BUTTON; b++ )
@@ -2973,12 +2850,6 @@ void ui__update_LCD( void ) {
     }
 }
 
-void redraw_LCD( void ) {
-    memset( disp_buf, 0, sizeof( disp_buf ) );
-    memset( lcd_buffer, 0, sizeof( lcd_buffer ) );
-    ui__update_LCD();
-}
-
 void ui__disp_draw_nibble( word_20 addr, word_4 val ) {
     long offset;
     int x, y;
@@ -3025,20 +2896,15 @@ void ui__draw_annunc( void ) {
 
     if ( val == last_annunc_state )
         return;
+
     last_annunc_state = val;
 
     char sdl_annuncstate[ 6 ];
-    for ( int i = 0; ann_tbl[ i ].bit; i++ ) {
+    for ( int i = 0; ann_tbl[ i ].bit; i++ )
         sdl_annuncstate[ i ] =
             ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit ) ? 1 : 0;
-    }
 
     SDLDrawAnnunc( sdl_annuncstate );
-}
-
-void redraw_annunc( void ) {
-    last_annunc_state = -1;
-    ui__draw_annunc();
 }
 
 void ui__init_LCD( void ) {
