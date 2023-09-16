@@ -37,9 +37,8 @@ LIBS += $(shell pkg-config --libs SDL_gfx sdl12_compat)
 ### /SDL1.2 UI
 
 ### debugger
-DOTOS += src/debugger.o \
-	src/debugger_disasm.o \
-	src/debugger_rpl.o
+DOTOS += src/debugger.o
+
 CFLAGS += $(shell pkg-config --cflags readline)
 LIBS += $(shell pkg-config --libs readline)
 ### /debugger

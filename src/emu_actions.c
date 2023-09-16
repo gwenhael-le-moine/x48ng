@@ -329,17 +329,6 @@ void do_shutdown( void ) {
     start_timer( RUN_TIMER );
 }
 
-void set_hardware_stat( int op ) {
-    if ( op & 1 )
-        saturn.XM = 1;
-    if ( op & 2 )
-        saturn.SB = 1;
-    if ( op & 4 )
-        saturn.SR = 1;
-    if ( op & 8 )
-        saturn.MP = 1;
-}
-
 void clear_hardware_stat( int op ) {
     if ( op & 1 )
         saturn.XM = 0;
@@ -384,31 +373,6 @@ long pop_return_addr( void ) {
     return saturn.rstk[ saturn.rstkp-- ];
 }
 
-char* make_hexstr( long addr, int n ) {
-    static char str[ 44 ];
-    int t, trunc = 0;
-
-    if ( n > 40 ) {
-        n = 40;
-        trunc = 1;
-    }
-    for ( int i = 0; i < n; i++ ) {
-        t = read_nibble( addr + i );
-        if ( t <= 9 )
-            str[ i ] = '0' + t;
-        else
-            str[ i ] = 'a' + ( t - 10 );
-    }
-    str[ n ] = '\0';
-    if ( trunc ) {
-        str[ n ] = '.';
-        str[ n + 1 ] = '.';
-        str[ n + 2 ] = '.';
-        str[ n + 3 ] = '\0';
-    }
-    return str;
-}
-
 void load_constant( unsigned char* reg, int n, long addr ) {
     int p = saturn.P;
 
@@ -425,11 +389,6 @@ void load_addr( word_20* dat, long addr, int n ) {
     }
 }
 
-void load_address( unsigned char* reg, long addr, int n ) {
-    for ( int i = 0; i < n; i++ )
-        reg[ i ] = read_nibble( addr + i );
-}
-
 void register_to_address( unsigned char* reg, word_20* dat, int s ) {
     int n;
 
@@ -440,19 +399,6 @@ void register_to_address( unsigned char* reg, word_20* dat, int s ) {
     for ( int i = 0; i < n; i++ ) {
         *dat &= ~nibble_masks[ i ];
         *dat |= ( reg[ i ] & 0x0f ) << ( i * 4 );
-    }
-}
-
-void address_to_register( word_20 dat, unsigned char* reg, int s ) {
-    int n;
-
-    if ( s )
-        n = 4;
-    else
-        n = 5;
-    for ( int i = 0; i < n; i++ ) {
-        reg[ i ] = dat & 0x0f;
-        dat >>= 4;
     }
 }
 

@@ -53,6 +53,42 @@ void get_home_directory( char* path ) {
     }
 }
 
+int read_rom( const char* fname ) {
+    int ram_size;
+
+    if ( !read_rom_file( fname, &saturn.rom, &rom_size ) )
+        return 0;
+
+    if ( verbose )
+        printf( "read %s\n", fname );
+
+    dev_memory_init();
+
+    ram_size = opt_gx ? RAM_SIZE_GX : RAM_SIZE_SX;
+
+    if ( NULL == ( saturn.ram = ( word_4* )malloc( ram_size ) ) ) {
+        if ( verbose )
+            fprintf( stderr, "can\'t malloc RAM\n" );
+        return 0;
+    }
+
+    memset( saturn.ram, 0, ram_size );
+
+    port1_size = 0;
+    port1_mask = 0;
+    port1_is_ram = 0;
+    saturn.port1 = ( unsigned char* )0;
+
+    port2_size = 0;
+    port2_mask = 0;
+    port2_is_ram = 0;
+    saturn.port2 = ( unsigned char* )0;
+
+    saturn.card_status = 0;
+
+    return 1;
+}
+
 void saturn_config_init( void ) {
     saturn.version[ 0 ] = VERSION_MAJOR;
     saturn.version[ 1 ] = VERSION_MINOR;
@@ -432,42 +468,6 @@ int read_mem_file( char* name, word_4* mem, int size ) {
 
     if ( verbose )
         printf( "read %s\n", name );
-
-    return 1;
-}
-
-int read_rom( const char* fname ) {
-    int ram_size;
-
-    if ( !read_rom_file( fname, &saturn.rom, &rom_size ) )
-        return 0;
-
-    if ( verbose )
-        printf( "read %s\n", fname );
-
-    dev_memory_init();
-
-    ram_size = opt_gx ? RAM_SIZE_GX : RAM_SIZE_SX;
-
-    if ( NULL == ( saturn.ram = ( word_4* )malloc( ram_size ) ) ) {
-        if ( verbose )
-            fprintf( stderr, "can\'t malloc RAM\n" );
-        return 0;
-    }
-
-    memset( saturn.ram, 0, ram_size );
-
-    port1_size = 0;
-    port1_mask = 0;
-    port1_is_ram = 0;
-    saturn.port1 = ( unsigned char* )0;
-
-    port2_size = 0;
-    port2_mask = 0;
-    port2_is_ram = 0;
-    saturn.port2 = ( unsigned char* )0;
-
-    saturn.card_status = 0;
 
     return 1;
 }

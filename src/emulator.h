@@ -253,12 +253,10 @@ extern saturn_t saturn;
 /**************/
 /* emu_init.c */
 /**************/
-extern int init_emulator( void );
-void init_saturn( void );
-int exit_emulator( void );
-int read_rom( const char* fname );
-int read_files( void );
-int write_files( void );
+extern int init_emulator( void ); /* used in main.c */
+extern int exit_emulator( void ); /* debugger.c; main.c; ui_sdl.c */
+extern int read_files( void );    /* debugger.c */
+extern int write_files( void );   /* used in debugger.c */
 
 /***************/
 /* emu_timer.c */
@@ -297,7 +295,6 @@ void clear_status( void );
 void set_program_stat( int n );
 void clear_program_stat( int n );
 int get_program_stat( int n );
-void set_hardware_stat( int op );
 void clear_hardware_stat( int op );
 int is_zero_hardware_stat( int op );
 void set_register_bit( unsigned char* reg, int n );
@@ -306,11 +303,8 @@ int get_register_bit( unsigned char* reg, int n );
 void set_register_nibble( unsigned char* reg, int n, unsigned char val );
 unsigned char get_register_nibble( unsigned char* reg, int n );
 void register_to_address( unsigned char* reg, word_20* dat, int s );
-void address_to_register( word_20 dat, unsigned char* reg, int s );
 void add_address( word_20* dat, int add );
-char* make_hexstr( long addr, int n );
 void load_constant( unsigned char* reg, int n, long addr );
-void load_address( unsigned char* reg, long addr, int n );
 void store( word_20 dat, unsigned char* reg, int code );
 void store_n( word_20 dat, unsigned char* reg, int n );
 void recall( unsigned char* reg, word_20 dat, int code );
@@ -357,7 +351,7 @@ void shift_left_circ_register( unsigned char* r, int code );
 void shift_right_register( unsigned char* r, int code );
 void shift_right_circ_register( unsigned char* r, int code );
 void shift_right_bit_register( unsigned char* r, int code );
-extern int is_zero_register( unsigned char* r, int code );
+int is_zero_register( unsigned char* r, int code );
 int is_not_zero_register( unsigned char* r, int code );
 int is_equal_register( unsigned char* r1, unsigned char* r2, int code );
 int is_not_equal_register( unsigned char* r1, unsigned char* r2, int code );
