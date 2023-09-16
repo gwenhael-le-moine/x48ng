@@ -90,9 +90,9 @@ int main( int argc, char** argv ) {
     flags &= ~O_NONBLOCK;
     fcntl( STDIN_FILENO, F_SETFL, flags );
 
-    /*****************************/
-    /* initialize emulator stuff */
-    /*****************************/
+    /********************/
+    /* initialize stuff */
+    /********************/
     init_emulator();
     init_serial();
     init_ui();

@@ -6,7 +6,7 @@
 
 #include "emulator.h"
 #include "romio.h"
-#include "ui.h" /* disp; ui__disp_draw_nibble(); ui__menu_draw_nibble(); */
+#include "ui.h" /* ui__disp_draw_nibble(); ui__menu_draw_nibble(); */
 #include "runtime_options.h"
 
 #define MCTL_MMIO_SX 0
@@ -59,7 +59,6 @@ void write_dev_mem( long addr, int val ) {
                 saturn.disp_io = val;
                 display.on = ( val & 0x8 ) >> 3;
                 display.offset = val & 0x7;
-                disp.offset = 2 * display.offset;
                 if ( display.offset > 3 )
                     display.nibs_per_line =
                         ( NIBBLES_PER_ROW + saturn.line_offset + 2 ) & 0xfff;
@@ -224,7 +223,6 @@ void write_dev_mem( long addr, int val ) {
                 display.lines = saturn.line_count & 0x3f;
                 if ( display.lines == 0 )
                     display.lines = 63;
-                disp.lines = 2 * display.lines;
                 display.disp_end =
                     display.disp_start +
                     ( display.nibs_per_line * ( display.lines + 1 ) );
@@ -491,7 +489,7 @@ void write_nibble_sx( long addr, int val ) {
             }
             return;
     }
-    if ( device.display_touched || !disp.mapped )
+    if ( device.display_touched )
         return;
     if ( addr >= display.disp_start && addr < display.disp_end ) {
         ui__disp_draw_nibble( addr, val );
@@ -682,7 +680,7 @@ void write_nibble_gx( long addr, int val ) {
                 }
             return;
     }
-    if ( device.display_touched || !disp.mapped )
+    if ( device.display_touched )
         return;
     if ( addr >= display.disp_start && addr < display.disp_end ) {
         ui__disp_draw_nibble( addr, val );

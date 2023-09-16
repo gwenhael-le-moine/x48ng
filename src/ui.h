@@ -7,14 +7,6 @@
 /* public API */
 /**************/
 /* used in: emu_memory.c */
-typedef struct disp_t {
-    unsigned int w, h;
-    short mapped;
-    int offset;
-    int lines;
-} disp_t;
-extern disp_t disp;
-
 extern void ui__disp_draw_nibble( word_20 addr, word_4 val );
 extern void ui__menu_draw_nibble( word_20 addr, word_4 val );
 

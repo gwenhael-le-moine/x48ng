@@ -213,8 +213,6 @@ typedef struct sdltohpkeymap_t {
 /*************/
 /* variables */
 /*************/
-disp_t disp;
-
 keypad_t keypad;
 color_t* colors;
 
@@ -2772,7 +2770,7 @@ static inline void draw_nibble( int c, int r, int val ) {
     x = ( c * 4 ); // x: start in pixels
 
     if ( r <= display.lines )
-        x -= disp.offset;
+        x -= 2 * display.offset;
     y = r; // y: start in pixels
 
     val &= 0x0f;
@@ -2809,9 +2807,6 @@ void ui__update_LCD( void ) {
     long addr;
     static int old_offset = -1;
     static int old_lines = -1;
-
-    if ( !disp.mapped )
-        return;
 
     if ( display.on ) {
         addr = display.disp_start;
@@ -2912,14 +2907,10 @@ void ui__init_LCD( void ) {
 
     display.disp_start = ( saturn.disp_addr & 0xffffe );
     display.offset = ( saturn.disp_io & 0x7 );
-    disp.offset = 2 * display.offset;
 
     display.lines = ( saturn.line_count & 0x3f );
     if ( display.lines == 0 )
         display.lines = 63;
-    disp.lines = 2 * display.lines;
-    if ( disp.lines < 110 )
-        disp.lines = 110;
 
     if ( display.offset > 3 )
         display.nibs_per_line =
@@ -2955,10 +2946,6 @@ void SDLCreateHP( void ) {
         width = KEYBOARD_WIDTH;
         height = DISPLAY_HEIGHT;
     }
-
-    disp.mapped = 1;
-    disp.w = DISPLAY_WIDTH;
-    disp.h = DISPLAY_HEIGHT;
 
     keypad.width = width;
     keypad.height = height;
