@@ -232,28 +232,24 @@ int get_identification( void ) {
     int i;
     static int chip_id[] = { 0,    0,    0,    0,    0x05, 0xf6,
                              0x07, 0xf8, 0x01, 0xf2, 0,    0 };
-    int id;
 
     for ( i = 0; i < 6; i++ )
         if ( saturn.mem_cntl[ i ].unconfigured )
             break;
 
-    if ( i < 6 )
-        id = chip_id[ 2 * i + ( 2 - saturn.mem_cntl[ i ].unconfigured ) ];
-    else
-        id = 0;
+    int id = ( i < 6 )
+                 ? chip_id[ 2 * i + ( 2 - saturn.mem_cntl[ i ].unconfigured ) ]
+                 : 0;
 
     for ( i = 0; i < 3; i++ ) {
         saturn.C[ i ] = id & 0x0f;
         id >>= 4;
     }
+
     return 0;
 }
 
 void do_shutdown( void ) {
-    int wake;
-    t1_t2_ticks ticks;
-
     if ( device.display_touched ) {
         device.display_touched = 0;
         ui__update_LCD();
@@ -267,13 +263,10 @@ void do_shutdown( void ) {
         saturn.int_pending = 0;
     }
 
-    if ( in_debugger )
-        wake = 1;
-    else
-        wake = 0;
+    int wake = ( in_debugger ) ? 1 : 0;
+    t1_t2_ticks ticks;
 
     do {
-
         pause();
 
         if ( got_alarm ) {
@@ -353,6 +346,7 @@ int is_zero_hardware_stat( int op ) {
     if ( op & 8 )
         if ( saturn.MP != 0 )
             return 0;
+
     return 1;
 }
 
