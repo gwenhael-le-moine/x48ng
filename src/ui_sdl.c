@@ -1222,25 +1222,23 @@ void SDLInit( void ) {
     }
 }
 
-int button_pressed( int b ) {
+void button_pressed( int b ) {
     int code;
-    int i, r, c;
 
-    if ( buttons[ b ].pressed == 1 ) // Check not already pressed (may be
-                                     // important: avoids a useless do_kbd_int)
-        return 0;
+    // Check not already pressed (may be important: avoids a useless do_kbd_int)
+    if ( buttons[ b ].pressed == 1 )
+        return;
 
     buttons[ b ].pressed = 1;
 
     code = buttons[ b ].code;
-
     if ( code == 0x8000 ) {
-        for ( i = 0; i < 9; i++ )
+        for ( int i = 0; i < 9; i++ )
             saturn.keybuf.rows[ i ] |= 0x8000;
         do_kbd_int();
     } else {
-        r = code >> 4;
-        c = 1 << ( code & 0xf );
+        int r = code >> 4;
+        int c = 1 << ( code & 0xf );
         if ( ( saturn.keybuf.rows[ r ] & c ) == 0 ) {
             if ( saturn.kbd_ien )
                 do_kbd_int();
@@ -1250,16 +1248,14 @@ int button_pressed( int b ) {
             saturn.keybuf.rows[ r ] |= c;
         }
     }
-
-    return 0;
 }
 
-int button_released( int b ) {
+void button_released( int b ) {
     int code;
 
     // Check not already released (not critical)
     if ( buttons[ b ].pressed == 0 )
-        return 0;
+        return;
 
     buttons[ b ].pressed = 0;
 
@@ -1268,13 +1264,10 @@ int button_released( int b ) {
         for ( int i = 0; i < 9; i++ )
             saturn.keybuf.rows[ i ] &= ~0x8000;
     } else {
-        int r, c;
-        r = code >> 4;
-        c = 1 << ( code & 0xf );
+        int r = code >> 4;
+        int c = 1 << ( code & 0xf );
         saturn.keybuf.rows[ r ] &= ~c;
     }
-
-    return 0;
 }
 
 void SDLCreateColors( void ) {
@@ -1328,13 +1321,13 @@ void ui__adjust_contrast() {
     SDLCreateColors();
     SDLCreateAnnunc();
 
-    // redraw_LCD();
+    // redraw LCD
     memset( disp_buf, 0, sizeof( disp_buf ) );
     memset( lcd_buffer, 0, sizeof( lcd_buffer ) );
 
     ui__update_LCD();
 
-    // redraw_annunc();
+    // redraw annunc
     last_annunc_state = -1;
 
     ui__draw_annunc();
@@ -1343,15 +1336,35 @@ void ui__adjust_contrast() {
 // Find which key is pressed, if any.
 // Returns -1 is no key is pressed
 int SDLCoordinateToKey( unsigned int x, unsigned int y ) {
-    int i;
-    for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
-        if ( x >= KEYBOARD_OFFSET_X + buttons[ i ].x &&
-             x <= KEYBOARD_OFFSET_X + buttons[ i ].x + buttons[ i ].w &&
-             y >= KEYBOARD_OFFSET_Y + buttons[ i ].y &&
-             y <= KEYBOARD_OFFSET_Y + buttons[ i ].y + buttons[ i ].h ) {
-            return i;
-        }
+    /* return immediatly if the click isn't even in the keyboard area */
+    if ( y < KEYBOARD_OFFSET_Y )
+        return -1;
+
+    int row = ( y - KEYBOARD_OFFSET_Y ) / ( KEYBOARD_HEIGHT / 9 );
+    int column;
+    switch ( row ) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+            column = ( x - KEYBOARD_OFFSET_X ) / ( KEYBOARD_WIDTH / 6 );
+            return ( row * 6 ) + column;
+        case 4: /* with [ENTER] key */
+            column = ( ( x - KEYBOARD_OFFSET_X ) / ( KEYBOARD_WIDTH / 5 ) ) - 1;
+            if ( column < 0 )
+                column = 0;
+            return ( 4 * 6 ) + column;
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+            column = ( x - KEYBOARD_OFFSET_X ) / ( KEYBOARD_WIDTH / 5 );
+            return ( 4 * 6 ) + 5 + ( ( row - 5 ) * 5 ) + column;
+
+        default:
+            return -1;
     }
+
     return -1;
 }
 // Map the keyboard keys to the HP keys
@@ -2751,57 +2764,62 @@ int ui__get_event( void ) {
                 exit( 0 );
                 break;
 
-            // Mouse move: react to state changes in the buttons that are
-            // pressed
-            case SDL_MOUSEMOTION:
-                hpkey = SDLCoordinateToKey( event.motion.x, event.motion.y );
-                if ( event.motion.state & SDL_BUTTON( 1 ) ) {
-                    // Mouse moves on a key different from the last key
-                    // (state change):
-                    // - release last (if last was pressed)
-                    // - press new (if new is pressed)
-                    if ( hpkey != lasthpkey ) {
-                        keyispressed = hpkey;
+                /* // Mouse move: react to state changes in the buttons that are
+                 */
+                /* // pressed */
+                /* case SDL_MOUSEMOTION: */
+                /*     hpkey = SDLCoordinateToKey( event.motion.x,
+                 * event.motion.y ); */
+                /*     if ( event.motion.state & SDL_BUTTON( 1 ) ) { */
+                /*         // Mouse moves on a key different from the last key
+                 */
+                /*         // (state change): */
+                /*         // - release last (if last was pressed) */
+                /*         // - press new (if new is pressed) */
+                /*         if ( hpkey != lasthpkey ) { */
+                /*             keyispressed = hpkey; */
 
-                        if ( lasthpkey != -1 ) {
-                            if ( !lastislongpress ) {
-                                button_release_all();
-                                rv = 1;
-                                SDLUIFeedback();
-                            }
-                            // Stop timer, clear long key press
-                            lastticks = -1;
-                            lastislongpress = 0;
-                        }
-                        if ( hpkey != -1 ) {
-                            if ( !buttons[ hpkey ]
-                                      .pressed ) // If a key is down, it
-                                                 // can't be down another
-                                                 // time
-                            {
-                                button_pressed( hpkey );
-                                rv = 1;
-                                // Start timer
-                                lastticks = SDL_GetTicks();
-                                SDLUIFeedback();
-                            }
-                        }
-                    }
-                    lasthpkey = hpkey;
-                }
-                if ( hpkey == -1 ) // Needed to avoid pressing and moving
-                                   // outside of a button releases
-                    lasthpkey = -1;
+                /*             if ( lasthpkey != -1 ) { */
+                /*                 if ( !lastislongpress ) { */
+                /*                     button_release_all(); */
+                /*                     rv = 1; */
+                /*                     SDLUIFeedback(); */
+                /*                 } */
+                /*                 // Stop timer, clear long key press */
+                /*                 lastticks = -1; */
+                /*                 lastislongpress = 0; */
+                /*             } */
+                /*             if ( hpkey != -1 ) { */
+                /*                 if ( !buttons[ hpkey ] */
+                /*                           .pressed ) // If a key is down, it
+                 */
+                /*                                      // can't be down another
+                 */
+                /*                                      // time */
+                /*                 { */
+                /*                     button_pressed( hpkey ); */
+                /*                     rv = 1; */
+                /*                     // Start timer */
+                /*                     lastticks = SDL_GetTicks(); */
+                /*                     SDLUIFeedback(); */
+                /*                 } */
+                /*             } */
+                /*         } */
+                /*         lasthpkey = hpkey; */
+                /*     } */
+                /*     if ( hpkey == -1 ) // Needed to avoid pressing and moving
+                 */
+                /*                        // outside of a button releases */
+                /*         lasthpkey = -1; */
 
-                break;
+                /*     break; */
 
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP:
                 hpkey = SDLCoordinateToKey( event.button.x, event.button.y );
 
-                if ( hpkey !=
-                     -1 ) // React to mouse up/down when click over a button
-                {
+                // React to mouse up/down when click over a button
+                if ( hpkey != -1 ) {
                     if ( event.type == SDL_MOUSEBUTTONDOWN ) {
                         keyispressed = hpkey;
 
