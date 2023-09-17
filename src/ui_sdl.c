@@ -205,11 +205,6 @@ typedef struct SDLWINDOW {
     int x, y;
 } SDLWINDOW_t;
 
-typedef struct sdltohpkeymap_t {
-    SDLKey sdlkey;
-    int hpkey;
-} sdltohpkeymap_t;
-
 /*************/
 /* variables */
 /*************/
@@ -1070,87 +1065,6 @@ ann_struct_t ann_tbl[] = {
     { 0 } };
 /* \ x48_lcd.c */
 
-sdltohpkeymap_t sdltohpkeymap[] = {
-    // Numbers
-    { SDLK_0, BUTTON_0 },
-    { SDLK_1, BUTTON_1 },
-    { SDLK_2, BUTTON_2 },
-    { SDLK_3, BUTTON_3 },
-    { SDLK_4, BUTTON_4 },
-    { SDLK_5, BUTTON_5 },
-    { SDLK_6, BUTTON_6 },
-    { SDLK_7, BUTTON_7 },
-    { SDLK_8, BUTTON_8 },
-    { SDLK_9, BUTTON_9 },
-    { SDLK_KP0, BUTTON_0 },
-    { SDLK_KP1, BUTTON_1 },
-    { SDLK_KP2, BUTTON_2 },
-    { SDLK_KP3, BUTTON_3 },
-    { SDLK_KP4, BUTTON_4 },
-    { SDLK_KP5, BUTTON_5 },
-    { SDLK_KP6, BUTTON_6 },
-    { SDLK_KP7, BUTTON_7 },
-    { SDLK_KP8, BUTTON_8 },
-    { SDLK_KP9, BUTTON_9 },
-    // Letters, space, return, backspace, delete, period, arrows
-    { SDLK_a, BUTTON_A },
-    { SDLK_b, BUTTON_B },
-    { SDLK_c, BUTTON_C },
-    { SDLK_d, BUTTON_D },
-    { SDLK_e, BUTTON_E },
-    { SDLK_f, BUTTON_F },
-    { SDLK_g, BUTTON_MTH },
-    { SDLK_h, BUTTON_PRG },
-    { SDLK_i, BUTTON_CST },
-    { SDLK_j, BUTTON_VAR },
-    { SDLK_k, BUTTON_UP },
-    { SDLK_UP, BUTTON_UP },
-    { SDLK_l, BUTTON_NXT },
-    { SDLK_m, BUTTON_COLON },
-    { SDLK_n, BUTTON_STO },
-    { SDLK_o, BUTTON_EVAL },
-    { SDLK_p, BUTTON_LEFT },
-    { SDLK_LEFT, BUTTON_LEFT },
-    { SDLK_q, BUTTON_DOWN },
-    { SDLK_DOWN, BUTTON_DOWN },
-    { SDLK_r, BUTTON_RIGHT },
-    { SDLK_RIGHT, BUTTON_RIGHT },
-    { SDLK_s, BUTTON_SIN },
-    { SDLK_t, BUTTON_COS },
-    { SDLK_u, BUTTON_TAN },
-    { SDLK_v, BUTTON_SQRT },
-    { SDLK_w, BUTTON_POWER },
-    { SDLK_x, BUTTON_INV },
-    { SDLK_y, BUTTON_NEG },
-    { SDLK_z, BUTTON_EEX },
-    { SDLK_SPACE, BUTTON_SPC },
-    { SDLK_RETURN, BUTTON_ENTER },
-    { SDLK_KP_ENTER, BUTTON_ENTER },
-    { SDLK_BACKSPACE, BUTTON_BS },
-    { SDLK_DELETE, BUTTON_DEL },
-    { SDLK_PERIOD, BUTTON_PERIOD },
-    { SDLK_KP_PERIOD, BUTTON_PERIOD },
-    // Math operators
-    { SDLK_PLUS, BUTTON_PLUS },
-    { SDLK_KP_PLUS, BUTTON_PLUS },
-    { SDLK_MINUS, BUTTON_MINUS },
-    { SDLK_KP_MINUS, BUTTON_MINUS },
-    { SDLK_ASTERISK, BUTTON_MUL },
-    { SDLK_KP_MULTIPLY, BUTTON_MUL },
-    { SDLK_SLASH, BUTTON_DIV },
-    { SDLK_KP_DIVIDE, BUTTON_DIV },
-    // on, shift, alpha
-    { SDLK_ESCAPE, BUTTON_ON },
-    { SDLK_LSHIFT, BUTTON_SHL },
-    { SDLK_RSHIFT, BUTTON_SHL },
-    { SDLK_LCTRL, BUTTON_SHR },
-    { SDLK_RCTRL, BUTTON_SHR },
-    { SDLK_LALT, BUTTON_ALPHA },
-    { SDLK_RALT, BUTTON_ALPHA },
-
-    // end marker
-    { ( SDLKey )0, ( SDLKey )0 } };
-
 // State to displayed zoomed last pressed key
 SDL_Surface* showkeylastsurf = 0;
 int showkeylastx, showkeylasty, showkeylastkey;
@@ -1443,13 +1357,227 @@ int SDLCoordinateToKey( unsigned int x, unsigned int y ) {
 // Map the keyboard keys to the HP keys
 // Returns -1 if there is no mapping
 int SDLKeyToKey( SDLKey k ) {
-    int i = 0;
-
-    while ( sdltohpkeymap[ i ].sdlkey ) {
-        if ( sdltohpkeymap[ i ].sdlkey == k )
-            return sdltohpkeymap[ i ].hpkey;
-        i++;
+    switch ( k ) {
+        case SDLK_0:
+            return BUTTON_0;
+            break;
+        case SDLK_1:
+            return BUTTON_1;
+            break;
+        case SDLK_2:
+            return BUTTON_2;
+            break;
+        case SDLK_3:
+            return BUTTON_3;
+            break;
+        case SDLK_4:
+            return BUTTON_4;
+            break;
+        case SDLK_5:
+            return BUTTON_5;
+            break;
+        case SDLK_6:
+            return BUTTON_6;
+            break;
+        case SDLK_7:
+            return BUTTON_7;
+            break;
+        case SDLK_8:
+            return BUTTON_8;
+            break;
+        case SDLK_9:
+            return BUTTON_9;
+            break;
+        case SDLK_KP0:
+            return BUTTON_0;
+            break;
+        case SDLK_KP1:
+            return BUTTON_1;
+            break;
+        case SDLK_KP2:
+            return BUTTON_2;
+            break;
+        case SDLK_KP3:
+            return BUTTON_3;
+            break;
+        case SDLK_KP4:
+            return BUTTON_4;
+            break;
+        case SDLK_KP5:
+            return BUTTON_5;
+            break;
+        case SDLK_KP6:
+            return BUTTON_6;
+            break;
+        case SDLK_KP7:
+            return BUTTON_7;
+            break;
+        case SDLK_KP8:
+            return BUTTON_8;
+            break;
+        case SDLK_KP9:
+            return BUTTON_9;
+            break;
+        case SDLK_a:
+            return BUTTON_A;
+            break;
+        case SDLK_b:
+            return BUTTON_B;
+            break;
+        case SDLK_c:
+            return BUTTON_C;
+            break;
+        case SDLK_d:
+            return BUTTON_D;
+            break;
+        case SDLK_e:
+            return BUTTON_E;
+            break;
+        case SDLK_f:
+            return BUTTON_F;
+            break;
+        case SDLK_g:
+            return BUTTON_MTH;
+            break;
+        case SDLK_h:
+            return BUTTON_PRG;
+            break;
+        case SDLK_i:
+            return BUTTON_CST;
+            break;
+        case SDLK_j:
+            return BUTTON_VAR;
+            break;
+        case SDLK_k:
+            return BUTTON_UP;
+            break;
+        case SDLK_UP:
+            return BUTTON_UP;
+            break;
+        case SDLK_l:
+            return BUTTON_NXT;
+            break;
+        case SDLK_m:
+            return BUTTON_COLON;
+            break;
+        case SDLK_n:
+            return BUTTON_STO;
+            break;
+        case SDLK_o:
+            return BUTTON_EVAL;
+            break;
+        case SDLK_p:
+            return BUTTON_LEFT;
+            break;
+        case SDLK_LEFT:
+            return BUTTON_LEFT;
+            break;
+        case SDLK_q:
+            return BUTTON_DOWN;
+            break;
+        case SDLK_DOWN:
+            return BUTTON_DOWN;
+            break;
+        case SDLK_r:
+            return BUTTON_RIGHT;
+            break;
+        case SDLK_RIGHT:
+            return BUTTON_RIGHT;
+            break;
+        case SDLK_s:
+            return BUTTON_SIN;
+            break;
+        case SDLK_t:
+            return BUTTON_COS;
+            break;
+        case SDLK_u:
+            return BUTTON_TAN;
+            break;
+        case SDLK_v:
+            return BUTTON_SQRT;
+            break;
+        case SDLK_w:
+            return BUTTON_POWER;
+            break;
+        case SDLK_x:
+            return BUTTON_INV;
+            break;
+        case SDLK_y:
+            return BUTTON_NEG;
+            break;
+        case SDLK_z:
+            return BUTTON_EEX;
+            break;
+        case SDLK_SPACE:
+            return BUTTON_SPC;
+            break;
+        case SDLK_RETURN:
+            return BUTTON_ENTER;
+            break;
+        case SDLK_KP_ENTER:
+            return BUTTON_ENTER;
+            break;
+        case SDLK_BACKSPACE:
+            return BUTTON_BS;
+            break;
+        case SDLK_DELETE:
+            return BUTTON_DEL;
+            break;
+        case SDLK_PERIOD:
+            return BUTTON_PERIOD;
+            break;
+        case SDLK_KP_PERIOD:
+            return BUTTON_PERIOD;
+            break;
+        case SDLK_PLUS:
+            return BUTTON_PLUS;
+            break;
+        case SDLK_KP_PLUS:
+            return BUTTON_PLUS;
+            break;
+        case SDLK_MINUS:
+            return BUTTON_MINUS;
+            break;
+        case SDLK_KP_MINUS:
+            return BUTTON_MINUS;
+            break;
+        case SDLK_ASTERISK:
+            return BUTTON_MUL;
+            break;
+        case SDLK_KP_MULTIPLY:
+            return BUTTON_MUL;
+            break;
+        case SDLK_SLASH:
+            return BUTTON_DIV;
+            break;
+        case SDLK_KP_DIVIDE:
+            return BUTTON_DIV;
+            break;
+        case SDLK_ESCAPE:
+            return BUTTON_ON;
+            break;
+        case SDLK_LSHIFT:
+            return BUTTON_SHL;
+            break;
+        case SDLK_RSHIFT:
+            return BUTTON_SHL;
+            break;
+        case SDLK_LCTRL:
+            return BUTTON_SHR;
+            break;
+        case SDLK_RCTRL:
+            return BUTTON_SHR;
+            break;
+        case SDLK_LALT:
+            return BUTTON_ALPHA;
+            break;
+        case SDLK_RALT:
+            return BUTTON_ALPHA;
+            break;
+        default:
+            return -1;
     }
+
     return -1;
 }
 
