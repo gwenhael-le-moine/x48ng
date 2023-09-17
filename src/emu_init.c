@@ -8,7 +8,7 @@
 #include <sys/types.h>
 
 #include "runtime_options.h"
-#include "emulator.h"
+#include "emulator_inner.h"
 #include "romio.h"
 
 #define X48_MAGIC 0x48503438

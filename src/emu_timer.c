@@ -7,8 +7,10 @@
 #include <sys/time.h>
 
 #include "romio.h"
-#include "emulator.h"
+#include "emulator_inner.h"
 #include "debugger.h" /* used for in_debugger */
+
+#define NR_TIMERS 4
 
 typedef struct x48_timer_t {
     word_1 run;

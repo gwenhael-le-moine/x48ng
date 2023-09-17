@@ -4,7 +4,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#include "emulator.h"
+#include "emulator_inner.h"
 #include "romio.h"
 #include "ui.h" /* ui__disp_draw_nibble(); ui__menu_draw_nibble(); */
 #include "runtime_options.h"

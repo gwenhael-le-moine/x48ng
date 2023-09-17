@@ -8,7 +8,7 @@
 #include <unistd.h>
 
 #include "runtime_options.h"
-#include "emulator.h"
+#include "emulator_inner.h"
 
 static int wire_fd;
 static int ir_fd;

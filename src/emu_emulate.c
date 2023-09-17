@@ -4,9 +4,21 @@
 #include <sys/time.h>
 
 #include "runtime_options.h" /* throttle */
-#include "emulator.h" /* word_20; register_to_address(); exchange_reg(); add_address(); store(); recall(); store_n(); recall_n(); */
 #include "ui.h" /* ui__get_event(); ui__adjust_contrast(); ui__update_LCD(); ui__draw_annunc(); */
 #include "debugger.h" /* enter_debugger, TRAP_INSTRUCTION, ILLEGAL_INSTRUCTION */
+#include "emulator_inner.h"
+
+#define P_FIELD 0  /* unused? */
+#define WP_FIELD 1 /* unused? */
+#define XS_FIELD 2 /* unused? */
+#define X_FIELD 3  /* unused? */
+#define S_FIELD 4  /* unused? */
+#define M_FIELD 5  /* unused? */
+#define B_FIELD 6  /* unused? */
+#define W_FIELD 7
+#define A_FIELD 15
+#define IN_FIELD 16
+#define OUTS_FIELD 18
 
 static long jumpaddr;
 
@@ -21,6 +33,9 @@ int adj_time_pending = 0;
 int set_t1;
 
 long schedule_event = 0;
+
+long sched_timer1;
+long sched_timer2;
 
 #define SrvcIoStart 0x3c0
 #define SrvcIoEnd 0x5ec
