@@ -16,6 +16,8 @@ jobs:
     - name: update deps
       run: sudo apt-get -y update
     - name: install deps
-      run: sudo apt install pkgconf libreadline-dev libsdl1.2-compat-dev libsdl-gfx1.2-dev
+      run: sudo apt install pkgconf libreadline-dev libsdl1.2-compat-dev libsdl-gfx1.2-dev libx11-dev libxext-dev
+    - name: make x11
+      run: make clean-all && make GUI=x11
     - name: make
       run: make clean-all && make
