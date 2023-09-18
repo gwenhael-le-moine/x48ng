@@ -2686,7 +2686,7 @@ void SDLUIShowKey( int hpkey ) {
     SDL_UpdateRect( sdlwindow, x, y, ssurf->w, ssurf->h );
 }
 
-void SDLUIFeedback( void ) {}
+inline void SDLUIFeedback( void ) {}
 
 static int button_release_all( void ) {
     for ( int b = BUTTON_A; b <= LAST_BUTTON; b++ )
