@@ -25,6 +25,12 @@ ifeq ($(GUI), sdl)
 	LIBS += $(shell pkg-config --libs SDL_gfx sdl12_compat)
 endif
 
+### X11 UI
+ifeq ($(GUI), x11)
+	CFLAGS += $(shell pkg-config --cflags x11 xext) -D_GNU_SOURCE=1 -DGUI_IS_X11=1
+	LIBS += $(shell pkg-config --libs x11 xext)
+endif
+
 DOTOS = src/emu_serial.o \
 	src/emu_emulate.o \
 	src/emu_init.o \
