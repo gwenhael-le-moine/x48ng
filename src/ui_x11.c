@@ -2276,8 +2276,8 @@ int merge_app_defaults( char* path, XrmDatabase* db ) {
 }
 
 int InitDisplay( int argc, char** argv ) {
-    XrmDatabase /* cmd = NULL, */ tmp = NULL;
-    char* res = NULL /* , *s */;
+    XrmDatabase cmd = NULL, tmp = NULL;
+    char *res = NULL, *s;
     char buf[ 1024 ], home[ 1024 ];
     int def;
     struct passwd* pwd;
@@ -2291,9 +2291,8 @@ int InitDisplay( int argc, char** argv ) {
      * Parse the command line
      */
     XrmInitialize();
-    /* XrmParseCommand( &cmd, options, sizeof( options ) / sizeof( *options ),
-     */
-    /*                  progname, &argc, argv ); */
+    XrmParseCommand( &cmd, options, sizeof( options ) / sizeof( *options ),
+                     progname, &argc, argv );
 
     /* if ( ( argc == 2 ) && !strcmp( argv[ 1 ], "-help" ) ) */
     /*     usage(); */
@@ -2310,37 +2309,35 @@ int InitDisplay( int argc, char** argv ) {
     /*
      * look for argument -name
      */
-    /* res = get_string_resource_from_db( cmd, "name", "Name" ); */
-    /* if ( res ) { */
-    /*     if ( !( res_name = strdup( res ) ) ) */
-    /*         fatal_exit( "out of memory in InitDisplay()\n", "" ); */
+    res = get_string_resource_from_db( cmd, "name", "Name" );
+    if ( res ) {
+        if ( !( res_name = strdup( res ) ) )
+            fatal_exit( "out of memory in InitDisplay()\n", "" );
 
-    /*     for ( s = res_name; *s; s++ ) */
-    /*         *s = isupper( *s ) ? tolower( *s ) : *s; */
+        for ( s = res_name; *s; s++ )
+            *s = isupper( *s ) ? tolower( *s ) : *s;
 
-    /*     free( res_class ); */
-    /*     res_class = strdup( res_name ); */
-    /*     *res_class = islower( *res_class ) ? toupper( *res_class ) :
-     * *res_class; */
+        free( res_class );
+        res_class = strdup( res_name );
+        *res_class = islower( *res_class ) ? toupper( *res_class ) : *res_class;
 
-    /*     argc = saved_argc; */
-    /*     argv = ( char** )malloc( ( argc + 1 ) * sizeof( char* ) ); */
-    /*     if ( argv == ( char** )0 ) */
-    /*         fatal_exit( "out of memory in InitDisplay()\n", "" ); */
+        argc = saved_argc;
+        argv = ( char** )malloc( ( argc + 1 ) * sizeof( char* ) );
+        if ( argv == ( char** )0 )
+            fatal_exit( "out of memory in InitDisplay()\n", "" );
 
-    /*     argv[ argc ] = ( char* )0; */
-    /*     for ( int i = 0; i < argc; i++ ) */
-    /*         argv[ i ] = saved_argv[ i ]; */
+        argv[ argc ] = ( char* )0;
+        for ( int i = 0; i < argc; i++ )
+            argv[ i ] = saved_argv[ i ];
 
-    /*     XrmParseCommand( &cmd, options, sizeof( options ) / sizeof( *options
-     * ), */
-    /*                      res_name, &argc, argv ); */
-    /* } */
+        XrmParseCommand( &cmd, options, sizeof( options ) / sizeof( *options ),
+                         res_name, &argc, argv );
+    }
 
     /*
      * open the display
      */
-    /* res = get_string_resource_from_db( cmd, "display", "Display" ); */
+    res = get_string_resource_from_db( cmd, "display", "Display" );
 
     dpy = XOpenDisplay( res );
     if ( dpy == ( Display* )0 ) {
@@ -5943,4 +5940,6 @@ void init_ui( int argc, char** argv ) {
     }
 
     init_annunc();
+
+    ui__init_LCD();
 }
