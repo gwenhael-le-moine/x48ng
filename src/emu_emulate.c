@@ -6,6 +6,7 @@
 #include "runtime_options.h" /* throttle */
 #include "ui.h" /* ui__get_event(); ui__adjust_contrast(); ui__update_LCD(); ui__draw_annunc(); */
 #include "debugger.h" /* enter_debugger, TRAP_INSTRUCTION, ILLEGAL_INSTRUCTION */
+#include "emulator.h"
 #include "emulator_inner.h"
 
 #define P_FIELD 0  /* unused? */

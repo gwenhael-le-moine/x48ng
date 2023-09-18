@@ -7,6 +7,7 @@
 #include <sys/time.h>
 
 #include "romio.h"
+#include "emulator.h"
 #include "emulator_inner.h"
 #include "debugger.h" /* used for in_debugger */
 

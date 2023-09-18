@@ -228,6 +228,12 @@ extern display_t display;
 
 extern saturn_t saturn;
 
+extern int device_check;
+extern short port1_is_ram;
+extern long port1_mask;
+extern short port2_is_ram;
+extern long port2_mask;
+
 /**************/
 /* emu_init.c */
 /**************/

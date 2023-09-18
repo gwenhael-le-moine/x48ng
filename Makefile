@@ -20,16 +20,12 @@ ifeq ($(FULL_WARNINGS), yes)
 endif
 
 ### SDL UI
-# ifeq ($(GUI), sdl)
 	CFLAGS += $(shell pkg-config --cflags SDL_gfx sdl12_compat)
 	LIBS += $(shell pkg-config --libs SDL_gfx sdl12_compat)
-# endif
 
 ### X11 UI
-# ifeq ($(GUI), x11)
 	CFLAGS += $(shell pkg-config --cflags x11 xext) -D_GNU_SOURCE=1 -DGUI_IS_X11=1
 	LIBS += $(shell pkg-config --libs x11 xext)
-# endif
 
 DOTOS = src/emu_serial.o \
 	src/emu_emulate.o \
@@ -109,7 +105,6 @@ install: all
 
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/share/applications
 	sed "s|@PREFIX@|$(PREFIX)|g" dist/x48ng.desktop > $(DESTDIR)$(PREFIX)/share/applications/x48ng.desktop
-# ifeq ($(GUI), x11)
+
 	install -m 755 -d -- $(DESTDIR)/etc/X11/app-defaults
 	install -c -m 644 dist/X48NG.ad $(DESTDIR)/etc/X11/app-defaults/X48NG
-# endif

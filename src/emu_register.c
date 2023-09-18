@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "emulator.h"
 #include "emulator_inner.h"
 
 extern long nibble_masks[ 16 ];

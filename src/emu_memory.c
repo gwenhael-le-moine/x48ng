@@ -4,6 +4,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+#include "emulator.h"
 #include "emulator_inner.h"
 #include "romio.h"
 #include "ui.h" /* ui__disp_draw_nibble(); ui__menu_draw_nibble(); */
@@ -25,16 +26,12 @@
 
 #define DISP_INSTR_OFF 0x10
 
-extern int device_check;
-extern short port1_is_ram;
-extern long port1_mask;
-extern short port2_is_ram;
-extern long port2_mask;
-
 long nibble_masks[ 16 ] = { 0x0000000f, 0x000000f0, 0x00000f00, 0x0000f000,
                             0x000f0000, 0x00f00000, 0x0f000000, 0xf0000000,
                             0x0000000f, 0x000000f0, 0x00000f00, 0x0000f000,
                             0x000f0000, 0x00f00000, 0x0f000000, 0xf0000000 };
+
+display_t display;
 
 void ( *write_nibble )( long addr, int val );
 int ( *read_nibble )( long addr );

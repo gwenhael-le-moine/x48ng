@@ -8,6 +8,7 @@
 #include <sys/types.h>
 
 #include "runtime_options.h"
+#include "emulator.h"
 #include "emulator_inner.h"
 #include "romio.h"
 

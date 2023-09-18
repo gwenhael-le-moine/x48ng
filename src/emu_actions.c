@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "emulator.h"
 #include "emulator_inner.h"
 #include "romio.h"
 #include "ui.h" /* ui__get_event(); ui__update_LCD(); */
