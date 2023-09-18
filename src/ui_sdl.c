@@ -51,17 +51,17 @@
 /* typedef */
 /***********/
 
-typedef struct ui_sdl__color_t {
+typedef struct sdl_color_t {
     const char* name;
     int r, g, b;
-} ui_sdl__color_t;
+} sdl_color_t;
 
-typedef struct ui_sdl__keypad_t {
+typedef struct sdl_keypad_t {
     unsigned int width;
     unsigned int height;
-} ui_sdl__keypad_t;
+} sdl_keypad_t;
 
-typedef struct ui_sdl__button_t {
+typedef struct sdl_button_t {
     const char* name;
     short pressed;
     short extra;
@@ -85,11 +85,11 @@ typedef struct ui_sdl__button_t {
 
     SDL_Surface* surfaceup;
     SDL_Surface* surfacedown;
-} ui_sdl__button_t;
+} sdl_button_t;
 
 // This mimicks the structure formerly lcd.c, except with SDL surfaces instead
 // of Pixmaps.
-typedef struct ui_sdl__ann_struct_t {
+typedef struct sdl_ann_struct_t {
     int bit;
     int x;
     int y;
@@ -99,57 +99,57 @@ typedef struct ui_sdl__ann_struct_t {
 
     SDL_Surface* surfaceon;
     SDL_Surface* surfaceoff;
-} ui_sdl__ann_struct_t;
+} sdl_ann_struct_t;
 
 /*************/
 /* variables */
 /*************/
-ui_sdl__keypad_t keypad;
-ui_sdl__color_t* sdl_colors;
+sdl_keypad_t keypad;
+sdl_color_t* sdl_colors;
 
-ui_sdl__color_t sdl_colors_sx[] = { { "white", 255, 255, 255 },
-                                    { "left", 255, 166, 0 },
-                                    { "right", 0, 210, 255 },
-                                    { "but_top", 109, 93, 93 },
-                                    { "button", 90, 77, 77 },
-                                    { "but_bot", 76, 65, 65 },
-                                    { "lcd_col", 202, 221, 92 },
-                                    { "pix_col", 0, 0, 128 },
-                                    { "pad_top", 109, 78, 78 },
-                                    { "pad", 90, 64, 64 },
-                                    { "pad_bot", 76, 54, 54 },
-                                    { "disp_pad_top", 155, 118, 84 },
-                                    { "disp_pad", 124, 94, 67 },
-                                    { "disp_pad_bot", 100, 75, 53 },
-                                    { "logo", 204, 169, 107 },
-                                    { "logo_back", 64, 64, 64 },
-                                    { "label", 202, 184, 144 },
-                                    { "frame", 0, 0, 0 },
-                                    { "underlay", 60, 42, 42 },
-                                    { "black", 0, 0, 0 },
-                                    { 0 } };
+sdl_color_t sdl_colors_sx[] = { { "white", 255, 255, 255 },
+                                { "left", 255, 166, 0 },
+                                { "right", 0, 210, 255 },
+                                { "but_top", 109, 93, 93 },
+                                { "button", 90, 77, 77 },
+                                { "but_bot", 76, 65, 65 },
+                                { "lcd_col", 202, 221, 92 },
+                                { "pix_col", 0, 0, 128 },
+                                { "pad_top", 109, 78, 78 },
+                                { "pad", 90, 64, 64 },
+                                { "pad_bot", 76, 54, 54 },
+                                { "disp_pad_top", 155, 118, 84 },
+                                { "disp_pad", 124, 94, 67 },
+                                { "disp_pad_bot", 100, 75, 53 },
+                                { "logo", 204, 169, 107 },
+                                { "logo_back", 64, 64, 64 },
+                                { "label", 202, 184, 144 },
+                                { "frame", 0, 0, 0 },
+                                { "underlay", 60, 42, 42 },
+                                { "black", 0, 0, 0 },
+                                { 0 } };
 
-ui_sdl__color_t sdl_colors_gx[] = { { "white", 255, 255, 255 },
-                                    { "left", 255, 186, 255 },
-                                    { "right", 0, 255, 204 },
-                                    { "but_top", 104, 104, 104 },
-                                    { "button", 88, 88, 88 },
-                                    { "but_bot", 74, 74, 74 },
-                                    { "lcd_col", 202, 221, 92 },
-                                    { "pix_col", 0, 0, 128 },
-                                    { "pad_top", 88, 88, 88 },
-                                    { "pad", 74, 74, 74 },
-                                    { "pad_bot", 64, 64, 64 },
-                                    { "disp_pad_top", 128, 128, 138 },
-                                    { "disp_pad", 104, 104, 110 },
-                                    { "disp_pad_bot", 84, 84, 90 },
-                                    { "logo", 176, 176, 184 },
-                                    { "logo_back", 104, 104, 110 },
-                                    { "label", 240, 240, 240 },
-                                    { "frame", 0, 0, 0 },
-                                    { "underlay", 104, 104, 110 },
-                                    { "black", 0, 0, 0 },
-                                    { 0 } };
+sdl_color_t sdl_colors_gx[] = { { "white", 255, 255, 255 },
+                                { "left", 255, 186, 255 },
+                                { "right", 0, 255, 204 },
+                                { "but_top", 104, 104, 104 },
+                                { "button", 88, 88, 88 },
+                                { "but_bot", 74, 74, 74 },
+                                { "lcd_col", 202, 221, 92 },
+                                { "pix_col", 0, 0, 128 },
+                                { "pad_top", 88, 88, 88 },
+                                { "pad", 74, 74, 74 },
+                                { "pad_bot", 64, 64, 64 },
+                                { "disp_pad_top", 128, 128, 138 },
+                                { "disp_pad", 104, 104, 110 },
+                                { "disp_pad_bot", 84, 84, 90 },
+                                { "logo", 176, 176, 184 },
+                                { "logo_back", 104, 104, 110 },
+                                { "label", 240, 240, 240 },
+                                { "frame", 0, 0, 0 },
+                                { "underlay", 104, 104, 110 },
+                                { "black", 0, 0, 0 },
+                                { 0 } };
 
 // This will take the value of the defines, but can be run-time modified
 unsigned KEYBOARD_HEIGHT, KEYBOARD_WIDTH, TOP_SKIP, SIDE_SKIP, BOTTOM_SKIP,
@@ -159,9 +159,9 @@ unsigned KEYBOARD_HEIGHT, KEYBOARD_WIDTH, TOP_SKIP, SIDE_SKIP, BOTTOM_SKIP,
 
 unsigned int ARGBColors[ BLACK + 1 ];
 
-ui_sdl__button_t* buttons = 0;
+sdl_button_t* buttons = 0;
 
-ui_sdl__button_t buttons_sx[] = {
+sdl_button_t buttons_sx[] = {
     { "A",
       0,
       0,
@@ -485,7 +485,7 @@ ui_sdl__button_t buttons_sx[] = {
 
     { 0 } };
 
-ui_sdl__button_t buttons_gx[] = {
+sdl_button_t buttons_gx[] = {
     { "A",
       0,
       0,
@@ -809,7 +809,7 @@ ui_sdl__button_t buttons_gx[] = {
 
     { 0 } };
 
-ui_sdl__ann_struct_t ann_tbl[] = {
+sdl_ann_struct_t ann_tbl[] = {
     { ANN_LEFT, 16, 4, ann_left_width, ann_left_height, ann_left_bitmap, 0, 0 },
     { ANN_RIGHT, 61, 4, ann_right_width, ann_right_height, ann_right_bitmap, 0,
       0 },
@@ -2619,7 +2619,7 @@ static inline void draw_nibble( int c, int r, int val ) {
     SDLDrawNibble( x, y, val );
 }
 
-/* void ui_sdl__draw_nibble( int c, int r, int val ) { draw_nibble( c, r, val );
+/* void sdl_draw_nibble( int c, int r, int val ) { draw_nibble( c, r, val );
  * }
  */
 
@@ -2663,7 +2663,7 @@ void SDLCreateHP( void ) {
         free( buttons );
         buttons = 0;
     }
-    buttons = ( ui_sdl__button_t* )malloc( sizeof( buttons_gx ) );
+    buttons = ( sdl_button_t* )malloc( sizeof( buttons_gx ) );
 
     if ( opt_gx )
         memcpy( buttons, buttons_gx, sizeof( buttons_gx ) );
@@ -2692,7 +2692,7 @@ void SDLCreateHP( void ) {
 /**********/
 /* public */
 /**********/
-int ui_sdl__get_event( void ) {
+int sdl_get_event( void ) {
     SDL_Event event;
     int hpkey;
     int rv;
@@ -2875,7 +2875,7 @@ int ui_sdl__get_event( void ) {
     return 1;
 }
 
-void ui_sdl__update_LCD( void ) {
+void sdl_update_LCD( void ) {
     int i, j;
     long addr;
     static int old_offset = -1;
@@ -2918,7 +2918,7 @@ void ui_sdl__update_LCD( void ) {
     }
 }
 
-void ui_sdl__disp_draw_nibble( word_20 addr, word_4 val ) {
+void sdl_disp_draw_nibble( word_20 addr, word_4 val ) {
     long offset;
     int x, y;
 
@@ -2944,7 +2944,7 @@ void ui_sdl__disp_draw_nibble( word_20 addr, word_4 val ) {
     }
 }
 
-void ui_sdl__menu_draw_nibble( word_20 addr, word_4 val ) {
+void sdl_menu_draw_nibble( word_20 addr, word_4 val ) {
     long offset;
     int x, y;
 
@@ -2957,7 +2957,7 @@ void ui_sdl__menu_draw_nibble( word_20 addr, word_4 val ) {
     }
 }
 
-void ui_sdl__draw_annunc( void ) {
+void sdl_draw_annunc( void ) {
     int val;
 
     val = display.annunc;
@@ -2975,7 +2975,7 @@ void ui_sdl__draw_annunc( void ) {
     SDLDrawAnnunc( sdl_annuncstate );
 }
 
-void ui_sdl__adjust_contrast() {
+void sdl_adjust_contrast() {
     SDLCreateColors();
     SDLCreateAnnunc();
 
@@ -2983,15 +2983,15 @@ void ui_sdl__adjust_contrast() {
     memset( sdl_disp_buf, 0, sizeof( sdl_disp_buf ) );
     memset( sdl_lcd_buffer, 0, sizeof( sdl_lcd_buffer ) );
 
-    ui_sdl__update_LCD();
+    sdl_update_LCD();
 
     // redraw annunc
     sdl_last_annunc_state = -1;
 
-    ui_sdl__draw_annunc();
+    sdl_draw_annunc();
 }
 
-void ui_sdl__init_LCD( void ) {
+void sdl_init_LCD( void ) {
     display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
 
     display.disp_start = ( saturn.disp_addr & 0xffffe );
@@ -3026,5 +3026,5 @@ void ui_sdl__init_LCD( void ) {
 void init_sdl_ui( int argc, char** argv ) {
     SDLInit();
     SDLCreateHP();
-    ui_sdl__init_LCD();
+    sdl_init_LCD();
 }

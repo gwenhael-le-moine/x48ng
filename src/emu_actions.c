@@ -5,7 +5,7 @@
 #include "emulator.h"
 #include "emulator_inner.h"
 #include "romio.h"
-#include "ui.h" /* ui__get_event(); ui__update_LCD(); */
+#include "ui.h" /* ui_get_event(); ui_update_LCD(); */
 
 #include "debugger.h" /* in_debugger, enter_debugger */
 
@@ -253,7 +253,7 @@ int get_identification( void ) {
 void do_shutdown( void ) {
     if ( device.display_touched ) {
         device.display_touched = 0;
-        ui__update_LCD();
+        ui_update_LCD();
     }
 
     stop_timer( RUN_TIMER );
@@ -281,7 +281,7 @@ void do_shutdown( void ) {
             set_t1 = ticks.t1_ticks;
 
             interrupt_called = 0;
-            if ( ui__get_event() && interrupt_called )
+            if ( ui_get_event() && interrupt_called )
                 wake = 1;
 
             if ( saturn.timer2 <= 0 ) {

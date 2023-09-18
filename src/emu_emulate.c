@@ -4,7 +4,7 @@
 #include <sys/time.h>
 
 #include "runtime_options.h" /* throttle */
-#include "ui.h" /* ui__get_event(); ui__adjust_contrast(); ui__update_LCD(); ui__draw_annunc(); */
+#include "ui.h" /* ui_get_event(); ui_adjust_contrast(); ui_update_LCD(); ui_draw_annunc(); */
 #include "debugger.h" /* enter_debugger, TRAP_INSTRUCTION, ILLEGAL_INSTRUCTION */
 #include "emulator.h"
 #include "emulator_inner.h"
@@ -2285,7 +2285,7 @@ inline void schedule( void ) {
         /* UI */
         if ( device.display_touched > 0 && device.display_touched-- == 1 ) {
             device.display_touched = 0;
-            ui__update_LCD();
+            ui_update_LCD();
         }
 
         if ( device.display_touched > 0 )
@@ -2293,12 +2293,12 @@ inline void schedule( void ) {
 
         if ( device.contrast_touched ) {
             device.contrast_touched = 0;
-            ui__adjust_contrast();
+            ui_adjust_contrast();
         }
 
         if ( device.ann_touched ) {
             device.ann_touched = 0;
-            ui__draw_annunc();
+            ui_draw_annunc();
         }
 
         /* serial */
@@ -2446,9 +2446,9 @@ inline void schedule( void ) {
     if ( got_alarm ) {
         got_alarm = 0;
 
-        ui__update_LCD();
+        ui_update_LCD();
 
-        ui__get_event();
+        ui_get_event();
     }
 }
 

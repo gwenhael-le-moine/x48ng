@@ -7,7 +7,7 @@
 #include "emulator.h"
 #include "emulator_inner.h"
 #include "romio.h"
-#include "ui.h" /* ui__disp_draw_nibble(); ui__menu_draw_nibble(); */
+#include "ui.h" /* ui_disp_draw_nibble(); ui_menu_draw_nibble(); */
 #include "runtime_options.h"
 
 #define MCTL_MMIO_SX 0
@@ -491,13 +491,13 @@ void write_nibble_sx( long addr, int val ) {
         return;
 
     if ( addr >= display.disp_start && addr < display.disp_end )
-        ui__disp_draw_nibble( addr, val );
+        ui_disp_draw_nibble( addr, val );
 
     if ( display.lines == 63 )
         return;
 
     if ( addr >= display.menu_start && addr < display.menu_end )
-        ui__menu_draw_nibble( addr, val );
+        ui_menu_draw_nibble( addr, val );
 }
 
 void write_nibble_gx( long addr, int val ) {
@@ -660,13 +660,13 @@ void write_nibble_gx( long addr, int val ) {
         return;
 
     if ( addr >= display.disp_start && addr < display.disp_end )
-        ui__disp_draw_nibble( addr, val );
+        ui_disp_draw_nibble( addr, val );
 
     if ( display.lines == 63 )
         return;
 
     if ( addr >= display.menu_start && addr < display.menu_end )
-        ui__menu_draw_nibble( addr, val );
+        ui_menu_draw_nibble( addr, val );
 }
 
 int read_nibble_sx( long addr ) {

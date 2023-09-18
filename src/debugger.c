@@ -10,7 +10,7 @@
 #include "runtime_options.h"
 #include "emulator.h"
 #include "romio.h"
-#include "ui.h" /* ui__init_LCD(); ui__update_LCD(); */
+#include "ui.h" /* ui_init_LCD(); ui_update_LCD(); */
 #include "debugger.h"
 
 #define MAX_ARGS 16
@@ -3656,8 +3656,8 @@ static void cmd_load( int argc, char** argv ) {
             free( tmp_saturn.port2 );
 
         /* After reloading state we need to refresh the UI's LCD */
-        ui__init_LCD();
-        ui__update_LCD();
+        ui_init_LCD();
+        ui_update_LCD();
     } else {
         printf( "Loading emulator-state from files failed.\n" );
         if ( saturn.rom )
@@ -4184,14 +4184,17 @@ int debug( void ) {
         if ( enter_debugger & USER_INTERRUPT )
             if ( verbose )
                 printf( "usnterrupt (SIGINT) ignored\n" );
+
         exit_emulator();
         exit( 1 );
+
         if ( enter_debugger & BREAKPOINT_HIT )
             if ( verbose )
                 printf( "breakpoint hit at 0x%.5lX ignored\n", saturn.PC );
         if ( enter_debugger & TRAP_INSTRUCTION )
             if ( verbose )
                 printf( "trap instruction at 0x%.5lX ignored\n", saturn.PC );
+
         enter_debugger = 0;
         return 0;
     }
@@ -4201,7 +4204,7 @@ int debug( void ) {
      */
     if ( device.display_touched ) {
         device.display_touched = 0;
-        ui__update_LCD();
+        ui_update_LCD();
     }
 
     /*
@@ -4342,7 +4345,6 @@ int debug( void ) {
 
 void emulate_debug( void ) {
     do {
-
         step_instruction();
 
         if ( exec_flags & EXEC_BKPT ) {
@@ -4352,9 +4354,7 @@ void emulate_debug( void ) {
             }
         }
 
-        if ( schedule_event-- == 0 ) {
+        if ( schedule_event-- == 0 )
             schedule();
-        }
-
     } while ( !enter_debugger );
 }

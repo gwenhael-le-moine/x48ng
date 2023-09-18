@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <fcntl.h>
 #include <pwd.h>
 #include <string.h>
@@ -6,17 +8,15 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/utsname.h>
-#include <X11/cursorfont.h>
-
-#include <stdio.h>
-#include <stdlib.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
+
 #include <X11/Xlib.h>
 #include <X11/Xresource.h>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
 #include <X11/extensions/XShm.h>
+#include <X11/cursorfont.h>
 
 #include "runtime_options.h"
 #include "emulator.h"
@@ -223,21 +223,21 @@ static unsigned char hp48_green_gx_bitmap[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x1c, 0x00, 0x00, 0x00, 0x1c, 0x00, 0x00, 0x00 };
 
-typedef struct ui_x11__color_t {
+typedef struct x11_color_t {
     const char* name;
     int r, g, b;
 
     int mono_rgb;
     int gray_rgb;
     XColor xcolor;
-} ui_x11__color_t;
+} x11_color_t;
 
-typedef struct ui_x11__keypad_t {
+typedef struct x11_keypad_t {
     unsigned int width;
     unsigned int height;
 
     Pixmap pixmap;
-} ui_x11__keypad_t;
+} x11_keypad_t;
 
 typedef struct disp_t {
     unsigned int w, h;
@@ -256,7 +256,7 @@ typedef struct disp_t {
     XImage* menu_image;
 } disp_t;
 
-typedef struct ui_x11__button_t {
+typedef struct x11_button_t {
     const char* name;
     short pressed;
     short extra;
@@ -281,11 +281,11 @@ typedef struct ui_x11__button_t {
     Pixmap map;
     Pixmap down;
     Window xwin;
-} ui_x11__button_t;
+} x11_button_t;
 
 // This mimicks the structure formerly lcd.c, except with SDL surfaces instead
 // of Pixmaps.
-typedef struct ui_x11__ann_struct_t {
+typedef struct x11_ann_struct_t {
     int bit;
     int x;
     int y;
@@ -294,7 +294,7 @@ typedef struct ui_x11__ann_struct_t {
     unsigned char* bits;
 
     Pixmap pixmap;
-} ui_x11__ann_struct_t;
+} x11_ann_struct_t;
 
 typedef struct icon_t {
     unsigned int w;
@@ -303,8 +303,8 @@ typedef struct icon_t {
     unsigned char* bits;
 } icon_map_t;
 
-ui_x11__keypad_t x11_keypad;
-ui_x11__color_t* x11_colors;
+x11_keypad_t x11_keypad;
+x11_color_t* x11_colors;
 
 static XrmOptionDescRec options[] = {
     { "-display", ".display", XrmoptionSepArg, ( void* )0 },
@@ -414,7 +414,7 @@ int does_backing_store;
 int color_mode;
 int icon_color_mode;
 
-int useXShm;
+int useXShm = 1;
 int netbook;
 
 char* res_name;
@@ -422,7 +422,7 @@ char* res_class;
 
 XrmDatabase rdb = ( XrmDatabase )0;
 
-ui_x11__color_t x11_colors_sx[] = {
+x11_color_t x11_colors_sx[] = {
     { "white",
       255,
       255,
@@ -547,7 +547,7 @@ ui_x11__color_t x11_colors_sx[] = {
     { "black", 0, 0, 0, 0, 0, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
     { 0 } };
 
-ui_x11__color_t x11_colors_gx[] = {
+x11_color_t x11_colors_gx[] = {
     { "white",
       255,
       255,
@@ -672,9 +672,9 @@ ui_x11__color_t x11_colors_gx[] = {
     { "black", 0, 0, 0, 0, 0, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
     { 0 } };
 
-ui_x11__button_t* x11_buttons = 0;
+x11_button_t* x11_buttons = 0;
 
-ui_x11__button_t x11_buttons_sx[] = {
+x11_button_t x11_buttons_sx[] = {
     { "A",
       0,
       0,
@@ -1017,7 +1017,7 @@ ui_x11__button_t x11_buttons_sx[] = {
 
     { 0 } };
 
-ui_x11__button_t x11_buttons_gx[] = {
+x11_button_t x11_buttons_gx[] = {
     { "A",
       0,
       0,
@@ -1397,7 +1397,7 @@ unsigned char nibbles[ 16 ][ 2 ] = {
 
 static unsigned char nibble_bitmap[ 16 ];
 
-ui_x11__ann_struct_t x11_ann_tbl[] = {
+x11_ann_struct_t x11_ann_tbl[] = {
     { ANN_LEFT, 16, 4, ann_left_width, ann_left_height, ann_left_bitmap, 0 },
     { ANN_RIGHT, 61, 4, ann_right_width, ann_right_height, ann_right_bitmap,
       0 },
@@ -1606,7 +1606,7 @@ void fatal_exit( char* error, char* advice );
 int AllocColors( void );
 int merge_app_defaults( char* path, XrmDatabase* db );
 int InitDisplay( int argc, char** argv );
-void ui_x11__adjust_contrast( void );
+void x11_adjust_contrast( void );
 int x11_SmallTextWidth( const char* string, unsigned int length );
 void exit_x48( int tell_x11 );
 int DrawSmallString( Display* the_dpy, Drawable d, GC the_gc, int x, int y,
@@ -1616,12 +1616,12 @@ void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small,
 void DrawButtons( void );
 int DrawButton( int i );
 void CreateBackground( int width, int height, int w_top, int h_top,
-                       ui_x11__keypad_t* x11_keypad );
+                       x11_keypad_t* x11_keypad );
 void CreateKeypad( unsigned int w, unsigned int h, unsigned int offset_y,
-                   unsigned int offset_x, ui_x11__keypad_t* x11_keypad );
-void CreateBezel( ui_x11__keypad_t* x11_keypad );
-void DrawMore( unsigned int offset_y, ui_x11__keypad_t* x11_keypad );
-void DrawKeypad( ui_x11__keypad_t* x11_keypad );
+                   unsigned int offset_x, x11_keypad_t* x11_keypad );
+void CreateBezel( x11_keypad_t* x11_keypad );
+void DrawMore( unsigned int offset_y, x11_keypad_t* x11_keypad );
+void DrawKeypad( x11_keypad_t* x11_keypad );
 void CreateIcon( void );
 void refresh_icon( void );
 void DrawIcon( void );
@@ -1638,13 +1638,13 @@ int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen );
 int x11_button_pressed( int b );
 int x11_button_released( int b );
 void ShowConnections( char* wire, char* ir );
-int ui_x11__get_event( void );
-void ui_x11__init_LCD( void );
-void ui_x11__update_LCD( void );
+int x11_get_event( void );
+void x11_init_LCD( void );
+void x11_update_LCD( void );
 void redraw_display( void );
-void ui_x11__disp_draw_nibble( word_20 addr, word_4 val );
-void ui_x11__menu_draw_nibble( word_20 addr, word_4 val );
-void ui_x11__draw_annunc( void );
+void x11_disp_draw_nibble( word_20 addr, word_4 val );
+void x11_menu_draw_nibble( word_20 addr, word_4 val );
+void x11_draw_annunc( void );
 void init_annunc( void );
 void redraw_annunc( void );
 
@@ -2839,7 +2839,7 @@ int DrawButton( int i ) {
 }
 
 void CreateBackground( int width, int height, int w_top, int h_top,
-                       ui_x11__keypad_t* x11_keypad ) {
+                       x11_keypad_t* x11_keypad ) {
     XSetBackground( dpy, gc, COLOR( PAD ) );
     XSetForeground( dpy, gc, COLOR( PAD ) );
 
@@ -2852,7 +2852,7 @@ void CreateBackground( int width, int height, int w_top, int h_top,
 }
 
 void CreateKeypad( unsigned int w, unsigned int h, unsigned int offset_y,
-                   unsigned int offset_x, ui_x11__keypad_t* x11_keypad ) {
+                   unsigned int offset_x, x11_keypad_t* x11_keypad ) {
     int i, x, y;
     int wl, wr, ws;
     Pixmap pix;
@@ -3159,7 +3159,7 @@ void CreateKeypad( unsigned int w, unsigned int h, unsigned int offset_y,
     }
 }
 
-void CreateBezel( ui_x11__keypad_t* x11_keypad ) {
+void CreateBezel( x11_keypad_t* x11_keypad ) {
     int i;
     int display_height = DISPLAY_HEIGHT;
     int display_width = DISPLAY_WIDTH;
@@ -3288,7 +3288,7 @@ void CreateBezel( ui_x11__keypad_t* x11_keypad ) {
                ( int )( DISPLAY_OFFSET_Y + display_height - 2 ) );
 }
 
-void DrawMore( unsigned int offset_y, ui_x11__keypad_t* x11_keypad ) {
+void DrawMore( unsigned int offset_y, x11_keypad_t* x11_keypad ) {
     Pixmap pix;
     int cut = 0;
     int x, y;
@@ -3581,7 +3581,7 @@ void DrawMore( unsigned int offset_y, ui_x11__keypad_t* x11_keypad ) {
     }
 }
 
-void DrawKeypad( ui_x11__keypad_t* x11_keypad ) {
+void DrawKeypad( x11_keypad_t* x11_keypad ) {
     XCopyArea( dpy, x11_keypad->pixmap, mainW, gc, 0, 0, x11_keypad->width,
                x11_keypad->height, 0, 0 );
 }
@@ -4896,7 +4896,7 @@ void redraw_display( void ) {
     XClearWindow( dpy, disp.win );
     memset( x11_disp_buf, 0, sizeof( x11_disp_buf ) );
     memset( x11_lcd_buffer, 0, sizeof( x11_lcd_buffer ) );
-    ui_x11__update_LCD();
+    x11_update_LCD();
 }
 
 void init_annunc( void ) {
@@ -4908,14 +4908,14 @@ void init_annunc( void ) {
 
 void redraw_annunc( void ) {
     x11_last_annunc_state = -1;
-    ui_x11__draw_annunc();
+    x11_draw_annunc();
 }
 
 /**********/
 /* public */
 /**********/
 
-void ui_x11__adjust_contrast( void ) {
+void x11_adjust_contrast( void ) {
     int gray = 0;
     int r = 0, g = 0, b = 0;
     unsigned long old;
@@ -4978,7 +4978,7 @@ void ui_x11__adjust_contrast( void ) {
     }
 }
 
-int ui_x11__get_event( void ) {
+int x11_get_event( void ) {
     XEvent xev;
     XClientMessageEvent* cm;
     int i, wake, bufs = 2;
@@ -5070,7 +5070,7 @@ int ui_x11__get_event( void ) {
 
                     if ( !disp.mapped ) {
                         disp.mapped = 1;
-                        ui_x11__update_LCD();
+                        x11_update_LCD();
                         redraw_annunc();
                     }
                     break;
@@ -5612,7 +5612,7 @@ int ui_x11__get_event( void ) {
     return wake;
 }
 
-void ui_x11__init_LCD( void ) {
+void x11_init_LCD( void ) {
     display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
 
     display.disp_start = ( saturn.disp_addr & 0xffffe );
@@ -5648,53 +5648,51 @@ void ui_x11__init_LCD( void ) {
     memset( x11_lcd_buffer, 0xf0, sizeof( x11_lcd_buffer ) );
 
     /* init nibble_maps */
-    int i;
-
-    for ( i = 0; i < 16; i++ ) {
+    for ( int i = 0; i < 16; i++ )
         nibble_maps[ i ] =
             XCreateBitmapFromData( dpy, disp.win, ( char* )nibbles[ i ], 8, 2 );
-    }
 
-    if ( shm_flag ) {
-        if ( disp.disp_image->bitmap_bit_order == MSBFirst ) {
-            nibble_bitmap[ 0x0 ] = 0x00; /* ---- */
-            nibble_bitmap[ 0x1 ] = 0xc0; /* *--- */
-            nibble_bitmap[ 0x2 ] = 0x30; /* -*-- */
-            nibble_bitmap[ 0x3 ] = 0xf0; /* **-- */
-            nibble_bitmap[ 0x4 ] = 0x0c; /* --*- */
-            nibble_bitmap[ 0x5 ] = 0xcc; /* *-*- */
-            nibble_bitmap[ 0x6 ] = 0x3c; /* -**- */
-            nibble_bitmap[ 0x7 ] = 0xfc; /* ***- */
-            nibble_bitmap[ 0x8 ] = 0x03; /* ---* */
-            nibble_bitmap[ 0x9 ] = 0xc3; /* *--* */
-            nibble_bitmap[ 0xa ] = 0x33; /* -*-* */
-            nibble_bitmap[ 0xb ] = 0xf3; /* **-* */
-            nibble_bitmap[ 0xc ] = 0x0f; /* --** */
-            nibble_bitmap[ 0xd ] = 0xcf; /* *-** */
-            nibble_bitmap[ 0xe ] = 0x3f; /* -*** */
-            nibble_bitmap[ 0xf ] = 0xff; /* **** */
-        } else {
-            nibble_bitmap[ 0x0 ] = 0x00; /* ---- */
-            nibble_bitmap[ 0x1 ] = 0x03; /* *--- */
-            nibble_bitmap[ 0x2 ] = 0x0c; /* -*-- */
-            nibble_bitmap[ 0x3 ] = 0x0f; /* **-- */
-            nibble_bitmap[ 0x4 ] = 0x30; /* --*- */
-            nibble_bitmap[ 0x5 ] = 0x33; /* *-*- */
-            nibble_bitmap[ 0x6 ] = 0x3c; /* -**- */
-            nibble_bitmap[ 0x7 ] = 0x3f; /* ***- */
-            nibble_bitmap[ 0x8 ] = 0xc0; /* ---* */
-            nibble_bitmap[ 0x9 ] = 0xc3; /* *--* */
-            nibble_bitmap[ 0xa ] = 0xcc; /* -*-* */
-            nibble_bitmap[ 0xb ] = 0xcf; /* **-* */
-            nibble_bitmap[ 0xc ] = 0xf0; /* --** */
-            nibble_bitmap[ 0xd ] = 0xf3; /* *-** */
-            nibble_bitmap[ 0xe ] = 0xfc; /* -*** */
-            nibble_bitmap[ 0xf ] = 0xff; /* **** */
-        }
+    if ( !shm_flag )
+        return;
+
+    if ( disp.disp_image->bitmap_bit_order == MSBFirst ) {
+        nibble_bitmap[ 0x0 ] = 0x00; /* ---- */
+        nibble_bitmap[ 0x1 ] = 0xc0; /* *--- */
+        nibble_bitmap[ 0x2 ] = 0x30; /* -*-- */
+        nibble_bitmap[ 0x3 ] = 0xf0; /* **-- */
+        nibble_bitmap[ 0x4 ] = 0x0c; /* --*- */
+        nibble_bitmap[ 0x5 ] = 0xcc; /* *-*- */
+        nibble_bitmap[ 0x6 ] = 0x3c; /* -**- */
+        nibble_bitmap[ 0x7 ] = 0xfc; /* ***- */
+        nibble_bitmap[ 0x8 ] = 0x03; /* ---* */
+        nibble_bitmap[ 0x9 ] = 0xc3; /* *--* */
+        nibble_bitmap[ 0xa ] = 0x33; /* -*-* */
+        nibble_bitmap[ 0xb ] = 0xf3; /* **-* */
+        nibble_bitmap[ 0xc ] = 0x0f; /* --** */
+        nibble_bitmap[ 0xd ] = 0xcf; /* *-** */
+        nibble_bitmap[ 0xe ] = 0x3f; /* -*** */
+        nibble_bitmap[ 0xf ] = 0xff; /* **** */
+    } else {
+        nibble_bitmap[ 0x0 ] = 0x00; /* ---- */
+        nibble_bitmap[ 0x1 ] = 0x03; /* *--- */
+        nibble_bitmap[ 0x2 ] = 0x0c; /* -*-- */
+        nibble_bitmap[ 0x3 ] = 0x0f; /* **-- */
+        nibble_bitmap[ 0x4 ] = 0x30; /* --*- */
+        nibble_bitmap[ 0x5 ] = 0x33; /* *-*- */
+        nibble_bitmap[ 0x6 ] = 0x3c; /* -**- */
+        nibble_bitmap[ 0x7 ] = 0x3f; /* ***- */
+        nibble_bitmap[ 0x8 ] = 0xc0; /* ---* */
+        nibble_bitmap[ 0x9 ] = 0xc3; /* *--* */
+        nibble_bitmap[ 0xa ] = 0xcc; /* -*-* */
+        nibble_bitmap[ 0xb ] = 0xcf; /* **-* */
+        nibble_bitmap[ 0xc ] = 0xf0; /* --** */
+        nibble_bitmap[ 0xd ] = 0xf3; /* *-** */
+        nibble_bitmap[ 0xe ] = 0xfc; /* -*** */
+        nibble_bitmap[ 0xf ] = 0xff; /* **** */
     }
 }
 
-void ui_x11__update_LCD( void ) {
+void x11_update_LCD( void ) {
     int i, j;
     long addr;
     static int old_offset = -1;
@@ -5800,7 +5798,7 @@ void ui_x11__update_LCD( void ) {
         refresh_display();
 }
 
-void ui_x11__disp_draw_nibble( word_20 addr, word_4 val ) {
+void x11_disp_draw_nibble( word_20 addr, word_4 val ) {
     long offset;
     int shm_addr;
     int x, y;
@@ -5847,7 +5845,7 @@ void ui_x11__disp_draw_nibble( word_20 addr, word_4 val ) {
     }
 }
 
-void ui_x11__menu_draw_nibble( word_20 addr, word_4 val ) {
+void x11_menu_draw_nibble( word_20 addr, word_4 val ) {
     long offset;
     int shm_addr;
     int x, y;
@@ -5871,7 +5869,7 @@ void ui_x11__menu_draw_nibble( word_20 addr, word_4 val ) {
     }
 }
 
-void ui_x11__draw_annunc( void ) {
+void x11_draw_annunc( void ) {
     int val;
 
     val = display.annunc;
@@ -5914,5 +5912,5 @@ void init_x11_ui( int argc, char** argv ) {
 
     init_annunc();
 
-    ui_x11__init_LCD();
+    x11_init_LCD();
 }
