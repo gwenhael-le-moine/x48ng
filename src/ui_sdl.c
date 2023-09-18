@@ -51,17 +51,17 @@
 /* typedef */
 /***********/
 
-typedef struct color_t {
+typedef struct ui_sdl__color_t {
     const char* name;
     int r, g, b;
-} color_t;
+} ui_sdl__color_t;
 
-typedef struct keypad_t {
+typedef struct ui_sdl__keypad_t {
     unsigned int width;
     unsigned int height;
-} keypad_t;
+} ui_sdl__keypad_t;
 
-typedef struct button_t {
+typedef struct ui_sdl__button_t {
     const char* name;
     short pressed;
     short extra;
@@ -85,11 +85,11 @@ typedef struct button_t {
 
     SDL_Surface* surfaceup;
     SDL_Surface* surfacedown;
-} button_t;
+} ui_sdl__button_t;
 
 // This mimicks the structure formerly lcd.c, except with SDL surfaces instead
 // of Pixmaps.
-typedef struct ann_struct {
+typedef struct ui_sdl__ann_struct_t {
     int bit;
     int x;
     int y;
@@ -99,62 +99,57 @@ typedef struct ann_struct {
 
     SDL_Surface* surfaceon;
     SDL_Surface* surfaceoff;
-} ann_struct_t;
-
-typedef struct SDLWINDOW {
-    SDL_Surface *oldsurf, *surf;
-    int x, y;
-} SDLWINDOW_t;
+} ui_sdl__ann_struct_t;
 
 /*************/
 /* variables */
 /*************/
-keypad_t keypad;
-color_t* colors;
+ui_sdl__keypad_t keypad;
+ui_sdl__color_t* sdl_colors;
 
-color_t colors_sx[] = { { "white", 255, 255, 255 },
-                        { "left", 255, 166, 0 },
-                        { "right", 0, 210, 255 },
-                        { "but_top", 109, 93, 93 },
-                        { "button", 90, 77, 77 },
-                        { "but_bot", 76, 65, 65 },
-                        { "lcd_col", 202, 221, 92 },
-                        { "pix_col", 0, 0, 128 },
-                        { "pad_top", 109, 78, 78 },
-                        { "pad", 90, 64, 64 },
-                        { "pad_bot", 76, 54, 54 },
-                        { "disp_pad_top", 155, 118, 84 },
-                        { "disp_pad", 124, 94, 67 },
-                        { "disp_pad_bot", 100, 75, 53 },
-                        { "logo", 204, 169, 107 },
-                        { "logo_back", 64, 64, 64 },
-                        { "label", 202, 184, 144 },
-                        { "frame", 0, 0, 0 },
-                        { "underlay", 60, 42, 42 },
-                        { "black", 0, 0, 0 },
-                        { 0 } };
+ui_sdl__color_t sdl_colors_sx[] = { { "white", 255, 255, 255 },
+                                    { "left", 255, 166, 0 },
+                                    { "right", 0, 210, 255 },
+                                    { "but_top", 109, 93, 93 },
+                                    { "button", 90, 77, 77 },
+                                    { "but_bot", 76, 65, 65 },
+                                    { "lcd_col", 202, 221, 92 },
+                                    { "pix_col", 0, 0, 128 },
+                                    { "pad_top", 109, 78, 78 },
+                                    { "pad", 90, 64, 64 },
+                                    { "pad_bot", 76, 54, 54 },
+                                    { "disp_pad_top", 155, 118, 84 },
+                                    { "disp_pad", 124, 94, 67 },
+                                    { "disp_pad_bot", 100, 75, 53 },
+                                    { "logo", 204, 169, 107 },
+                                    { "logo_back", 64, 64, 64 },
+                                    { "label", 202, 184, 144 },
+                                    { "frame", 0, 0, 0 },
+                                    { "underlay", 60, 42, 42 },
+                                    { "black", 0, 0, 0 },
+                                    { 0 } };
 
-color_t colors_gx[] = { { "white", 255, 255, 255 },
-                        { "left", 255, 186, 255 },
-                        { "right", 0, 255, 204 },
-                        { "but_top", 104, 104, 104 },
-                        { "button", 88, 88, 88 },
-                        { "but_bot", 74, 74, 74 },
-                        { "lcd_col", 202, 221, 92 },
-                        { "pix_col", 0, 0, 128 },
-                        { "pad_top", 88, 88, 88 },
-                        { "pad", 74, 74, 74 },
-                        { "pad_bot", 64, 64, 64 },
-                        { "disp_pad_top", 128, 128, 138 },
-                        { "disp_pad", 104, 104, 110 },
-                        { "disp_pad_bot", 84, 84, 90 },
-                        { "logo", 176, 176, 184 },
-                        { "logo_back", 104, 104, 110 },
-                        { "label", 240, 240, 240 },
-                        { "frame", 0, 0, 0 },
-                        { "underlay", 104, 104, 110 },
-                        { "black", 0, 0, 0 },
-                        { 0 } };
+ui_sdl__color_t sdl_colors_gx[] = { { "white", 255, 255, 255 },
+                                    { "left", 255, 186, 255 },
+                                    { "right", 0, 255, 204 },
+                                    { "but_top", 104, 104, 104 },
+                                    { "button", 88, 88, 88 },
+                                    { "but_bot", 74, 74, 74 },
+                                    { "lcd_col", 202, 221, 92 },
+                                    { "pix_col", 0, 0, 128 },
+                                    { "pad_top", 88, 88, 88 },
+                                    { "pad", 74, 74, 74 },
+                                    { "pad_bot", 64, 64, 64 },
+                                    { "disp_pad_top", 128, 128, 138 },
+                                    { "disp_pad", 104, 104, 110 },
+                                    { "disp_pad_bot", 84, 84, 90 },
+                                    { "logo", 176, 176, 184 },
+                                    { "logo_back", 104, 104, 110 },
+                                    { "label", 240, 240, 240 },
+                                    { "frame", 0, 0, 0 },
+                                    { "underlay", 104, 104, 110 },
+                                    { "black", 0, 0, 0 },
+                                    { 0 } };
 
 // This will take the value of the defines, but can be run-time modified
 unsigned KEYBOARD_HEIGHT, KEYBOARD_WIDTH, TOP_SKIP, SIDE_SKIP, BOTTOM_SKIP,
@@ -164,9 +159,9 @@ unsigned KEYBOARD_HEIGHT, KEYBOARD_WIDTH, TOP_SKIP, SIDE_SKIP, BOTTOM_SKIP,
 
 unsigned int ARGBColors[ BLACK + 1 ];
 
-button_t* buttons = 0;
+ui_sdl__button_t* buttons = 0;
 
-button_t buttons_sx[] = {
+ui_sdl__button_t buttons_sx[] = {
     { "A",
       0,
       0,
@@ -490,7 +485,7 @@ button_t buttons_sx[] = {
 
     { 0 } };
 
-button_t buttons_gx[] = {
+ui_sdl__button_t buttons_gx[] = {
     { "A",
       0,
       0,
@@ -814,9 +809,7 @@ button_t buttons_gx[] = {
 
     { 0 } };
 
-/* x48_lcd.c */
-
-ann_struct_t ann_tbl[] = {
+ui_sdl__ann_struct_t ann_tbl[] = {
     { ANN_LEFT, 16, 4, ann_left_width, ann_left_height, ann_left_bitmap, 0, 0 },
     { ANN_RIGHT, 61, 4, ann_right_width, ann_right_height, ann_right_bitmap, 0,
       0 },
@@ -828,13 +821,149 @@ ann_struct_t ann_tbl[] = {
       0 },
     { ANN_IO, 241, 4, ann_io_width, ann_io_height, ann_io_bitmap, 0, 0 },
     { 0 } };
-/* \ x48_lcd.c */
+
+letter_t sdl_small_font[] = {
+    { 0, 0, 0 },
+    { nl_gx_width, nl_gx_height, nl_gx_bitmap },          /* \001 == \n gx */
+    { comma_gx_width, comma_gx_height, comma_gx_bitmap }, /* \002 == comma gx */
+    { arrow_gx_width, arrow_gx_height, arrow_gx_bitmap }, /* \003 == \-> gx */
+    { equal_gx_width, equal_gx_height, equal_gx_bitmap }, /* \004 == equal gx */
+    { pi_gx_width, pi_gx_height, pi_gx_bitmap },          /* \005 == pi gx */
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 }, /* # 16 */
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { blank_width, blank_height, blank_bitmap }, /* # 32 */
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { hash_width, hash_height, hash_bitmap },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { lbrace_width, lbrace_height, lbrace_bitmap },
+    { rbrace_width, rbrace_height, rbrace_bitmap },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { comma_width, comma_height, comma_bitmap },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { slash_width, slash_height, slash_bitmap },
+    { 0, 0, 0 }, /* # 48 */
+    { 0, 0, 0 },
+    { two_width, two_height, two_bitmap },
+    { three_width, three_height, three_bitmap },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { small_colon_width, small_colon_height, small_colon_bitmap },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { equal_width, equal_height, equal_bitmap },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 }, /* # 64 */
+    { A_width, A_height, A_bitmap },
+    { B_width, B_height, B_bitmap },
+    { C_width, C_height, C_bitmap },
+    { D_width, D_height, D_bitmap },
+    { E_width, E_height, E_bitmap },
+    { F_width, F_height, F_bitmap },
+    { G_width, G_height, G_bitmap },
+    { H_width, H_height, H_bitmap },
+    { I_width, I_height, I_bitmap },
+    { J_width, J_height, J_bitmap },
+    { K_width, K_height, K_bitmap },
+    { L_width, L_height, L_bitmap },
+    { M_width, M_height, M_bitmap },
+    { N_width, N_height, N_bitmap },
+    { O_width, O_height, O_bitmap },
+    { P_width, P_height, P_bitmap }, /* # 80 */
+    { Q_width, Q_height, Q_bitmap },
+    { R_width, R_height, R_bitmap },
+    { S_width, S_height, S_bitmap },
+    { T_width, T_height, T_bitmap },
+    { U_width, U_height, U_bitmap },
+    { V_width, V_height, V_bitmap },
+    { W_width, W_height, W_bitmap },
+    { X_width, X_height, X_bitmap },
+    { Y_width, Y_height, Y_bitmap },
+    { Z_width, Z_height, Z_bitmap },
+    { lbracket_width, lbracket_height, lbracket_bitmap },
+    { 0, 0, 0 },
+    { rbracket_width, rbracket_height, rbracket_bitmap },
+    { 0, 0, 0 },
+    { under_width, under_height, under_bitmap },
+    { 0, 0, 0 },                                 /* # 96 */
+    { arrow_width, arrow_height, arrow_bitmap }, /* a == left arrow   */
+    { diff_width, diff_height, diff_bitmap },    /* b == differential */
+    { integral_width, integral_height, integral_bitmap },    /* c == integral */
+    { sigma_width, sigma_height, sigma_bitmap },             /* d == sigma */
+    { sqr_width, sqr_height, sqr_bitmap },                   /* e == sqr */
+    { root_width, root_height, root_bitmap },                /* f == root */
+    { pow10_width, pow10_height, pow10_bitmap },             /* g == pow10 */
+    { exp_width, exp_height, exp_bitmap },                   /* h == exp */
+    { prog_width, prog_height, prog_bitmap },                /* i == << >> */
+    { string_width, string_height, string_bitmap },          /* j == " " */
+    { nl_width, nl_height, nl_bitmap },                      /* k == New Line */
+    { pi_width, pi_height, pi_bitmap },                      /* l == pi */
+    { angle_width, angle_height, angle_bitmap },             /* m == angle */
+    { sqr_gx_width, sqr_gx_height, sqr_gx_bitmap },          /* n == sqr gx */
+    { root_gx_width, root_gx_height, root_gx_bitmap },       /* o == root gx */
+    { pow10_gx_width, pow10_gx_height, pow10_gx_bitmap },    /* p == pow10 gx */
+    { exp_gx_width, exp_gx_height, exp_gx_bitmap },          /* q == exp gx */
+    { parens_gx_width, parens_gx_height, parens_gx_bitmap }, /* r == ( ) gx */
+    { hash_gx_width, hash_gx_height, hash_gx_bitmap },       /* s == # gx */
+    { bracket_gx_width, bracket_gx_height, bracket_gx_bitmap }, /* t == [] gx */
+    { under_gx_width, under_gx_height, under_gx_bitmap },       /* u == _ gx */
+    { prog_gx_width, prog_gx_height, prog_gx_bitmap },    /* v == << >> gx */
+    { quote_gx_width, quote_gx_height, quote_gx_bitmap }, /* w == " " gx */
+    { curly_gx_width, curly_gx_height, curly_gx_bitmap }, /* x == {} gx */
+    { colon_gx_width, colon_gx_height, colon_gx_bitmap }, /* y == :: gx */
+    { angle_gx_width, angle_gx_height, angle_gx_bitmap }, /* z == angle gx */
+    { lcurly_width, lcurly_height, lcurly_bitmap },
+    { 0, 0, 0 },
+    { rcurly_width, rcurly_height, rcurly_bitmap },
+    { 0, 0, 0 },
+    { 0, 0, 0 } };
 
 // State to displayed zoomed last pressed key
 SDL_Surface* showkeylastsurf = 0;
 int showkeylastx, showkeylasty, showkeylastkey;
 
 SDL_Surface* sdlwindow;
+
+int sdl_last_annunc_state = -1;
+
+// display_t sdl_display;
+
+unsigned char sdl_disp_buf[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
+unsigned char sdl_lcd_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
 
 /****************************/
 /* functions implementation */
@@ -885,14 +1014,14 @@ SDL_Surface* SDLCreateSurfFromData( unsigned int w, unsigned int h,
     return surf;
 }
 
-int SmallTextWidth( const char* string, unsigned int length ) {
+int sdl_SmallTextWidth( const char* string, unsigned int length ) {
     unsigned int i;
     int w;
 
     w = 0;
     for ( i = 0; i < length; i++ ) {
-        if ( small_font[ ( int )string[ i ] ].h != 0 ) {
-            w += small_font[ ( int )string[ i ] ].w + 1;
+        if ( sdl_small_font[ ( int )string[ i ] ].h != 0 ) {
+            w += sdl_small_font[ ( int )string[ i ] ].w + 1;
         } else {
             if ( verbose )
                 fprintf( stderr, "Unknown small letter 0x00%x\n",
@@ -909,12 +1038,12 @@ void SDLDrawSmallString( int x, int y, const char* string, unsigned int length,
     unsigned int i;
 
     for ( i = 0; i < length; i++ ) {
-        if ( small_font[ ( int )string[ i ] ].h != 0 ) {
-            int w = small_font[ ( int )string[ i ] ].w;
-            int h = small_font[ ( int )string[ i ] ].h;
+        if ( sdl_small_font[ ( int )string[ i ] ].h != 0 ) {
+            int w = sdl_small_font[ ( int )string[ i ] ].w;
+            int h = sdl_small_font[ ( int )string[ i ] ].h;
 
             SDL_Surface* surf = SDLCreateSurfFromData(
-                w, h, small_font[ ( int )string[ i ] ].bits, coloron,
+                w, h, sdl_small_font[ ( int )string[ i ] ].bits, coloron,
                 coloroff );
 
             SDL_Rect srect;
@@ -924,13 +1053,13 @@ void SDLDrawSmallString( int x, int y, const char* string, unsigned int length,
             srect.w = w;
             srect.h = h;
             drect.x = x;
-            drect.y = ( int )( y - small_font[ ( int )string[ i ] ].h );
+            drect.y = ( int )( y - sdl_small_font[ ( int )string[ i ] ].h );
             drect.w = w;
             drect.h = h;
             SDL_BlitSurface( surf, &srect, sdlwindow, &drect );
             SDL_FreeSurface( surf );
         }
-        x += SmallTextWidth( &string[ i ], 1 );
+        x += sdl_SmallTextWidth( &string[ i ], 1 );
     }
 }
 
@@ -987,7 +1116,7 @@ void SDLInit( void ) {
     }
 }
 
-void button_pressed( int b ) {
+void sdl_button_pressed( int b ) {
     int code;
 
     // Check not already pressed (may be important: avoids a useless do_kbd_int)
@@ -1015,7 +1144,7 @@ void button_pressed( int b ) {
     }
 }
 
-void button_released( int b ) {
+void sdl_button_released( int b ) {
     int code;
 
     // Check not already released (not critical)
@@ -1039,8 +1168,8 @@ void SDLCreateColors( void ) {
     unsigned i;
 
     for ( i = WHITE; i < BLACK; i++ )
-        ARGBColors[ i ] = 0xff000000 | ( colors[ i ].r << 16 ) |
-                          ( colors[ i ].g << 8 ) | colors[ i ].b;
+        ARGBColors[ i ] = 0xff000000 | ( sdl_colors[ i ].r << 16 ) |
+                          ( sdl_colors[ i ].g << 8 ) | sdl_colors[ i ].b;
 
     // Adjust the LCD color according to the contrast
     int contrast, r, g, b;
@@ -1051,9 +1180,10 @@ void SDLCreateColors( void ) {
     if ( contrast > 0x13 )
         contrast = 0x13;
 
-    r = ( 0x13 - contrast ) * ( colors[ LCD ].r / 0x10 );
-    g = ( 0x13 - contrast ) * ( colors[ LCD ].g / 0x10 );
-    b = 128 - ( ( 0x13 - contrast ) * ( ( 128 - colors[ LCD ].b ) / 0x10 ) );
+    r = ( 0x13 - contrast ) * ( sdl_colors[ LCD ].r / 0x10 );
+    g = ( 0x13 - contrast ) * ( sdl_colors[ LCD ].g / 0x10 );
+    b = 128 -
+        ( ( 0x13 - contrast ) * ( ( 128 - sdl_colors[ LCD ].b ) / 0x10 ) );
     ARGBColors[ PIXEL ] = 0xff000000 | ( r << 16 ) | ( g << 8 ) | b;
 }
 
@@ -1080,22 +1210,6 @@ void SDLCreateAnnunc( void ) {
             ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits,
             ARGBColors[ LCD ], ARGBColors[ LCD ] );
     }
-}
-
-void ui__adjust_contrast() {
-    SDLCreateColors();
-    SDLCreateAnnunc();
-
-    // redraw LCD
-    memset( disp_buf, 0, sizeof( disp_buf ) );
-    memset( lcd_buffer, 0, sizeof( lcd_buffer ) );
-
-    ui__update_LCD();
-
-    // redraw annunc
-    last_annunc_state = -1;
-
-    ui__draw_annunc();
 }
 
 // Find which key is pressed, if any.
@@ -1891,8 +2005,8 @@ void SDLDrawKeysLabelsLeft( void ) {
             colorfg = ARGBColors[ LEFT ];
 
             x = ( pw + 1 -
-                  SmallTextWidth( buttons[ i ].left,
-                                  strlen( buttons[ i ].left ) ) ) /
+                  sdl_SmallTextWidth( buttons[ i ].left,
+                                      strlen( buttons[ i ].left ) ) ) /
                 2;
             if ( opt_gx )
                 y = 14;
@@ -1920,16 +2034,16 @@ void SDLDrawKeysLabelsLeft( void ) {
                 // centered label
                 x = offset_x + buttons[ i ].x +
                     ( 1 + buttons[ i ].w -
-                      SmallTextWidth( buttons[ i ].left,
-                                      strlen( buttons[ i ].left ) ) ) /
+                      sdl_SmallTextWidth( buttons[ i ].left,
+                                          strlen( buttons[ i ].left ) ) ) /
                         2;
             } else {
                 // label to the left
-                wl = SmallTextWidth( buttons[ i ].left,
-                                     strlen( buttons[ i ].left ) );
-                wr = SmallTextWidth( buttons[ i ].right,
-                                     strlen( buttons[ i ].right ) );
-                ws = SmallTextWidth( " ", 1 );
+                wl = sdl_SmallTextWidth( buttons[ i ].left,
+                                         strlen( buttons[ i ].left ) );
+                wr = sdl_SmallTextWidth( buttons[ i ].right,
+                                         strlen( buttons[ i ].right ) );
+                ws = sdl_SmallTextWidth( " ", 1 );
 
                 x = offset_x + buttons[ i ].x +
                     ( 1 + buttons[ i ].w - ( wl + wr + ws ) ) / 2;
@@ -1970,8 +2084,8 @@ void SDLDrawKeysLabelsRight( void ) {
             colorfg = ARGBColors[ RIGHT ];
 
             x = ( pw + 1 -
-                  SmallTextWidth( buttons[ i ].right,
-                                  strlen( buttons[ i ].right ) ) ) /
+                  sdl_SmallTextWidth( buttons[ i ].right,
+                                      strlen( buttons[ i ].right ) ) ) /
                 2;
             if ( opt_gx )
                 y = 14;
@@ -2000,16 +2114,16 @@ void SDLDrawKeysLabelsRight( void ) {
                 // centered label
                 x = offset_x + buttons[ i ].x +
                     ( 1 + buttons[ i ].w -
-                      SmallTextWidth( buttons[ i ].right,
-                                      strlen( buttons[ i ].right ) ) ) /
+                      sdl_SmallTextWidth( buttons[ i ].right,
+                                          strlen( buttons[ i ].right ) ) ) /
                         2;
             } else {
                 // label to the right
-                wl = SmallTextWidth( buttons[ i ].left,
-                                     strlen( buttons[ i ].left ) );
-                wr = SmallTextWidth( buttons[ i ].right,
-                                     strlen( buttons[ i ].right ) );
-                ws = SmallTextWidth( " ", 1 );
+                wl = sdl_SmallTextWidth( buttons[ i ].left,
+                                         strlen( buttons[ i ].left ) );
+                wr = sdl_SmallTextWidth( buttons[ i ].right,
+                                         strlen( buttons[ i ].right ) );
+                ws = sdl_SmallTextWidth( " ", 1 );
 
                 x = offset_x + buttons[ i ].x +
                     ( 1 + buttons[ i ].w - ( wl + wr + ws ) ) / 2 + wl + ws;
@@ -2046,7 +2160,7 @@ void SDLDrawKeysLetters( void ) {
                 y = offset_y + buttons[ i ].y + buttons[ i ].h + 1;
             } else {
                 x = offset_x + buttons[ i ].x + buttons[ i ].w -
-                    SmallTextWidth( buttons[ i ].letter, 1 ) / 2 + 5;
+                    sdl_SmallTextWidth( buttons[ i ].letter, 1 ) / 2 + 5;
                 y = offset_y + buttons[ i ].y + buttons[ i ].h - 2;
             }
 
@@ -2077,7 +2191,8 @@ void SDLDrawKeysLabelsBottom( void ) {
 
         x = offset_x + buttons[ i ].x +
             ( 1 + buttons[ i ].w -
-              SmallTextWidth( buttons[ i ].sub, strlen( buttons[ i ].sub ) ) ) /
+              sdl_SmallTextWidth( buttons[ i ].sub,
+                                  strlen( buttons[ i ].sub ) ) ) /
                 2;
         y = offset_y + buttons[ i ].y + buttons[ i ].h + small_ascent + 2;
         SDLDrawSmallString( x, y, buttons[ i ].sub, strlen( buttons[ i ].sub ),
@@ -2341,8 +2456,8 @@ void SDLDrawNibble( int nx, int ny, int val ) {
 
         for ( x = 0; x < 4; x++ ) {
             // Check if bit is on
-            // char c = lcd_buffer[y/2][x>>2];		// The 4 lower bits
-            // in a byte are used (1 nibble per byte)
+            // char c = sdl_lcd_buffer[y/2][x>>2];		// The 4 lower
+            // bits in a byte are used (1 nibble per byte)
             if ( nx + x >= 131 ) // Clip at 131 pixels (some nibble writes may
                                  // go beyond the range, but are not visible)
                 break;
@@ -2455,7 +2570,7 @@ inline void SDLUIFeedback( void ) {}
 static int button_release_all( void ) {
     for ( int b = BUTTON_A; b <= LAST_BUTTON; b++ )
         if ( buttons[ b ].pressed ) {
-            button_released( b );
+            sdl_button_released( b );
         }
 
     return 0;
@@ -2485,7 +2600,99 @@ void SDLDrawSerialDevices() {
         stringColor( sdlwindow, 10, 240, text, 0xffffffff );
 }
 
-int ui__get_event( void ) {
+static inline void draw_nibble( int c, int r, int val ) {
+    int x, y;
+
+    x = ( c * 4 ); // x: start in pixels
+
+    if ( r <= display.lines )
+        x -= 2 * display.offset;
+    y = r; // y: start in pixels
+
+    val &= 0x0f;
+    if ( val != sdl_lcd_buffer[ r ][ c ] ) {
+        sdl_lcd_buffer[ r ][ c ] = val;
+    }
+    if ( val != sdl_lcd_buffer[ r ][ c ] )
+        sdl_lcd_buffer[ r ][ c ] = val;
+
+    SDLDrawNibble( x, y, val );
+}
+
+/* void ui_sdl__draw_nibble( int c, int r, int val ) { draw_nibble( c, r, val );
+ * }
+ */
+
+static inline void draw_row( long addr, int row ) {
+    int i, v;
+    int line_length;
+
+    line_length = NIBBLES_PER_ROW;
+    if ( ( display.offset > 3 ) && ( row <= display.lines ) )
+        line_length += 2;
+    for ( i = 0; i < line_length; i++ ) {
+        v = read_nibble( addr + i );
+        if ( v != sdl_disp_buf[ row ][ i ] ) {
+            sdl_disp_buf[ row ][ i ] = v;
+            draw_nibble( i, row, v );
+        }
+    }
+}
+
+void SDLCreateHP( void ) {
+    unsigned int width, height;
+
+    if ( show_ui_chrome ) {
+        width = KEYBOARD_WIDTH + 2 * SIDE_SKIP;
+        height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP +
+                 KEYBOARD_HEIGHT + BOTTOM_SKIP;
+    } else {
+        width = KEYBOARD_WIDTH;
+        height = DISPLAY_HEIGHT;
+    }
+
+    keypad.width = width;
+    keypad.height = height;
+
+    sdl_colors = opt_gx ? sdl_colors_gx : sdl_colors_sx;
+
+    // we allocate memory for the buttons because we need to modify
+    // their coordinates, and we don't want to change the original buttons_gx or
+    // buttons_sx
+    if ( buttons ) {
+        free( buttons );
+        buttons = 0;
+    }
+    buttons = ( ui_sdl__button_t* )malloc( sizeof( buttons_gx ) );
+
+    if ( opt_gx )
+        memcpy( buttons, buttons_gx, sizeof( buttons_gx ) );
+    else
+        memcpy( buttons, buttons_sx, sizeof( buttons_sx ) );
+
+    SDLCreateColors();
+
+    if ( show_ui_chrome ) {
+        int cut = buttons[ BUTTON_MTH ].y + KEYBOARD_OFFSET_Y - 19;
+
+        SDLDrawBackground( width, cut, width, height );
+        SDLDrawMore( cut, KEYBOARD_OFFSET_Y, keypad.width, keypad.height );
+        SDLDrawLogo();
+        SDLDrawBezel();
+        SDLDrawKeypad();
+
+        SDLDrawSerialDevices();
+    }
+
+    SDLDrawBackgroundLCD();
+
+    SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 );
+}
+
+/**********/
+/* public */
+/**********/
+int ui_sdl__get_event( void ) {
     SDL_Event event;
     int hpkey;
     int rv;
@@ -2557,7 +2764,7 @@ int ui__get_event( void ) {
                  */
                 /*                                      // time */
                 /*                 { */
-                /*                     button_pressed( hpkey ); */
+                /*                     sdl_button_pressed( hpkey ); */
                 /*                     rv = 1; */
                 /*                     // Start timer */
                 /*                     lastticks = SDL_GetTicks(); */
@@ -2587,7 +2794,7 @@ int ui__get_event( void ) {
                     if ( !buttons[ hpkey ].pressed ) // Key can't be pressed
                                                      // when down
                     {
-                        button_pressed( hpkey );
+                        sdl_button_pressed( hpkey );
                         rv = 1;
                         lasthpkey = hpkey;
                         // Start timer
@@ -2621,14 +2828,14 @@ int ui__get_event( void ) {
 
                     // Avoid pressing if it is already pressed
                     if ( !buttons[ hpkey ].pressed ) {
-                        button_pressed( hpkey );
+                        sdl_button_pressed( hpkey );
                         rv = 1;
                         SDLUIFeedback();
                     }
                 } else {
                     keyispressed = -1;
 
-                    button_released( hpkey );
+                    sdl_button_released( hpkey );
                     rv = 1;
                     SDLUIFeedback();
                 }
@@ -2668,47 +2875,7 @@ int ui__get_event( void ) {
     return 1;
 }
 
-/* x48_lcd.c */
-
-static inline void draw_nibble( int c, int r, int val ) {
-    int x, y;
-
-    x = ( c * 4 ); // x: start in pixels
-
-    if ( r <= display.lines )
-        x -= 2 * display.offset;
-    y = r; // y: start in pixels
-
-    val &= 0x0f;
-    if ( val != lcd_buffer[ r ][ c ] ) {
-        lcd_buffer[ r ][ c ] = val;
-    }
-    if ( val != lcd_buffer[ r ][ c ] )
-        lcd_buffer[ r ][ c ] = val;
-
-    SDLDrawNibble( x, y, val );
-}
-
-/* void ui__draw_nibble( int c, int r, int val ) { draw_nibble( c, r, val ); }
- */
-
-static inline void draw_row( long addr, int row ) {
-    int i, v;
-    int line_length;
-
-    line_length = NIBBLES_PER_ROW;
-    if ( ( display.offset > 3 ) && ( row <= display.lines ) )
-        line_length += 2;
-    for ( i = 0; i < line_length; i++ ) {
-        v = read_nibble( addr + i );
-        if ( v != disp_buf[ row ][ i ] ) {
-            disp_buf[ row ][ i ] = v;
-            draw_nibble( i, row, v );
-        }
-    }
-}
-
-void ui__update_LCD( void ) {
+void ui_sdl__update_LCD( void ) {
     int i, j;
     long addr;
     static int old_offset = -1;
@@ -2717,16 +2884,16 @@ void ui__update_LCD( void ) {
     if ( display.on ) {
         addr = display.disp_start;
         if ( display.offset != old_offset ) {
-            memset( disp_buf, 0xf0,
+            memset( sdl_disp_buf, 0xf0,
                     ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
-            memset( lcd_buffer, 0xf0,
+            memset( sdl_lcd_buffer, 0xf0,
                     ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
             old_offset = display.offset;
         }
         if ( display.lines != old_lines ) {
-            memset( &disp_buf[ 56 ][ 0 ], 0xf0,
+            memset( &sdl_disp_buf[ 56 ][ 0 ], 0xf0,
                     ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
-            memset( &lcd_buffer[ 56 ][ 0 ], 0xf0,
+            memset( &sdl_lcd_buffer[ 56 ][ 0 ], 0xf0,
                     ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
             old_lines = display.lines;
         }
@@ -2742,7 +2909,7 @@ void ui__update_LCD( void ) {
             }
         }
     } else {
-        memset( disp_buf, 0xf0, sizeof( disp_buf ) );
+        memset( sdl_disp_buf, 0xf0, sizeof( sdl_disp_buf ) );
         for ( i = 0; i < 64; i++ ) {
             for ( j = 0; j < NIBBLES_PER_ROW; j++ ) {
                 draw_nibble( j, i, 0x00 );
@@ -2751,7 +2918,7 @@ void ui__update_LCD( void ) {
     }
 }
 
-void ui__disp_draw_nibble( word_20 addr, word_4 val ) {
+void ui_sdl__disp_draw_nibble( word_20 addr, word_4 val ) {
     long offset;
     int x, y;
 
@@ -2763,42 +2930,42 @@ void ui__disp_draw_nibble( word_20 addr, word_4 val ) {
         y = offset / display.nibs_per_line;
         if ( y < 0 || y > 63 )
             return;
-        if ( val != disp_buf[ y ][ x ] ) {
-            disp_buf[ y ][ x ] = val;
+        if ( val != sdl_disp_buf[ y ][ x ] ) {
+            sdl_disp_buf[ y ][ x ] = val;
             draw_nibble( x, y, val );
         }
     } else {
         for ( y = 0; y < display.lines; y++ ) {
-            if ( val != disp_buf[ y ][ x ] ) {
-                disp_buf[ y ][ x ] = val;
+            if ( val != sdl_disp_buf[ y ][ x ] ) {
+                sdl_disp_buf[ y ][ x ] = val;
                 draw_nibble( x, y, val );
             }
         }
     }
 }
 
-void ui__menu_draw_nibble( word_20 addr, word_4 val ) {
+void ui_sdl__menu_draw_nibble( word_20 addr, word_4 val ) {
     long offset;
     int x, y;
 
     offset = ( addr - display.menu_start );
     x = offset % NIBBLES_PER_ROW;
     y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
-    if ( val != disp_buf[ y ][ x ] ) {
-        disp_buf[ y ][ x ] = val;
+    if ( val != sdl_disp_buf[ y ][ x ] ) {
+        sdl_disp_buf[ y ][ x ] = val;
         draw_nibble( x, y, val );
     }
 }
 
-void ui__draw_annunc( void ) {
+void ui_sdl__draw_annunc( void ) {
     int val;
 
     val = display.annunc;
 
-    if ( val == last_annunc_state )
+    if ( val == sdl_last_annunc_state )
         return;
 
-    last_annunc_state = val;
+    sdl_last_annunc_state = val;
 
     char sdl_annuncstate[ 6 ];
     for ( int i = 0; ann_tbl[ i ].bit; i++ )
@@ -2808,7 +2975,23 @@ void ui__draw_annunc( void ) {
     SDLDrawAnnunc( sdl_annuncstate );
 }
 
-void ui__init_LCD( void ) {
+void ui_sdl__adjust_contrast() {
+    SDLCreateColors();
+    SDLCreateAnnunc();
+
+    // redraw LCD
+    memset( sdl_disp_buf, 0, sizeof( sdl_disp_buf ) );
+    memset( sdl_lcd_buffer, 0, sizeof( sdl_lcd_buffer ) );
+
+    ui_sdl__update_LCD();
+
+    // redraw annunc
+    sdl_last_annunc_state = -1;
+
+    ui_sdl__draw_annunc();
+}
+
+void ui_sdl__init_LCD( void ) {
     display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
 
     display.disp_start = ( saturn.disp_addr & 0xffffe );
@@ -2836,63 +3019,12 @@ void ui__init_LCD( void ) {
 
     display.annunc = saturn.annunc;
 
-    memset( disp_buf, 0xf0, sizeof( disp_buf ) );
-    memset( lcd_buffer, 0xf0, sizeof( lcd_buffer ) );
-}
-/* \ x48_lcd.c */
-
-void SDLCreateHP( void ) {
-    unsigned int width, height;
-
-    if ( show_ui_chrome ) {
-        width = KEYBOARD_WIDTH + 2 * SIDE_SKIP;
-        height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP +
-                 KEYBOARD_HEIGHT + BOTTOM_SKIP;
-    } else {
-        width = KEYBOARD_WIDTH;
-        height = DISPLAY_HEIGHT;
-    }
-
-    keypad.width = width;
-    keypad.height = height;
-
-    colors = opt_gx ? colors_gx : colors_sx;
-
-    // we allocate memory for the buttons because we need to modify
-    // their coordinates, and we don't want to change the original buttons_gx or
-    // buttons_sx
-    if ( buttons ) {
-        free( buttons );
-        buttons = 0;
-    }
-    buttons = ( button_t* )malloc( sizeof( buttons_gx ) );
-
-    if ( opt_gx )
-        memcpy( buttons, buttons_gx, sizeof( buttons_gx ) );
-    else
-        memcpy( buttons, buttons_sx, sizeof( buttons_sx ) );
-
-    SDLCreateColors();
-
-    if ( show_ui_chrome ) {
-        int cut = buttons[ BUTTON_MTH ].y + KEYBOARD_OFFSET_Y - 19;
-
-        SDLDrawBackground( width, cut, width, height );
-        SDLDrawMore( cut, KEYBOARD_OFFSET_Y, keypad.width, keypad.height );
-        SDLDrawLogo();
-        SDLDrawBezel();
-        SDLDrawKeypad();
-
-        SDLDrawSerialDevices();
-    }
-
-    SDLDrawBackgroundLCD();
-
-    SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 );
+    memset( sdl_disp_buf, 0xf0, sizeof( sdl_disp_buf ) );
+    memset( sdl_lcd_buffer, 0xf0, sizeof( sdl_lcd_buffer ) );
 }
 
-void init_ui( int argc, char** argv ) {
+void init_sdl_ui( int argc, char** argv ) {
     SDLInit();
     SDLCreateHP();
-    ui__init_LCD();
+    ui_sdl__init_LCD();
 }

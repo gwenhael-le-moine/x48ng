@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <getopt.h>
 
@@ -16,6 +17,7 @@ int useDebugger = 1;
 int throttle = 0;
 int initialize = 0;
 int resetOnStartup = 0;
+int frontend_type = FRONTEND_X11;
 
 char* serialLine = "/dev/ttyS0";
 char* homeDirectory = ".x48ng";
@@ -30,7 +32,7 @@ int parse_args( int argc, char* argv[] ) {
     int option_index;
     int c = '?';
 
-    char* optstring = "c:S:hvVtsirT";
+    char* optstring = "c:S:u:hvVtsirT";
     static struct option long_options[] = {
         { "config-dir", required_argument, NULL, 1000 },
         { "rom-file", required_argument, NULL, 1010 },
@@ -40,6 +42,8 @@ int parse_args( int argc, char* argv[] ) {
         { "port2-file", required_argument, NULL, 1014 },
 
         { "serial-line", required_argument, NULL, 1015 },
+
+        { "front-end", required_argument, NULL, 'u' },
 
         { "help", no_argument, NULL, 'h' },
         { "version", no_argument, NULL, 'v' },
@@ -78,8 +82,12 @@ int parse_args( int argc, char* argv[] ) {
         "\t   --serial-line=<path>\t\tuse <path> as serial device default: "
         "%s)\n"
         "\t-V --verbose\t\t\tbe verbose (default: false)\n"
-        "\t   --no-chrome\t\t\tonly display the LCD (default: false)\n"
-        "\t   --fullscreen\t\t\tmake the UI fullscreen (default: false)\n"
+        "\t   --no-chrome\t\t\t[SDL only] only display the LCD (default: "
+        "false)\n"
+        "\t   --fullscreen\t\t\t[SDL only] make the UI fullscreen (default: "
+        "false)\n"
+        "\t-u --front-end\t\t\tspecify a front-end (available: x11, sdl; "
+        "default: x11)\n"
         "\t-t --use-terminal\t\tactivate pseudo terminal interface (default: "
         "true)\n"
         "\t-s --use-serial\t\t\tactivate serial interface (default: false)\n"
@@ -121,6 +129,12 @@ int parse_args( int argc, char* argv[] ) {
                 break;
             case 1015:
                 serialLine = optarg;
+                break;
+            case 'u':
+                if ( strcmp( optarg, "sdl" ) == 0 )
+                    frontend_type = FRONTEND_SDL;
+                else
+                    frontend_type = FRONTEND_X11;
                 break;
             case 'V':
                 verbose = 1;

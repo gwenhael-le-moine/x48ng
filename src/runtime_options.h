@@ -1,6 +1,9 @@
 #ifndef _OPTIONS_H
 #define _OPTIONS_H 1
 
+#define FRONTEND_SDL 0
+#define FRONTEND_X11 1
+
 extern char* progname;
 
 extern int verbose;
@@ -12,6 +15,7 @@ extern int useDebugger;
 extern int throttle;
 extern int initialize;
 extern int resetOnStartup;
+extern int frontend_type;
 
 extern char* serialLine;
 extern char* homeDirectory;

@@ -32,8 +32,6 @@ See https://github.com/gwenhael-le-moine/x48ng/issues
 
 ## Compilation
 
-The default gui is sdl. You can compile the x11 by passing `GUI=x11` to make.
-
 ### Dependencies (see .github/workflows/c-cpp.yml for debian packages names)
 
 - readline
