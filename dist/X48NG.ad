@@ -1,0 +1,39 @@
+!
+! X11 related stuff
+!
+*iconic:		False
+*visual:		Default
+*mono:			False
+*gray:			False
+*monoIcon:		False
+
+*useXShm:		True
+
+*smallLabelFont:	-*-fixed-bold-r-normal-*-14-*-*-*-*-*-iso8859-1
+*mediumLabelFont:	-*-fixed-bold-r-normal-*-15-*-*-*-*-*-iso8859-1
+*largeLabelFont:	-*-fixed-medium-r-normal-*-20-*-*-*-*-*-iso8859-1
+*connectionFont:	-*-fixed-medium-r-normal-*-12-*-*-*-*-*-iso8859-1
+
+!
+! informative stuff
+!
+*verbose:		False
+
+*printVersion:		False
+*printCopyright:	False
+*printWarranty:		False
+
+!
+! resources controlling the connections
+!
+*useTerminal:		True
+*useSerial:		False
+*serialLine:		/dev/ttyS0
+
+!
+! stuff controlling initialization
+!
+*completeInitialize:	False
+*resetOnStartup:	False
+*romFileName:		rom.dump
+*homeDirectory:		.x48ng

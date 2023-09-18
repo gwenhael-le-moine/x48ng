@@ -21,6 +21,7 @@ See https://github.com/gwenhael-le-moine/x48ng/issues
 
 ### short term
 
+- make different gui switchable at runtime
 - port from sdl1.2 to sdl2
 - add an text UI (ncurses & drawille)
 
@@ -31,11 +32,20 @@ See https://github.com/gwenhael-le-moine/x48ng/issues
 
 ## Compilation
 
+The default gui is sdl. You can compile the x11 by passing `GUI=x11` to make.
+
 ### Dependencies (see .github/workflows/c-cpp.yml for debian packages names)
 
 - readline
+
+for SDL version:
+
 - SDL_gfx1
 - SDL 1.2
+
+for x11 version:
+
+- x11
 
 ## Installation
 
