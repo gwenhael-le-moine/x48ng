@@ -106,7 +106,8 @@
 #define BUTTON_SPC 47
 #define BUTTON_PLUS 48
 
-#define LAST_BUTTON 48
+#define FIRST_BUTTON BUTTON_A
+#define LAST_BUTTON BUTTON_PLUS
 
 #define DISP_ROWS 64
 #define NIBS_PER_BUFFER_ROW ( NIBBLES_PER_ROW + 2 )
@@ -1880,16 +1881,16 @@ void SDLCreateKeys( void ) {
 
     for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
         // Create surfaces for each button
-        if ( !buttons[ i ].surfaceup ) {
+        if ( !buttons[ i ].surfaceup )
             buttons[ i ].surfaceup = SDL_CreateRGBSurface(
                 SDL_SWSURFACE, buttons[ i ].w, buttons[ i ].h, 32, 0x00ff0000,
                 0x0000ff00, 0x000000ff, 0xff000000 );
-        }
-        if ( !buttons[ i ].surfacedown ) {
+
+        if ( !buttons[ i ].surfacedown )
             buttons[ i ].surfacedown = SDL_CreateRGBSurface(
                 SDL_SWSURFACE, buttons[ i ].w, buttons[ i ].h, 32, 0x00ff0000,
                 0x0000ff00, 0x000000ff, 0xff000000 );
-        }
+
         // Use alpha channel
         pixel = 0x00000000;
         // pixel = 0xffff0000;
@@ -2361,11 +2362,9 @@ void SDLDrawKeyMenu( void ) {
 }
 
 void SDLDrawButtons( void ) {
-    int i;
+    SDL_Rect srect, drect;
 
-    for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
-        SDL_Rect /* rect, */ srect, drect;
-
+    for ( int i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
         // Blit the button surface to the screen
         srect.x = 0;
         srect.y = 0;
@@ -2375,13 +2374,12 @@ void SDLDrawButtons( void ) {
         drect.y = KEYBOARD_OFFSET_Y + buttons[ i ].y;
         drect.w = buttons[ i ].w;
         drect.h = buttons[ i ].h;
-        if ( buttons[ i ].pressed ) {
+        if ( buttons[ i ].pressed )
             SDL_BlitSurface( buttons[ i ].surfacedown, &srect, sdlwindow,
                              &drect );
-        } else {
+        else
             SDL_BlitSurface( buttons[ i ].surfaceup, &srect, sdlwindow,
                              &drect );
-        }
     }
 
     // Always update immediately buttons
@@ -2624,7 +2622,7 @@ void SDLUIHideKey( void ) {
 
 // Show the hp key which is being pressed
 void SDLUIShowKey( int hpkey ) {
-    SDL_Rect /* rect,  */ srect, drect;
+    SDL_Rect srect, drect;
     SDL_Surface* ssurf;
     int x;
     int y;
@@ -2642,10 +2640,8 @@ void SDLUIShowKey( int hpkey ) {
         return;
 
     // Which surface to show
-    if ( buttons[ hpkey ].pressed )
-        ssurf = buttons[ hpkey ].surfacedown;
-    else
-        ssurf = buttons[ hpkey ].surfaceup;
+    ssurf = ( buttons[ hpkey ].pressed ) ? buttons[ hpkey ].surfacedown
+                                         : buttons[ hpkey ].surfaceup;
 
     // Background backup
     showkeylastsurf =
@@ -2819,59 +2815,59 @@ int ui__get_event( void ) {
                 hpkey = SDLCoordinateToKey( event.button.x, event.button.y );
 
                 // React to mouse up/down when click over a button
-                if ( hpkey != -1 ) {
-                    if ( event.type == SDL_MOUSEBUTTONDOWN ) {
-                        keyispressed = hpkey;
+                if ( hpkey == -1 )
+                    break;
+                if ( event.type == SDL_MOUSEBUTTONDOWN ) {
+                    keyispressed = hpkey;
 
-                        if ( !buttons[ hpkey ].pressed ) // Key can't be pressed
-                                                         // when down
-                        {
-                            button_pressed( hpkey );
-                            rv = 1;
-                            lasthpkey = hpkey;
-                            // Start timer
-                            lastticks = SDL_GetTicks();
-                            SDLUIFeedback();
-                        }
-                    } else {
-                        keyispressed = -1;
-
-                        if ( !lastislongpress ) {
-                            button_release_all();
-                            rv = 1;
-                            lasthpkey = -1; // No key is pressed anymore
-                            SDLUIFeedback();
-                        }
-
-                        // Stop timer, clear long key press
-                        lastticks = -1;
-                        lastislongpress = 0;
+                    if ( !buttons[ hpkey ].pressed ) // Key can't be pressed
+                                                     // when down
+                    {
+                        button_pressed( hpkey );
+                        rv = 1;
+                        lasthpkey = hpkey;
+                        // Start timer
+                        lastticks = SDL_GetTicks();
+                        SDLUIFeedback();
                     }
+                } else {
+                    keyispressed = -1;
+
+                    if ( !lastislongpress ) {
+                        button_release_all();
+                        rv = 1;
+                        lasthpkey = -1; // No key is pressed anymore
+                        SDLUIFeedback();
+                    }
+
+                    // Stop timer, clear long key press
+                    lastticks = -1;
+                    lastislongpress = 0;
                 }
                 break;
+
             case SDL_KEYDOWN:
             case SDL_KEYUP:
                 hpkey = SDLKeyToKey( event.key.keysym.sym );
 
-                if ( hpkey != -1 ) {
-                    if ( event.type == SDL_KEYDOWN ) {
-                        keyispressed = hpkey;
+                if ( hpkey == -1 )
+                    break;
+                if ( event.type == SDL_KEYDOWN ) {
+                    keyispressed = hpkey;
 
-                        // Avoid pressing if it is already pressed
-                        if ( !buttons[ hpkey ].pressed ) {
-                            button_pressed( hpkey );
-                            rv = 1;
-                            SDLUIFeedback();
-                        }
-                    } else {
-                        keyispressed = -1;
-
-                        button_released( hpkey );
+                    // Avoid pressing if it is already pressed
+                    if ( !buttons[ hpkey ].pressed ) {
+                        button_pressed( hpkey );
                         rv = 1;
                         SDLUIFeedback();
                     }
-                }
+                } else {
+                    keyispressed = -1;
 
+                    button_released( hpkey );
+                    rv = 1;
+                    SDLUIFeedback();
+                }
                 break;
         }
     }
@@ -3124,6 +3120,13 @@ void SDLCreateHP( void ) {
         SDLDrawKeypad();
 
         SDLDrawSerialDevices();
+
+        /* for ( int i = FIRST_BUTTON; i <= LAST_BUTTON; ++i ) { */
+        /*     buttons[ i ].pressed = 1; */
+        /*     SDLUIShowKey( i ); */
+        /*     buttons[ i ].pressed = 0; */
+        /*     SDLUIShowKey( i ); */
+        /* } */
     }
 
     SDLDrawBackgroundLCD();
@@ -3131,14 +3134,8 @@ void SDLCreateHP( void ) {
     SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 );
 }
 
-void init_ui( void ) {
-    // SDL Initialization
+void init_ui( int argc, char** argv ) {
     SDLInit();
-
-    /*
-     *  Create the HP-48 window
-     */
     SDLCreateHP();
-
     ui__init_LCD();
 }

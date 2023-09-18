@@ -2445,6 +2445,8 @@ inline void schedule( void ) {
     if ( got_alarm ) {
         got_alarm = 0;
 
+        ui__update_LCD();
+
         ui__get_event();
     }
 }

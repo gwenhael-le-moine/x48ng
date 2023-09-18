@@ -38,6 +38,6 @@ extern void ui__init_LCD( void );
 /*******************/
 /* used in: main.c */
 /*******************/
-extern void init_ui( void );
+extern void init_ui( int argc, char** argv );
 
 #endif /* !_X48_GUI_H */

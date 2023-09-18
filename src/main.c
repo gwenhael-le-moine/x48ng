@@ -95,7 +95,7 @@ int main( int argc, char** argv ) {
     /********************/
     init_emulator();
     init_serial();
-    init_ui();
+    init_ui( argc, argv );
 
     /************************/
     /* Start emulation loop */
