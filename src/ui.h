@@ -65,4 +65,5 @@ extern void ( *ui__init_LCD )( void );
 /*******************/
 extern void ( *init_ui )( int argc, char** argv );
 
+extern void setup_frontend( void );
 #endif /* !_X48_GUI_H */
