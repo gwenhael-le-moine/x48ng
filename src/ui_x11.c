@@ -23,7 +23,6 @@
 #include "romio.h"
 #include "ui.h"
 #include "ui_inner.h"
-#include "ui_bitmaps.h"
 
 #define KEYBOARD_HEIGHT                                                        \
     ( x11_buttons[ LAST_BUTTON ].y + x11_buttons[ LAST_BUTTON ].h )
