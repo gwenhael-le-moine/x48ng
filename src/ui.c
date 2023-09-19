@@ -151,6 +151,19 @@ void ( *init_ui )( int argc, char** argv );
 
 void setup_frontend( void ) {
     switch ( frontend_type ) {
+        case FRONTEND_X11:
+        default:
+            ui_disp_draw_nibble = x11_disp_draw_nibble;
+            ui_menu_draw_nibble = x11_menu_draw_nibble;
+            ui_get_event = x11_get_event;
+            ui_update_LCD = x11_update_LCD;
+            ui_refresh_LCD = x11_refresh_LCD;
+            ui_adjust_contrast = x11_adjust_contrast;
+            ui_draw_annunc = x11_draw_annunc;
+            ui_init_LCD = x11_init_LCD;
+            init_ui = init_x11_ui;
+            break;
+
         case FRONTEND_SDL:
             ui_disp_draw_nibble = sdl_disp_draw_nibble;
             ui_menu_draw_nibble = sdl_menu_draw_nibble;
@@ -163,17 +176,16 @@ void setup_frontend( void ) {
             init_ui = init_sdl_ui;
             break;
 
-        case FRONTEND_X11:
-        default:
-            ui_disp_draw_nibble = x11_disp_draw_nibble;
-            ui_menu_draw_nibble = x11_menu_draw_nibble;
-            ui_get_event = x11_get_event;
-            ui_update_LCD = x11_update_LCD;
-            ui_refresh_LCD = x11_refresh_LCD;
-            ui_adjust_contrast = x11_adjust_contrast;
-            ui_draw_annunc = x11_draw_annunc;
-            ui_init_LCD = x11_init_LCD;
-            init_ui = init_x11_ui;
+        case FRONTEND_TEXT:
+            ui_disp_draw_nibble = text_disp_draw_nibble;
+            ui_menu_draw_nibble = text_menu_draw_nibble;
+            ui_get_event = text_get_event;
+            ui_update_LCD = text_update_LCD;
+            ui_refresh_LCD = text_refresh_LCD;
+            ui_adjust_contrast = text_adjust_contrast;
+            ui_draw_annunc = text_draw_annunc;
+            ui_init_LCD = text_init_LCD;
+            init_ui = init_text_ui;
             break;
     }
 }

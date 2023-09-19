@@ -27,32 +27,35 @@ extern letter_t small_font[ 128 ];
 /*************/
 /* functions */
 /*************/
-extern void sdl_disp_draw_nibble( word_20 addr, word_4 val );
 extern void x11_disp_draw_nibble( word_20 addr, word_4 val );
-
-extern void sdl_menu_draw_nibble( word_20 addr, word_4 val );
 extern void x11_menu_draw_nibble( word_20 addr, word_4 val );
-
-extern int sdl_get_event( void );
 extern int x11_get_event( void );
-
-extern void sdl_update_LCD( void );
 extern void x11_update_LCD( void );
-
-extern void sdl_refresh_LCD( void );
 extern void x11_refresh_LCD( void );
-
-extern void sdl_adjust_contrast( void );
 extern void x11_adjust_contrast( void );
-
-extern void sdl_draw_annunc( void );
 extern void x11_draw_annunc( void );
-
-extern void sdl_init_LCD( void );
 extern void x11_init_LCD( void );
-
-extern void init_sdl_ui( int argc, char** argv );
 extern void init_x11_ui( int argc, char** argv );
+
+extern void sdl_disp_draw_nibble( word_20 addr, word_4 val );
+extern void sdl_menu_draw_nibble( word_20 addr, word_4 val );
+extern int sdl_get_event( void );
+extern void sdl_update_LCD( void );
+extern void sdl_refresh_LCD( void );
+extern void sdl_adjust_contrast( void );
+extern void sdl_draw_annunc( void );
+extern void sdl_init_LCD( void );
+extern void init_sdl_ui( int argc, char** argv );
+
+extern void text_disp_draw_nibble( word_20 addr, word_4 val );
+extern void text_menu_draw_nibble( word_20 addr, word_4 val );
+extern int text_get_event( void );
+extern void text_update_LCD( void );
+extern void text_refresh_LCD( void );
+extern void text_adjust_contrast( void );
+extern void text_draw_annunc( void );
+extern void text_init_LCD( void );
+extern void init_text_ui( int argc, char** argv );
 
 /*************************************************/
 /* public API: if it's there it's used elsewhere */

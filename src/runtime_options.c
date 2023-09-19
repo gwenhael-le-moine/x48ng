@@ -112,7 +112,8 @@ int parse_args( int argc, char* argv[] ) {
         "\t   --serial-line=<path>\t\tuse <path> as serial device default: "
         "%s)\n"
         "\t-V --verbose\t\t\tbe verbose (default: false)\n"
-        "\t-u --front-end\t\t\tspecify a front-end (available: x11, sdl; "
+        "\t-u --front-end\t\t\tspecify a front-end (available: x11, sdl, "
+        "text; "
         "default: x11)\n"
         "\t-t --use-terminal\t\tactivate pseudo terminal interface (default: "
         "true)\n"
@@ -190,6 +191,8 @@ int parse_args( int argc, char* argv[] ) {
             case 'u':
                 if ( strcmp( optarg, "sdl" ) == 0 )
                     frontend_type = FRONTEND_SDL;
+                else if ( strcmp( optarg, "text" ) == 0 )
+                    frontend_type = FRONTEND_TEXT;
                 else
                     frontend_type = FRONTEND_X11;
                 break;
