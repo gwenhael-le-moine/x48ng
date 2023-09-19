@@ -3,6 +3,27 @@
 
 #include "emulator.h" /* word_4; word_20; */
 
+#define DISP_ROWS 64
+#define NIBS_PER_BUFFER_ROW ( NIBBLES_PER_ROW + 2 )
+
+/***********/
+/* typedef */
+/***********/
+typedef struct letter_t {
+    unsigned int w, h;
+    unsigned char* bits;
+} letter_t;
+
+/*************/
+/* variables */
+/*************/
+extern int last_annunc_state;
+
+extern unsigned char disp_buf[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
+extern unsigned char lcd_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
+
+extern letter_t small_font[ 128 ];
+
 /*************/
 /* functions */
 /*************/

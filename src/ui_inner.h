@@ -95,22 +95,8 @@
 #define FIRST_BUTTON BUTTON_A
 #define LAST_BUTTON BUTTON_PLUS
 
-#define DISP_ROWS 64
-#define NIBS_PER_BUFFER_ROW ( NIBBLES_PER_ROW + 2 )
-
 #define UPDATE_MENU 1
 #define UPDATE_DISP 2
 
-/***********/
-/* typedef */
-/***********/
-typedef struct letter_t {
-    unsigned int w, h;
-    unsigned char* bits;
-} letter_t;
-
-/*************/
-/* variables */
-/*************/
-
+extern int SmallTextWidth( const char* string, unsigned int length );
 #endif /* _UI_INNER_H */

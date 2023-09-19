@@ -822,153 +822,16 @@ sdl_ann_struct_t ann_tbl[] = {
     { ANN_IO, 241, 4, ann_io_width, ann_io_height, ann_io_bitmap, 0, 0 },
     { 0 } };
 
-letter_t sdl_small_font[] = {
-    { 0, 0, 0 },
-    { nl_gx_width, nl_gx_height, nl_gx_bitmap },          /* \001 == \n gx */
-    { comma_gx_width, comma_gx_height, comma_gx_bitmap }, /* \002 == comma gx */
-    { arrow_gx_width, arrow_gx_height, arrow_gx_bitmap }, /* \003 == \-> gx */
-    { equal_gx_width, equal_gx_height, equal_gx_bitmap }, /* \004 == equal gx */
-    { pi_gx_width, pi_gx_height, pi_gx_bitmap },          /* \005 == pi gx */
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 }, /* # 16 */
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { blank_width, blank_height, blank_bitmap }, /* # 32 */
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { hash_width, hash_height, hash_bitmap },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { lbrace_width, lbrace_height, lbrace_bitmap },
-    { rbrace_width, rbrace_height, rbrace_bitmap },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { comma_width, comma_height, comma_bitmap },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { slash_width, slash_height, slash_bitmap },
-    { 0, 0, 0 }, /* # 48 */
-    { 0, 0, 0 },
-    { two_width, two_height, two_bitmap },
-    { three_width, three_height, three_bitmap },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { small_colon_width, small_colon_height, small_colon_bitmap },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { equal_width, equal_height, equal_bitmap },
-    { 0, 0, 0 },
-    { 0, 0, 0 },
-    { 0, 0, 0 }, /* # 64 */
-    { A_width, A_height, A_bitmap },
-    { B_width, B_height, B_bitmap },
-    { C_width, C_height, C_bitmap },
-    { D_width, D_height, D_bitmap },
-    { E_width, E_height, E_bitmap },
-    { F_width, F_height, F_bitmap },
-    { G_width, G_height, G_bitmap },
-    { H_width, H_height, H_bitmap },
-    { I_width, I_height, I_bitmap },
-    { J_width, J_height, J_bitmap },
-    { K_width, K_height, K_bitmap },
-    { L_width, L_height, L_bitmap },
-    { M_width, M_height, M_bitmap },
-    { N_width, N_height, N_bitmap },
-    { O_width, O_height, O_bitmap },
-    { P_width, P_height, P_bitmap }, /* # 80 */
-    { Q_width, Q_height, Q_bitmap },
-    { R_width, R_height, R_bitmap },
-    { S_width, S_height, S_bitmap },
-    { T_width, T_height, T_bitmap },
-    { U_width, U_height, U_bitmap },
-    { V_width, V_height, V_bitmap },
-    { W_width, W_height, W_bitmap },
-    { X_width, X_height, X_bitmap },
-    { Y_width, Y_height, Y_bitmap },
-    { Z_width, Z_height, Z_bitmap },
-    { lbracket_width, lbracket_height, lbracket_bitmap },
-    { 0, 0, 0 },
-    { rbracket_width, rbracket_height, rbracket_bitmap },
-    { 0, 0, 0 },
-    { under_width, under_height, under_bitmap },
-    { 0, 0, 0 },                                 /* # 96 */
-    { arrow_width, arrow_height, arrow_bitmap }, /* a == left arrow   */
-    { diff_width, diff_height, diff_bitmap },    /* b == differential */
-    { integral_width, integral_height, integral_bitmap },    /* c == integral */
-    { sigma_width, sigma_height, sigma_bitmap },             /* d == sigma */
-    { sqr_width, sqr_height, sqr_bitmap },                   /* e == sqr */
-    { root_width, root_height, root_bitmap },                /* f == root */
-    { pow10_width, pow10_height, pow10_bitmap },             /* g == pow10 */
-    { exp_width, exp_height, exp_bitmap },                   /* h == exp */
-    { prog_width, prog_height, prog_bitmap },                /* i == << >> */
-    { string_width, string_height, string_bitmap },          /* j == " " */
-    { nl_width, nl_height, nl_bitmap },                      /* k == New Line */
-    { pi_width, pi_height, pi_bitmap },                      /* l == pi */
-    { angle_width, angle_height, angle_bitmap },             /* m == angle */
-    { sqr_gx_width, sqr_gx_height, sqr_gx_bitmap },          /* n == sqr gx */
-    { root_gx_width, root_gx_height, root_gx_bitmap },       /* o == root gx */
-    { pow10_gx_width, pow10_gx_height, pow10_gx_bitmap },    /* p == pow10 gx */
-    { exp_gx_width, exp_gx_height, exp_gx_bitmap },          /* q == exp gx */
-    { parens_gx_width, parens_gx_height, parens_gx_bitmap }, /* r == ( ) gx */
-    { hash_gx_width, hash_gx_height, hash_gx_bitmap },       /* s == # gx */
-    { bracket_gx_width, bracket_gx_height, bracket_gx_bitmap }, /* t == [] gx */
-    { under_gx_width, under_gx_height, under_gx_bitmap },       /* u == _ gx */
-    { prog_gx_width, prog_gx_height, prog_gx_bitmap },    /* v == << >> gx */
-    { quote_gx_width, quote_gx_height, quote_gx_bitmap }, /* w == " " gx */
-    { curly_gx_width, curly_gx_height, curly_gx_bitmap }, /* x == {} gx */
-    { colon_gx_width, colon_gx_height, colon_gx_bitmap }, /* y == :: gx */
-    { angle_gx_width, angle_gx_height, angle_gx_bitmap }, /* z == angle gx */
-    { lcurly_width, lcurly_height, lcurly_bitmap },
-    { 0, 0, 0 },
-    { rcurly_width, rcurly_height, rcurly_bitmap },
-    { 0, 0, 0 },
-    { 0, 0, 0 } };
-
 // State to displayed zoomed last pressed key
 SDL_Surface* showkeylastsurf = 0;
 int showkeylastx, showkeylasty, showkeylastkey;
 
 SDL_Surface* sdlwindow;
 
-int sdl_last_annunc_state = -1;
-
-// display_t sdl_display;
-
-unsigned char sdl_disp_buf[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
-unsigned char sdl_lcd_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
-
 /****************************/
 /* functions implementation */
 /****************************/
-unsigned SDLBGRA2ARGB( unsigned color ) {
+inline unsigned bgra2argb( unsigned color ) {
     unsigned a = ( color >> 24 ) & 0xff, r = ( color >> 16 ) & 0xff,
              g = ( color >> 8 ) & 0xff, b = color & 0xff;
 
@@ -1014,36 +877,17 @@ SDL_Surface* SDLCreateSurfFromData( unsigned int w, unsigned int h,
     return surf;
 }
 
-int sdl_SmallTextWidth( const char* string, unsigned int length ) {
-    unsigned int i;
-    int w;
-
-    w = 0;
-    for ( i = 0; i < length; i++ ) {
-        if ( sdl_small_font[ ( int )string[ i ] ].h != 0 ) {
-            w += sdl_small_font[ ( int )string[ i ] ].w + 1;
-        } else {
-            if ( verbose )
-                fprintf( stderr, "Unknown small letter 0x00%x\n",
-                         ( int )string[ i ] );
-            w += 5;
-        }
-    }
-
-    return w;
-}
-
 void SDLDrawSmallString( int x, int y, const char* string, unsigned int length,
                          unsigned int coloron, unsigned int coloroff ) {
     unsigned int i;
 
     for ( i = 0; i < length; i++ ) {
-        if ( sdl_small_font[ ( int )string[ i ] ].h != 0 ) {
-            int w = sdl_small_font[ ( int )string[ i ] ].w;
-            int h = sdl_small_font[ ( int )string[ i ] ].h;
+        if ( small_font[ ( int )string[ i ] ].h != 0 ) {
+            int w = small_font[ ( int )string[ i ] ].w;
+            int h = small_font[ ( int )string[ i ] ].h;
 
             SDL_Surface* surf = SDLCreateSurfFromData(
-                w, h, sdl_small_font[ ( int )string[ i ] ].bits, coloron,
+                w, h, small_font[ ( int )string[ i ] ].bits, coloron,
                 coloroff );
 
             SDL_Rect srect;
@@ -1053,13 +897,13 @@ void SDLDrawSmallString( int x, int y, const char* string, unsigned int length,
             srect.w = w;
             srect.h = h;
             drect.x = x;
-            drect.y = ( int )( y - sdl_small_font[ ( int )string[ i ] ].h );
+            drect.y = ( int )( y - small_font[ ( int )string[ i ] ].h );
             drect.w = w;
             drect.h = h;
             SDL_BlitSurface( surf, &srect, sdlwindow, &drect );
             SDL_FreeSurface( surf );
         }
-        x += sdl_SmallTextWidth( &string[ i ], 1 );
+        x += SmallTextWidth( &string[ i ], 1 );
     }
 }
 
@@ -1117,15 +961,13 @@ void SDLInit( void ) {
 }
 
 void sdl_button_pressed( int b ) {
-    int code;
-
     // Check not already pressed (may be important: avoids a useless do_kbd_int)
     if ( buttons[ b ].pressed == 1 )
         return;
 
     buttons[ b ].pressed = 1;
 
-    code = buttons[ b ].code;
+    int code = buttons[ b ].code;
     if ( code == 0x8000 ) {
         for ( int i = 0; i < 9; i++ )
             saturn.keybuf.rows[ i ] |= 0x8000;
@@ -1145,15 +987,13 @@ void sdl_button_pressed( int b ) {
 }
 
 void sdl_button_released( int b ) {
-    int code;
-
     // Check not already released (not critical)
     if ( buttons[ b ].pressed == 0 )
         return;
 
     buttons[ b ].pressed = 0;
 
-    code = buttons[ b ].code;
+    int code = buttons[ b ].code;
     if ( code == 0x8000 ) {
         for ( int i = 0; i < 9; i++ )
             saturn.keybuf.rows[ i ] &= ~0x8000;
@@ -1477,132 +1317,132 @@ void SDLDrawMore( unsigned int cut, unsigned int offset_y, int keypad_width,
                   int keypad_height ) {
     // bottom lines
     lineColor( sdlwindow, 1, keypad_height - 1, keypad_width - 1,
-               keypad_height - 1, SDLBGRA2ARGB( ARGBColors[ PAD_TOP ] ) );
+               keypad_height - 1, bgra2argb( ARGBColors[ PAD_TOP ] ) );
     lineColor( sdlwindow, 2, keypad_height - 2, keypad_width - 2,
-               keypad_height - 2, SDLBGRA2ARGB( ARGBColors[ PAD_TOP ] ) );
+               keypad_height - 2, bgra2argb( ARGBColors[ PAD_TOP ] ) );
 
     // right lines
     lineColor( sdlwindow, keypad_width - 1, keypad_height - 1, keypad_width - 1,
-               cut, SDLBGRA2ARGB( ARGBColors[ PAD_TOP ] ) );
+               cut, bgra2argb( ARGBColors[ PAD_TOP ] ) );
     lineColor( sdlwindow, keypad_width - 2, keypad_height - 2, keypad_width - 2,
-               cut, SDLBGRA2ARGB( ARGBColors[ PAD_TOP ] ) );
+               cut, bgra2argb( ARGBColors[ PAD_TOP ] ) );
 
     // right lines
     lineColor( sdlwindow, keypad_width - 1, cut - 1, keypad_width - 1, 1,
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD_TOP ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD_TOP ] ) );
     lineColor( sdlwindow, keypad_width - 2, cut - 1, keypad_width - 2, 2,
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD_TOP ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD_TOP ] ) );
 
     // top lines
     lineColor( sdlwindow, 0, 0, keypad_width - 2, 0,
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD_BOT ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD_BOT ] ) );
     lineColor( sdlwindow, 1, 1, keypad_width - 3, 1,
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD_BOT ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD_BOT ] ) );
 
     // left lines
     lineColor( sdlwindow, 0, cut - 1, 0, 0,
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD_BOT ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD_BOT ] ) );
     lineColor( sdlwindow, 1, cut - 1, 1, 1,
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD_BOT ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD_BOT ] ) );
 
     // left lines
     lineColor( sdlwindow, 0, keypad_height - 2, 0, cut,
-               SDLBGRA2ARGB( ARGBColors[ PAD_BOT ] ) );
+               bgra2argb( ARGBColors[ PAD_BOT ] ) );
     lineColor( sdlwindow, 1, keypad_height - 3, 1, cut,
-               SDLBGRA2ARGB( ARGBColors[ PAD_BOT ] ) );
+               bgra2argb( ARGBColors[ PAD_BOT ] ) );
 
     // lower the menu buttons
 
     // bottom lines
     lineColor( sdlwindow, 3, keypad_height - 3, keypad_width - 3,
-               keypad_height - 3, SDLBGRA2ARGB( ARGBColors[ PAD_TOP ] ) );
+               keypad_height - 3, bgra2argb( ARGBColors[ PAD_TOP ] ) );
     lineColor( sdlwindow, 4, keypad_height - 4, keypad_width - 4,
-               keypad_height - 4, SDLBGRA2ARGB( ARGBColors[ PAD_TOP ] ) );
+               keypad_height - 4, bgra2argb( ARGBColors[ PAD_TOP ] ) );
 
     // right lines
     lineColor( sdlwindow, keypad_width - 3, keypad_height - 3, keypad_width - 3,
-               cut, SDLBGRA2ARGB( ARGBColors[ PAD_TOP ] ) );
+               cut, bgra2argb( ARGBColors[ PAD_TOP ] ) );
     lineColor( sdlwindow, keypad_width - 4, keypad_height - 4, keypad_width - 4,
-               cut, SDLBGRA2ARGB( ARGBColors[ PAD_TOP ] ) );
+               cut, bgra2argb( ARGBColors[ PAD_TOP ] ) );
 
     // right lines
     lineColor( sdlwindow, keypad_width - 3, cut - 1, keypad_width - 3,
                offset_y - ( KBD_UPLINE - 1 ),
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD_TOP ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD_TOP ] ) );
     lineColor( sdlwindow, keypad_width - 4, cut - 1, keypad_width - 4,
                offset_y - ( KBD_UPLINE - 2 ),
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD_TOP ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD_TOP ] ) );
 
     // top lines
     lineColor( sdlwindow, 2, offset_y - ( KBD_UPLINE - 0 ), keypad_width - 4,
                offset_y - ( KBD_UPLINE - 0 ),
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD_BOT ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD_BOT ] ) );
     lineColor( sdlwindow, 3, offset_y - ( KBD_UPLINE - 1 ), keypad_width - 5,
                offset_y - ( KBD_UPLINE - 1 ),
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD_BOT ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD_BOT ] ) );
 
     // left lines
     lineColor( sdlwindow, 2, cut - 1, 2, offset_y - ( KBD_UPLINE - 1 ),
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD_BOT ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD_BOT ] ) );
     lineColor( sdlwindow, 3, cut - 1, 3, offset_y - ( KBD_UPLINE - 2 ),
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD_BOT ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD_BOT ] ) );
 
     // left lines
     lineColor( sdlwindow, 2, keypad_height - 4, 2, cut,
-               SDLBGRA2ARGB( ARGBColors[ PAD_BOT ] ) );
+               bgra2argb( ARGBColors[ PAD_BOT ] ) );
     lineColor( sdlwindow, 3, keypad_height - 5, 3, cut,
-               SDLBGRA2ARGB( ARGBColors[ PAD_BOT ] ) );
+               bgra2argb( ARGBColors[ PAD_BOT ] ) );
 
     // lower the keyboard
 
     // bottom lines
     lineColor( sdlwindow, 5, keypad_height - 5, keypad_width - 3,
-               keypad_height - 5, SDLBGRA2ARGB( ARGBColors[ PAD_TOP ] ) );
+               keypad_height - 5, bgra2argb( ARGBColors[ PAD_TOP ] ) );
     lineColor( sdlwindow, 6, keypad_height - 6, keypad_width - 4,
-               keypad_height - 6, SDLBGRA2ARGB( ARGBColors[ PAD_TOP ] ) );
+               keypad_height - 6, bgra2argb( ARGBColors[ PAD_TOP ] ) );
 
     // right lines
     lineColor( sdlwindow, keypad_width - 5, keypad_height - 5, keypad_width - 5,
-               cut + 1, SDLBGRA2ARGB( ARGBColors[ PAD_TOP ] ) );
+               cut + 1, bgra2argb( ARGBColors[ PAD_TOP ] ) );
     lineColor( sdlwindow, keypad_width - 6, keypad_height - 6, keypad_width - 6,
-               cut + 2, SDLBGRA2ARGB( ARGBColors[ PAD_TOP ] ) );
+               cut + 2, bgra2argb( ARGBColors[ PAD_TOP ] ) );
 
     // top lines
     lineColor( sdlwindow, 4, cut, keypad_width - 6, cut,
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD_BOT ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD_BOT ] ) );
     lineColor( sdlwindow, 5, cut + 1, keypad_width - 7, cut + 1,
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD_BOT ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD_BOT ] ) );
 
     // left lines
     lineColor( sdlwindow, 4, keypad_height - 6, 4, cut + 1,
-               SDLBGRA2ARGB( ARGBColors[ PAD_BOT ] ) );
+               bgra2argb( ARGBColors[ PAD_BOT ] ) );
     lineColor( sdlwindow, 5, keypad_height - 7, 5, cut + 2,
-               SDLBGRA2ARGB( ARGBColors[ PAD_BOT ] ) );
+               bgra2argb( ARGBColors[ PAD_BOT ] ) );
 
     // round off the bottom edge
 
     lineColor( sdlwindow, keypad_width - 7, keypad_height - 7, keypad_width - 7,
-               keypad_height - 14, SDLBGRA2ARGB( ARGBColors[ PAD_TOP ] ) );
+               keypad_height - 14, bgra2argb( ARGBColors[ PAD_TOP ] ) );
     lineColor( sdlwindow, keypad_width - 8, keypad_height - 8, keypad_width - 8,
-               keypad_height - 11, SDLBGRA2ARGB( ARGBColors[ PAD_TOP ] ) );
+               keypad_height - 11, bgra2argb( ARGBColors[ PAD_TOP ] ) );
     lineColor( sdlwindow, keypad_width - 7, keypad_height - 7,
                keypad_width - 14, keypad_height - 7,
-               SDLBGRA2ARGB( ARGBColors[ PAD_TOP ] ) );
+               bgra2argb( ARGBColors[ PAD_TOP ] ) );
     lineColor( sdlwindow, keypad_width - 7, keypad_height - 8,
                keypad_width - 11, keypad_height - 8,
-               SDLBGRA2ARGB( ARGBColors[ PAD_TOP ] ) );
+               bgra2argb( ARGBColors[ PAD_TOP ] ) );
     pixelColor( sdlwindow, keypad_width - 9, keypad_height - 9,
-                SDLBGRA2ARGB( ARGBColors[ PAD_TOP ] ) );
+                bgra2argb( ARGBColors[ PAD_TOP ] ) );
 
     lineColor( sdlwindow, 7, keypad_height - 7, 13, keypad_height - 7,
-               SDLBGRA2ARGB( ARGBColors[ PAD_TOP ] ) );
+               bgra2argb( ARGBColors[ PAD_TOP ] ) );
     lineColor( sdlwindow, 8, keypad_height - 8, 10, keypad_height - 8,
-               SDLBGRA2ARGB( ARGBColors[ PAD_TOP ] ) );
+               bgra2argb( ARGBColors[ PAD_TOP ] ) );
 
     lineColor( sdlwindow, 6, keypad_height - 8, 6, keypad_height - 14,
-               SDLBGRA2ARGB( ARGBColors[ PAD_BOT ] ) );
+               bgra2argb( ARGBColors[ PAD_BOT ] ) );
     lineColor( sdlwindow, 7, keypad_height - 9, 7, keypad_height - 11,
-               SDLBGRA2ARGB( ARGBColors[ PAD_BOT ] ) );
+               bgra2argb( ARGBColors[ PAD_BOT ] ) );
 }
 
 void SDLDrawLogo() {
@@ -1635,15 +1475,15 @@ void SDLDrawLogo() {
     if ( !opt_gx ) {
         lineColor( sdlwindow, DISPLAY_OFFSET_X, 9,
                    DISPLAY_OFFSET_X + hp_width - 1, 9,
-                   SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                   bgra2argb( ARGBColors[ FRAME ] ) );
         lineColor( sdlwindow, DISPLAY_OFFSET_X - 1, 10, DISPLAY_OFFSET_X - 1,
-                   10 + hp_height - 1, SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                   10 + hp_height - 1, bgra2argb( ARGBColors[ FRAME ] ) );
         lineColor( sdlwindow, DISPLAY_OFFSET_X, 10 + hp_height,
                    DISPLAY_OFFSET_X + hp_width - 1, 10 + hp_height,
-                   SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                   bgra2argb( ARGBColors[ FRAME ] ) );
         lineColor( sdlwindow, DISPLAY_OFFSET_X + hp_width, 10,
                    DISPLAY_OFFSET_X + hp_width, 10 + hp_height - 1,
-                   SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                   bgra2argb( ARGBColors[ FRAME ] ) );
     }
 
     // write the name of it
@@ -1788,152 +1628,152 @@ void SDLCreateKeys( void ) {
         // draw the released button
         // draw edge of button
         lineColor( buttons[ i ].surfaceup, 1, buttons[ i ].h - 2, 1, 1,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_TOP ] ) );
+                   bgra2argb( ARGBColors[ BUT_TOP ] ) );
         lineColor( buttons[ i ].surfaceup, 2, buttons[ i ].h - 3, 2, 2,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_TOP ] ) );
+                   bgra2argb( ARGBColors[ BUT_TOP ] ) );
         lineColor( buttons[ i ].surfaceup, 3, buttons[ i ].h - 4, 3, 3,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_TOP ] ) );
+                   bgra2argb( ARGBColors[ BUT_TOP ] ) );
 
         lineColor( buttons[ i ].surfaceup, 1, 1, buttons[ i ].w - 2, 1,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_TOP ] ) );
+                   bgra2argb( ARGBColors[ BUT_TOP ] ) );
         lineColor( buttons[ i ].surfaceup, 2, 2, buttons[ i ].w - 3, 2,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_TOP ] ) );
+                   bgra2argb( ARGBColors[ BUT_TOP ] ) );
         lineColor( buttons[ i ].surfaceup, 3, 3, buttons[ i ].w - 4, 3,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_TOP ] ) );
+                   bgra2argb( ARGBColors[ BUT_TOP ] ) );
         lineColor( buttons[ i ].surfaceup, 4, 4, buttons[ i ].w - 5, 4,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_TOP ] ) );
+                   bgra2argb( ARGBColors[ BUT_TOP ] ) );
 
         pixelColor( buttons[ i ].surfaceup, 4, 5,
-                    SDLBGRA2ARGB( ARGBColors[ BUT_TOP ] ) );
+                    bgra2argb( ARGBColors[ BUT_TOP ] ) );
 
         lineColor( buttons[ i ].surfaceup, 3, buttons[ i ].h - 2,
                    buttons[ i ].w - 2, buttons[ i ].h - 2,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_BOT ] ) );
+                   bgra2argb( ARGBColors[ BUT_BOT ] ) );
         lineColor( buttons[ i ].surfaceup, 4, buttons[ i ].h - 3,
                    buttons[ i ].w - 3, buttons[ i ].h - 3,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_BOT ] ) );
+                   bgra2argb( ARGBColors[ BUT_BOT ] ) );
 
         lineColor( buttons[ i ].surfaceup, buttons[ i ].w - 2,
                    buttons[ i ].h - 2, buttons[ i ].w - 2, 3,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_BOT ] ) );
+                   bgra2argb( ARGBColors[ BUT_BOT ] ) );
         lineColor( buttons[ i ].surfaceup, buttons[ i ].w - 3,
                    buttons[ i ].h - 3, buttons[ i ].w - 3, 4,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_BOT ] ) );
+                   bgra2argb( ARGBColors[ BUT_BOT ] ) );
         lineColor( buttons[ i ].surfaceup, buttons[ i ].w - 4,
                    buttons[ i ].h - 4, buttons[ i ].w - 4, 5,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_BOT ] ) );
+                   bgra2argb( ARGBColors[ BUT_BOT ] ) );
         pixelColor( buttons[ i ].surfaceup, buttons[ i ].w - 5,
-                    buttons[ i ].h - 4, SDLBGRA2ARGB( ARGBColors[ BUT_BOT ] ) );
+                    buttons[ i ].h - 4, bgra2argb( ARGBColors[ BUT_BOT ] ) );
 
         // draw frame around button
 
         lineColor( buttons[ i ].surfaceup, 0, buttons[ i ].h - 3, 0, 2,
-                   SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                   bgra2argb( ARGBColors[ FRAME ] ) );
         lineColor( buttons[ i ].surfaceup, 2, 0, buttons[ i ].w - 3, 0,
-                   SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                   bgra2argb( ARGBColors[ FRAME ] ) );
         lineColor( buttons[ i ].surfaceup, 2, buttons[ i ].h - 1,
                    buttons[ i ].w - 3, buttons[ i ].h - 1,
-                   SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                   bgra2argb( ARGBColors[ FRAME ] ) );
         lineColor( buttons[ i ].surfaceup, buttons[ i ].w - 1,
                    buttons[ i ].h - 3, buttons[ i ].w - 1, 2,
-                   SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                   bgra2argb( ARGBColors[ FRAME ] ) );
         if ( i == BUTTON_ON ) {
             lineColor( buttons[ i ].surfaceup, 1, 1, buttons[ 1 ].w - 2, 1,
-                       SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                       bgra2argb( ARGBColors[ FRAME ] ) );
             pixelColor( buttons[ i ].surfaceup, 1, 2,
-                        SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                        bgra2argb( ARGBColors[ FRAME ] ) );
             pixelColor( buttons[ i ].surfaceup, buttons[ i ].w - 2, 2,
-                        SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                        bgra2argb( ARGBColors[ FRAME ] ) );
         } else {
             pixelColor( buttons[ i ].surfaceup, 1, 1,
-                        SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                        bgra2argb( ARGBColors[ FRAME ] ) );
             pixelColor( buttons[ i ].surfaceup, buttons[ i ].w - 2, 1,
-                        SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                        bgra2argb( ARGBColors[ FRAME ] ) );
         }
         pixelColor( buttons[ i ].surfaceup, 1, buttons[ i ].h - 2,
-                    SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                    bgra2argb( ARGBColors[ FRAME ] ) );
         pixelColor( buttons[ i ].surfaceup, buttons[ i ].w - 2,
-                    buttons[ i ].h - 2, SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                    buttons[ i ].h - 2, bgra2argb( ARGBColors[ FRAME ] ) );
 
         // draw the depressed button
 
         // draw edge of button
         lineColor( buttons[ i ].surfacedown, 2, buttons[ i ].h - 4, 2, 2,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_TOP ] ) );
+                   bgra2argb( ARGBColors[ BUT_TOP ] ) );
         lineColor( buttons[ i ].surfacedown, 3, buttons[ i ].h - 5, 3, 3,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_TOP ] ) );
+                   bgra2argb( ARGBColors[ BUT_TOP ] ) );
         lineColor( buttons[ i ].surfacedown, 2, 2, buttons[ i ].w - 4, 2,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_TOP ] ) );
+                   bgra2argb( ARGBColors[ BUT_TOP ] ) );
         lineColor( buttons[ i ].surfacedown, 3, 3, buttons[ i ].w - 5, 3,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_TOP ] ) );
+                   bgra2argb( ARGBColors[ BUT_TOP ] ) );
         pixelColor( buttons[ i ].surfacedown, 4, 4,
-                    SDLBGRA2ARGB( ARGBColors[ BUT_TOP ] ) );
+                    bgra2argb( ARGBColors[ BUT_TOP ] ) );
 
         lineColor( buttons[ i ].surfacedown, 3, buttons[ i ].h - 3,
                    buttons[ i ].w - 3, buttons[ i ].h - 3,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_BOT ] ) );
+                   bgra2argb( ARGBColors[ BUT_BOT ] ) );
         lineColor( buttons[ i ].surfacedown, 4, buttons[ i ].h - 4,
                    buttons[ i ].w - 4, buttons[ i ].h - 4,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_BOT ] ) );
+                   bgra2argb( ARGBColors[ BUT_BOT ] ) );
         lineColor( buttons[ i ].surfacedown, buttons[ i ].w - 3,
                    buttons[ i ].h - 3, buttons[ i ].w - 3, 3,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_BOT ] ) );
+                   bgra2argb( ARGBColors[ BUT_BOT ] ) );
         lineColor( buttons[ i ].surfacedown, buttons[ i ].w - 4,
                    buttons[ i ].h - 4, buttons[ i ].w - 4, 4,
-                   SDLBGRA2ARGB( ARGBColors[ BUT_BOT ] ) );
+                   bgra2argb( ARGBColors[ BUT_BOT ] ) );
         pixelColor( buttons[ i ].surfacedown, buttons[ i ].w - 5,
-                    buttons[ i ].h - 5, SDLBGRA2ARGB( ARGBColors[ BUT_BOT ] ) );
+                    buttons[ i ].h - 5, bgra2argb( ARGBColors[ BUT_BOT ] ) );
 
         // draw frame around button
         lineColor( buttons[ i ].surfacedown, 0, buttons[ i ].h - 3, 0, 2,
-                   SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                   bgra2argb( ARGBColors[ FRAME ] ) );
         lineColor( buttons[ i ].surfacedown, 2, 0, buttons[ i ].w - 3, 0,
-                   SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                   bgra2argb( ARGBColors[ FRAME ] ) );
         lineColor( buttons[ i ].surfacedown, 2, buttons[ i ].h - 1,
                    buttons[ i ].w - 3, buttons[ i ].h - 1,
-                   SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                   bgra2argb( ARGBColors[ FRAME ] ) );
         lineColor( buttons[ i ].surfacedown, buttons[ i ].w - 1,
                    buttons[ i ].h - 3, buttons[ i ].w - 1, 2,
-                   SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                   bgra2argb( ARGBColors[ FRAME ] ) );
 
         if ( i == BUTTON_ON ) {
             lineColor( buttons[ i ].surfacedown, 1, 1, buttons[ i ].w - 2, 1,
-                       SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                       bgra2argb( ARGBColors[ FRAME ] ) );
             pixelColor( buttons[ i ].surfacedown, 1, 2,
-                        SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                        bgra2argb( ARGBColors[ FRAME ] ) );
             pixelColor( buttons[ i ].surfacedown, buttons[ i ].w - 2, 2,
-                        SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                        bgra2argb( ARGBColors[ FRAME ] ) );
         } else {
             pixelColor( buttons[ i ].surfacedown, 1, 1,
-                        SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                        bgra2argb( ARGBColors[ FRAME ] ) );
             pixelColor( buttons[ i ].surfacedown, buttons[ i ].w - 2, 1,
-                        SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                        bgra2argb( ARGBColors[ FRAME ] ) );
         }
         pixelColor( buttons[ i ].surfacedown, 1, buttons[ i ].h - 2,
-                    SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                    bgra2argb( ARGBColors[ FRAME ] ) );
         pixelColor( buttons[ i ].surfacedown, buttons[ i ].w - 2,
-                    buttons[ i ].h - 2, SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                    buttons[ i ].h - 2, bgra2argb( ARGBColors[ FRAME ] ) );
         if ( i == BUTTON_ON ) {
             rectangleColor( buttons[ i ].surfacedown, 1, 2,
                             1 + buttons[ i ].w - 3, 2 + buttons[ i ].h - 4,
-                            SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                            bgra2argb( ARGBColors[ FRAME ] ) );
             pixelColor( buttons[ i ].surfacedown, 2, 3,
-                        SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                        bgra2argb( ARGBColors[ FRAME ] ) );
             pixelColor( buttons[ i ].surfacedown, buttons[ i ].w - 3, 3,
-                        SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                        bgra2argb( ARGBColors[ FRAME ] ) );
         } else {
             rectangleColor( buttons[ i ].surfacedown, 1, 1,
                             1 + buttons[ i ].w - 3, 1 + buttons[ i ].h - 3,
-                            SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                            bgra2argb( ARGBColors[ FRAME ] ) );
             pixelColor( buttons[ i ].surfacedown, 2, 2,
-                        SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                        bgra2argb( ARGBColors[ FRAME ] ) );
             pixelColor( buttons[ i ].surfacedown, buttons[ i ].w - 3, 2,
-                        SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                        bgra2argb( ARGBColors[ FRAME ] ) );
         }
         pixelColor( buttons[ i ].surfacedown, 2, buttons[ i ].h - 3,
-                    SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                    bgra2argb( ARGBColors[ FRAME ] ) );
         pixelColor( buttons[ i ].surfacedown, buttons[ i ].w - 3,
-                    buttons[ i ].h - 3, SDLBGRA2ARGB( ARGBColors[ FRAME ] ) );
+                    buttons[ i ].h - 3, bgra2argb( ARGBColors[ FRAME ] ) );
 
         if ( buttons[ i ].label != ( char* )0 ) {
             // Todo: use SDL_ttf to print "nice" fonts
@@ -2005,8 +1845,8 @@ void SDLDrawKeysLabelsLeft( void ) {
             colorfg = ARGBColors[ LEFT ];
 
             x = ( pw + 1 -
-                  sdl_SmallTextWidth( buttons[ i ].left,
-                                      strlen( buttons[ i ].left ) ) ) /
+                  SmallTextWidth( buttons[ i ].left,
+                                  strlen( buttons[ i ].left ) ) ) /
                 2;
             if ( opt_gx )
                 y = 14;
@@ -2034,16 +1874,16 @@ void SDLDrawKeysLabelsLeft( void ) {
                 // centered label
                 x = offset_x + buttons[ i ].x +
                     ( 1 + buttons[ i ].w -
-                      sdl_SmallTextWidth( buttons[ i ].left,
-                                          strlen( buttons[ i ].left ) ) ) /
+                      SmallTextWidth( buttons[ i ].left,
+                                      strlen( buttons[ i ].left ) ) ) /
                         2;
             } else {
                 // label to the left
-                wl = sdl_SmallTextWidth( buttons[ i ].left,
-                                         strlen( buttons[ i ].left ) );
-                wr = sdl_SmallTextWidth( buttons[ i ].right,
-                                         strlen( buttons[ i ].right ) );
-                ws = sdl_SmallTextWidth( " ", 1 );
+                wl = SmallTextWidth( buttons[ i ].left,
+                                     strlen( buttons[ i ].left ) );
+                wr = SmallTextWidth( buttons[ i ].right,
+                                     strlen( buttons[ i ].right ) );
+                ws = SmallTextWidth( " ", 1 );
 
                 x = offset_x + buttons[ i ].x +
                     ( 1 + buttons[ i ].w - ( wl + wr + ws ) ) / 2;
@@ -2084,8 +1924,8 @@ void SDLDrawKeysLabelsRight( void ) {
             colorfg = ARGBColors[ RIGHT ];
 
             x = ( pw + 1 -
-                  sdl_SmallTextWidth( buttons[ i ].right,
-                                      strlen( buttons[ i ].right ) ) ) /
+                  SmallTextWidth( buttons[ i ].right,
+                                  strlen( buttons[ i ].right ) ) ) /
                 2;
             if ( opt_gx )
                 y = 14;
@@ -2114,16 +1954,16 @@ void SDLDrawKeysLabelsRight( void ) {
                 // centered label
                 x = offset_x + buttons[ i ].x +
                     ( 1 + buttons[ i ].w -
-                      sdl_SmallTextWidth( buttons[ i ].right,
-                                          strlen( buttons[ i ].right ) ) ) /
+                      SmallTextWidth( buttons[ i ].right,
+                                      strlen( buttons[ i ].right ) ) ) /
                         2;
             } else {
                 // label to the right
-                wl = sdl_SmallTextWidth( buttons[ i ].left,
-                                         strlen( buttons[ i ].left ) );
-                wr = sdl_SmallTextWidth( buttons[ i ].right,
-                                         strlen( buttons[ i ].right ) );
-                ws = sdl_SmallTextWidth( " ", 1 );
+                wl = SmallTextWidth( buttons[ i ].left,
+                                     strlen( buttons[ i ].left ) );
+                wr = SmallTextWidth( buttons[ i ].right,
+                                     strlen( buttons[ i ].right ) );
+                ws = SmallTextWidth( " ", 1 );
 
                 x = offset_x + buttons[ i ].x +
                     ( 1 + buttons[ i ].w - ( wl + wr + ws ) ) / 2 + wl + ws;
@@ -2160,7 +2000,7 @@ void SDLDrawKeysLetters( void ) {
                 y = offset_y + buttons[ i ].y + buttons[ i ].h + 1;
             } else {
                 x = offset_x + buttons[ i ].x + buttons[ i ].w -
-                    sdl_SmallTextWidth( buttons[ i ].letter, 1 ) / 2 + 5;
+                    SmallTextWidth( buttons[ i ].letter, 1 ) / 2 + 5;
                 y = offset_y + buttons[ i ].y + buttons[ i ].h - 2;
             }
 
@@ -2191,8 +2031,7 @@ void SDLDrawKeysLabelsBottom( void ) {
 
         x = offset_x + buttons[ i ].x +
             ( 1 + buttons[ i ].w -
-              sdl_SmallTextWidth( buttons[ i ].sub,
-                                  strlen( buttons[ i ].sub ) ) ) /
+              SmallTextWidth( buttons[ i ].sub, strlen( buttons[ i ].sub ) ) ) /
                 2;
         y = offset_y + buttons[ i ].y + buttons[ i ].h + small_ascent + 2;
         SDLDrawSmallString( x, y, buttons[ i ].sub, strlen( buttons[ i ].sub ),
@@ -2290,100 +2129,100 @@ void SDLDrawBezel() {
                    DISPLAY_OFFSET_Y + display_height + 2 * i,
                    DISPLAY_OFFSET_X + display_width + i,
                    DISPLAY_OFFSET_Y + display_height + 2 * i,
-                   SDLBGRA2ARGB( ARGBColors[ DISP_PAD_TOP ] ) );
+                   bgra2argb( ARGBColors[ DISP_PAD_TOP ] ) );
         lineColor( sdlwindow, DISPLAY_OFFSET_X - i,
                    DISPLAY_OFFSET_Y + display_height + 2 * i + 1,
                    DISPLAY_OFFSET_X + display_width + i,
                    DISPLAY_OFFSET_Y + display_height + 2 * i + 1,
-                   SDLBGRA2ARGB( ARGBColors[ DISP_PAD_TOP ] ) );
+                   bgra2argb( ARGBColors[ DISP_PAD_TOP ] ) );
         lineColor( sdlwindow, DISPLAY_OFFSET_X + display_width + i,
                    DISPLAY_OFFSET_Y - i, DISPLAY_OFFSET_X + display_width + i,
                    DISPLAY_OFFSET_Y + display_height + 2 * i,
-                   SDLBGRA2ARGB( ARGBColors[ DISP_PAD_TOP ] ) );
+                   bgra2argb( ARGBColors[ DISP_PAD_TOP ] ) );
     }
 
     for ( i = 0; i < DISP_FRAME; i++ ) {
         lineColor(
             sdlwindow, DISPLAY_OFFSET_X - i - 1, DISPLAY_OFFSET_Y - i - 1,
             DISPLAY_OFFSET_X + display_width + i - 1, DISPLAY_OFFSET_Y - i - 1,
-            SDLBGRA2ARGB( ARGBColors[ DISP_PAD_BOT ] ) );
+            bgra2argb( ARGBColors[ DISP_PAD_BOT ] ) );
         lineColor( sdlwindow, DISPLAY_OFFSET_X - i - 1,
                    DISPLAY_OFFSET_Y - i - 1, DISPLAY_OFFSET_X - i - 1,
                    DISPLAY_OFFSET_Y + display_height + 2 * i - 1,
-                   SDLBGRA2ARGB( ARGBColors[ DISP_PAD_BOT ] ) );
+                   bgra2argb( ARGBColors[ DISP_PAD_BOT ] ) );
     }
 
     // round off corners
     lineColor( sdlwindow, DISPLAY_OFFSET_X - DISP_FRAME,
                DISPLAY_OFFSET_Y - DISP_FRAME, DISPLAY_OFFSET_X - DISP_FRAME + 3,
                DISPLAY_OFFSET_Y - DISP_FRAME,
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD ] ) );
     lineColor( sdlwindow, DISPLAY_OFFSET_X - DISP_FRAME,
                DISPLAY_OFFSET_Y - DISP_FRAME, DISPLAY_OFFSET_X - DISP_FRAME,
                DISPLAY_OFFSET_Y - DISP_FRAME + 3,
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD ] ) );
     pixelColor( sdlwindow, DISPLAY_OFFSET_X - DISP_FRAME + 1,
                 DISPLAY_OFFSET_Y - DISP_FRAME + 1,
-                SDLBGRA2ARGB( ARGBColors[ DISP_PAD ] ) );
+                bgra2argb( ARGBColors[ DISP_PAD ] ) );
 
     lineColor( sdlwindow, DISPLAY_OFFSET_X + display_width + DISP_FRAME - 4,
                DISPLAY_OFFSET_Y - DISP_FRAME,
                DISPLAY_OFFSET_X + display_width + DISP_FRAME - 1,
                DISPLAY_OFFSET_Y - DISP_FRAME,
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD ] ) );
     lineColor( sdlwindow, DISPLAY_OFFSET_X + display_width + DISP_FRAME - 1,
                DISPLAY_OFFSET_Y - DISP_FRAME,
                DISPLAY_OFFSET_X + display_width + DISP_FRAME - 1,
                DISPLAY_OFFSET_Y - DISP_FRAME + 3,
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD ] ) );
     pixelColor( sdlwindow, DISPLAY_OFFSET_X + display_width + DISP_FRAME - 2,
                 DISPLAY_OFFSET_Y - DISP_FRAME + 1,
-                SDLBGRA2ARGB( ARGBColors[ DISP_PAD ] ) );
+                bgra2argb( ARGBColors[ DISP_PAD ] ) );
 
     lineColor( sdlwindow, DISPLAY_OFFSET_X - DISP_FRAME,
                DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 4,
                DISPLAY_OFFSET_X - DISP_FRAME,
                DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 1,
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD ] ) );
     lineColor( sdlwindow, DISPLAY_OFFSET_X - DISP_FRAME,
                DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 1,
                DISPLAY_OFFSET_X - DISP_FRAME + 3,
                DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 1,
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD ] ) );
     pixelColor( sdlwindow, DISPLAY_OFFSET_X - DISP_FRAME + 1,
                 DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 2,
-                SDLBGRA2ARGB( ARGBColors[ DISP_PAD ] ) );
+                bgra2argb( ARGBColors[ DISP_PAD ] ) );
 
     lineColor( sdlwindow, DISPLAY_OFFSET_X + display_width + DISP_FRAME - 1,
                DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 4,
                DISPLAY_OFFSET_X + display_width + DISP_FRAME - 1,
                DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 1,
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD ] ) );
     lineColor( sdlwindow, DISPLAY_OFFSET_X + display_width + DISP_FRAME - 4,
                DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 1,
                DISPLAY_OFFSET_X + display_width + DISP_FRAME - 1,
                DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 1,
-               SDLBGRA2ARGB( ARGBColors[ DISP_PAD ] ) );
+               bgra2argb( ARGBColors[ DISP_PAD ] ) );
     pixelColor( sdlwindow, DISPLAY_OFFSET_X + display_width + DISP_FRAME - 2,
                 DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 2,
-                SDLBGRA2ARGB( ARGBColors[ DISP_PAD ] ) );
+                bgra2argb( ARGBColors[ DISP_PAD ] ) );
 
     // simulate rounded lcd corners
 
     lineColor( sdlwindow, DISPLAY_OFFSET_X - 1, DISPLAY_OFFSET_Y + 1,
                DISPLAY_OFFSET_X - 1, DISPLAY_OFFSET_Y + display_height - 2,
-               SDLBGRA2ARGB( ARGBColors[ LCD ] ) );
+               bgra2argb( ARGBColors[ LCD ] ) );
     lineColor( sdlwindow, DISPLAY_OFFSET_X + 1, DISPLAY_OFFSET_Y - 1,
                DISPLAY_OFFSET_X + display_width - 2, DISPLAY_OFFSET_Y - 1,
-               SDLBGRA2ARGB( ARGBColors[ LCD ] ) );
+               bgra2argb( ARGBColors[ LCD ] ) );
     lineColor(
         sdlwindow, DISPLAY_OFFSET_X + 1, DISPLAY_OFFSET_Y + display_height,
         DISPLAY_OFFSET_X + display_width - 2, DISPLAY_OFFSET_Y + display_height,
-        SDLBGRA2ARGB( ARGBColors[ LCD ] ) );
+        bgra2argb( ARGBColors[ LCD ] ) );
     lineColor( sdlwindow, DISPLAY_OFFSET_X + display_width,
                DISPLAY_OFFSET_Y + 1, DISPLAY_OFFSET_X + display_width,
                DISPLAY_OFFSET_Y + display_height - 2,
-               SDLBGRA2ARGB( ARGBColors[ LCD ] ) );
+               bgra2argb( ARGBColors[ LCD ] ) );
 }
 
 void SDLDrawBackground( int width, int height, int w_top, int h_top ) {
@@ -2456,7 +2295,7 @@ void SDLDrawNibble( int nx, int ny, int val ) {
 
         for ( x = 0; x < 4; x++ ) {
             // Check if bit is on
-            // char c = sdl_lcd_buffer[y/2][x>>2];		// The 4 lower
+            // char c = lcd_buffer[y/2][x>>2];		// The 4 lower
             // bits in a byte are used (1 nibble per byte)
             if ( nx + x >= 131 ) // Clip at 131 pixels (some nibble writes may
                                  // go beyond the range, but are not visible)
@@ -2567,13 +2406,10 @@ void SDLUIShowKey( int hpkey ) {
 
 inline void SDLUIFeedback( void ) {}
 
-static int button_release_all( void ) {
+static void button_release_all( void ) {
     for ( int b = BUTTON_A; b <= LAST_BUTTON; b++ )
-        if ( buttons[ b ].pressed ) {
+        if ( buttons[ b ].pressed )
             sdl_button_released( b );
-        }
-
-    return 0;
 }
 
 void SDLDrawSerialDevices() {
@@ -2610,18 +2446,12 @@ static inline void draw_nibble( int c, int r, int val ) {
     y = r; // y: start in pixels
 
     val &= 0x0f;
-    if ( val != sdl_lcd_buffer[ r ][ c ] ) {
-        sdl_lcd_buffer[ r ][ c ] = val;
+    if ( val != lcd_buffer[ r ][ c ] ) {
+        lcd_buffer[ r ][ c ] = val;
+
+        SDLDrawNibble( x, y, val );
     }
-    if ( val != sdl_lcd_buffer[ r ][ c ] )
-        sdl_lcd_buffer[ r ][ c ] = val;
-
-    SDLDrawNibble( x, y, val );
 }
-
-/* void sdl_draw_nibble( int c, int r, int val ) { draw_nibble( c, r, val );
- * }
- */
 
 static inline void draw_row( long addr, int row ) {
     int i, v;
@@ -2632,8 +2462,8 @@ static inline void draw_row( long addr, int row ) {
         line_length += 2;
     for ( i = 0; i < line_length; i++ ) {
         v = read_nibble( addr + i );
-        if ( v != sdl_disp_buf[ row ][ i ] ) {
-            sdl_disp_buf[ row ][ i ] = v;
+        if ( v != disp_buf[ row ][ i ] ) {
+            disp_buf[ row ][ i ] = v;
             draw_nibble( i, row, v );
         }
     }
@@ -2884,16 +2714,16 @@ void sdl_update_LCD( void ) {
     if ( display.on ) {
         addr = display.disp_start;
         if ( display.offset != old_offset ) {
-            memset( sdl_disp_buf, 0xf0,
+            memset( disp_buf, 0xf0,
                     ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
-            memset( sdl_lcd_buffer, 0xf0,
+            memset( lcd_buffer, 0xf0,
                     ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
             old_offset = display.offset;
         }
         if ( display.lines != old_lines ) {
-            memset( &sdl_disp_buf[ 56 ][ 0 ], 0xf0,
+            memset( &disp_buf[ 56 ][ 0 ], 0xf0,
                     ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
-            memset( &sdl_lcd_buffer[ 56 ][ 0 ], 0xf0,
+            memset( &lcd_buffer[ 56 ][ 0 ], 0xf0,
                     ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
             old_lines = display.lines;
         }
@@ -2909,7 +2739,7 @@ void sdl_update_LCD( void ) {
             }
         }
     } else {
-        memset( sdl_disp_buf, 0xf0, sizeof( sdl_disp_buf ) );
+        memset( disp_buf, 0xf0, sizeof( disp_buf ) );
         for ( i = 0; i < 64; i++ ) {
             for ( j = 0; j < NIBBLES_PER_ROW; j++ ) {
                 draw_nibble( j, i, 0x00 );
@@ -2930,14 +2760,14 @@ void sdl_disp_draw_nibble( word_20 addr, word_4 val ) {
         y = offset / display.nibs_per_line;
         if ( y < 0 || y > 63 )
             return;
-        if ( val != sdl_disp_buf[ y ][ x ] ) {
-            sdl_disp_buf[ y ][ x ] = val;
+        if ( val != disp_buf[ y ][ x ] ) {
+            disp_buf[ y ][ x ] = val;
             draw_nibble( x, y, val );
         }
     } else {
         for ( y = 0; y < display.lines; y++ ) {
-            if ( val != sdl_disp_buf[ y ][ x ] ) {
-                sdl_disp_buf[ y ][ x ] = val;
+            if ( val != disp_buf[ y ][ x ] ) {
+                disp_buf[ y ][ x ] = val;
                 draw_nibble( x, y, val );
             }
         }
@@ -2951,8 +2781,8 @@ void sdl_menu_draw_nibble( word_20 addr, word_4 val ) {
     offset = ( addr - display.menu_start );
     x = offset % NIBBLES_PER_ROW;
     y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
-    if ( val != sdl_disp_buf[ y ][ x ] ) {
-        sdl_disp_buf[ y ][ x ] = val;
+    if ( val != disp_buf[ y ][ x ] ) {
+        disp_buf[ y ][ x ] = val;
         draw_nibble( x, y, val );
     }
 }
@@ -2962,10 +2792,10 @@ void sdl_draw_annunc( void ) {
 
     val = display.annunc;
 
-    if ( val == sdl_last_annunc_state )
+    if ( val == last_annunc_state )
         return;
 
-    sdl_last_annunc_state = val;
+    last_annunc_state = val;
 
     char sdl_annuncstate[ 6 ];
     for ( int i = 0; ann_tbl[ i ].bit; i++ )
@@ -2980,13 +2810,13 @@ void sdl_adjust_contrast() {
     SDLCreateAnnunc();
 
     // redraw LCD
-    memset( sdl_disp_buf, 0, sizeof( sdl_disp_buf ) );
-    memset( sdl_lcd_buffer, 0, sizeof( sdl_lcd_buffer ) );
+    memset( disp_buf, 0, sizeof( disp_buf ) );
+    memset( lcd_buffer, 0, sizeof( lcd_buffer ) );
 
     sdl_update_LCD();
 
     // redraw annunc
-    sdl_last_annunc_state = -1;
+    last_annunc_state = -1;
 
     sdl_draw_annunc();
 }
@@ -3019,8 +2849,8 @@ void sdl_init_LCD( void ) {
 
     display.annunc = saturn.annunc;
 
-    memset( sdl_disp_buf, 0xf0, sizeof( sdl_disp_buf ) );
-    memset( sdl_lcd_buffer, 0xf0, sizeof( sdl_lcd_buffer ) );
+    memset( disp_buf, 0xf0, sizeof( disp_buf ) );
+    memset( lcd_buffer, 0xf0, sizeof( lcd_buffer ) );
 }
 
 void init_sdl_ui( int argc, char** argv ) {
