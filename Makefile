@@ -14,18 +14,22 @@ OPTIM ?= 2
 CFLAGS = -g -O$(OPTIM) -I./src/ -D_GNU_SOURCE=1 -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DPATCHLEVEL=$(PATCHLEVEL)
 LIBS = -lm
 
+### SDL UI
+CFLAGS += $(shell pkg-config --cflags SDL_gfx sdl12_compat)
+LIBS += $(shell pkg-config --libs SDL_gfx sdl12_compat)
+
+### X11 UI
+CFLAGS += $(shell pkg-config --cflags x11 xext) -D_GNU_SOURCE=1
+LIBS += $(shell pkg-config --libs x11 xext)
+
+### debugger
+CFLAGS += $(shell pkg-config --cflags readline)
+LIBS += $(shell pkg-config --libs readline)
+
 FULL_WARNINGS = no
 ifeq ($(FULL_WARNINGS), yes)
 	CFLAGS += -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-function -Wconversion -Wdouble-promotion -Wno-sign-conversion -fsanitize=undefined -fsanitize-trap
 endif
-
-### SDL UI
-	CFLAGS += $(shell pkg-config --cflags SDL_gfx sdl12_compat)
-	LIBS += $(shell pkg-config --libs SDL_gfx sdl12_compat)
-
-### X11 UI
-	CFLAGS += $(shell pkg-config --cflags x11 xext) -D_GNU_SOURCE=1 -DGUI_IS_X11=1
-	LIBS += $(shell pkg-config --libs x11 xext)
 
 DOTOS = src/emu_serial.o \
 	src/emu_emulate.o \
@@ -34,19 +38,13 @@ DOTOS = src/emu_serial.o \
 	src/emu_memory.o \
 	src/emu_register.o \
 	src/emu_timer.o \
+	src/debugger.o \
 	src/runtime_options.o \
 	src/romio.o \
 	src/ui_sdl.o \
 	src/ui_x11.o \
 	src/ui.o \
 	src/main.o
-
-### debugger
-DOTOS += src/debugger.o
-
-CFLAGS += $(shell pkg-config --cflags readline)
-LIBS += $(shell pkg-config --libs readline)
-### /debugger
 
 .PHONY: all clean clean-all pretty-code install
 
