@@ -11,6 +11,7 @@ char* progname = "x48ng";
 int verbose = 0;
 int show_ui_chrome = 1;
 int show_ui_fullscreen = 0;
+int netbook = 0;
 int useTerminal = 1;
 int useSerial = 0;
 int useDebugger = 1;
@@ -51,6 +52,7 @@ int parse_args( int argc, char* argv[] ) {
         { "verbose", no_argument, &verbose, 1 },
         { "no-chrome", no_argument, &show_ui_chrome, 0 },
         { "fullscreen", no_argument, &show_ui_fullscreen, 1 },
+        { "netbook", no_argument, &netbook, 1 },
         { "use-terminal", no_argument, &useTerminal, 1 },
         { "use-serial", no_argument, &useSerial, 1 },
 
@@ -85,6 +87,8 @@ int parse_args( int argc, char* argv[] ) {
         "\t   --no-chrome\t\t\t[SDL only] only display the LCD (default: "
         "false)\n"
         "\t   --fullscreen\t\t\t[SDL only] make the UI fullscreen (default: "
+        "false)\n"
+        "\t   --netbook\t\t\t[X11 only] make the UI horizontal (default: "
         "false)\n"
         "\t-u --front-end\t\t\tspecify a front-end (available: x11, sdl; "
         "default: x11)\n"
