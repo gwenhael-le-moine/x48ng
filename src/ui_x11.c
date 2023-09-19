@@ -330,80 +330,6 @@ typedef struct icon_t {
 x11_keypad_t x11_keypad;
 x11_color_t* x11_colors;
 
-static XrmOptionDescRec options[] = {
-    { "-display", ".display", XrmoptionSepArg, ( void* )0 },
-    { "-geometry", "*geometry", XrmoptionSepArg, ( void* )0 },
-    { "-iconGeom", "*iconGeom", XrmoptionSepArg, ( void* )0 },
-    { "-iconName", "*iconName", XrmoptionSepArg, ( void* )0 },
-    { "-iconic", "*iconic", XrmoptionNoArg, ( void* )"True" },
-    { "-name", ( char* )0, XrmoptionSepArg, ( void* )0 },
-    { "-title", "*title", XrmoptionSepArg, ( void* )0 },
-
-    { "-xshm", "*useXShm", XrmoptionNoArg, ( void* )"True" },
-    { "+xshm", "*useXShm", XrmoptionNoArg, ( void* )"False" },
-
-    { "-visual", "*visual", XrmoptionSepArg, ( void* )0 },
-    { "-mono", "*mono", XrmoptionNoArg, ( void* )"True" },
-    { "-gray", "*gray", XrmoptionNoArg, ( void* )"True" },
-    { "-monoIcon", "*monoIcon", XrmoptionNoArg, ( void* )"True" },
-
-    { "-version", "*printVersion", XrmoptionNoArg, ( void* )"True" },
-    { "-copyright", "*printCopyright", XrmoptionNoArg, ( void* )"True" },
-    { "-warranty", "*printWarranty", XrmoptionNoArg, ( void* )"True" },
-
-    { "-smallFont", "*smallLabelFont", XrmoptionSepArg, ( void* )0 },
-    { "-mediumFont", "*mediumLabelFont", XrmoptionSepArg, ( void* )0 },
-    { "-largeFont", "*largeLabelFont", XrmoptionSepArg, ( void* )0 },
-    { "-connFont", "*connectionFont", XrmoptionSepArg, ( void* )0 },
-
-    { "-verbose", "*verbose", XrmoptionNoArg, ( void* )"True" },
-
-    { "-terminal", "*useTerminal", XrmoptionNoArg, ( void* )"True" },
-    { "+terminal", "*useTerminal", XrmoptionNoArg, ( void* )"False" },
-    { "-serial", "*useSerial", XrmoptionNoArg, ( void* )"True" },
-    { "+serial", "*useSerial", XrmoptionNoArg, ( void* )"False" },
-    { "-line", "*serialLine", XrmoptionSepArg, ( void* )0 },
-
-    { "-initialize", "*completeInitialize", XrmoptionNoArg, ( void* )"True" },
-    { "-reset", "*resetOnStartup", XrmoptionNoArg, ( void* )"True" },
-    { "-rom", "*romFileName", XrmoptionSepArg, ( void* )0 },
-    { "-home", "*homeDirectory", XrmoptionSepArg, ( void* )0 },
-
-    { "-xrm", ( char* )0, XrmoptionResArg, ( void* )0 },
-    { "-netbook", "*netbook", XrmoptionNoArg, ( void* )"False" },
-    { "+netbook", "*netbook", XrmoptionNoArg, ( void* )"True" },
-
-    { "-throttle", "*throttle", XrmoptionNoArg, ( void* )"False" },
-    { "+throttle", "*throttle", XrmoptionNoArg, ( void* )"True" },
-};
-
-static char* defaults[] = { "*iconic:			False",
-                            "*visual:			Default",
-                            "*mono:			False",
-                            "*gray:			False",
-                            "*monoIcon:			False",
-                            "*useXShm:			True",
-                            "*smallLabelFont:		"
-                            "-*-fixed-bold-r-normal-*-14-*-*-*-*-*-iso8859-1",
-                            "*mediumLabelFont:		"
-                            "-*-fixed-bold-r-normal-*-15-*-*-*-*-*-iso8859-1",
-                            "*largeLabelFont:		"
-                            "-*-fixed-medium-r-normal-*-20-*-*-*-*-*-iso8859-1",
-                            "*connectionFont:		"
-                            "-*-fixed-medium-r-normal-*-12-*-*-*-*-*-iso8859-1",
-                            "*verbose:			False",
-                            "*printVersion:		False",
-                            "*printCopyright:		False",
-                            "*printWarranty:		False",
-                            "*useTerminal:		True",
-                            "*useSerial:		False",
-                            "*serialLine:		/dev/ttyS0",
-                            "*completeInitialize:	False",
-                            "*resetOnStartup:		False",
-                            "*romFileName:		rom.dump",
-                            "*homeDirectory:		.x48ng",
-                            0 };
-
 static int CompletionType = -1;
 
 extern int saved_argc;
@@ -437,8 +363,6 @@ int direct_color;
 int does_backing_store;
 int color_mode;
 int icon_color_mode;
-
-int useXShm = 1;
 
 char* res_name;
 char* res_class;
@@ -1466,10 +1390,8 @@ char** saved_argv;
 
 void fatal_exit( char* error, char* advice );
 int AllocColors( void );
-int merge_app_defaults( char* path, XrmDatabase* db );
 int InitDisplay( int argc, char** argv );
 void x11_adjust_contrast( void );
-void exit_x48( int tell_x11 );
 int DrawSmallString( Display* the_dpy, Drawable d, GC the_gc, int x, int y,
                      const char* string, unsigned int length );
 void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small,
@@ -1478,8 +1400,8 @@ void DrawButtons( void );
 int DrawButton( int i );
 void CreateBackground( int width, int height, int w_top, int h_top,
                        x11_keypad_t* x11_keypad );
-void CreateKeypad( unsigned int w, unsigned int h, unsigned int offset_y,
-                   unsigned int offset_x, x11_keypad_t* x11_keypad );
+void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
+                   x11_keypad_t* x11_keypad );
 void CreateBezel( x11_keypad_t* x11_keypad );
 void DrawMore( unsigned int offset_y, x11_keypad_t* x11_keypad );
 void DrawKeypad( x11_keypad_t* x11_keypad );
@@ -1526,340 +1448,115 @@ void fatal_exit( char* error, char* advice ) {
     exit( 1 );
 }
 
-void usage( void ) {
-    fprintf( stdout, "\n\
-%s Version %d.%d.%d\n\
-\n\
-usage:\n\t%s [-options ...]\n\
-\n\
-where options include:\n\
-    -help                        print out this message\n\
-    -display    <displayname>    X server to contact\n\
-    -name	<string>         set application name to <string>\n\
-    -title      <string>         set window title to <string>\n\
-    -geometry   <geometry>       position of window\n\
-    -iconGeom   <geometry>       position of icon window\n\
-    -iconic                      start iconic\n\
-    -visual     <visualname>     use visual <visualname>\n\
-    -mono                        force monochrome\n\
-    -gray                        force grayscale\n\
-    -monoIcon                    force monochrome icon\n\
-    -smallFont  <fontname>       <fontname> to draw small labels (MTH - DEL)\n\
-    -mediumFont <fontname>       <fontname> to draw medium label (ENTER)\n\
-    -largeFont  <fontname>       <fontname> to draw large labels (Numbers)\n\
-    -connFont   <fontname>       <fontname> to display wire & IR connections\n\
-    -/+xshm                      turn on/off XShm extension\n\
-    -version                     print out version information\n\
-    -copyright                   print out copyright information\n\
-    -warranty                    print out warranty information\n\
-    -verbose                     run verbosive\n\
-    -/+terminal                  turn on/off pseudo terminal interface\n\
-    -/+serial                    turn on/off serial interface\n\
-    -line       <devicename>     use serial line <devicename> for IR connection\n\
-    -reset                       perform a reset (PC = 0) on startup\n\
-    -initialize                  force initialization x48ng from ROM-dump\n\
-    -rom        <filename>       if initializing, read ROM from <filename>\n\
-    -home       <directory>      use directory ~/<directory> to save x48ng files\n\
-    -xrm        <resource>       set Xresource <resource>\n\
-    -/+throttle			 turn off/on speed emulation\n\
-    -/+netbook			 turn off/on netbook layout\n\
-\n",
-             progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL, progname );
+/* static Visual* pick_visual_of_class( Display* dpy, int visual_class, */
+/*                                      unsigned int* depth ) { */
+/*     XVisualInfo vi_in, *vi_out; */
+/*     int out_count; */
 
-    fflush( stdout );
-    exit( 1 );
-}
+/*     vi_in.class = visual_class; */
+/*     vi_in.screen = DefaultScreen( dpy ); */
+/*     vi_out = XGetVisualInfo( dpy, VisualClassMask | VisualScreenMask, &vi_in,
+ */
+/*                              &out_count ); */
+/*     if ( vi_out ) { /\* choose the 'best' one, if multiple *\/ */
+/*         int i, best; */
+/*         Visual* visual; */
+/*         for ( i = 0, best = 0; i < out_count; i++ ) */
+/*             if ( vi_out[ i ].depth > vi_out[ best ].depth ) */
+/*                 best = i; */
+/*         visual = vi_out[ best ].visual; */
+/*         *depth = vi_out[ best ].depth; */
+/*         XFree( ( char* )vi_out ); */
+/*         return visual; */
+/*     } else { */
+/*         *depth = DefaultDepth( dpy, DefaultScreen( dpy ) ); */
+/*         return DefaultVisual( dpy, DefaultScreen( dpy ) ); */
+/*     } */
+/* } */
 
-void show_version( void ) {
-    fprintf( stdout, "\n\
-%s Version %d.%d.%d",
-             progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
-}
+/* static Visual* id_to_visual( Display* dpy, int id, unsigned int* depth ) { */
+/*     XVisualInfo vi_in, *vi_out; */
+/*     int out_count; */
 
-void show_copyright( void ) {
-    fprintf( stdout, "\n\
-                               COPYRIGHT\n\
-\n\
-x48ng is an Emulator for the HP-48 Handheld Calculator.\n\
-\n\
-This program is free software; you can redistribute it and/or modify\n\
-it under the terms of the GNU General Public License as published by\n\
-the Free Software Foundation; either version 2 of the License, or\n\
-(at your option) any later version.\n\
-\n\
-This program is distributed in the hope that it will be useful,\n\
-but WITHOUT ANY WARRANTY; without even the implied warranty of\n\
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n\
-GNU General Public License for more details.\n\
-\n\
-You should have received a copy of the GNU General Public License\n\
-along with this program; if not, write to the Free Software\n\
-Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.\n\n" );
-}
-
-void show_warranty( void ) {
-    fprintf( stdout, "\n\
-                              NO WARRANTY\n\
-\n\
-      BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY\n\
-FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.  EXCEPT WHEN\n\
-OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES\n\
-PROVIDE THE PROGRAM \"AS IS\" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED\n\
-OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF\n\
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE RISK AS\n\
-TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.  SHOULD THE\n\
-PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING,\n\
-REPAIR OR CORRECTION.\n\
-\n\
-      IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING\n\
-WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR\n\
-REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES,\n\
-INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING\n\
-OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED\n\
-TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY\n\
-YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER\n\
-PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE\n\
-POSSIBILITY OF SUCH DAMAGES.\n\n" );
-}
-
-char* get_string_resource_from_db( XrmDatabase db, char* name, char* class ) {
-    XrmValue value;
-    char* type;
-    char full_name[ 1024 ], full_class[ 1024 ];
-
-    strcpy( full_name, res_name );
-    strcat( full_name, "." );
-    strcat( full_name, name );
-    strcpy( full_class, res_class );
-    strcat( full_class, "." );
-    strcat( full_class, class );
-    if ( XrmGetResource( db, full_name, full_class, &type, &value ) ) {
-        char* str = ( char* )malloc( value.size + 1 );
-        strncpy( str, ( char* )value.addr, value.size );
-        str[ value.size ] = 0;
-        return str;
-    }
-    return ( char* )0;
-}
-
-char* get_string_resource( char* name, char* class ) {
-    return get_string_resource_from_db( rdb, name, class );
-}
-
-int get_boolean_resource( char* name, char* class ) {
-    char *tmp, buf[ 100 ];
-    char* s = get_string_resource( name, class );
-    char* os = s;
-    if ( !s )
-        return 0;
-    for ( tmp = buf; *s; s++ )
-        *tmp++ = isupper( *s ) ? tolower( *s ) : *s;
-    *tmp = 0;
-    free( os );
-
-    if ( !strcmp( buf, "on" ) || !strcmp( buf, "true" ) ||
-         !strcmp( buf, "yes" ) )
-        return 1;
-    if ( !strcmp( buf, "off" ) || !strcmp( buf, "false" ) ||
-         !strcmp( buf, "no" ) )
-        return 0;
-    fprintf( stderr, "%s must be boolean, not %s.\n", name, buf );
-    return 0;
-}
-
-int get_integer_resource( char* name, char* class ) {
-    int val;
-    char c, *s = get_string_resource( name, class );
-    if ( !s )
-        return 0;
-    if ( 1 == sscanf( s, " %d %c", &val, &c ) ) {
-        free( s );
-        return val;
-    }
-    fprintf( stderr, "%s must be an integer, not %s.\n", name, s );
-    free( s );
-    return 0;
-}
-
-unsigned int get_pixel_resource( char* name, char* class, Display* dpy,
-                                 Colormap cmap ) {
-    XColor color;
-    char* s = get_string_resource( name, class );
-    if ( !s )
-        goto DEFAULT;
-
-    if ( !XParseColor( dpy, cmap, s, &color ) ) {
-        fprintf( stderr, "can't parse color %s\n", s );
-        goto DEFAULT;
-    }
-    if ( !XAllocColor( dpy, cmap, &color ) ) {
-        fprintf( stderr, "couldn't allocate color %s\n", s );
-        goto DEFAULT;
-    }
-    free( s );
-    return color.pixel;
-DEFAULT:
-    if ( s )
-        free( s );
-    return ( strcmp( class, "Background" )
-                 ? WhitePixel( dpy, DefaultScreen( dpy ) )
-                 : BlackPixel( dpy, DefaultScreen( dpy ) ) );
-}
-
-static Visual* pick_visual_of_class( Display* dpy, int visual_class,
-                                     unsigned int* depth ) {
-    XVisualInfo vi_in, *vi_out;
-    int out_count;
-
-    vi_in.class = visual_class;
-    vi_in.screen = DefaultScreen( dpy );
-    vi_out = XGetVisualInfo( dpy, VisualClassMask | VisualScreenMask, &vi_in,
-                             &out_count );
-    if ( vi_out ) { /* choose the 'best' one, if multiple */
-        int i, best;
-        Visual* visual;
-        for ( i = 0, best = 0; i < out_count; i++ )
-            if ( vi_out[ i ].depth > vi_out[ best ].depth )
-                best = i;
-        visual = vi_out[ best ].visual;
-        *depth = vi_out[ best ].depth;
-        XFree( ( char* )vi_out );
-        return visual;
-    } else {
-        *depth = DefaultDepth( dpy, DefaultScreen( dpy ) );
-        return DefaultVisual( dpy, DefaultScreen( dpy ) );
-    }
-}
-
-static Visual* id_to_visual( Display* dpy, int id, unsigned int* depth ) {
-    XVisualInfo vi_in, *vi_out;
-    int out_count;
-
-    vi_in.screen = DefaultScreen( dpy );
-    vi_in.visualid = id;
-    vi_out = XGetVisualInfo( dpy, VisualScreenMask | VisualIDMask, &vi_in,
-                             &out_count );
-    if ( vi_out ) {
-        Visual* v = vi_out[ 0 ].visual;
-        *depth = vi_out[ 0 ].depth;
-        XFree( ( char* )vi_out );
-        return v;
-    }
-    return 0;
-}
+/*     vi_in.screen = DefaultScreen( dpy ); */
+/*     vi_in.visualid = id; */
+/*     vi_out = XGetVisualInfo( dpy, VisualScreenMask | VisualIDMask, &vi_in, */
+/*                              &out_count ); */
+/*     if ( vi_out ) { */
+/*         Visual* v = vi_out[ 0 ].visual; */
+/*         *depth = vi_out[ 0 ].depth; */
+/*         XFree( ( char* )vi_out ); */
+/*         return v; */
+/*     } */
+/*     return 0; */
+/* } */
 
 Visual* get_visual_resource( Display* dpy, char* name, char* class,
                              unsigned int* depth ) {
-    char c;
-    char *tmp, *s;
-    int vclass;
-    int id;
+    /* char c; */
+    /* char *tmp, *s; */
+    /* int vclass; */
+    /* int id; */
 
-    s = get_string_resource( name, class );
-    if ( s )
-        for ( tmp = s; *tmp; tmp++ )
-            if ( isupper( *tmp ) )
-                *tmp = tolower( *tmp );
+    /* s = get_string_resource( name, class ); */
+    /* if ( s ) */
+    /*     for ( tmp = s; *tmp; tmp++ ) */
+    /*         if ( isupper( *tmp ) ) */
+    /*             *tmp = tolower( *tmp ); */
 
-    if ( !s || !strcmp( s, "default" ) )
-        vclass = -1;
-    else if ( !strcmp( s, "staticgray" ) )
-        vclass = StaticGray;
-    else if ( !strcmp( s, "staticcolor" ) )
-        vclass = StaticColor;
-    else if ( !strcmp( s, "truecolor" ) )
-        vclass = TrueColor;
-    else if ( !strcmp( s, "grayscale" ) )
-        vclass = GrayScale;
-    else if ( !strcmp( s, "pseudocolor" ) )
-        vclass = PseudoColor;
-    else if ( !strcmp( s, "directcolor" ) )
-        vclass = DirectColor;
-    else if ( 1 == sscanf( s, " %d %c", &id, &c ) )
-        vclass = -2;
-    else if ( 1 == sscanf( s, " 0x%x %c", &id, &c ) )
-        vclass = -2;
-    else {
-        fprintf( stderr, "unrecognized visual \"%s\".\n", s );
-        vclass = -1;
-    }
-    if ( s )
-        free( s );
+    /* if ( !s || !strcmp( s, "default" ) ) */
+    /*     vclass = -1; */
+    /* else if ( !strcmp( s, "staticgray" ) ) */
+    /*     vclass = StaticGray; */
+    /* else if ( !strcmp( s, "staticcolor" ) ) */
+    /*     vclass = StaticColor; */
+    /* else if ( !strcmp( s, "truecolor" ) ) */
+    /*     vclass = TrueColor; */
+    /* else if ( !strcmp( s, "grayscale" ) ) */
+    /*     vclass = GrayScale; */
+    /* else if ( !strcmp( s, "pseudocolor" ) ) */
+    /*     vclass = PseudoColor; */
+    /* else if ( !strcmp( s, "directcolor" ) ) */
+    /*     vclass = DirectColor; */
+    /* else if ( 1 == sscanf( s, " %d %c", &id, &c ) ) */
+    /*     vclass = -2; */
+    /* else if ( 1 == sscanf( s, " 0x%x %c", &id, &c ) ) */
+    /*     vclass = -2; */
+    /* else { */
+    /*     fprintf( stderr, "unrecognized visual \"%s\".\n", s ); */
+    /* vclass = -1; */
+    /* } */
+    /* if ( s ) */
+    /*     free( s ); */
 
-    if ( vclass == -1 ) {
-        *depth = DefaultDepth( dpy, DefaultScreen( dpy ) );
-        return DefaultVisual( dpy, DefaultScreen( dpy ) );
-    } else if ( vclass == -2 ) {
-        Visual* v = id_to_visual( dpy, id, depth );
-        if ( v )
-            return v;
-        fprintf( stderr, "no visual with id 0x%x.\n", id );
-        *depth = DefaultDepth( dpy, DefaultScreen( dpy ) );
-        return DefaultVisual( dpy, DefaultScreen( dpy ) );
-    } else
-        return pick_visual_of_class( dpy, vclass, depth );
+    /* if ( vclass == -1 ) { */
+    *depth = DefaultDepth( dpy, DefaultScreen( dpy ) );
+    return DefaultVisual( dpy, DefaultScreen( dpy ) );
+    /* } else if ( vclass == -2 ) { */
+    /*     Visual* v = id_to_visual( dpy, id, depth ); */
+    /*     if ( v ) */
+    /*         return v; */
+    /*     fprintf( stderr, "no visual with id 0x%x.\n", id ); */
+    /*     *depth = DefaultDepth( dpy, DefaultScreen( dpy ) ); */
+    /*     return DefaultVisual( dpy, DefaultScreen( dpy ) ); */
+    /* } else */
+    /*     return pick_visual_of_class( dpy, vclass, depth ); */
 }
 
-XFontStruct* get_font_resource( Display* dpy, char* name, char* class ) {
-    char* s;
+XFontStruct* load_x11_font( Display* dpy, char* fontname ) {
     XFontStruct* f = ( XFontStruct* )0;
 
-    s = get_string_resource( name, class );
+    f = XLoadQueryFont( dpy, fontname );
 
-    if ( s )
-        f = XLoadQueryFont( dpy, s );
-    else {
-        char errbuf[ 1024 ];
-        sprintf( errbuf, "can\'t get resource \'%s\'", name );
-        fatal_exit( errbuf, "" );
-    }
     if ( f == ( XFontStruct* )0 ) {
         char errbuf[ 1024 ];
         char fixbuf[ 1024 ];
-        sprintf( errbuf, "can\'t load font \'%s\'", s );
+        sprintf( errbuf, "can\'t load font \'%s\'", fontname );
         sprintf( fixbuf, "Please change resource \'%s\'", name );
         fatal_exit( errbuf, fixbuf );
     }
+
     return f;
-}
-
-void get_resources( void ) {
-    /* verbose = 0; */
-    /* useTerminal = 1; */
-    /* useSerial = 0; */
-    /* initialize = 0; */
-    /* resetOnStartup = 0; */
-    /* netbook = 0; */
-    /* throttle = 0; */
-    useXShm = 1;
-
-    /* if ( get_boolean_resource( "printVersion", "PrintVersion" ) ) */
-    /*     show_version(); */
-    /* if ( get_boolean_resource( "printCopyright", "PrintCopyright" ) ) */
-    /*     show_copyright(); */
-    /* if ( get_boolean_resource( "printWarranty", "PrintWarranty" ) ) */
-    /*     show_warranty(); */
-
-    /* verbose = get_boolean_resource( "verbose", "Verbose" ); */
-
-    useXShm = get_boolean_resource( "useXShm", "UseXShm" );
-
-    /* useTerminal = get_boolean_resource( "useTerminal", "UseTerminal" ); */
-    /* useSerial = get_boolean_resource( "useSerial", "UseSerial" ); */
-    /* serialLine = get_string_resource( "serialLine", "SerialLine" ); */
-
-    /* initialize = */
-    /*     get_boolean_resource( "completeInitialize", "CompleteInitialize" );
-     */
-    /* resetOnStartup = get_boolean_resource( "resetOnStartup", "ResetOnStartup"
-     * ); */
-    /* romFileName = get_string_resource( "romFileName", "RomFileName" ); */
-    /* homeDirectory = get_string_resource( "homeDirectory", "HomeDirectory" );
-     */
-
-    /* netbook = get_boolean_resource( "netbook", "Netbook" ); */
-
-    /* throttle = get_boolean_resource( "throttle", "Throttle" ); */
 }
 
 int AllocColors( void ) {
@@ -2032,192 +1729,17 @@ int AllocColors( void ) {
     return 0;
 }
 
-int merge_app_defaults( char* path, XrmDatabase* db ) {
-    char file[ 1024 ];
-    XrmDatabase tmp;
-
-    if ( path == ( char* )0 )
-        return 0;
-
-    sprintf( file, "%s/%s", path, res_class );
-
-    tmp = XrmGetFileDatabase( file );
-    if ( tmp == ( XrmDatabase )0 )
-        return 0;
-
-    XrmMergeDatabases( tmp, db );
-
-    return 1;
-}
-
 int InitDisplay( int argc, char** argv ) {
-    XrmDatabase cmd = NULL, tmp = NULL;
-    char *res = NULL, *s;
-    char buf[ 1024 ], home[ 1024 ];
-    int def;
-    struct passwd* pwd;
-#ifdef SYSV
-    struct utsname uts;
-#else
-    char hostname[ 128 ];
-#endif
-
-    /*
-     * Parse the command line
-     */
-    XrmInitialize();
-    XrmParseCommand( &cmd, options, sizeof( options ) / sizeof( *options ),
-                     progname, &argc, argv );
-
-    /* if ( ( argc == 2 ) && !strcmp( argv[ 1 ], "-help" ) ) */
-    /*     usage(); */
-    /* else if ( argc > 1 ) { */
-    /*     fprintf( stderr, "unknown option %s or missing argument\n", argv[ 1 ]
-     * ); */
-    /*     usage(); */
-    /* } */
-
-    res_name = progname;
-    res_class = strdup( res_name );
-    *res_class = islower( *res_class ) ? toupper( *res_class ) : *res_class;
-
-    /*
-     * look for argument -name
-     */
-    res = get_string_resource_from_db( cmd, "name", "Name" );
-    if ( res ) {
-        if ( !( res_name = strdup( res ) ) )
-            fatal_exit( "out of memory in InitDisplay()\n", "" );
-
-        for ( s = res_name; *s; s++ )
-            *s = isupper( *s ) ? tolower( *s ) : *s;
-
-        free( res_class );
-        res_class = strdup( res_name );
-        *res_class = islower( *res_class ) ? toupper( *res_class ) : *res_class;
-
-        argc = saved_argc;
-        argv = ( char** )malloc( ( argc + 1 ) * sizeof( char* ) );
-        if ( argv == ( char** )0 )
-            fatal_exit( "out of memory in InitDisplay()\n", "" );
-
-        argv[ argc ] = ( char* )0;
-        for ( int i = 0; i < argc; i++ )
-            argv[ i ] = saved_argv[ i ];
-
-        XrmParseCommand( &cmd, options, sizeof( options ) / sizeof( *options ),
-                         res_name, &argc, argv );
-    }
-
     /*
      * open the display
      */
-    res = get_string_resource_from_db( cmd, "display", "Display" );
-
-    dpy = XOpenDisplay( res );
+    dpy = XOpenDisplay( NULL );
     if ( dpy == ( Display* )0 ) {
-        if ( res ) {
-            if ( verbose )
-                fprintf( stderr, "can\'t open display %s\n", res );
-        } else {
-            if ( verbose )
-                fprintf( stderr, "can\'t open display\n" );
-        }
+        if ( verbose )
+            fprintf( stderr, "can\'t open display\n" );
+
         return -1;
     }
-
-    /*
-     * Load all those Resources.
-     *
-     * 1. Hardcoded Defaults
-     *
-     * 2. /usr/lib/X11/app-defaults/X48NG
-     *
-     * 3. Values in $XUSERFILESEARCHPATH/X48NG or, if not set,
-     *    $XAPPLRESDIR/X48NG
-     *
-     * 4. Values from XResourceManagerString() or, if empty,
-     *    ~/.Xdefaults
-     *
-     * 5. Values in $XENVIRONMENT or, if not set,
-     *    ~/.Xdefaults-hostname
-     *
-     * 6. Command line arguments
-     */
-
-    /* 1.  Hardcoded Defaults */
-
-    for ( def = 0; defaults[ def ]; def++ ) {
-        if ( ( tmp = XrmGetStringDatabase( defaults[ def ] ) ) )
-            XrmMergeDatabases( tmp, &rdb );
-    }
-
-    /* 2. /usr/lib/X11/app-defaults/X48NG */
-
-    merge_app_defaults( "/usr/lib/X11/app-defaults", &rdb );
-
-    /* 3. Values in $XUSERFILESEARCHPATH/X48NG, or $XAPPLRESDIR/X48NG */
-
-    if ( !merge_app_defaults( getenv( "XUSERFILESEARCHPATH" ), &rdb ) )
-        merge_app_defaults( getenv( "XAPPLRESDIR" ), &rdb );
-
-    /* 4. Values from XResourceManagerString() or ~/.Xdefaults */
-
-    res = XResourceManagerString( dpy );
-    if ( res ) {
-        if ( ( tmp = XrmGetStringDatabase( res ) ) )
-            XrmMergeDatabases( tmp, &rdb );
-    } else {
-        res = getenv( "HOME" );
-        if ( res )
-            strcpy( home, res );
-        else {
-            pwd = getpwuid( getuid() );
-            if ( pwd )
-                strcpy( home, pwd->pw_dir );
-        }
-        sprintf( buf, "%s/.Xdefaults", home );
-        if ( ( tmp = XrmGetFileDatabase( buf ) ) )
-            XrmMergeDatabases( tmp, &rdb );
-    }
-
-    /* 5. Values in $XENVIRONMENT or ~/.Xdefaults-hostname */
-
-    res = getenv( "XENVIRONMENT" );
-    if ( res ) {
-        if ( ( tmp = XrmGetFileDatabase( res ) ) )
-            XrmMergeDatabases( tmp, &rdb );
-    } else {
-        res = getenv( "HOME" );
-        if ( res )
-            strcpy( home, res );
-        else {
-            pwd = getpwuid( getuid() );
-            if ( pwd )
-                strcpy( home, pwd->pw_dir );
-        }
-        tmp = ( XrmDatabase )0;
-#ifdef SYSV
-        if ( uname( &uts ) >= 0 ) {
-            sprintf( buf, "%s/.Xdefaults-%s", home, uts.nodename );
-            tmp = XrmGetFileDatabase( buf );
-        }
-#else
-        if ( gethostname( hostname, 128 ) >= 0 ) {
-            sprintf( buf, "%s/.Xdefaults-%s", home, hostname );
-            tmp = XrmGetFileDatabase( buf );
-        }
-#endif
-        if ( tmp )
-            XrmMergeDatabases( tmp, &rdb );
-    }
-
-    /* 6. Command line arguments */
-
-    /* if ( cmd ) */
-    /*     XrmMergeDatabases( cmd, &rdb ); */
-
-    get_resources();
 
     /*
      * Get the default screen
@@ -2232,26 +1754,17 @@ int InitDisplay( int argc, char** argv ) {
     /*
      * Try to use XShm-Extension
      */
-    shm_flag = useXShm;
+    shm_flag = 1;
 
     if ( !XShmQueryExtension( dpy ) ) {
         shm_flag = 0;
         if ( verbose )
             fprintf( stderr, "Xserver does not support XShm extension.\n" );
     }
-    if ( shm_flag )
+    if ( verbose && shm_flag )
         fprintf( stderr, "using XShm extension.\n" );
 
     return 0;
-}
-
-void exit_x48( int tell_x11 ) {
-    exit_emulator();
-
-    if ( tell_x11 )
-        XCloseDisplay( dpy );
-
-    exit( 0 );
 }
 
 int DrawSmallString( Display* the_dpy, Drawable d, GC the_gc, int x, int y,
@@ -2694,8 +2207,8 @@ void CreateBackground( int width, int height, int w_top, int h_top,
     XFillRectangle( dpy, x11_keypad->pixmap, gc, 0, 0, width, height );
 }
 
-void CreateKeypad( unsigned int w, unsigned int h, unsigned int offset_y,
-                   unsigned int offset_x, x11_keypad_t* x11_keypad ) {
+void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
+                   x11_keypad_t* x11_keypad ) {
     int i, x, y;
     int wl, wr, ws;
     Pixmap pix;
@@ -2703,9 +2216,9 @@ void CreateKeypad( unsigned int w, unsigned int h, unsigned int offset_y,
     unsigned int pw, ph;
     XFontStruct *f_small, *f_med, *f_big;
 
-    f_small = get_font_resource( dpy, "smallLabelFont", "SmallLabelFont" );
-    f_med = get_font_resource( dpy, "mediumLabelFont", "MediumLabelFont" );
-    f_big = get_font_resource( dpy, "largeLabelFont", "LargeLabelFont" );
+    f_small = load_x11_font( dpy, smallFont );
+    f_med = load_x11_font( dpy, mediumFont );
+    f_big = load_x11_font( dpy, largeFont );
 
     /*
      * draw the character labels
@@ -3813,16 +3326,16 @@ int CreateWindows( int argc, char** argv ) {
         color_mode = COLOR_MODE_GRAY;
     else
         color_mode = COLOR_MODE_COLOR;
-    if ( get_boolean_resource( "gray", "Gray" ) )
+    if ( gray )
         color_mode = COLOR_MODE_GRAY;
 
-    if ( get_boolean_resource( "mono", "Mono" ) )
+    if ( mono )
         color_mode = COLOR_MODE_MONO;
     if ( depth == 1 )
         color_mode = COLOR_MODE_MONO;
 
     icon_color_mode = color_mode;
-    if ( get_boolean_resource( "monoIcon", "Mono" ) )
+    if ( monoIcon )
         icon_color_mode = COLOR_MODE_MONO;
 
     clh.res_name = res_name;
@@ -3830,7 +3343,7 @@ int CreateWindows( int argc, char** argv ) {
     if ( !XStringListToTextProperty( &progname, 1, &iname ) )
         return -1;
 
-    if ( ( name = get_string_resource( "title", "Title" ) ) == ( char* )0 ) {
+    if ( ( name = title ) == ( char* )0 ) {
         name = ( char* )malloc( 128 );
         if ( name == ( char* )0 )
             fatal_exit( "malloc failed.\n", "" );
@@ -3880,7 +3393,7 @@ int CreateWindows( int argc, char** argv ) {
     hint.flags = PSize | PMinSize | PMaxSize | PBaseSize | PWinGravity;
 
     sprintf( def_geom, "%ux%u", width, height );
-    user_geom = get_string_resource( "geometry", "Geometry" );
+    user_geom = geometry; // get_string_resource( "geometry", "Geometry" );
 
     info = XWMGeometry( dpy, screen, user_geom, def_geom, 0, &hint, &x, &y, &w,
                         &h, &hint.win_gravity );
@@ -3896,7 +3409,7 @@ int CreateWindows( int argc, char** argv ) {
     /*
      * check if we start iconic
      */
-    if ( get_boolean_resource( "iconic", "Iconic" ) )
+    if ( iconic )
         wmh.initial_state = IconicState;
     else
         wmh.initial_state = NormalState;
@@ -3938,22 +3451,24 @@ int CreateWindows( int argc, char** argv ) {
     /*
      * set icon position if requested
      */
-    ih.x = ih.y = 0;
-    ih.min_width = ih.max_width = ih.base_width = ih.width = hp48_icon_width;
-    ih.min_height = ih.max_height = ih.base_height = ih.height =
-        hp48_icon_height;
-    ih.win_gravity = NorthWestGravity;
-    ih.flags = PSize | PMinSize | PMaxSize | PBaseSize | PWinGravity;
+    /* ih.x = ih.y = 0; */
+    /* ih.min_width = ih.max_width = ih.base_width = ih.width = hp48_icon_width;
+     */
+    /* ih.min_height = ih.max_height = ih.base_height = ih.height = */
+    /*     hp48_icon_height; */
+    /* ih.win_gravity = NorthWestGravity; */
+    /* ih.flags = PSize | PMinSize | PMaxSize | PBaseSize | PWinGravity; */
 
-    user_geom = get_string_resource( "iconGeom", "IconGeom" );
-    info = XWMGeometry( dpy, screen, user_geom, ( char* )0, 0, &ih, &x, &y, &w,
-                        &h, &ih.win_gravity );
+    /* user_geom = get_string_resource( "iconGeom", "IconGeom" ); */
+    /* info = XWMGeometry( dpy, screen, user_geom, ( char* )0, 0, &ih, &x, &y,
+     * &w, */
+    /*                     &h, &ih.win_gravity ); */
 
-    if ( ( info & XValue ) && ( info & YValue ) ) {
-        wmh.icon_x = x;
-        wmh.icon_y = y;
-        wmh.flags |= IconPositionHint;
-    }
+    /* if ( ( info & XValue ) && ( info & YValue ) ) { */
+    /*     wmh.icon_x = x; */
+    /*     wmh.icon_y = y; */
+    /*     wmh.flags |= IconPositionHint; */
+    /* } */
 
     /*
      * set some more attributes of icon window
@@ -4028,14 +3543,13 @@ int CreateWindows( int argc, char** argv ) {
         CreateBackground( width / 2, height, width, height, &x11_keypad );
         DrawMore( KEYBOARD_OFFSET_Y, &x11_keypad );
         CreateBezel( &x11_keypad );
-        CreateKeypad( width, height, -cut, KEYBOARD_OFFSET_X, &x11_keypad );
+        CreateKeypad( -cut, KEYBOARD_OFFSET_X, &x11_keypad );
     } else {
         int cut = x11_buttons[ BUTTON_MTH ].y + KEYBOARD_OFFSET_Y - 19;
         CreateBackground( width, cut, width, height, &x11_keypad );
         DrawMore( KEYBOARD_OFFSET_Y, &x11_keypad );
         CreateBezel( &x11_keypad );
-        CreateKeypad( width, height, KEYBOARD_OFFSET_Y, KEYBOARD_OFFSET_X,
-                      &x11_keypad );
+        CreateKeypad( KEYBOARD_OFFSET_Y, KEYBOARD_OFFSET_X, &x11_keypad );
     }
 
     /*
@@ -4047,6 +3561,8 @@ int CreateWindows( int argc, char** argv ) {
     DrawKeypad( &x11_keypad );
     DrawButtons();
     DrawIcon();
+
+    ShowConnections( wire_name, ir_name );
 
     if ( shm_flag ) {
         XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
@@ -4642,7 +4158,7 @@ void ShowConnections( char* wire, char* ir ) {
     int dir, fa, fd;
     Pixmap pix;
 
-    finfo = get_font_resource( dpy, "connectionFont", "ConnectionFont" );
+    finfo = load_x11_font( dpy, connFont );
     val.font = finfo->fid;
     gc_mask = GCFont;
     XChangeGC( dpy, gc, gc_mask, &val );
@@ -4738,69 +4254,6 @@ void redraw_annunc( void ) {
 /**********/
 /* public */
 /**********/
-
-void x11_adjust_contrast( void ) {
-    int gray = 0;
-    int r = 0, g = 0, b = 0;
-    unsigned long old;
-
-    int contrast = display.contrast;
-
-    if ( contrast < 0x3 )
-        contrast = 0x3;
-    if ( contrast > 0x13 )
-        contrast = 0x13;
-
-    old = x11_colors[ PIXEL ].xcolor.pixel;
-    switch ( color_mode ) {
-        case COLOR_MODE_MONO:
-            return;
-        case COLOR_MODE_GRAY:
-            gray = ( 0x13 - contrast ) * ( x11_colors[ LCD ].gray_rgb / 0x10 );
-            x11_colors[ PIXEL ].xcolor.red = gray << 8;
-            x11_colors[ PIXEL ].xcolor.green = gray << 8;
-            x11_colors[ PIXEL ].xcolor.blue = gray << 8;
-            break;
-        default:
-            r = ( 0x13 - contrast ) * ( x11_colors[ LCD ].r / 0x10 );
-            g = ( 0x13 - contrast ) * ( x11_colors[ LCD ].g / 0x10 );
-            b = 128 - ( ( 0x13 - contrast ) *
-                        ( ( 128 - x11_colors[ LCD ].b ) / 0x10 ) );
-            x11_colors[ PIXEL ].xcolor.red = r << 8;
-            x11_colors[ PIXEL ].xcolor.green = g << 8;
-            x11_colors[ PIXEL ].xcolor.blue = b << 8;
-            break;
-    }
-    if ( direct_color ) {
-        x11_colors[ PIXEL ].gray_rgb = gray;
-        x11_colors[ PIXEL ].r = r;
-        x11_colors[ PIXEL ].g = g;
-        x11_colors[ PIXEL ].b = b;
-        AllocColors();
-        XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
-        disp.display_update = UPDATE_DISP | UPDATE_MENU;
-        refresh_display();
-        redraw_annunc();
-        last_icon_state = -1;
-        refresh_icon();
-    } else if ( dynamic_color ) {
-        XStoreColor( dpy, cmap, &x11_colors[ PIXEL ].xcolor );
-    } else {
-        if ( XAllocColor( dpy, cmap, &x11_colors[ PIXEL ].xcolor ) == 0 ) {
-            x11_colors[ PIXEL ].xcolor.pixel = old;
-            if ( verbose )
-                fprintf( stderr, "warning: can\'t alloc new pixel color.\n" );
-        } else {
-            XFreeColors( dpy, cmap, &old, 1, 0 );
-            XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
-            disp.display_update = UPDATE_DISP | UPDATE_MENU;
-            refresh_display();
-            redraw_annunc();
-            last_icon_state = -1;
-            refresh_icon();
-        }
-    }
-}
 
 int x11_get_event( void ) {
     XEvent xev;
@@ -5407,16 +4860,16 @@ int x11_get_event( void ) {
                     cm = ( XClientMessageEvent* )&xev;
 
                     if ( cm->message_type == wm_protocols ) {
-                        if ( cm->data.l[ 0 ] == wm_delete_window ) {
-                            /*
-                             * Quit selected from window managers menu
-                             */
-                            exit_x48( 1 );
+                        if ( cm->data.l[ 0 ] == ( long )wm_delete_window ) {
+                            exit_emulator();
+
+                            XCloseDisplay( dpy );
+
+                            exit( 0 );
                         }
 
-                        if ( cm->data.l[ 0 ] == wm_save_yourself ) {
+                        if ( cm->data.l[ 0 ] == ( long )wm_save_yourself )
                             save_command_line();
-                        }
                     }
                     break;
 
@@ -5434,6 +4887,69 @@ int x11_get_event( void ) {
         first_key++;
 
     return wake;
+}
+
+void x11_adjust_contrast( void ) {
+    int gray = 0;
+    int r = 0, g = 0, b = 0;
+    unsigned long old;
+
+    int contrast = display.contrast;
+
+    if ( contrast < 0x3 )
+        contrast = 0x3;
+    if ( contrast > 0x13 )
+        contrast = 0x13;
+
+    old = x11_colors[ PIXEL ].xcolor.pixel;
+    switch ( color_mode ) {
+        case COLOR_MODE_MONO:
+            return;
+        case COLOR_MODE_GRAY:
+            gray = ( 0x13 - contrast ) * ( x11_colors[ LCD ].gray_rgb / 0x10 );
+            x11_colors[ PIXEL ].xcolor.red = gray << 8;
+            x11_colors[ PIXEL ].xcolor.green = gray << 8;
+            x11_colors[ PIXEL ].xcolor.blue = gray << 8;
+            break;
+        default:
+            r = ( 0x13 - contrast ) * ( x11_colors[ LCD ].r / 0x10 );
+            g = ( 0x13 - contrast ) * ( x11_colors[ LCD ].g / 0x10 );
+            b = 128 - ( ( 0x13 - contrast ) *
+                        ( ( 128 - x11_colors[ LCD ].b ) / 0x10 ) );
+            x11_colors[ PIXEL ].xcolor.red = r << 8;
+            x11_colors[ PIXEL ].xcolor.green = g << 8;
+            x11_colors[ PIXEL ].xcolor.blue = b << 8;
+            break;
+    }
+    if ( direct_color ) {
+        x11_colors[ PIXEL ].gray_rgb = gray;
+        x11_colors[ PIXEL ].r = r;
+        x11_colors[ PIXEL ].g = g;
+        x11_colors[ PIXEL ].b = b;
+        AllocColors();
+        XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
+        disp.display_update = UPDATE_DISP | UPDATE_MENU;
+        refresh_display();
+        redraw_annunc();
+        last_icon_state = -1;
+        refresh_icon();
+    } else if ( dynamic_color ) {
+        XStoreColor( dpy, cmap, &x11_colors[ PIXEL ].xcolor );
+    } else {
+        if ( XAllocColor( dpy, cmap, &x11_colors[ PIXEL ].xcolor ) == 0 ) {
+            x11_colors[ PIXEL ].xcolor.pixel = old;
+            if ( verbose )
+                fprintf( stderr, "warning: can\'t alloc new pixel color.\n" );
+        } else {
+            XFreeColors( dpy, cmap, &old, 1, 0 );
+            XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
+            disp.display_update = UPDATE_DISP | UPDATE_MENU;
+            refresh_display();
+            redraw_annunc();
+            last_icon_state = -1;
+            refresh_icon();
+        }
+    }
 }
 
 void x11_init_LCD( void ) {
@@ -5618,6 +5134,11 @@ void x11_update_LCD( void ) {
         }
     }
 
+    if ( disp.display_update )
+        refresh_display();
+}
+
+void x11_refresh_LCD( void ) {
     if ( disp.display_update )
         refresh_display();
 }

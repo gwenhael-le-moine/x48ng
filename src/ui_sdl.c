@@ -2705,6 +2705,54 @@ int sdl_get_event( void ) {
     return 1;
 }
 
+void sdl_adjust_contrast() {
+    SDLCreateColors();
+    SDLCreateAnnunc();
+
+    // redraw LCD
+    memset( disp_buf, 0, sizeof( disp_buf ) );
+    memset( lcd_buffer, 0, sizeof( lcd_buffer ) );
+
+    sdl_update_LCD();
+
+    // redraw annunc
+    last_annunc_state = -1;
+
+    sdl_draw_annunc();
+}
+
+void sdl_init_LCD( void ) {
+    display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
+
+    display.disp_start = ( saturn.disp_addr & 0xffffe );
+    display.offset = ( saturn.disp_io & 0x7 );
+
+    display.lines = ( saturn.line_count & 0x3f );
+    if ( display.lines == 0 )
+        display.lines = 63;
+
+    if ( display.offset > 3 )
+        display.nibs_per_line =
+            ( NIBBLES_PER_ROW + saturn.line_offset + 2 ) & 0xfff;
+    else
+        display.nibs_per_line =
+            ( NIBBLES_PER_ROW + saturn.line_offset ) & 0xfff;
+
+    display.disp_end =
+        display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
+
+    display.menu_start = saturn.menu_addr;
+    display.menu_end = saturn.menu_addr + 0x110;
+
+    display.contrast = saturn.contrast_ctrl;
+    display.contrast |= ( ( saturn.disp_test & 0x1 ) << 4 );
+
+    display.annunc = saturn.annunc;
+
+    memset( disp_buf, 0xf0, sizeof( disp_buf ) );
+    memset( lcd_buffer, 0xf0, sizeof( lcd_buffer ) );
+}
+
 void sdl_update_LCD( void ) {
     int i, j;
     long addr;
@@ -2747,6 +2795,8 @@ void sdl_update_LCD( void ) {
         }
     }
 }
+
+void sdl_refresh_LCD( void ) {}
 
 void sdl_disp_draw_nibble( word_20 addr, word_4 val ) {
     long offset;
@@ -2803,54 +2853,6 @@ void sdl_draw_annunc( void ) {
             ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit ) ? 1 : 0;
 
     SDLDrawAnnunc( sdl_annuncstate );
-}
-
-void sdl_adjust_contrast() {
-    SDLCreateColors();
-    SDLCreateAnnunc();
-
-    // redraw LCD
-    memset( disp_buf, 0, sizeof( disp_buf ) );
-    memset( lcd_buffer, 0, sizeof( lcd_buffer ) );
-
-    sdl_update_LCD();
-
-    // redraw annunc
-    last_annunc_state = -1;
-
-    sdl_draw_annunc();
-}
-
-void sdl_init_LCD( void ) {
-    display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
-
-    display.disp_start = ( saturn.disp_addr & 0xffffe );
-    display.offset = ( saturn.disp_io & 0x7 );
-
-    display.lines = ( saturn.line_count & 0x3f );
-    if ( display.lines == 0 )
-        display.lines = 63;
-
-    if ( display.offset > 3 )
-        display.nibs_per_line =
-            ( NIBBLES_PER_ROW + saturn.line_offset + 2 ) & 0xfff;
-    else
-        display.nibs_per_line =
-            ( NIBBLES_PER_ROW + saturn.line_offset ) & 0xfff;
-
-    display.disp_end =
-        display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
-
-    display.menu_start = saturn.menu_addr;
-    display.menu_end = saturn.menu_addr + 0x110;
-
-    display.contrast = saturn.contrast_ctrl;
-    display.contrast |= ( ( saturn.disp_test & 0x1 ) << 4 );
-
-    display.annunc = saturn.annunc;
-
-    memset( disp_buf, 0xf0, sizeof( disp_buf ) );
-    memset( lcd_buffer, 0xf0, sizeof( lcd_buffer ) );
 }
 
 void init_sdl_ui( int argc, char** argv ) {

@@ -9,16 +9,12 @@
 char* progname = "x48ng";
 
 int verbose = 0;
-int show_ui_chrome = 1;
-int show_ui_fullscreen = 0;
-int netbook = 0;
 int useTerminal = 1;
 int useSerial = 0;
 int useDebugger = 1;
 int throttle = 0;
 int initialize = 0;
 int resetOnStartup = 0;
-int frontend_type = FRONTEND_X11;
 
 char* serialLine = "/dev/ttyS0";
 char* homeDirectory = ".x48ng";
@@ -28,6 +24,33 @@ char* ramFileName = "ram";
 char* stateFileName = "hp48";
 char* port1FileName = "port1";
 char* port2FileName = "port2";
+
+int frontend_type = FRONTEND_X11;
+
+/* sdl */
+int show_ui_chrome = 1;
+int show_ui_fullscreen = 0;
+
+/* x11 */
+int netbook = 0;
+
+char* name = "x48ng";
+char* title = "x48ng";
+char* geometry;
+/* char* iconGeom; */
+/* char* iconName; */
+
+/* int x11_visual = -1; */
+int mono = 0;
+int gray = 0;
+int monoIcon = 0;
+int iconic = 0;
+int xrm = 1;
+
+char* smallFont = "-*-fixed-bold-r-normal-*-14-*-*-*-*-*-iso8859-1";
+char* mediumFont = "-*-fixed-bold-r-normal-*-15-*-*-*-*-*-iso8859-1";
+char* largeFont = "-*-fixed-medium-r-normal-*-20-*-*-*-*-*-iso8859-1";
+char* connFont = "-*-fixed-medium-r-normal-*-12-*-*-*-*-*-iso8859-1";
 
 int parse_args( int argc, char* argv[] ) {
     int option_index;
@@ -50,9 +73,6 @@ int parse_args( int argc, char* argv[] ) {
         { "version", no_argument, NULL, 'v' },
 
         { "verbose", no_argument, &verbose, 1 },
-        { "no-chrome", no_argument, &show_ui_chrome, 0 },
-        { "fullscreen", no_argument, &show_ui_fullscreen, 1 },
-        { "netbook", no_argument, &netbook, 1 },
         { "use-terminal", no_argument, &useTerminal, 1 },
         { "use-serial", no_argument, &useSerial, 1 },
 
@@ -61,6 +81,17 @@ int parse_args( int argc, char* argv[] ) {
         { "throttle", no_argument, &throttle, 1 },
 
         { "no-debug", no_argument, &useDebugger, 0 },
+
+        { "sdl-no-chrome", no_argument, &show_ui_chrome, 0 },
+        { "sdl-fullscreen", no_argument, &show_ui_fullscreen, 1 },
+
+        { "x11-netbook", no_argument, &netbook, 1 },
+        { "x11-mono", no_argument, &mono, 1 },
+        { "x11-gray", no_argument, &gray, 1 },
+        { "x11-small-font", required_argument, NULL, 8111 },
+        { "x11-medium-font", required_argument, NULL, 8112 },
+        { "x11-large-font", required_argument, NULL, 8113 },
+        { "x11-connection-font", required_argument, NULL, 8114 },
 
         { 0, 0, 0, 0 } };
 
@@ -84,12 +115,6 @@ int parse_args( int argc, char* argv[] ) {
         "\t   --serial-line=<path>\t\tuse <path> as serial device default: "
         "%s)\n"
         "\t-V --verbose\t\t\tbe verbose (default: false)\n"
-        "\t   --no-chrome\t\t\t[SDL only] only display the LCD (default: "
-        "false)\n"
-        "\t   --fullscreen\t\t\t[SDL only] make the UI fullscreen (default: "
-        "false)\n"
-        "\t   --netbook\t\t\t[X11 only] make the UI horizontal (default: "
-        "false)\n"
         "\t-u --front-end\t\t\tspecify a front-end (available: x11, sdl; "
         "default: x11)\n"
         "\t-t --use-terminal\t\tactivate pseudo terminal interface (default: "
@@ -98,14 +123,33 @@ int parse_args( int argc, char* argv[] ) {
         "\t   --no-debug\t\t\tdisable the debugger\n"
         "\t-i --initialize\t\t\tinitialize the content of <config-dir>\n"
         "\t-r --reset\t\t\tperform a reset on startup\n"
-        "\t-T --throttle\t\t\ttry to emulate real speed (default: false)\n";
-
+        "\t-T --throttle\t\t\ttry to emulate real speed (default: false)\n"
+        "\t   --sdl-no-chrome\t\t[SDL only] only display the LCD (default: "
+        "false)\n"
+        "\t   --sdl-fullscreen\t\t[SDL only] make the UI fullscreen "
+        "(default: "
+        "false)\n"
+        "\t   --x11-netbook\t\t[X11 only] make the UI horizontal (default: "
+        "false)\n"
+        "\t   --x11-mono\t\t\t[X11 only] make the UI monochrome (default: "
+        "false)\n"
+        "\t   --x11-gray\t\t\t[X11 only] make the UI grayscale (default: "
+        "false)\n"
+        "\t   --x11-small-font=<X font name>\tuse <X font name> as small "
+        "font (default: %s)\n"
+        "\t   --x11-medium-font=<X font name>\tuse <X font name> as medium "
+        "font (default: %s)\n"
+        "\t   --x11-large-font=<X font name>\tuse <X font name> as large "
+        "font (default: %s)\n"
+        "\t   --x11-connection-font=<X font name>\tuse <X font name> as "
+        "connection font (default: %s)\n";
     while ( c != EOF ) {
         c = getopt_long( argc, argv, optstring, long_options, &option_index );
 
         switch ( c ) {
             case 'h':
-                fprintf( stdout, help_text, progname, serialLine );
+                fprintf( stdout, help_text, progname, serialLine, smallFont,
+                         mediumFont, largeFont, connFont );
                 exit( 0 );
                 break;
             case 'v':
@@ -133,6 +177,18 @@ int parse_args( int argc, char* argv[] ) {
                 break;
             case 1015:
                 serialLine = optarg;
+                break;
+            case 8111:
+                smallFont = optarg;
+                break;
+            case 8112:
+                mediumFont = optarg;
+                break;
+            case 8113:
+                largeFont = optarg;
+                break;
+            case 8114:
+                connFont = optarg;
                 break;
             case 'u':
                 if ( strcmp( optarg, "sdl" ) == 0 )

@@ -253,7 +253,7 @@ int get_identification( void ) {
 void do_shutdown( void ) {
     if ( device.display_touched ) {
         device.display_touched = 0;
-        ui_update_LCD();
+        ui_refresh_LCD();
     }
 
     stop_timer( RUN_TIMER );
@@ -273,7 +273,7 @@ void do_shutdown( void ) {
         if ( got_alarm ) {
             got_alarm = 0;
 
-            ui_update_LCD();
+            ui_refresh_LCD();
 
             ticks = get_t1_t2();
             if ( saturn.t2_ctrl & 0x01 )

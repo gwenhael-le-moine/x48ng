@@ -105,6 +105,3 @@ install: all
 
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/share/applications
 	sed "s|@PREFIX@|$(PREFIX)|g" dist/x48ng.desktop > $(DESTDIR)$(PREFIX)/share/applications/x48ng.desktop
-
-	install -m 755 -d -- $(DESTDIR)/etc/X11/app-defaults
-	install -c -m 644 dist/X48NG.ad $(DESTDIR)/etc/X11/app-defaults/X48NG

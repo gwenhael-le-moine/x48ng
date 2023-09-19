@@ -39,6 +39,9 @@ extern int x11_get_event( void );
 extern void sdl_update_LCD( void );
 extern void x11_update_LCD( void );
 
+extern void sdl_refresh_LCD( void );
+extern void x11_refresh_LCD( void );
+
 extern void sdl_adjust_contrast( void );
 extern void x11_adjust_contrast( void );
 
@@ -69,6 +72,7 @@ extern int ( *ui_get_event )( void );
 /* used in: emu_actions.c, emu_emulate.c, debugger.c */
 /*****************************************************/
 extern void ( *ui_update_LCD )( void );
+extern void ( *ui_refresh_LCD )( void );
 
 /**************************/
 /* used in: emu_emulate.c */
