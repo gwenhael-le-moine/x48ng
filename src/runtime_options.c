@@ -33,20 +33,17 @@ int show_ui_fullscreen = 0;
 
 /* x11 */
 int netbook = 0;
-
 char* name = "x48ng";
 char* title = "x48ng";
 char* geometry;
 /* char* iconGeom; */
 /* char* iconName; */
-
 /* int x11_visual = -1; */
 int mono = 0;
 int gray = 0;
 int monoIcon = 0;
 int iconic = 0;
 int xrm = 1;
-
 char* smallFont = "-*-fixed-bold-r-normal-*-14-*-*-*-*-*-iso8859-1";
 char* mediumFont = "-*-fixed-bold-r-normal-*-15-*-*-*-*-*-iso8859-1";
 char* largeFont = "-*-fixed-medium-r-normal-*-20-*-*-*-*-*-iso8859-1";

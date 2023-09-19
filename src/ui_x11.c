@@ -354,7 +354,6 @@ static int xerror_flag;
 
 static int dynamic_color;
 static int direct_color;
-static int does_backing_store;
 static int color_mode;
 static int icon_color_mode;
 
@@ -1678,11 +1677,6 @@ int InitDisplay( int argc, char** argv ) {
      * Get the default screen
      */
     screen = DefaultScreen( dpy );
-
-    /*
-     * Does the Xserver do backing-store?
-     */
-    does_backing_store = XDoesBackingStore( XScreenOfDisplay( dpy, screen ) );
 
     /*
      * Try to use XShm-Extension
@@ -3589,7 +3583,7 @@ void DrawDisp( void ) {
     redraw_annunc();
 }
 
-void get_geometry_string( Window win, char* s, int allow_off_screen ) {
+void get_Window_geometry_string( Window win, char* s, int allow_off_screen ) {
     XWindowAttributes xwa;
     Window root, parent, window;
     Window* children = ( Window* )0;
@@ -3661,49 +3655,15 @@ void save_options( int argc, char** argv ) {
 }
 
 void save_command_line( void ) {
-    XWindowAttributes xwa;
-    int wm_argc, ac;
-    char **wm_argv, geom[ 128 ], icon_geom[ 128 ];
+    int wm_argc = 0;
+    char** wm_argv = ( char** )malloc( ( saved_argc + 5 ) * sizeof( char* ) );
 
-    ac = wm_argc = 0;
-
-    wm_argv = ( char** )malloc( ( saved_argc + 5 ) * sizeof( char* ) );
     if ( wm_argv == ( char** )0 ) {
         if ( verbose )
             fprintf( stderr, "warning: malloc failed in wm_save_yourself.\n" );
         XSetCommand( dpy, mainW, saved_argv, saved_argc );
         return;
     }
-
-    while ( saved_argv[ ac ] ) {
-        if ( !strcmp( saved_argv[ ac ], "-geometry" ) ) {
-            ac += 2;
-            continue;
-        }
-        if ( !strcmp( saved_argv[ ac ], "-iconGeom" ) ) {
-            ac += 2;
-            continue;
-        }
-        if ( !strcmp( saved_argv[ ac ], "-iconic" ) ) {
-            ac++;
-            continue;
-        }
-        wm_argv[ wm_argc++ ] = saved_argv[ ac++ ];
-    }
-
-    wm_argv[ wm_argc++ ] = "-geometry";
-    get_geometry_string( mainW, geom, 1 );
-    wm_argv[ wm_argc++ ] = geom;
-
-    wm_argv[ wm_argc++ ] = "-iconGeom";
-    get_geometry_string( iconW, icon_geom, 0 );
-    wm_argv[ wm_argc++ ] = icon_geom;
-
-    XGetWindowAttributes( dpy, mainW, &xwa );
-    if ( xwa.map_state == IsUnmapped ) {
-        wm_argv[ wm_argc++ ] = "-iconic";
-    }
-    wm_argv[ wm_argc ] = ( char* )0;
 
     XSetCommand( dpy, mainW, wm_argv, wm_argc );
 }

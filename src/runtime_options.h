@@ -30,20 +30,17 @@ extern int show_ui_fullscreen;
 
 /* x11 */
 extern int netbook;
-
 extern char* name;
 extern char* title;
 extern char* geometry;
 /* extern char* iconGeom; */
 /* extern char* iconName; */
-
 /* extern int x11_visual; */
 extern int mono;
 extern int gray;
 extern int monoIcon;
 extern int iconic;
 extern int xrm;
-
 extern char* smallFont;
 extern char* mediumFont;
 extern char* largeFont;
