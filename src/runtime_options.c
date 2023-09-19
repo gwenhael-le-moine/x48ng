@@ -193,8 +193,12 @@ int parse_args( int argc, char* argv[] ) {
                     frontend_type = FRONTEND_SDL;
                 else if ( strcmp( optarg, "text" ) == 0 )
                     frontend_type = FRONTEND_TEXT;
-                else
+                else if ( strcmp( optarg, "x11" ) == 0 )
                     frontend_type = FRONTEND_X11;
+                else {
+                    fprintf( stderr, "Error: unknown frontend '%s'\n", optarg );
+                    exit( 1 );
+                }
                 break;
             case 'V':
                 verbose = 1;
