@@ -3731,7 +3731,7 @@ void CreateDispWindow( void ) {
         CompletionType = XShmGetEventBase( dpy ) + ShmCompletion;
     }
 
- shm_error:
+shm_error:
     XSetErrorHandler( NULL );
     XFlush( dpy );
 
@@ -4689,17 +4689,14 @@ static inline void draw_nibble( int c, int r, int val ) {
     int x, y;
 
     x = ( c * 8 ) + 5;
-
     if ( r <= display.lines )
         x -= disp.offset;
     y = ( r * 2 ) + 20;
-
     val &= 0x0f;
     if ( val != lcd_buffer[ r ][ c ] ) {
-        lcd_buffer[ r ][ c ] = val;
-
         XCopyPlane( dpy, nibble_maps[ val ], disp.win, disp.gc, 0, 0, 8, 2, x,
                     y, 1 );
+        lcd_buffer[ r ][ c ] = val;
     }
 }
 
