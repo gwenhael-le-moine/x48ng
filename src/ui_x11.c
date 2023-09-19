@@ -1384,53 +1384,6 @@ icon_map_t icon_maps_gx[] = {
 int saved_argc;
 char** saved_argv;
 
-/**************/
-/* prototypes */
-/**************/
-
-void fatal_exit( char* error, char* advice );
-int AllocColors( void );
-int InitDisplay( int argc, char** argv );
-void x11_adjust_contrast( void );
-int DrawSmallString( Display* the_dpy, Drawable d, GC the_gc, int x, int y,
-                     const char* string, unsigned int length );
-void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small,
-                   XFontStruct* f_med, XFontStruct* f_big );
-void DrawButtons( void );
-int DrawButton( int i );
-void CreateBackground( int width, int height, int w_top, int h_top,
-                       x11_keypad_t* x11_keypad );
-void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
-                   x11_keypad_t* x11_keypad );
-void CreateBezel( x11_keypad_t* x11_keypad );
-void DrawMore( unsigned int offset_y, x11_keypad_t* x11_keypad );
-void DrawKeypad( x11_keypad_t* x11_keypad );
-void CreateIcon( void );
-void refresh_icon( void );
-void DrawIcon( void );
-int handle_xerror( Display* the_dpy, XErrorEvent* eev );
-void CreateDispWindow( void );
-int CreateWindows( int argc, char** argv );
-int key_event( int b, XEvent* xev );
-void refresh_display( void );
-void DrawDisp( void );
-void get_geometry_string( Window win, char* s, int allow_off_screen );
-void save_options( int argc, char** argv );
-void save_command_line( void );
-int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen );
-int x11_button_pressed( int b );
-int x11_button_released( int b );
-void ShowConnections( char* wire, char* ir );
-int x11_get_event( void );
-void x11_init_LCD( void );
-void x11_update_LCD( void );
-void redraw_display( void );
-void x11_disp_draw_nibble( word_20 addr, word_4 val );
-void x11_menu_draw_nibble( word_20 addr, word_4 val );
-void x11_draw_annunc( void );
-void init_annunc( void );
-void redraw_annunc( void );
-
 /*************/
 /* functions */
 /*************/
@@ -3257,6 +3210,60 @@ shm_error:
     }
 }
 
+void DrawSerialDevices( char* wire, char* ir ) {
+    char name[ 128 ];
+    int x, y, w, h;
+    int conn_top;
+    XFontStruct* finfo;
+    XGCValues val;
+    unsigned long gc_mask;
+    XCharStruct xchar;
+    int dir, fa, fd;
+    Pixmap pix;
+
+    finfo = load_x11_font( dpy, connFont );
+    val.font = finfo->fid;
+    gc_mask = GCFont;
+    XChangeGC( dpy, gc, gc_mask, &val );
+
+    conn_top = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 18;
+
+    XTextExtents( finfo, "TEST", ( int )strlen( "TEST" ), &dir, &fa, &fd,
+                  &xchar );
+    w = DISPLAY_WIDTH;
+    h = fa + fd;
+
+    pix = XCreatePixmap( dpy, x11_keypad.pixmap, w, h,
+                         depth ); /* FIXME keypad? */
+    XSetForeground( dpy, gc, COLOR( DISP_PAD ) );
+    XFillRectangle( dpy, pix, gc, 0, 0, w, h );
+
+    XSetBackground( dpy, gc, COLOR( DISP_PAD ) );
+    XSetForeground( dpy, gc, COLOR( LABEL ) );
+
+    sprintf( name, "wire: %s", wire ? wire : "none" );
+    XTextExtents( finfo, name, ( int )strlen( name ), &dir, &fa, &fd, &xchar );
+    x = 0;
+    y = fa;
+    XDrawImageString( dpy, pix, gc, x, y, name, ( int )strlen( name ) );
+
+    sprintf( name, "IR: %s", ir ? ir : "none" );
+    XTextExtents( finfo, name, ( int )strlen( name ), &dir, &fa, &fd, &xchar );
+    x = w - xchar.width - 1;
+    y = fa;
+    XDrawImageString( dpy, pix, gc, x, y, name, ( int )strlen( name ) );
+
+    x = DISPLAY_OFFSET_X;
+    y = conn_top;
+    XCopyArea( dpy, pix, x11_keypad.pixmap, gc, 0, 0, w, h, x,
+               y ); /* FIXME keypad? */
+
+    DrawKeypad( &x11_keypad );
+
+    XFreePixmap( dpy, pix );
+    XFreeFont( dpy, finfo );
+}
+
 int CreateWindows( int argc, char** argv ) {
     XSizeHints hint, ih;
     XWMHints wmh;
@@ -3562,7 +3569,7 @@ int CreateWindows( int argc, char** argv ) {
     DrawButtons();
     DrawIcon();
 
-    ShowConnections( wire_name, ir_name );
+    DrawSerialDevices( wire_name, ir_name );
 
     if ( shm_flag ) {
         XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
@@ -3625,6 +3632,18 @@ void refresh_display( void ) {
                       ( unsigned int )( 126 - disp.lines ), 0 );
     }
     disp.display_update = 0;
+}
+
+void redraw_display( void ) {
+    XClearWindow( dpy, disp.win );
+    memset( disp_buf, 0, sizeof( disp_buf ) );
+    memset( lcd_buffer, 0, sizeof( lcd_buffer ) );
+    x11_update_LCD();
+}
+
+void redraw_annunc( void ) {
+    last_annunc_state = -1;
+    x11_draw_annunc();
 }
 
 void DrawDisp( void ) {
@@ -4147,60 +4166,6 @@ static void button_release_all( void ) {
         }
 }
 
-void ShowConnections( char* wire, char* ir ) {
-    char name[ 128 ];
-    int x, y, w, h;
-    int conn_top;
-    XFontStruct* finfo;
-    XGCValues val;
-    unsigned long gc_mask;
-    XCharStruct xchar;
-    int dir, fa, fd;
-    Pixmap pix;
-
-    finfo = load_x11_font( dpy, connFont );
-    val.font = finfo->fid;
-    gc_mask = GCFont;
-    XChangeGC( dpy, gc, gc_mask, &val );
-
-    conn_top = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 18;
-
-    XTextExtents( finfo, "TEST", ( int )strlen( "TEST" ), &dir, &fa, &fd,
-                  &xchar );
-    w = DISPLAY_WIDTH;
-    h = fa + fd;
-
-    pix = XCreatePixmap( dpy, x11_keypad.pixmap, w, h,
-                         depth ); /* FIXME keypad? */
-    XSetForeground( dpy, gc, COLOR( DISP_PAD ) );
-    XFillRectangle( dpy, pix, gc, 0, 0, w, h );
-
-    XSetBackground( dpy, gc, COLOR( DISP_PAD ) );
-    XSetForeground( dpy, gc, COLOR( LABEL ) );
-
-    sprintf( name, "wire: %s", wire ? wire : "none" );
-    XTextExtents( finfo, name, ( int )strlen( name ), &dir, &fa, &fd, &xchar );
-    x = 0;
-    y = fa;
-    XDrawImageString( dpy, pix, gc, x, y, name, ( int )strlen( name ) );
-
-    sprintf( name, "IR: %s", ir ? ir : "none" );
-    XTextExtents( finfo, name, ( int )strlen( name ), &dir, &fa, &fd, &xchar );
-    x = w - xchar.width - 1;
-    y = fa;
-    XDrawImageString( dpy, pix, gc, x, y, name, ( int )strlen( name ) );
-
-    x = DISPLAY_OFFSET_X;
-    y = conn_top;
-    XCopyArea( dpy, pix, x11_keypad.pixmap, gc, 0, 0, w, h, x,
-               y ); /* FIXME keypad? */
-
-    DrawKeypad( &x11_keypad );
-
-    XFreePixmap( dpy, pix );
-    XFreeFont( dpy, finfo );
-}
-
 static inline void draw_nibble( int c, int r, int val ) {
     int x, y;
 
@@ -4232,23 +4197,11 @@ static inline void draw_row( long addr, int row ) {
     }
 }
 
-void redraw_display( void ) {
-    XClearWindow( dpy, disp.win );
-    memset( disp_buf, 0, sizeof( disp_buf ) );
-    memset( lcd_buffer, 0, sizeof( lcd_buffer ) );
-    x11_update_LCD();
-}
-
 void init_annunc( void ) {
     for ( int i = 0; x11_ann_tbl[ i ].bit; i++ )
         x11_ann_tbl[ i ].pixmap = XCreateBitmapFromData(
             dpy, disp.win, ( char* )x11_ann_tbl[ i ].bits,
             x11_ann_tbl[ i ].width, x11_ann_tbl[ i ].height );
-}
-
-void redraw_annunc( void ) {
-    last_annunc_state = -1;
-    x11_draw_annunc();
 }
 
 /**********/
