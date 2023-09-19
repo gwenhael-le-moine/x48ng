@@ -307,8 +307,6 @@ typedef struct disp_t {
     GC gc;
 
     short mapped;
-    int offset;
-    int lines;
 
     int display_update;
     XShmSegmentInfo disp_info;
@@ -3543,13 +3541,15 @@ void refresh_display( void ) {
         return;
 
     if ( disp.display_update & UPDATE_DISP ) {
-        XShmPutImage( dpy, disp.win, disp.gc, disp.disp_image, disp.offset, 0,
-                      5, 20, 262, ( unsigned int )( disp.lines + 2 ), 0 );
+        XShmPutImage( dpy, disp.win, disp.gc, disp.disp_image,
+                      2 * display.offset, 0, 5, 20, 262,
+                      ( unsigned int )( ( 2 * display.lines ) + 2 ), 0 );
     }
-    if ( ( disp.lines < 126 ) && ( disp.display_update & UPDATE_MENU ) ) {
+    if ( ( ( 2 * display.lines ) < 126 ) &&
+         ( disp.display_update & UPDATE_MENU ) ) {
         XShmPutImage( dpy, disp.win, disp.gc, disp.menu_image, 0, 0, 5,
-                      ( int )( disp.lines + 22 ), 262,
-                      ( unsigned int )( 126 - disp.lines ), 0 );
+                      ( int )( ( 2 * display.lines ) + 22 ), 262,
+                      ( unsigned int )( 126 - ( 2 * display.lines ) ), 0 );
     }
     disp.display_update = 0;
 }
@@ -3568,12 +3568,14 @@ void redraw_annunc( void ) {
 
 void DrawDisp( void ) {
     if ( shm_flag ) {
-        XShmPutImage( dpy, disp.win, disp.gc, disp.disp_image, disp.offset, 0,
-                      5, 20, 262, ( unsigned int )( disp.lines + 2 ), 0 );
+        XShmPutImage( dpy, disp.win, disp.gc, disp.disp_image,
+                      2 * display.offset, 0, 5, 20, 262,
+                      ( unsigned int )( ( 2 * display.lines ) + 2 ), 0 );
         if ( display.lines < 63 ) {
             XShmPutImage( dpy, disp.win, disp.gc, disp.menu_image, 0,
-                          disp.lines - 110, 5, 22 + disp.lines, 262,
-                          ( unsigned int )( 126 - disp.lines ), 0 );
+                          ( 2 * display.lines ) - 110, 5,
+                          22 + ( 2 * display.lines ), 262,
+                          ( unsigned int )( 126 - ( 2 * display.lines ) ), 0 );
         }
         disp.display_update = 0;
     } else {
@@ -4057,7 +4059,7 @@ static inline void draw_nibble( int c, int r, int val ) {
 
     x = ( c * 8 ) + 5;
     if ( r <= display.lines )
-        x -= disp.offset;
+        x -= ( 2 * display.offset );
     y = ( r * 2 ) + 20;
     val &= 0x0f;
     if ( val != lcd_buffer[ r ][ c ] ) {
@@ -4795,14 +4797,10 @@ void x11_init_LCD( void ) {
 
     display.disp_start = ( saturn.disp_addr & 0xffffe );
     display.offset = ( saturn.disp_io & 0x7 );
-    disp.offset = 2 * display.offset;
 
     display.lines = ( saturn.line_count & 0x3f );
     if ( display.lines == 0 )
         display.lines = 63;
-    disp.lines = 2 * display.lines;
-    if ( disp.lines < 110 )
-        disp.lines = 110;
 
     if ( display.offset > 3 )
         display.nibs_per_line =
