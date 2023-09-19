@@ -103,64 +103,64 @@ typedef struct sdl_ann_struct_t {
 /*************/
 /* variables */
 /*************/
-sdl_keypad_t keypad;
-sdl_color_t* sdl_colors;
+static sdl_keypad_t keypad;
+static sdl_color_t* sdl_colors;
 
-sdl_color_t sdl_colors_sx[] = { { "white", 255, 255, 255 },
-                                { "left", 255, 166, 0 },
-                                { "right", 0, 210, 255 },
-                                { "but_top", 109, 93, 93 },
-                                { "button", 90, 77, 77 },
-                                { "but_bot", 76, 65, 65 },
-                                { "lcd_col", 202, 221, 92 },
-                                { "pix_col", 0, 0, 128 },
-                                { "pad_top", 109, 78, 78 },
-                                { "pad", 90, 64, 64 },
-                                { "pad_bot", 76, 54, 54 },
-                                { "disp_pad_top", 155, 118, 84 },
-                                { "disp_pad", 124, 94, 67 },
-                                { "disp_pad_bot", 100, 75, 53 },
-                                { "logo", 204, 169, 107 },
-                                { "logo_back", 64, 64, 64 },
-                                { "label", 202, 184, 144 },
-                                { "frame", 0, 0, 0 },
-                                { "underlay", 60, 42, 42 },
-                                { "black", 0, 0, 0 },
-                                { 0 } };
+static sdl_color_t sdl_colors_sx[] = { { "white", 255, 255, 255 },
+                                       { "left", 255, 166, 0 },
+                                       { "right", 0, 210, 255 },
+                                       { "but_top", 109, 93, 93 },
+                                       { "button", 90, 77, 77 },
+                                       { "but_bot", 76, 65, 65 },
+                                       { "lcd_col", 202, 221, 92 },
+                                       { "pix_col", 0, 0, 128 },
+                                       { "pad_top", 109, 78, 78 },
+                                       { "pad", 90, 64, 64 },
+                                       { "pad_bot", 76, 54, 54 },
+                                       { "disp_pad_top", 155, 118, 84 },
+                                       { "disp_pad", 124, 94, 67 },
+                                       { "disp_pad_bot", 100, 75, 53 },
+                                       { "logo", 204, 169, 107 },
+                                       { "logo_back", 64, 64, 64 },
+                                       { "label", 202, 184, 144 },
+                                       { "frame", 0, 0, 0 },
+                                       { "underlay", 60, 42, 42 },
+                                       { "black", 0, 0, 0 },
+                                       { 0 } };
 
-sdl_color_t sdl_colors_gx[] = { { "white", 255, 255, 255 },
-                                { "left", 255, 186, 255 },
-                                { "right", 0, 255, 204 },
-                                { "but_top", 104, 104, 104 },
-                                { "button", 88, 88, 88 },
-                                { "but_bot", 74, 74, 74 },
-                                { "lcd_col", 202, 221, 92 },
-                                { "pix_col", 0, 0, 128 },
-                                { "pad_top", 88, 88, 88 },
-                                { "pad", 74, 74, 74 },
-                                { "pad_bot", 64, 64, 64 },
-                                { "disp_pad_top", 128, 128, 138 },
-                                { "disp_pad", 104, 104, 110 },
-                                { "disp_pad_bot", 84, 84, 90 },
-                                { "logo", 176, 176, 184 },
-                                { "logo_back", 104, 104, 110 },
-                                { "label", 240, 240, 240 },
-                                { "frame", 0, 0, 0 },
-                                { "underlay", 104, 104, 110 },
-                                { "black", 0, 0, 0 },
-                                { 0 } };
+static sdl_color_t sdl_colors_gx[] = { { "white", 255, 255, 255 },
+                                       { "left", 255, 186, 255 },
+                                       { "right", 0, 255, 204 },
+                                       { "but_top", 104, 104, 104 },
+                                       { "button", 88, 88, 88 },
+                                       { "but_bot", 74, 74, 74 },
+                                       { "lcd_col", 202, 221, 92 },
+                                       { "pix_col", 0, 0, 128 },
+                                       { "pad_top", 88, 88, 88 },
+                                       { "pad", 74, 74, 74 },
+                                       { "pad_bot", 64, 64, 64 },
+                                       { "disp_pad_top", 128, 128, 138 },
+                                       { "disp_pad", 104, 104, 110 },
+                                       { "disp_pad_bot", 84, 84, 90 },
+                                       { "logo", 176, 176, 184 },
+                                       { "logo_back", 104, 104, 110 },
+                                       { "label", 240, 240, 240 },
+                                       { "frame", 0, 0, 0 },
+                                       { "underlay", 104, 104, 110 },
+                                       { "black", 0, 0, 0 },
+                                       { 0 } };
 
 // This will take the value of the defines, but can be run-time modified
-unsigned KEYBOARD_HEIGHT, KEYBOARD_WIDTH, TOP_SKIP, SIDE_SKIP, BOTTOM_SKIP,
-    DISP_KBD_SKIP, DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_OFFSET_X,
+static unsigned KEYBOARD_HEIGHT, KEYBOARD_WIDTH, TOP_SKIP, SIDE_SKIP,
+    BOTTOM_SKIP, DISP_KBD_SKIP, DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_OFFSET_X,
     DISPLAY_OFFSET_Y, DISP_FRAME, KEYBOARD_OFFSET_X, KEYBOARD_OFFSET_Y,
     KBD_UPLINE;
 
-unsigned int ARGBColors[ BLACK + 1 ];
+static unsigned int ARGBColors[ BLACK + 1 ];
 
-sdl_button_t* buttons = 0;
+static sdl_button_t* buttons = 0;
 
-sdl_button_t buttons_sx[] = {
+static sdl_button_t buttons_sx[] = {
     { "A",
       0,
       0,
@@ -484,7 +484,7 @@ sdl_button_t buttons_sx[] = {
 
     { 0 } };
 
-sdl_button_t buttons_gx[] = {
+static sdl_button_t buttons_gx[] = {
     { "A",
       0,
       0,
@@ -808,7 +808,7 @@ sdl_button_t buttons_gx[] = {
 
     { 0 } };
 
-sdl_ann_struct_t ann_tbl[] = {
+static sdl_ann_struct_t ann_tbl[] = {
     { ANN_LEFT, 16, 4, ann_left_width, ann_left_height, ann_left_bitmap, 0, 0 },
     { ANN_RIGHT, 61, 4, ann_right_width, ann_right_height, ann_right_bitmap, 0,
       0 },
@@ -822,15 +822,15 @@ sdl_ann_struct_t ann_tbl[] = {
     { 0 } };
 
 // State to displayed zoomed last pressed key
-SDL_Surface* showkeylastsurf = 0;
-int showkeylastx, showkeylasty, showkeylastkey;
+static SDL_Surface* showkeylastsurf = 0;
+static int showkeylastx, showkeylasty, showkeylastkey;
 
-SDL_Surface* sdlwindow;
+static SDL_Surface* sdlwindow;
 
 /****************************/
 /* functions implementation */
 /****************************/
-inline unsigned bgra2argb( unsigned color ) {
+static inline unsigned bgra2argb( unsigned color ) {
     unsigned a = ( color >> 24 ) & 0xff, r = ( color >> 16 ) & 0xff,
              g = ( color >> 8 ) & 0xff, b = color & 0xff;
 
@@ -841,9 +841,10 @@ inline unsigned bgra2argb( unsigned color ) {
 /*
         Create a surface from binary bitmap data
 */
-SDL_Surface* SDLCreateSurfFromData( unsigned int w, unsigned int h,
-                                    unsigned char* data, unsigned int coloron,
-                                    unsigned int coloroff ) {
+static SDL_Surface* SDLCreateSurfFromData( unsigned int w, unsigned int h,
+                                           unsigned char* data,
+                                           unsigned int coloron,
+                                           unsigned int coloroff ) {
     unsigned int x, y;
     SDL_Surface* surf;
 
@@ -876,8 +877,9 @@ SDL_Surface* SDLCreateSurfFromData( unsigned int w, unsigned int h,
     return surf;
 }
 
-void SDLDrawSmallString( int x, int y, const char* string, unsigned int length,
-                         unsigned int coloron, unsigned int coloroff ) {
+static void SDLDrawSmallString( int x, int y, const char* string,
+                                unsigned int length, unsigned int coloron,
+                                unsigned int coloroff ) {
     unsigned int i;
 
     for ( i = 0; i < length; i++ ) {
@@ -906,7 +908,7 @@ void SDLDrawSmallString( int x, int y, const char* string, unsigned int length,
     }
 }
 
-void SDLInit( void ) {
+static void SDLInit( void ) {
     unsigned int width, height;
 
     // Initialize SDL
@@ -959,7 +961,7 @@ void SDLInit( void ) {
     }
 }
 
-void sdl_button_pressed( int b ) {
+static void sdl_button_pressed( int b ) {
     // Check not already pressed (may be important: avoids a useless do_kbd_int)
     if ( buttons[ b ].pressed == 1 )
         return;
@@ -985,7 +987,7 @@ void sdl_button_pressed( int b ) {
     }
 }
 
-void sdl_button_released( int b ) {
+static void sdl_button_released( int b ) {
     // Check not already released (not critical)
     if ( buttons[ b ].pressed == 0 )
         return;
@@ -1003,7 +1005,7 @@ void sdl_button_released( int b ) {
     }
 }
 
-void SDLCreateColors( void ) {
+static void SDLCreateColors( void ) {
     unsigned i;
 
     for ( i = WHITE; i < BLACK; i++ )
@@ -1028,7 +1030,7 @@ void SDLCreateColors( void ) {
 
 // This should be called once to setup the surfaces. Calling it multiple
 // times is fine, it won't do anything on subsequent calls.
-void SDLCreateAnnunc( void ) {
+static void SDLCreateAnnunc( void ) {
     for ( int i = 0; i < 6; i++ ) {
         // If the SDL surface does not exist yet, we create it on the fly
         if ( ann_tbl[ i ].surfaceon ) {
@@ -1053,7 +1055,7 @@ void SDLCreateAnnunc( void ) {
 
 // Find which key is pressed, if any.
 // Returns -1 is no key is pressed
-int SDLCoordinateToKey( unsigned int x, unsigned int y ) {
+static int SDLCoordinateToKey( unsigned int x, unsigned int y ) {
     /* return immediatly if the click isn't even in the keyboard area */
     if ( y < KEYBOARD_OFFSET_Y )
         return -1;
@@ -1085,9 +1087,10 @@ int SDLCoordinateToKey( unsigned int x, unsigned int y ) {
 
     return -1;
 }
+
 // Map the keyboard keys to the HP keys
 // Returns -1 if there is no mapping
-int SDLKeyToKey( SDLKey k ) {
+static int SDLKeyToKey( SDLKey k ) {
     switch ( k ) {
         case SDLK_0:
             return BUTTON_0;
@@ -1312,8 +1315,8 @@ int SDLKeyToKey( SDLKey k ) {
     return -1;
 }
 
-void SDLDrawMore( unsigned int cut, unsigned int offset_y, int keypad_width,
-                  int keypad_height ) {
+static void SDLDrawMore( unsigned int cut, unsigned int offset_y,
+                         int keypad_width, int keypad_height ) {
     // bottom lines
     lineColor( sdlwindow, 1, keypad_height - 1, keypad_width - 1,
                keypad_height - 1, bgra2argb( ARGBColors[ PAD_TOP ] ) );
@@ -1444,7 +1447,7 @@ void SDLDrawMore( unsigned int cut, unsigned int offset_y, int keypad_width,
                bgra2argb( ARGBColors[ PAD_BOT ] ) );
 }
 
-void SDLDrawLogo() {
+static void SDLDrawLogo() {
     int x, y;
     SDL_Surface* surf;
 
@@ -1592,7 +1595,7 @@ void SDLDrawLogo() {
     }
 }
 
-void SDLCreateKeys( void ) {
+static void SDLCreateKeys( void ) {
     unsigned i, x, y;
     unsigned pixel;
 
@@ -1816,7 +1819,7 @@ void SDLCreateKeys( void ) {
 }
 
 // Draw the left labels (violet on GX)
-void SDLDrawKeysLabelsLeft( void ) {
+static void SDLDrawKeysLabelsLeft( void ) {
     int i, x, y;
     unsigned int pw /* , ph */;
     int wl, wr, ws;
@@ -1898,7 +1901,7 @@ void SDLDrawKeysLabelsLeft( void ) {
 }
 
 // Draw the right labels (green on GX)
-void SDLDrawKeysLabelsRight( void ) {
+static void SDLDrawKeysLabelsRight( void ) {
     int i, x, y;
     unsigned int pw /* , ph */;
     int wl, wr, ws;
@@ -1979,7 +1982,7 @@ void SDLDrawKeysLabelsRight( void ) {
 }
 
 // Draw the letter bottom right of the keys
-void SDLDrawKeysLetters( void ) {
+static void SDLDrawKeysLetters( void ) {
     int i, x, y;
     int offset_y = KEYBOARD_OFFSET_Y;
     int offset_x = KEYBOARD_OFFSET_X;
@@ -2010,7 +2013,7 @@ void SDLDrawKeysLetters( void ) {
 }
 
 // Bottom label: the only one is the cancel button
-void SDLDrawKeysLabelsBottom( void ) {
+static void SDLDrawKeysLabelsBottom( void ) {
     int i, x, y;
     int offset_y = KEYBOARD_OFFSET_Y;
     int offset_x = KEYBOARD_OFFSET_X;
@@ -2039,7 +2042,7 @@ void SDLDrawKeysLabelsBottom( void ) {
 }
 
 // Draws the greyish area around keys that trigger menus
-void SDLDrawKeyMenu( void ) {
+static void SDLDrawKeyMenu( void ) {
     int i, x, y;
     int offset_y = KEYBOARD_OFFSET_Y;
     int offset_x = KEYBOARD_OFFSET_X;
@@ -2078,7 +2081,7 @@ void SDLDrawKeyMenu( void ) {
     }
 }
 
-void SDLDrawButtons( void ) {
+static void SDLDrawButtons( void ) {
     SDL_Rect srect, drect;
 
     for ( int i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
@@ -2107,7 +2110,7 @@ void SDLDrawButtons( void ) {
         buttons[ LAST_BUTTON ].y + buttons[ LAST_BUTTON ].h - buttons[ 0 ].y );
 }
 
-void SDLDrawKeypad( void ) {
+static void SDLDrawKeypad( void ) {
     SDLDrawKeyMenu();
     SDLDrawKeysLetters();
     SDLDrawKeysLabelsBottom();
@@ -2117,7 +2120,7 @@ void SDLDrawKeypad( void ) {
     SDLDrawButtons();
 }
 
-void SDLDrawBezel() {
+static void SDLDrawBezel() {
     unsigned int i;
     int display_height = DISPLAY_HEIGHT;
     int display_width = DISPLAY_WIDTH;
@@ -2224,7 +2227,7 @@ void SDLDrawBezel() {
                bgra2argb( ARGBColors[ LCD ] ) );
 }
 
-void SDLDrawBackground( int width, int height, int w_top, int h_top ) {
+static void SDLDrawBackground( int width, int height, int w_top, int h_top ) {
     SDL_Rect rect;
 
     rect.x = 0;
@@ -2238,7 +2241,7 @@ void SDLDrawBackground( int width, int height, int w_top, int h_top ) {
     SDL_FillRect( sdlwindow, &rect, ARGBColors[ DISP_PAD ] );
 }
 
-void SDLDrawBackgroundLCD() {
+static void SDLDrawBackgroundLCD() {
     SDL_Rect rect;
 
     rect.x = DISPLAY_OFFSET_X;
@@ -2248,7 +2251,7 @@ void SDLDrawBackgroundLCD() {
     SDL_FillRect( sdlwindow, &rect, ARGBColors[ LCD ] );
 }
 
-void SDLDrawAnnunc( char* annunc ) {
+static void SDLDrawAnnunc( char* annunc ) {
     SDLCreateAnnunc();
 
     // Print the annunciator
@@ -2278,7 +2281,7 @@ void SDLDrawAnnunc( char* annunc ) {
                     ann_tbl[ 5 ].y + ann_tbl[ 5 ].height - ann_tbl[ 0 ].y );
 }
 
-void SDLDrawNibble( int nx, int ny, int val ) {
+static void SDLDrawNibble( int nx, int ny, int val ) {
     int x, y;
     int xoffset = DISPLAY_OFFSET_X + 5;
     int yoffset = DISPLAY_OFFSET_Y + 20;
@@ -2318,7 +2321,7 @@ void SDLDrawNibble( int nx, int ny, int val ) {
 #endif
 }
 
-void SDLUIHideKey( void ) {
+static void SDLUIHideKey( void ) {
     SDL_Rect drect;
 
     if ( showkeylastsurf == 0 )
@@ -2338,7 +2341,7 @@ void SDLUIHideKey( void ) {
 }
 
 // Show the hp key which is being pressed
-void SDLUIShowKey( int hpkey ) {
+static void SDLUIShowKey( int hpkey ) {
     SDL_Rect srect, drect;
     SDL_Surface* ssurf;
     int x;
@@ -2403,7 +2406,7 @@ void SDLUIShowKey( int hpkey ) {
     SDL_UpdateRect( sdlwindow, x, y, ssurf->w, ssurf->h );
 }
 
-inline void SDLUIFeedback( void ) {}
+static inline void SDLUIFeedback( void ) {}
 
 static void button_release_all( void ) {
     for ( int b = BUTTON_A; b <= LAST_BUTTON; b++ )
@@ -2411,7 +2414,7 @@ static void button_release_all( void ) {
             sdl_button_released( b );
 }
 
-void SDLDrawSerialDevices() {
+static void SDLDrawSerialDevices() {
     char text[ 1024 ];
 
     if ( verbose ) {
@@ -2468,7 +2471,7 @@ static inline void draw_row( long addr, int row ) {
     }
 }
 
-void SDLCreateHP( void ) {
+static void SDLCreateHP( void ) {
     unsigned int width, height;
 
     if ( show_ui_chrome ) {
