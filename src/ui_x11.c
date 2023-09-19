@@ -2083,7 +2083,7 @@ static void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small,
 static void DrawButtons( void ) {
     int i;
 
-    for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
+    for ( i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
         if ( buttons[ i ].pressed ) {
             XCopyArea( dpy, buttons[ i ].down, buttons[ i ].xwin, gc, 0, 0,
                        buttons[ i ].w, buttons[ i ].h, 0, 0 );
@@ -2134,7 +2134,7 @@ static void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
     /*
      * draw the character labels
      */
-    for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
+    for ( i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
 
         CreateButton( i, offset_x, offset_y, f_small, f_med, f_big );
 
@@ -2169,7 +2169,7 @@ static void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
     /*
      * draw the bottom labels
      */
-    for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
+    for ( i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
 
         if ( buttons[ i ].sub != ( char* )0 ) {
 
@@ -2191,7 +2191,7 @@ static void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
     /*
      * draw the left labels
      */
-    for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
+    for ( i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
 
         if ( buttons[ i ].left != ( char* )0 ) {
 
@@ -2289,7 +2289,7 @@ static void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
     /*
      * draw the right labels
      */
-    for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
+    for ( i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
 
         if ( i < BUTTON_MTH )
             pixel = COLOR( DISP_PAD );
@@ -4076,7 +4076,7 @@ static int x11_button_released( int b ) {
 }
 
 static void button_release_all( void ) {
-    for ( int b = BUTTON_A; b <= LAST_BUTTON; b++ )
+    for ( int b = FIRST_BUTTON; b <= LAST_BUTTON; b++ )
         if ( buttons[ b ].pressed ) {
             int code = buttons[ b ].code;
             if ( code == 0x8000 ) {
@@ -4209,7 +4209,7 @@ int x11_get_event( void ) {
                         } else if ( xev.xexpose.window == mainW ) {
                             DrawKeypad( &keypad );
                         } else
-                            for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
+                            for ( i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
                                 if ( xev.xexpose.window == buttons[ i ].xwin ) {
                                     DrawButton( i );
                                     break;
@@ -4674,7 +4674,7 @@ int x11_get_event( void ) {
                         if ( xev.xbutton.button == Button1 ||
                              xev.xbutton.button == Button2 ||
                              xev.xbutton.button == Button3 ) {
-                            for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
+                            for ( i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
                                 if ( xev.xbutton.subwindow ==
                                      buttons[ i ].xwin ) {
                                     if ( buttons[ i ].pressed ) {
