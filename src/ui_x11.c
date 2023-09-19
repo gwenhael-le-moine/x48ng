@@ -1504,7 +1504,7 @@ static XFontStruct* load_x11_font( Display* dpy, char* fontname ) {
     return f;
 }
 
-static int AllocColors( void ) {
+int AllocColors( void ) {
     int c, error, dyn;
     int r_shift = 0, g_shift = 0, b_shift = 0;
     XSetWindowAttributes xswa;
@@ -1662,7 +1662,7 @@ static int AllocColors( void ) {
     return 0;
 }
 
-static int InitDisplay( int argc, char** argv ) {
+int InitDisplay( int argc, char** argv ) {
     /*
      * open the display
      */
@@ -1700,8 +1700,8 @@ static int InitDisplay( int argc, char** argv ) {
     return 0;
 }
 
-static int DrawSmallString( Display* the_dpy, Drawable d, GC the_gc, int x,
-                            int y, const char* string, unsigned int length ) {
+int DrawSmallString( Display* the_dpy, Drawable d, GC the_gc, int x, int y,
+                     const char* string, unsigned int length ) {
     Pixmap pix;
 
     for ( unsigned int i = 0; i < length; i++ ) {
@@ -1721,8 +1721,8 @@ static int DrawSmallString( Display* the_dpy, Drawable d, GC the_gc, int x,
     return 0;
 }
 
-static void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small,
-                          XFontStruct* f_med, XFontStruct* f_big ) {
+void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small,
+                   XFontStruct* f_med, XFontStruct* f_big ) {
     int x, y;
     XSetWindowAttributes xswa;
     XFontStruct* finfo;
@@ -2080,7 +2080,7 @@ static void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small,
     }
 }
 
-static void DrawButtons( void ) {
+void DrawButtons( void ) {
     int i;
 
     for ( i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
@@ -2094,7 +2094,7 @@ static void DrawButtons( void ) {
     }
 }
 
-static int DrawButton( int i ) {
+void DrawButton( int i ) {
     if ( buttons[ i ].pressed ) {
         XCopyArea( dpy, buttons[ i ].down, buttons[ i ].xwin, gc, 0, 0,
                    buttons[ i ].w, buttons[ i ].h, 0, 0 );
@@ -2102,11 +2102,10 @@ static int DrawButton( int i ) {
         XCopyArea( dpy, buttons[ i ].map, buttons[ i ].xwin, gc, 0, 0,
                    buttons[ i ].w, buttons[ i ].h, 0, 0 );
     }
-    return 0;
 }
 
-static void CreateBackground( int width, int height, int w_top, int h_top,
-                              x11_keypad_t* keypad ) {
+void CreateBackground( int width, int height, int w_top, int h_top,
+                       x11_keypad_t* keypad ) {
     XSetBackground( dpy, gc, COLOR( PAD ) );
     XSetForeground( dpy, gc, COLOR( PAD ) );
 
@@ -2118,8 +2117,8 @@ static void CreateBackground( int width, int height, int w_top, int h_top,
     XFillRectangle( dpy, keypad->pixmap, gc, 0, 0, width, height );
 }
 
-static void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
-                          x11_keypad_t* keypad ) {
+void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
+                   x11_keypad_t* keypad ) {
     int i, x, y;
     int wl, wr, ws;
     Pixmap pix;
@@ -2413,7 +2412,7 @@ static void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
     }
 }
 
-static void CreateBezel( x11_keypad_t* keypad ) {
+void CreateBezel( x11_keypad_t* keypad ) {
     int i;
     int display_height = DISPLAY_HEIGHT;
     int display_width = DISPLAY_WIDTH;
@@ -2539,7 +2538,7 @@ static void CreateBezel( x11_keypad_t* keypad ) {
                ( int )( DISPLAY_OFFSET_Y + display_height - 2 ) );
 }
 
-static void DrawMore( unsigned int offset_y, x11_keypad_t* keypad ) {
+void DrawMore( unsigned int offset_y, x11_keypad_t* keypad ) {
     Pixmap pix;
     int cut = 0;
     int x, y;
@@ -2816,12 +2815,12 @@ static void DrawMore( unsigned int offset_y, x11_keypad_t* keypad ) {
     }
 }
 
-static void DrawKeypad( x11_keypad_t* keypad ) {
+void DrawKeypad( x11_keypad_t* keypad ) {
     XCopyArea( dpy, keypad->pixmap, mainW, gc, 0, 0, keypad->width,
                keypad->height, 0, 0 );
 }
 
-static void CreateIcon( void ) {
+void CreateIcon( void ) {
     XSetWindowAttributes xswa;
     XWindowAttributes xwa;
     Pixmap tmp_pix;
@@ -2900,7 +2899,7 @@ static void CreateIcon( void ) {
     XSetFillStyle( dpy, gc, FillSolid );
 }
 
-static void refresh_icon( void ) {
+void refresh_icon( void ) {
     int icon_state;
 
     icon_state =
@@ -2942,18 +2941,18 @@ static void refresh_icon( void ) {
     }
 }
 
-static void DrawIcon( void ) {
+void DrawIcon( void ) {
     XCopyArea( dpy, icon_pix, iconW, gc, 0, 0, hp48_icon_width,
                hp48_icon_height, 0, 0 );
 }
 
-static int handle_xerror( Display* the_dpy, XErrorEvent* eev ) {
+int handle_xerror( Display* the_dpy, XErrorEvent* eev ) {
     xerror_flag = 1;
 
     return 0;
 }
 
-static void CreateDispWindow( void ) {
+void CreateDispWindow( void ) {
     XSetWindowAttributes xswa;
     XGCValues val;
     unsigned long gc_mask;
@@ -3138,7 +3137,7 @@ shm_error:
     }
 }
 
-static void DrawSerialDevices( char* wire, char* ir ) {
+void DrawSerialDevices( char* wire, char* ir ) {
     char name[ 128 ];
     int x, y, w, h;
     int conn_top;
@@ -3191,7 +3190,7 @@ static void DrawSerialDevices( char* wire, char* ir ) {
     XFreeFont( dpy, finfo );
 }
 
-static int CreateWindows( int argc, char** argv ) {
+int CreateWindows( int argc, char** argv ) {
     XSizeHints hint, ih;
     XWMHints wmh;
     XClassHint clh;
@@ -3506,7 +3505,7 @@ static int CreateWindows( int argc, char** argv ) {
     return 0;
 }
 
-static int key_event( int b, XEvent* xev ) {
+int key_event( int b, XEvent* xev ) {
     int code;
     int i, r, c;
 
@@ -3545,7 +3544,7 @@ static int key_event( int b, XEvent* xev ) {
     return 0;
 }
 
-static void refresh_display( void ) {
+void refresh_display( void ) {
     if ( !shm_flag )
         return;
 
@@ -3561,19 +3560,19 @@ static void refresh_display( void ) {
     disp.display_update = 0;
 }
 
-static void redraw_display( void ) {
+void redraw_display( void ) {
     XClearWindow( dpy, disp.win );
     memset( disp_buf, 0, sizeof( disp_buf ) );
     memset( lcd_buffer, 0, sizeof( lcd_buffer ) );
     x11_update_LCD();
 }
 
-static void redraw_annunc( void ) {
+void redraw_annunc( void ) {
     last_annunc_state = -1;
     x11_draw_annunc();
 }
 
-static void DrawDisp( void ) {
+void DrawDisp( void ) {
     if ( shm_flag ) {
         XShmPutImage( dpy, disp.win, disp.gc, disp.disp_image, disp.offset, 0,
                       5, 20, 262, ( unsigned int )( disp.lines + 2 ), 0 );
@@ -3590,7 +3589,7 @@ static void DrawDisp( void ) {
     redraw_annunc();
 }
 
-static void get_geometry_string( Window win, char* s, int allow_off_screen ) {
+void get_geometry_string( Window win, char* s, int allow_off_screen ) {
     XWindowAttributes xwa;
     Window root, parent, window;
     Window* children = ( Window* )0;
@@ -3640,7 +3639,7 @@ static void get_geometry_string( Window win, char* s, int allow_off_screen ) {
              x, ( y_s > 0 ) ? "+" : "-", y );
 }
 
-static void save_options( int argc, char** argv ) {
+void save_options( int argc, char** argv ) {
     int l;
 
     saved_argc = argc;
@@ -3661,7 +3660,7 @@ static void save_options( int argc, char** argv ) {
     }
 }
 
-static void save_command_line( void ) {
+void save_command_line( void ) {
     XWindowAttributes xwa;
     int wm_argc, ac;
     char **wm_argv, geom[ 128 ], icon_geom[ 128 ];
@@ -3709,7 +3708,7 @@ static void save_command_line( void ) {
     XSetCommand( dpy, mainW, wm_argv, wm_argc );
 }
 
-static int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen ) {
+int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen ) {
     int wake = 0;
 
     if ( buflen == 1 )
@@ -4018,7 +4017,7 @@ static int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen ) {
     return wake;
 }
 
-static int x11_button_pressed( int b ) {
+int x11_button_pressed( int b ) {
     int code;
     int i, r, c;
 
@@ -4051,7 +4050,7 @@ static int x11_button_pressed( int b ) {
     return 0;
 }
 
-static int x11_button_released( int b ) {
+int x11_button_released( int b ) {
     int code;
 
     // Check not already released (not critical)
@@ -4075,7 +4074,7 @@ static int x11_button_released( int b ) {
     return 0;
 }
 
-static void button_release_all( void ) {
+void button_release_all( void ) {
     for ( int b = FIRST_BUTTON; b <= LAST_BUTTON; b++ )
         if ( buttons[ b ].pressed ) {
             int code = buttons[ b ].code;
@@ -4124,7 +4123,7 @@ static inline void draw_row( long addr, int row ) {
     }
 }
 
-static void init_annunc( void ) {
+static inline void init_annunc( void ) {
     for ( int i = 0; ann_tbl[ i ].bit; i++ )
         ann_tbl[ i ].pixmap =
             XCreateBitmapFromData( dpy, disp.win, ( char* )ann_tbl[ i ].bits,
