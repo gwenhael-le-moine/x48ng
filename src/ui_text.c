@@ -29,6 +29,29 @@ typedef struct tui_ann_struct_t {
     unsigned char* bits;
 } tui_ann_struct_t;
 
+typedef struct tui_button_t {
+    const char* name;
+    short pressed;
+    short extra;
+
+    int code;
+    int x, y;
+    unsigned int w, h;
+
+    int lc;
+    const char* label;
+    short font_size;
+    unsigned int lw, lh;
+    unsigned char* lb;
+
+    const char* letter;
+
+    const char* left;
+    short is_menu;
+    const char* right;
+    const char* sub;
+} tui_button_t;
+
 /*************/
 /* variables */
 /*************/
@@ -40,6 +63,228 @@ static tui_ann_struct_t ann_tbl[] = {
       ann_battery_bitmap },
     { ANN_BUSY, 196, 4, ann_busy_width, ann_busy_height, ann_busy_bitmap },
     { ANN_IO, 241, 4, ann_io_width, ann_io_height, ann_io_bitmap },
+    { 0 } };
+
+static tui_button_t* buttons = 0;
+
+static tui_button_t buttons_sx[] = {
+    { "A", 0, 0, 0x14, 0, 0, 36, 23, WHITE, 0, 0, menu_label_width,
+      menu_label_height, menu_label_bitmap, "A", 0, 0, 0, 0 },
+    { "B", 0, 0, 0x84, 50, 0, 36, 23, WHITE, 0, 0, menu_label_width,
+      menu_label_height, menu_label_bitmap, "B", 0, 0, 0, 0 },
+    { "C", 0, 0, 0x83, 100, 0, 36, 23, WHITE, 0, 0, menu_label_width,
+      menu_label_height, menu_label_bitmap, "C", 0, 0, 0, 0 },
+    { "D", 0, 0, 0x82, 150, 0, 36, 23, WHITE, 0, 0, menu_label_width,
+      menu_label_height, menu_label_bitmap, "D", 0, 0, 0, 0 },
+    { "E", 0, 0, 0x81, 200, 0, 36, 23, WHITE, 0, 0, menu_label_width,
+      menu_label_height, menu_label_bitmap, "E", 0, 0, 0, 0 },
+    { "F", 0, 0, 0x80, 250, 0, 36, 23, WHITE, 0, 0, menu_label_width,
+      menu_label_height, menu_label_bitmap, "F", 0, 0, 0, 0 },
+
+    { "MTH", 0, 0, 0x24, 0, 50, 36, 26, WHITE, "MTH", 0, 0, 0, 0, "G", "PRINT",
+      1, 0, 0 },
+    { "PRG", 0, 0, 0x74, 50, 50, 36, 26, WHITE, "PRG", 0, 0, 0, 0, "H", "I/O",
+      1, 0, 0 },
+    { "CST", 0, 0, 0x73, 100, 50, 36, 26, WHITE, "CST", 0, 0, 0, 0, "I",
+      "MODES", 1, 0, 0 },
+    { "VAR", 0, 0, 0x72, 150, 50, 36, 26, WHITE, "VAR", 0, 0, 0, 0, "J",
+      "MEMORY", 1, 0, 0 },
+    { "UP", 0, 0, 0x71, 200, 50, 36, 26, WHITE, 0, 0, up_width, up_height,
+      up_bitmap, "K", "LIBRARY", 1, 0, 0 },
+    { "NXT", 0, 0, 0x70, 250, 50, 36, 26, WHITE, "NXT", 0, 0, 0, 0, "L", "PREV",
+      0, 0, 0 },
+
+    { "COLON", 0, 0, 0x04, 0, 100, 36, 26, WHITE, 0, 0, colon_width,
+      colon_height, colon_bitmap, "M", "UP", 0, "HOME", 0 },
+    { "STO", 0, 0, 0x64, 50, 100, 36, 26, WHITE, "STO", 0, 0, 0, 0, "N", "DEF",
+      0, "RCL", 0 },
+    { "EVAL", 0, 0, 0x63, 100, 100, 36, 26, WHITE, "EVAL", 0, 0, 0, 0, "O",
+      "aQ", 0, "aNUM", 0 },
+    { "LEFT", 0, 0, 0x62, 150, 100, 36, 26, WHITE, 0, 0, left_width,
+      left_height, left_bitmap, "P", "GRAPH", 0, 0, 0 },
+    { "DOWN", 0, 0, 0x61, 200, 100, 36, 26, WHITE, 0, 0, down_width,
+      down_height, down_bitmap, "Q", "REVIEW", 0, 0, 0 },
+    { "RIGHT", 0, 0, 0x60, 250, 100, 36, 26, WHITE, 0, 0, right_width,
+      right_height, right_bitmap, "R", "SWAP", 0, 0, 0 },
+
+    { "SIN", 0, 0, 0x34, 0, 150, 36, 26, WHITE, "SIN", 0, 0, 0, 0, "S", "ASIN",
+      0, "b", 0 },
+    { "COS", 0, 0, 0x54, 50, 150, 36, 26, WHITE, "COS", 0, 0, 0, 0, "T", "ACOS",
+      0, "c", 0 },
+    { "TAN", 0, 0, 0x53, 100, 150, 36, 26, WHITE, "TAN", 0, 0, 0, 0, "U",
+      "ATAN", 0, "d", 0 },
+    { "SQRT", 0, 0, 0x52, 150, 150, 36, 26, WHITE, 0, 0, sqrt_width,
+      sqrt_height, sqrt_bitmap, "V", "e", 0, "f", 0 },
+    { "POWER", 0, 0, 0x51, 200, 150, 36, 26, WHITE, 0, 0, power_width,
+      power_height, power_bitmap, "W", "g", 0, "LOG", 0 },
+    { "INV", 0, 0, 0x50, 250, 150, 36, 26, WHITE, 0, 0, inv_width, inv_height,
+      inv_bitmap, "X", "h", 0, "LN", 0 },
+
+    { "ENTER", 0, 0, 0x44, 0, 200, 86, 26, WHITE, "ENTER", 2, 0, 0, 0, 0,
+      "EQUATION", 0, "MATRIX", 0 },
+    { "NEG", 0, 0, 0x43, 100, 200, 36, 26, WHITE, 0, 0, neg_width, neg_height,
+      neg_bitmap, "Y", "EDIT", 0, "VISIT", 0 },
+    { "EEX", 0, 0, 0x42, 150, 200, 36, 26, WHITE, "EEX", 0, 0, 0, 0, "Z", "2D",
+      0, "3D", 0 },
+    { "DEL", 0, 0, 0x41, 200, 200, 36, 26, WHITE, "DEL", 0, 0, 0, 0, 0, "PURGE",
+      0, 0, 0 },
+    { "BS", 0, 0, 0x40, 250, 200, 36, 26, WHITE, 0, 0, bs_width, bs_height,
+      bs_bitmap, 0, "DROP", 0, "CLR", 0 },
+
+    { "ALPHA", 0, 0, 0x35, 0, 250, 36, 26, WHITE, 0, 0, alpha_width,
+      alpha_height, alpha_bitmap, 0, "USR", 0, "ENTRY", 0 },
+    { "7", 0, 0, 0x33, 60, 250, 46, 26, WHITE, "7", 1, 0, 0, 0, 0, "SOLVE", 1,
+      0, 0 },
+    { "8", 0, 0, 0x32, 120, 250, 46, 26, WHITE, "8", 1, 0, 0, 0, 0, "PLOT", 1,
+      0, 0 },
+    { "9", 0, 0, 0x31, 180, 250, 46, 26, WHITE, "9", 1, 0, 0, 0, 0, "ALGEBRA",
+      1, 0, 0 },
+    { "DIV", 0, 0, 0x30, 240, 250, 46, 26, WHITE, 0, 0, div_width, div_height,
+      div_bitmap, 0, "( )", 0, "#", 0 },
+
+    { "SHL", 0, 0, 0x25, 0, 300, 36, 26, LEFT, 0, 0, shl_width, shl_height,
+      shl_bitmap, 0, 0, 0, 0, 0 },
+    { "4", 0, 0, 0x23, 60, 300, 46, 26, WHITE, "4", 1, 0, 0, 0, 0, "TIME", 1, 0,
+      0 },
+    { "5", 0, 0, 0x22, 120, 300, 46, 26, WHITE, "5", 1, 0, 0, 0, 0, "STAT", 1,
+      0, 0 },
+    { "6", 0, 0, 0x21, 180, 300, 46, 26, WHITE, "6", 1, 0, 0, 0, 0, "UNITS", 1,
+      0, 0 },
+    { "MUL", 0, 0, 0x20, 240, 300, 46, 26, WHITE, 0, 0, mul_width, mul_height,
+      mul_bitmap, 0, "[ ]", 0, "_", 0 },
+
+    { "SHR", 0, 0, 0x15, 0, 350, 36, 26, RIGHT, 0, 0, shr_width, shr_height,
+      shr_bitmap, 0, 0, 0, 0, 0 },
+    { "1", 0, 0, 0x13, 60, 350, 46, 26, WHITE, "1", 1, 0, 0, 0, 0, "RAD", 0,
+      "POLAR", 0 },
+    { "2", 0, 0, 0x12, 120, 350, 46, 26, WHITE, "2", 1, 0, 0, 0, 0, "STACK", 0,
+      "ARG", 0 },
+    { "3", 0, 0, 0x11, 180, 350, 46, 26, WHITE, "3", 1, 0, 0, 0, 0, "CMD", 0,
+      "MENU", 0 },
+    { "MINUS", 0, 0, 0x10, 240, 350, 46, 26, WHITE, 0, 0, minus_width,
+      minus_height, minus_bitmap, 0, "i", 0, "j", 0 },
+
+    { "ON", 0, 0, 0x8000, 0, 400, 36, 26, WHITE, "ON", 0, 0, 0, 0, 0, "CONT", 0,
+      "OFF", "ATTN" },
+    { "0", 0, 0, 0x03, 60, 400, 46, 26, WHITE, "0", 1, 0, 0, 0, 0, "= ", 0,
+      " a", 0 },
+    { "PERIOD", 0, 0, 0x02, 120, 400, 46, 26, WHITE, ".", 1, 0, 0, 0, 0, ", ",
+      0, " k", 0 },
+    { "SPC", 0, 0, 0x01, 180, 400, 46, 26, WHITE, "SPC", 0, 0, 0, 0, 0, "l ", 0,
+      " m", 0 },
+    { "PLUS", 0, 0, 0x00, 240, 400, 46, 26, WHITE, 0, 0, plus_width,
+      plus_height, plus_bitmap, 0, "{ }", 0, ": :", 0 },
+
+    { 0 } };
+
+static tui_button_t buttons_gx[] = {
+    { "A", 0, 0, 0x14, 0, 0, 36, 23, WHITE, 0, 0, menu_label_width,
+      menu_label_height, menu_label_bitmap, "A", 0, 0, 0, 0 },
+    { "B", 0, 0, 0x84, 50, 0, 36, 23, WHITE, 0, 0, menu_label_width,
+      menu_label_height, menu_label_bitmap, "B", 0, 0, 0, 0 },
+    { "C", 0, 0, 0x83, 100, 0, 36, 23, WHITE, 0, 0, menu_label_width,
+      menu_label_height, menu_label_bitmap, "C", 0, 0, 0, 0 },
+    { "D", 0, 0, 0x82, 150, 0, 36, 23, WHITE, 0, 0, menu_label_width,
+      menu_label_height, menu_label_bitmap, "D", 0, 0, 0, 0 },
+    { "E", 0, 0, 0x81, 200, 0, 36, 23, WHITE, 0, 0, menu_label_width,
+      menu_label_height, menu_label_bitmap, "E", 0, 0, 0, 0 },
+    { "F", 0, 0, 0x80, 250, 0, 36, 23, WHITE, 0, 0, menu_label_width,
+      menu_label_height, menu_label_bitmap, "F", 0, 0, 0, 0 },
+
+    { "MTH", 0, 0, 0x24, 0, 50, 36, 26, WHITE, "MTH", 0, 0, 0, 0, "G", "RAD", 0,
+      "POLAR", 0 },
+    { "PRG", 0, 0, 0x74, 50, 50, 36, 26, WHITE, "PRG", 0, 0, 0, 0, "H", 0, 0,
+      "CHARS", 0 },
+    { "CST", 0, 0, 0x73, 100, 50, 36, 26, WHITE, "CST", 0, 0, 0, 0, "I", 0, 0,
+      "MODES", 0 },
+    { "VAR", 0, 0, 0x72, 150, 50, 36, 26, WHITE, "VAR", 0, 0, 0, 0, "J", 0, 0,
+      "MEMORY", 0 },
+    { "UP", 0, 0, 0x71, 200, 50, 36, 26, WHITE, 0, 0, up_width, up_height,
+      up_bitmap, "K", 0, 0, "STACK", 0 },
+    { "NXT", 0, 0, 0x70, 250, 50, 36, 26, WHITE, "NXT", 0, 0, 0, 0, "L", "PREV",
+      0, "MENU", 0 },
+
+    { "COLON", 0, 0, 0x04, 0, 100, 36, 26, WHITE, 0, 0, colon_width,
+      colon_height, colon_bitmap, "M", "UP", 0, "HOME", 0 },
+    { "STO", 0, 0, 0x64, 50, 100, 36, 26, WHITE, "STO", 0, 0, 0, 0, "N", "DEF",
+      0, "RCL", 0 },
+    { "EVAL", 0, 0, 0x63, 100, 100, 36, 26, WHITE, "EVAL", 0, 0, 0, 0, "O",
+      "aNUM", 0, "UNDO", 0 },
+    { "LEFT", 0, 0, 0x62, 150, 100, 36, 26, WHITE, 0, 0, left_width,
+      left_height, left_bitmap, "P", "PICTURE", 0, 0, 0 },
+    { "DOWN", 0, 0, 0x61, 200, 100, 36, 26, WHITE, 0, 0, down_width,
+      down_height, down_bitmap, "Q", "VIEW", 0, 0, 0 },
+    { "RIGHT", 0, 0, 0x60, 250, 100, 36, 26, WHITE, 0, 0, right_width,
+      right_height, right_bitmap, "R", "SWAP", 0, 0, 0 },
+
+    { "SIN", 0, 0, 0x34, 0, 150, 36, 26, WHITE, "SIN", 0, 0, 0, 0, "S", "ASIN",
+      0, "b", 0 },
+    { "COS", 0, 0, 0x54, 50, 150, 36, 26, WHITE, "COS", 0, 0, 0, 0, "T", "ACOS",
+      0, "c", 0 },
+    { "TAN", 0, 0, 0x53, 100, 150, 36, 26, WHITE, "TAN", 0, 0, 0, 0, "U",
+      "ATAN", 0, "d", 0 },
+    { "SQRT", 0, 0, 0x52, 150, 150, 36, 26, WHITE, 0, 0, sqrt_width,
+      sqrt_height, sqrt_bitmap, "V", "n", 0, "o", 0 },
+    { "POWER", 0, 0, 0x51, 200, 150, 36, 26, WHITE, 0, 0, power_width,
+      power_height, power_bitmap, "W", "p", 0, "LOG", 0 },
+    { "INV", 0, 0, 0x50, 250, 150, 36, 26, WHITE, 0, 0, inv_width, inv_height,
+      inv_bitmap, "X", "q", 0, "LN", 0 },
+
+    { "ENTER", 0, 0, 0x44, 0, 200, 86, 26, WHITE, "ENTER", 2, 0, 0, 0, 0,
+      "EQUATION", 0, "MATRIX", 0 },
+    { "NEG", 0, 0, 0x43, 100, 200, 36, 26, WHITE, 0, 0, neg_width, neg_height,
+      neg_bitmap, "Y", "EDIT", 0, "CMD", 0 },
+    { "EEX", 0, 0, 0x42, 150, 200, 36, 26, WHITE, "EEX", 0, 0, 0, 0, "Z",
+      "PURG", 0, "ARG", 0 },
+    { "DEL", 0, 0, 0x41, 200, 200, 36, 26, WHITE, "DEL", 0, 0, 0, 0, 0, "CLEAR",
+      0, 0, 0 },
+    { "BS", 0, 0, 0x40, 250, 200, 36, 26, WHITE, 0, 0, bs_width, bs_height,
+      bs_bitmap, 0, "DROP", 0, 0, 0 },
+
+    { "ALPHA", 0, 0, 0x35, 0, 250, 36, 26, WHITE, 0, 0, alpha_width,
+      alpha_height, alpha_bitmap, 0, "USER", 0, "ENTRY", 0 },
+    { "7", 0, 0, 0x33, 60, 250, 46, 26, WHITE, "7", 1, 0, 0, 0, 0, 0, 1,
+      "SOLVE", 0 },
+    { "8", 0, 0, 0x32, 120, 250, 46, 26, WHITE, "8", 1, 0, 0, 0, 0, 0, 1,
+      "PLOT", 0 },
+    { "9", 0, 0, 0x31, 180, 250, 46, 26, WHITE, "9", 1, 0, 0, 0, 0, 0, 1,
+      "SYMBOLIC", 0 },
+    { "DIV", 0, 0, 0x30, 240, 250, 46, 26, WHITE, 0, 0, div_width, div_height,
+      div_bitmap, 0, "r ", 0, "s", 0 },
+
+    { "SHL", 0, 0, 0x25, 0, 300, 36, 26, LEFT, 0, 0, shl_width, shl_height,
+      shl_bitmap, 0, 0, 0, 0, 0 },
+    { "4", 0, 0, 0x23, 60, 300, 46, 26, WHITE, "4", 1, 0, 0, 0, 0, 0, 1, "TIME",
+      0 },
+    { "5", 0, 0, 0x22, 120, 300, 46, 26, WHITE, "5", 1, 0, 0, 0, 0, 0, 1,
+      "STAT", 0 },
+    { "6", 0, 0, 0x21, 180, 300, 46, 26, WHITE, "6", 1, 0, 0, 0, 0, 0, 1,
+      "UNITS", 0 },
+    { "MUL", 0, 0, 0x20, 240, 300, 46, 26, WHITE, 0, 0, mul_width, mul_height,
+      mul_bitmap, 0, "t ", 0, "u", 0 },
+
+    { "SHR", 0, 0, 0x15, 0, 350, 36, 26, RIGHT, 0, 0, shr_width, shr_height,
+      shr_bitmap, 0, 0, 1, " ", 0 },
+    { "1", 0, 0, 0x13, 60, 350, 46, 26, WHITE, "1", 1, 0, 0, 0, 0, 0, 1, "I/O",
+      0 },
+    { "2", 0, 0, 0x12, 120, 350, 46, 26, WHITE, "2", 1, 0, 0, 0, 0, 0, 1,
+      "LIBRARY", 0 },
+    { "3", 0, 0, 0x11, 180, 350, 46, 26, WHITE, "3", 1, 0, 0, 0, 0, 0, 1,
+      "EQ LIB", 0 },
+    { "MINUS", 0, 0, 0x10, 240, 350, 46, 26, WHITE, 0, 0, minus_width,
+      minus_height, minus_bitmap, 0, "v ", 0, "w", 0 },
+
+    { "ON", 0, 0, 0x8000, 0, 400, 36, 26, WHITE, "ON", 0, 0, 0, 0, 0, "CONT", 0,
+      "OFF", "CANCEL" },
+    { "0", 0, 0, 0x03, 60, 400, 46, 26, WHITE, "0", 1, 0, 0, 0, 0, "\004 ", 0,
+      "\003", 0 },
+    { "PERIOD", 0, 0, 0x02, 120, 400, 46, 26, WHITE, ".", 1, 0, 0, 0, 0,
+      "\002 ", 0, "\001", 0 },
+    { "SPC", 0, 0, 0x01, 180, 400, 46, 26, WHITE, "SPC", 0, 0, 0, 0, 0, "\005 ",
+      0, "z", 0 },
+    { "PLUS", 0, 0, 0x00, 240, 400, 46, 26, WHITE, 0, 0, plus_width,
+      plus_height, plus_bitmap, 0, "x ", 0, "y", 0 },
+
     { 0 } };
 
 /****************************/
@@ -79,10 +324,263 @@ static inline void draw_row( long addr, int row ) {
     }
 }
 
+static void tui_button_pressed( int b ) {
+    // Check not already pressed (may be important: avoids a useless do_kbd_int)
+    if ( buttons[ b ].pressed == 1 )
+        return;
+
+    buttons[ b ].pressed = 1;
+
+    int code = buttons[ b ].code;
+    if ( code == 0x8000 ) {
+        for ( int i = 0; i < 9; i++ )
+            saturn.keybuf.rows[ i ] |= 0x8000;
+        do_kbd_int();
+    } else {
+        int r = code >> 4;
+        int c = 1 << ( code & 0xf );
+        if ( ( saturn.keybuf.rows[ r ] & c ) == 0 ) {
+            if ( saturn.kbd_ien )
+                do_kbd_int();
+            if ( ( saturn.keybuf.rows[ r ] & c ) )
+                fprintf( stderr, "bug\n" );
+
+            saturn.keybuf.rows[ r ] |= c;
+        }
+    }
+}
+
+static void tui_button_released( int b ) {
+    // Check not already released (not critical)
+    if ( buttons[ b ].pressed == 0 )
+        return;
+
+    buttons[ b ].pressed = 0;
+
+    int code = buttons[ b ].code;
+    if ( code == 0x8000 ) {
+        for ( int i = 0; i < 9; i++ )
+            saturn.keybuf.rows[ i ] &= ~0x8000;
+    } else {
+        int r = code >> 4;
+        int c = 1 << ( code & 0xf );
+        saturn.keybuf.rows[ r ] &= ~c;
+    }
+}
+
+static void tui_button_release_all( void ) {
+    for ( int b = FIRST_BUTTON; b <= LAST_BUTTON; b++ )
+        if ( buttons[ b ].pressed )
+            tui_button_released( b );
+}
+
 /**********/
 /* public */
 /**********/
-int text_get_event( void ) { return 1; }
+int text_get_event( void ) {
+    int hpkey = -1;
+
+    /* check for input */
+    uint32_t k = getch();
+
+    if ( k == ( uint32_t )ERR )
+        return -1;
+
+    /* return key to queue */
+    /* ungetch(ch); */
+
+    switch ( k ) {
+        case '0':
+            hpkey = BUTTON_0;
+            break;
+        case '1':
+            hpkey = BUTTON_1;
+            break;
+        case '2':
+            hpkey = BUTTON_2;
+            break;
+        case '3':
+            hpkey = BUTTON_3;
+            break;
+        case '4':
+            hpkey = BUTTON_4;
+            break;
+        case '5':
+            hpkey = BUTTON_5;
+            break;
+        case '6':
+            hpkey = BUTTON_6;
+            break;
+        case '7':
+            hpkey = BUTTON_7;
+            break;
+        case '8':
+            hpkey = BUTTON_8;
+            break;
+        case '9':
+            hpkey = BUTTON_9;
+            break;
+        case 'a':
+            hpkey = BUTTON_A;
+            break;
+        case 'b':
+            hpkey = BUTTON_B;
+            break;
+        case 'c':
+            hpkey = BUTTON_C;
+            break;
+        case 'd':
+            hpkey = BUTTON_D;
+            break;
+        case 'e':
+            hpkey = BUTTON_E;
+            break;
+        case 'f':
+            hpkey = BUTTON_F;
+            break;
+        case 'g':
+            hpkey = BUTTON_MTH;
+            break;
+        case 'h':
+            hpkey = BUTTON_PRG;
+            break;
+        case 'i':
+            hpkey = BUTTON_CST;
+            break;
+        case 'j':
+            hpkey = BUTTON_VAR;
+            break;
+        case 'k':
+            hpkey = BUTTON_UP;
+            break;
+        case KEY_UP:
+            hpkey = BUTTON_UP;
+            break;
+        case 'l':
+            hpkey = BUTTON_NXT;
+            break;
+        case 'm':
+            hpkey = BUTTON_COLON;
+            break;
+        case 'n':
+            hpkey = BUTTON_STO;
+            break;
+        case 'o':
+            hpkey = BUTTON_EVAL;
+            break;
+        case 'p':
+            hpkey = BUTTON_LEFT;
+            break;
+        case KEY_LEFT:
+            hpkey = BUTTON_LEFT;
+            break;
+        case 'q':
+            hpkey = BUTTON_DOWN;
+            break;
+        case KEY_DOWN:
+            hpkey = BUTTON_DOWN;
+            break;
+        case 'r':
+            hpkey = BUTTON_RIGHT;
+            break;
+        case KEY_RIGHT:
+            hpkey = BUTTON_RIGHT;
+            break;
+        case 's':
+            hpkey = BUTTON_SIN;
+            break;
+        case 't':
+            hpkey = BUTTON_COS;
+            break;
+        case 'u':
+            hpkey = BUTTON_TAN;
+            break;
+        case 'v':
+            hpkey = BUTTON_SQRT;
+            break;
+        case 'w':
+            hpkey = BUTTON_POWER;
+            break;
+        case 'x':
+            hpkey = BUTTON_INV;
+            break;
+        case 'y':
+            hpkey = BUTTON_NEG;
+            break;
+        case 'z':
+            hpkey = BUTTON_EEX;
+            break;
+        case ' ':
+            hpkey = BUTTON_SPC;
+            break;
+        case KEY_ENTER:
+            hpkey = BUTTON_ENTER;
+            break;
+        case KEY_BACKSPACE:
+        case 127:
+        case '\b':
+            hpkey = BUTTON_BS;
+            break;
+        case KEY_DC:
+            hpkey = BUTTON_DEL;
+            break;
+        case '.':
+            hpkey = BUTTON_PERIOD;
+            break;
+        case '+':
+            hpkey = BUTTON_PLUS;
+            break;
+        case '-':
+            hpkey = BUTTON_MINUS;
+            break;
+        case '*':
+            hpkey = BUTTON_MUL;
+            break;
+        case '/':
+            hpkey = BUTTON_DIV;
+            break;
+        case KEY_HOME: /* Home */
+                       /* case 262: */
+            hpkey = BUTTON_ON;
+            break;
+        /* case KEY_NPAGE: /\* PgUp *\/ */
+        case 339:
+            hpkey = BUTTON_SHL;
+            break;
+        /* case KEY_PPAGE: /\* PgDn *\/ */
+        case 338:
+            hpkey = BUTTON_SHR;
+            break;
+        /* case KEY_IC: /\* Insert *\/ */
+        case 331:
+            hpkey = BUTTON_ALPHA;
+            break;
+
+        /* case KEY_END: /\* End *\/ */
+        case 360:
+            nodelay( stdscr, FALSE );
+            echo();
+
+            endwin();
+            exit_emulator();
+            exit( 0 );
+            break;
+
+        default:
+            return -1;
+    }
+
+    if ( hpkey == -1 )
+        return -1;
+    printw( "%i\n", hpkey );
+    /* tui_button_release_all(); */
+
+    /* if ( !buttons[ hpkey ].pressed ) { */
+    tui_button_pressed( hpkey );
+    tui_button_released( hpkey );
+
+    return 1;
+}
 
 void text_adjust_contrast() {}
 
@@ -221,10 +719,27 @@ void text_draw_annunc( void ) {
 }
 
 void init_text_ui( int argc, char** argv ) {
+    buttons = ( tui_button_t* )malloc( sizeof( buttons_gx ) );
+
+    if ( opt_gx )
+        memcpy( buttons, buttons_gx, sizeof( buttons_gx ) );
+    else
+        memcpy( buttons, buttons_sx, sizeof( buttons_sx ) );
+
     text_init_LCD();
+
+    initscr();
+    nodelay( stdscr, TRUE );
+    noecho();
+    curs_set( 0 );
 
     fprintf( stderr, "Text UI not implemented yet" );
 
-    exit_emulator();
-    exit( 0 );
+    /* nodelay( stdscr, FALSE ); */
+    /* echo(); */
+
+    /* endwin(); */
+
+    /* exit_emulator(); */
+    /* exit( 0 ); */
 }
