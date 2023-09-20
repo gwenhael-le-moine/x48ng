@@ -92,13 +92,16 @@ void get_absolute_config_dir( char* source, char* dest ) {
 
 static inline void normalize_filenames( void ) {
     struct stat st;
-    int normalized_config_path_exist = 0;
+    int normalized_config_path_exist = 1;
 
     get_absolute_config_dir( configDir, normalized_config_path );
+    if ( verbose )
+        fprintf( stderr, "normalized_config_path: %s\n",
+                 normalized_config_path );
 
     if ( stat( normalized_config_path, &st ) == -1 )
         if ( errno == ENOENT )
-            normalized_config_path_exist = 1;
+            normalized_config_path_exist = 0;
 
     if ( romFileName[ 0 ] == '/' )
         strcpy( normalized_rom_path, "" );
