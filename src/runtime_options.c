@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -90,12 +91,26 @@ void get_absolute_config_dir( char* source, char* dest ) {
 }
 
 static inline void normalize_filenames( void ) {
+    struct stat st;
+    int normalized_config_path_exist = 0;
+
     get_absolute_config_dir( configDir, normalized_config_path );
+
+    if ( stat( normalized_config_path, &st ) == -1 )
+        if ( errno == ENOENT )
+            normalized_config_path_exist = 1;
 
     if ( romFileName[ 0 ] == '/' )
         strcpy( normalized_rom_path, "" );
-    else
+    else {
+        if ( !normalized_config_path_exist ) {
+            fprintf( stderr, "ERROR: Cannot find rom `%s`\n", romFileName );
+            fprintf( stderr, "  You need a ROM to use %s\n", progname );
+
+            exit( 1 );
+        }
         strcpy( normalized_rom_path, normalized_config_path );
+    }
     strcat( normalized_rom_path, romFileName );
 
     if ( ramFileName[ 0 ] == '/' )
