@@ -257,13 +257,47 @@ int parse_args( int argc, char* argv[] ) {
         fprintf( stderr, "verbose = %i\n", verbose );
         fprintf( stderr, "useTerminal = %i\n", useTerminal );
         fprintf( stderr, "useSerial = %i\n", useSerial );
+        fprintf( stderr, "useDebugger = %i\n", useDebugger );
         fprintf( stderr, "throttle = %i\n", throttle );
         fprintf( stderr, "initialize = %i\n", initialize );
         fprintf( stderr, "resetOnStartup = %i\n", resetOnStartup );
+        fprintf( stderr, "frontend_type = " );
+        switch ( frontend_type ) {
+            case FRONTEND_X11:
+                fprintf( stderr, "x11\n" );
+                break;
+            case FRONTEND_SDL:
+                fprintf( stderr, "sdl\n" );
+                break;
+            case FRONTEND_TEXT:
+                fprintf( stderr, "text\n" );
+                break;
+            default:
+                fprintf( stderr, "???\n" );
+                break;
+        }
 
         fprintf( stderr, "serialLine = %s\n", serialLine );
-        fprintf( stderr, "romFileName = %s\n", romFileName );
         fprintf( stderr, "homeDirectory = %s\n", homeDirectory );
+        fprintf( stderr, "romFileName = %s\n", romFileName );
+        fprintf( stderr, "ramFileName = %s\n", ramFileName );
+        fprintf( stderr, "stateFileName = %s\n", stateFileName );
+        fprintf( stderr, "port1FileName = %s\n", port1FileName );
+        fprintf( stderr, "port2FileName = %s\n", port2FileName );
+
+        fprintf( stderr, "netbook = %i\n", netbook );
+        fprintf( stderr, "mono = %i\n", mono );
+        fprintf( stderr, "gray = %i\n", gray );
+        fprintf( stderr, "monoIcon = %i\n", monoIcon );
+        fprintf( stderr, "iconic = %i\n", iconic );
+        fprintf( stderr, "xrm = %i\n", xrm );
+
+        fprintf( stderr, "geometry = %s\n", geometry );
+        fprintf( stderr, "x11_visual = %s\n", x11_visual );
+        fprintf( stderr, "smallFont = %s\n", smallFont );
+        fprintf( stderr, "mediumFont = %s\n", mediumFont );
+        fprintf( stderr, "largeFont = %s\n", largeFont );
+        fprintf( stderr, "connFont = %s\n", connFont );
     }
 
     return ( optind );
