@@ -1388,102 +1388,95 @@ static void fatal_exit( char* error, char* advice ) {
     exit( 1 );
 }
 
-/* static Visual* pick_visual_of_class( Display* dpy, int visual_class, */
-/*                                      unsigned int* depth ) { */
-/*     XVisualInfo vi_in, *vi_out; */
-/*     int out_count; */
+inline Visual* pick_visual_of_class( Display* dpy, int visual_class,
+                                     unsigned int* depth ) {
+    XVisualInfo vi_in, *vi_out;
+    int out_count;
 
-/*     vi_in.class = visual_class; */
-/*     vi_in.screen = DefaultScreen( dpy ); */
-/*     vi_out = XGetVisualInfo( dpy, VisualClassMask | VisualScreenMask, &vi_in,
- */
-/*                              &out_count ); */
-/*     if ( vi_out ) { /\* choose the 'best' one, if multiple *\/ */
-/*         int i, best; */
-/*         Visual* visual; */
-/*         for ( i = 0, best = 0; i < out_count; i++ ) */
-/*             if ( vi_out[ i ].depth > vi_out[ best ].depth ) */
-/*                 best = i; */
-/*         visual = vi_out[ best ].visual; */
-/*         *depth = vi_out[ best ].depth; */
-/*         XFree( ( char* )vi_out ); */
-/*         return visual; */
-/*     } else { */
-/*         *depth = DefaultDepth( dpy, DefaultScreen( dpy ) ); */
-/*         return DefaultVisual( dpy, DefaultScreen( dpy ) ); */
-/*     } */
-/* } */
-
-/* static Visual* id_to_visual( Display* dpy, int id, unsigned int* depth ) { */
-/*     XVisualInfo vi_in, *vi_out; */
-/*     int out_count; */
-
-/*     vi_in.screen = DefaultScreen( dpy ); */
-/*     vi_in.visualid = id; */
-/*     vi_out = XGetVisualInfo( dpy, VisualScreenMask | VisualIDMask, &vi_in, */
-/*                              &out_count ); */
-/*     if ( vi_out ) { */
-/*         Visual* v = vi_out[ 0 ].visual; */
-/*         *depth = vi_out[ 0 ].depth; */
-/*         XFree( ( char* )vi_out ); */
-/*         return v; */
-/*     } */
-/*     return 0; */
-/* } */
-
-static Visual* get_visual_resource( Display* dpy, char* name, char* class,
-                                    unsigned int* depth ) {
-    /* char c; */
-    /* char *tmp, *s; */
-    /* int vclass; */
-    /* int id; */
-
-    /* s = get_string_resource( name, class ); */
-    /* if ( s ) */
-    /*     for ( tmp = s; *tmp; tmp++ ) */
-    /*         if ( isupper( *tmp ) ) */
-    /*             *tmp = tolower( *tmp ); */
-
-    /* if ( !s || !strcmp( s, "default" ) ) */
-    /*     vclass = -1; */
-    /* else if ( !strcmp( s, "staticgray" ) ) */
-    /*     vclass = StaticGray; */
-    /* else if ( !strcmp( s, "staticcolor" ) ) */
-    /*     vclass = StaticColor; */
-    /* else if ( !strcmp( s, "truecolor" ) ) */
-    /*     vclass = TrueColor; */
-    /* else if ( !strcmp( s, "grayscale" ) ) */
-    /*     vclass = GrayScale; */
-    /* else if ( !strcmp( s, "pseudocolor" ) ) */
-    /*     vclass = PseudoColor; */
-    /* else if ( !strcmp( s, "directcolor" ) ) */
-    /*     vclass = DirectColor; */
-    /* else if ( 1 == sscanf( s, " %d %c", &id, &c ) ) */
-    /*     vclass = -2; */
-    /* else if ( 1 == sscanf( s, " 0x%x %c", &id, &c ) ) */
-    /*     vclass = -2; */
-    /* else { */
-    /*     fprintf( stderr, "unrecognized visual \"%s\".\n", s ); */
-    /* vclass = -1; */
-    /* } */
-    /* if ( s ) */
-    /*     free( s ); */
-
-    /* if ( vclass == -1 ) { */
-    *depth = DefaultDepth( dpy, DefaultScreen( dpy ) );
-    return DefaultVisual( dpy, DefaultScreen( dpy ) );
-    /* } else if ( vclass == -2 ) { */
-    /*     Visual* v = id_to_visual( dpy, id, depth ); */
-    /*     if ( v ) */
-    /*         return v; */
-    /*     fprintf( stderr, "no visual with id 0x%x.\n", id ); */
-    /*     *depth = DefaultDepth( dpy, DefaultScreen( dpy ) ); */
-    /*     return DefaultVisual( dpy, DefaultScreen( dpy ) ); */
-    /* } else */
-    /*     return pick_visual_of_class( dpy, vclass, depth ); */
+    vi_in.class = visual_class;
+    vi_in.screen = DefaultScreen( dpy );
+    vi_out = XGetVisualInfo( dpy, VisualClassMask | VisualScreenMask, &vi_in,
+                             &out_count );
+    if ( vi_out ) { /* choose the 'best' one, if multiple */
+        int i, best;
+        Visual* visual;
+        for ( i = 0, best = 0; i < out_count; i++ )
+            if ( vi_out[ i ].depth > vi_out[ best ].depth )
+                best = i;
+        visual = vi_out[ best ].visual;
+        *depth = vi_out[ best ].depth;
+        XFree( ( char* )vi_out );
+        return visual;
+    } else {
+        *depth = DefaultDepth( dpy, DefaultScreen( dpy ) );
+        return DefaultVisual( dpy, DefaultScreen( dpy ) );
+    }
 }
 
-static XFontStruct* load_x11_font( Display* dpy, char* fontname ) {
+inline Visual* id_to_visual( Display* dpy, int id, unsigned int* depth ) {
+    XVisualInfo vi_in, *vi_out;
+    int out_count;
+
+    vi_in.screen = DefaultScreen( dpy );
+    vi_in.visualid = id;
+    vi_out = XGetVisualInfo( dpy, VisualScreenMask | VisualIDMask, &vi_in,
+                             &out_count );
+    if ( vi_out ) {
+        Visual* v = vi_out[ 0 ].visual;
+        *depth = vi_out[ 0 ].depth;
+        XFree( ( char* )vi_out );
+        return v;
+    }
+    return 0;
+}
+
+Visual* get_visual_resource( Display* dpy, unsigned int* depth ) {
+    char c;
+    int vclass;
+    int id;
+
+    if ( !x11_visual || !strcmp( x11_visual, "default" ) )
+        vclass = -1;
+    else if ( !strcmp( x11_visual, "staticgray" ) )
+        vclass = StaticGray;
+    else if ( !strcmp( x11_visual, "staticcolor" ) )
+        vclass = StaticColor;
+    else if ( !strcmp( x11_visual, "truecolor" ) )
+        vclass = TrueColor;
+    else if ( !strcmp( x11_visual, "grayscale" ) )
+        vclass = GrayScale;
+    else if ( !strcmp( x11_visual, "pseudocolor" ) )
+        vclass = PseudoColor;
+    else if ( !strcmp( x11_visual, "directcolor" ) )
+        vclass = DirectColor;
+    else if ( 1 == sscanf( x11_visual, " %d %c", &id, &c ) )
+        vclass = -2;
+    else if ( 1 == sscanf( x11_visual, " 0x%x %c", &id, &c ) )
+        vclass = -2;
+    else {
+        fprintf( stderr, "unrecognized visual \"%s\".\n", x11_visual );
+        vclass = -1;
+    }
+
+    if ( vclass == -1 ) {
+        *depth = DefaultDepth( dpy, DefaultScreen( dpy ) );
+
+        return DefaultVisual( dpy, DefaultScreen( dpy ) );
+    } else if ( vclass == -2 ) {
+        Visual* v = id_to_visual( dpy, id, depth );
+        if ( v )
+            return v;
+
+        fprintf( stderr, "no visual with id 0x%x.\n", id );
+
+        *depth = DefaultDepth( dpy, DefaultScreen( dpy ) );
+
+        return DefaultVisual( dpy, DefaultScreen( dpy ) );
+    } else
+        return pick_visual_of_class( dpy, vclass, depth );
+}
+
+XFontStruct* load_x11_font( Display* dpy, char* fontname ) {
     XFontStruct* f = ( XFontStruct* )0;
 
     f = XLoadQueryFont( dpy, fontname );
@@ -2938,7 +2931,7 @@ int handle_xerror( Display* the_dpy, XErrorEvent* eev ) {
     return 0;
 }
 
-void CreateDispWindow( void ) {
+void CreateLCDWindow( void ) {
     XSetWindowAttributes xswa;
     XGCValues val;
     unsigned long gc_mask;
@@ -3210,7 +3203,7 @@ int CreateWindows( int argc, char** argv ) {
     }
 
     class = InputOutput;
-    visual = get_visual_resource( dpy, "visual", "Visual", &depth );
+    visual = get_visual_resource( dpy, &depth );
     if ( visual != DefaultVisual( dpy, screen ) ) {
         if ( visual->class == DirectColor )
             cmap = XCreateColormap( dpy, RootWindow( dpy, screen ), visual,
@@ -3439,7 +3432,7 @@ int CreateWindows( int argc, char** argv ) {
     /*
      * create the display
      */
-    CreateDispWindow();
+    CreateLCDWindow();
 
     /*
      * create the keypad

@@ -36,7 +36,7 @@ extern char* title;
 extern char* geometry;
 /* extern char* iconGeom; */
 /* extern char* iconName; */
-/* extern int x11_visual; */
+extern char* x11_visual;
 extern int mono;
 extern int gray;
 extern int monoIcon;

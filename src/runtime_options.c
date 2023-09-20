@@ -38,7 +38,10 @@ char* title = "x48ng";
 char* geometry;
 /* char* iconGeom; */
 /* char* iconName; */
-/* int x11_visual = -1; */
+char* x11_visual = "default";
+/* default | staticgray | staticcolor | truecolor | grayscale |
+ * pseudocolor | directcolor | 0xnn | nn
+ */
 int mono = 0;
 int gray = 0;
 int monoIcon = 0;
@@ -87,6 +90,7 @@ int parse_args( int argc, char* argv[] ) {
         { "x11-netbook", no_argument, &netbook, 1 },
         { "x11-mono", no_argument, &mono, 1 },
         { "x11-gray", no_argument, &gray, 1 },
+        { "x11-visual", required_argument, NULL, 8110 },
         { "x11-small-font", required_argument, NULL, 8111 },
         { "x11-medium-font", required_argument, NULL, 8112 },
         { "x11-large-font", required_argument, NULL, 8113 },
@@ -129,17 +133,21 @@ int parse_args( int argc, char* argv[] ) {
         "\t-i --initialize\t\t\tinitialize the content of <config-dir>\n"
         "\t-r --reset\t\t\tperform a reset on startup\n"
         "\t-T --throttle\t\t\ttry to emulate real speed (default: false)\n"
-        "\t   --sdl-no-chrome\t\t[SDL only] only display the LCD (default: "
+        "\t   --sdl-no-chrome\t\tonly display the LCD (default: "
         "false)\n"
-        "\t   --sdl-fullscreen\t\t[SDL only] make the UI fullscreen "
+        "\t   --sdl-fullscreen\t\tmake the UI fullscreen "
         "(default: "
         "false)\n"
-        "\t   --x11-netbook\t\t[X11 only] make the UI horizontal (default: "
+        "\t   --x11-netbook\t\tmake the UI horizontal (default: "
         "false)\n"
-        "\t   --x11-mono\t\t\t[X11 only] make the UI monochrome (default: "
+        "\t   --x11-mono\t\t\tmake the UI monochrome (default: "
         "false)\n"
-        "\t   --x11-gray\t\t\t[X11 only] make the UI grayscale (default: "
+        "\t   --x11-gray\t\t\tmake the UI grayscale (default: "
         "false)\n"
+        "\t   --x11-visual=<X visual>\tuse visual <X visual> (default: "
+        "default), possible values: "
+        "<default | staticgray | staticcolor | truecolor | grayscale | "
+        "pseudocolor | directcolor | 0xnn | nn>\n"
         "\t   --x11-small-font=<X font name>\tuse <X font name> as small "
         "font (default: %s)\n"
         "\t   --x11-medium-font=<X font name>\tuse <X font name> as medium "
@@ -182,6 +190,9 @@ int parse_args( int argc, char* argv[] ) {
                 break;
             case 1015:
                 serialLine = optarg;
+                break;
+            case 8110:
+                x11_visual = optarg;
                 break;
             case 8111:
                 smallFont = optarg;

@@ -29,7 +29,7 @@
 .\"
 .\" $XFree86: xc/programs/xcalc/xcalc.man,v 1.5 2003/03/19 01:49:28 dawes Exp $
 .\"
-.de EX		\"Begin example
+.de EX  \"Begin example
 .ne 5
 .if n .sp 1
 .if t .sp .5
@@ -91,23 +91,25 @@ where options include:
 .br
         \-T \-\-throttle                try to emulate real speed (default: false)
 .br
-           \-\-sdl\-no\-chrome              [SDL] only display the LCD (default: false)
+           \-\-sdl\-no\-chrome           only display the LCD (default: false)
 .br
-           \-\-sdl\-fullscreen             [SDL] make the UI fullscreen (default: false)
+           \-\-sdl\-fullscreen          make the UI fullscreen (default: false)
 .br
-           \-\-x11\-netbook                [X11] make the UI horizontal (default: false)
+           \-\-x11\-netbook             make the UI horizontal (default: false)
 .br
-           \-\-x11\-mono                   [X11] make the UI monochrome (default: false)
+           \-\-x11\-mono                make the UI monochrome (default: false)
 .br
-           \-\-x11\-gray                   [X11] make the UI grayscale (default: false)
+           \-\-x11\-gray                make the UI grayscale (default: false)
 .br
-           \-\-x11\-small\-font=<fontname>  [X11] use <fontname> as small font
+           \-\-x11\-visual=<X visual>   use visual <X visual> (default: default), possible values: <default | staticgray | staticcolor | truecolor | grayscale | pseudocolor | directcolor | 0xnn | nn>
 .br
-           \-\-x11\-medium\-font=<fontname> [X11] use <fontname> as medium font
+           \-\-x11\-small\-font=<fontname>  use <fontname> as small font
 .br
-           \-\-x11\-large\-font=<fontname>  [X11] use <fontname> as large font
+           \-\-x11\-medium\-font=<fontname> use <fontname> as medium font
 .br
-           \-\-x11\-connection\-font=<fontname> [X11] use <fontname> as connection font
+           \-\-x11\-large\-font=<fontname>  use <fontname> as large font
+.br
+           \-\-x11\-connection\-font=<fontname> use <fontname> as connection font
 
 .SH DESCRIPTION
 .I x48ng
