@@ -20,8 +20,8 @@ int initialize = 0;
 int resetOnStartup = 0;
 
 char* serialLine = "/dev/ttyS0";
-char* homeDirectory = ".x48ng";
 
+char* configDir = ".x48ng";
 char* romFileName = "rom";
 char* ramFileName = "ram";
 char* stateFileName = "hp48";
@@ -55,31 +55,72 @@ char* mediumFont = "-*-fixed-bold-r-normal-*-15-*-*-*-*-*-iso8859-1";
 char* largeFont = "-*-fixed-medium-r-normal-*-20-*-*-*-*-*-iso8859-1";
 char* connFont = "-*-fixed-medium-r-normal-*-12-*-*-*-*-*-iso8859-1";
 
-void get_home_directory( char* path ) {
-    char* p;
+char normalized_config_path[ MAX_LENGTH_FILENAME ];
+char normalized_rom_path[ MAX_LENGTH_FILENAME ];
+char normalized_ram_path[ MAX_LENGTH_FILENAME ];
+char normalized_state_path[ MAX_LENGTH_FILENAME ];
+char normalized_port1_path[ MAX_LENGTH_FILENAME ];
+char normalized_port2_path[ MAX_LENGTH_FILENAME ];
+
+void get_absolute_config_dir( char* source, char* dest ) {
+    char* home;
     struct passwd* pwd;
 
-    if ( homeDirectory[ 0 ] == '/' )
-        strcpy( path, homeDirectory );
-    else {
-        p = getenv( "HOME" );
-        if ( p ) {
-            strcpy( path, p );
-            strcat( path, "/" );
+    if ( source[ 0 ] != '/' ) {
+        home = getenv( "HOME" );
+        if ( home ) {
+            strcpy( dest, home );
+            strcat( dest, "/" );
         } else {
             pwd = getpwuid( getuid() );
             if ( pwd ) {
-                strcpy( path, pwd->pw_dir );
-                strcat( path, "/" );
+                strcpy( dest, pwd->pw_dir );
+                strcat( dest, "/" );
             } else {
                 if ( verbose )
                     fprintf( stderr, "can\'t figure out your home directory, "
                                      "trying /tmp\n" );
-                strcpy( path, "/tmp" );
+                strcpy( dest, "/tmp" );
             }
         }
-        strcat( path, homeDirectory );
     }
+    strcat( dest, source );
+    if ( dest[ strlen( dest ) ] != '/' )
+        strcat( dest, "/" );
+}
+
+static inline void normalize_filenames( void ) {
+    get_absolute_config_dir( configDir, normalized_config_path );
+
+    if ( romFileName[ 0 ] == '/' )
+        strcpy( normalized_rom_path, "" );
+    else
+        strcpy( normalized_rom_path, normalized_config_path );
+    strcat( normalized_rom_path, romFileName );
+
+    if ( ramFileName[ 0 ] == '/' )
+        strcpy( normalized_ram_path, "" );
+    else
+        strcpy( normalized_ram_path, normalized_config_path );
+    strcat( normalized_ram_path, ramFileName );
+
+    if ( stateFileName[ 0 ] == '/' )
+        strcpy( normalized_state_path, "" );
+    else
+        strcpy( normalized_state_path, normalized_config_path );
+    strcat( normalized_state_path, stateFileName );
+
+    if ( port1FileName[ 0 ] == '/' )
+        strcpy( normalized_port1_path, "" );
+    else
+        strcpy( normalized_port1_path, normalized_config_path );
+    strcat( normalized_port1_path, port1FileName );
+
+    if ( port2FileName[ 0 ] == '/' )
+        strcpy( normalized_port2_path, "" );
+    else
+        strcpy( normalized_port2_path, normalized_config_path );
+    strcat( normalized_port2_path, port2FileName );
 }
 
 int parse_args( int argc, char* argv[] ) {
@@ -89,11 +130,11 @@ int parse_args( int argc, char* argv[] ) {
     char* optstring = "c:S:u:hvVtsirT";
     static struct option long_options[] = {
         { "config-dir", required_argument, NULL, 1000 },
-        { "rom-file", required_argument, NULL, 1010 },
-        { "ram-file", required_argument, NULL, 1011 },
-        { "state-file", required_argument, NULL, 1012 },
-        { "port1-file", required_argument, NULL, 1013 },
-        { "port2-file", required_argument, NULL, 1014 },
+        { "rom", required_argument, NULL, 1010 },
+        { "ram", required_argument, NULL, 1011 },
+        { "state", required_argument, NULL, 1012 },
+        { "port1", required_argument, NULL, 1013 },
+        { "port2", required_argument, NULL, 1014 },
 
         { "serial-line", required_argument, NULL, 1015 },
 
@@ -137,15 +178,15 @@ int parse_args( int argc, char* argv[] ) {
         "\t-v --version\t\t\tshow version\n"
         "\t   --config-dir=<path>\t\tuse <path> as x48ng's home (default: "
         "~/.x48ng/)\n"
-        "\t   --rom-file=<filename>\tuse <filename> (absolute or relative to "
+        "\t   --rom=<filename>\tuse <filename> (absolute or relative to "
         "<config-dir>) as ROM (default: rom)\n"
-        "\t   --ram-file=<filename>\tuse <filename> (absolute or relative to "
+        "\t   --ram=<filename>\tuse <filename> (absolute or relative to "
         "<config-dir>) as RAM (default: ram)\n"
-        "\t   --state-file=<filename>\tuse <filename> (absolute or relative "
+        "\t   --state=<filename>\tuse <filename> (absolute or relative "
         "to <config-dir>) as STATE (default: hp48)\n"
-        "\t   --port1-file=<filename>\tuse <filename> (absolute or relative "
+        "\t   --port1=<filename>\tuse <filename> (absolute or relative "
         "to <config-dir>) as PORT1 (default: port1)\n"
-        "\t   --port2-file=<filename>\tuse <filename> (absolute or relative "
+        "\t   --port2=<filename>\tuse <filename> (absolute or relative "
         "to <config-dir>) as PORT2 (default: port2)\n"
         "\t   --serial-line=<path>\t\tuse <path> as serial device default: "
         "%s)\n"
@@ -201,7 +242,7 @@ int parse_args( int argc, char* argv[] ) {
                 exit( 0 );
                 break;
             case 1000:
-                homeDirectory = optarg;
+                configDir = optarg;
                 break;
             case 1010:
                 romFileName = optarg;
@@ -283,6 +324,8 @@ int parse_args( int argc, char* argv[] ) {
         fprintf( stderr, "\n" );
     }
 
+    normalize_filenames();
+
     if ( verbose ) {
         fprintf( stderr, "verbose = %i\n", verbose );
         fprintf( stderr, "useTerminal = %i\n", useTerminal );
@@ -308,7 +351,7 @@ int parse_args( int argc, char* argv[] ) {
         }
 
         fprintf( stderr, "serialLine = %s\n", serialLine );
-        fprintf( stderr, "homeDirectory = %s\n", homeDirectory );
+        fprintf( stderr, "configDir = %s\n", configDir );
         fprintf( stderr, "romFileName = %s\n", romFileName );
         fprintf( stderr, "ramFileName = %s\n", ramFileName );
         fprintf( stderr, "stateFileName = %s\n", stateFileName );
@@ -328,53 +371,17 @@ int parse_args( int argc, char* argv[] ) {
         fprintf( stderr, "mediumFont = %s\n", mediumFont );
         fprintf( stderr, "largeFont = %s\n", largeFont );
         fprintf( stderr, "connFont = %s\n", connFont );
-    }
 
-    /* check that homeDirectory exists, otherwise initialize */
-    char config_dir[ 1024 ];
-    char rom_filename[ 1024 ];
-    char config_filename[ 1024 ];
-    struct stat sb;
-
-    get_home_directory( config_dir );
-    if ( romFileName[ 0 ] == '/' )
-        strcpy( rom_filename, "" );
-    else
-        strcpy( rom_filename, config_dir );
-    strcat( rom_filename, romFileName );
-
-    if ( stat( config_dir, &sb ) == 0 && S_ISDIR( sb.st_mode ) &&
-         stat( rom_filename, &sb ) == 0 ) {
-        if ( verbose )
-            fprintf( stderr, "%s exists\n", config_dir );
-
-        /* a config_dir exists with a romFileName in it. */
-        /* we can initialize if necessary */
-        if ( !initialize ) {
-            /* Not forced to initialize but does stateFileName exist? */
-            if ( stateFileName[ 0 ] == '/' )
-                strcpy( config_filename, "" );
-            else
-                strcpy( config_filename, config_dir );
-            strcat( config_filename, stateFileName );
-            /* if not then initialize */
-            initialize = stat( config_filename, &sb ) == 0 ? 0 : 1;
-
-            /* Not forced to initialize but does ramFileName exist? */
-            if ( ramFileName[ 0 ] == '/' )
-                strcpy( config_filename, "" );
-            else
-                strcpy( config_filename, config_dir );
-            strcat( config_filename, ramFileName );
-            /* if not then initialize */
-            initialize = stat( config_filename, &sb ) == 0 ? 0 : 1;
-        }
-    } else {
-        if ( mkdir( config_dir, 0755 ) == 0 )
-            fprintf( stderr, "Created %s, please copy a rom in it.\n",
-                     config_dir );
-
-        exit( 1 );
+        fprintf( stderr, "normalized_config_path = %s\n",
+                 normalized_config_path );
+        fprintf( stderr, "normalized_rom_path = %s\n", normalized_rom_path );
+        fprintf( stderr, "normalized_ram_path = %s\n", normalized_ram_path );
+        fprintf( stderr, "normalized_state_path = %s\n",
+                 normalized_state_path );
+        fprintf( stderr, "normalized_port1_path = %s\n",
+                 normalized_port1_path );
+        fprintf( stderr, "normalized_port2_path = %s\n",
+                 normalized_port2_path );
     }
 
     return ( optind );

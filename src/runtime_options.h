@@ -17,8 +17,8 @@ extern int resetOnStartup;
 extern int frontend_type;
 
 extern char* serialLine;
-extern char* homeDirectory;
 
+extern char* configDir;
 extern char* romFileName;
 extern char* ramFileName;
 extern char* stateFileName;
@@ -47,10 +47,18 @@ extern char* mediumFont;
 extern char* largeFont;
 extern char* connFont;
 
+#define MAX_LENGTH_FILENAME 2048
+extern char normalized_config_path[ MAX_LENGTH_FILENAME ];
+extern char normalized_rom_path[ MAX_LENGTH_FILENAME ];
+extern char normalized_ram_path[ MAX_LENGTH_FILENAME ];
+extern char normalized_state_path[ MAX_LENGTH_FILENAME ];
+extern char normalized_port1_path[ MAX_LENGTH_FILENAME ];
+extern char normalized_port2_path[ MAX_LENGTH_FILENAME ];
+
 /*************/
 /* functions */
 /*************/
-extern void get_home_directory( char* path );
+extern void get_absolute_config_dir( char* source, char* path );
 extern int parse_args( int argc, char* argv[] );
 
 #endif /* !_OPTIONS_H */

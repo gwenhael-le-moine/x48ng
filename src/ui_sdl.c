@@ -2415,7 +2415,7 @@ static void button_release_all( void ) {
 }
 
 static void SDLDrawSerialDevices() {
-    char text[ 1024 ];
+    char text[ 1024 ] = "";
 
     if ( verbose ) {
         fprintf( stderr, "wire_name: %s\n", wire_name );
