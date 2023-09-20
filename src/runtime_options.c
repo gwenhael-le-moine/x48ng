@@ -79,9 +79,11 @@ int parse_args( int argc, char* argv[] ) {
 
         { "no-debug", no_argument, &useDebugger, 0 },
 
+        { "sdl", no_argument, &frontend_type, FRONTEND_SDL },
         { "sdl-no-chrome", no_argument, &show_ui_chrome, 0 },
         { "sdl-fullscreen", no_argument, &show_ui_fullscreen, 1 },
 
+        { "x11", no_argument, &frontend_type, FRONTEND_X11 },
         { "x11-netbook", no_argument, &netbook, 1 },
         { "x11-mono", no_argument, &mono, 1 },
         { "x11-gray", no_argument, &gray, 1 },
@@ -89,6 +91,8 @@ int parse_args( int argc, char* argv[] ) {
         { "x11-medium-font", required_argument, NULL, 8112 },
         { "x11-large-font", required_argument, NULL, 8113 },
         { "x11-connection-font", required_argument, NULL, 8114 },
+
+        { "tui", no_argument, &frontend_type, FRONTEND_TEXT },
 
         { 0, 0, 0, 0 } };
 
@@ -115,6 +119,9 @@ int parse_args( int argc, char* argv[] ) {
         "\t-u --front-end\t\t\tspecify a front-end (available: x11, sdl, "
         "text; "
         "default: x11)\n"
+        "\t   --x11\t\tuse X11 front-end (default: true)\n"
+        "\t   --sdl\t\tuse SDL front-end (default: false)\n"
+        "\t   --tui\t\tuse terminal front-end (default: false)\n"
         "\t-t --use-terminal\t\tactivate pseudo terminal interface (default: "
         "true)\n"
         "\t-s --use-serial\t\t\tactivate serial interface (default: false)\n"
