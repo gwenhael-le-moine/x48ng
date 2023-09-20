@@ -50,6 +50,7 @@ extern char* connFont;
 /*************/
 /* functions */
 /*************/
+extern void get_home_directory( char* path );
 extern int parse_args( int argc, char* argv[] );
 
 #endif /* !_OPTIONS_H */

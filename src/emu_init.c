@@ -1,5 +1,4 @@
 #include <errno.h>
-#include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -26,33 +25,6 @@ short port1_is_ram;
 long port2_size;
 long port2_mask;
 short port2_is_ram;
-
-void get_home_directory( char* path ) {
-    char* p;
-    struct passwd* pwd;
-
-    if ( homeDirectory[ 0 ] == '/' )
-        strcpy( path, homeDirectory );
-    else {
-        p = getenv( "HOME" );
-        if ( p ) {
-            strcpy( path, p );
-            strcat( path, "/" );
-        } else {
-            pwd = getpwuid( getuid() );
-            if ( pwd ) {
-                strcpy( path, pwd->pw_dir );
-                strcat( path, "/" );
-            } else {
-                if ( verbose )
-                    fprintf( stderr, "can\'t figure out your home directory, "
-                                     "trying /tmp\n" );
-                strcpy( path, "/tmp" );
-            }
-        }
-        strcat( path, homeDirectory );
-    }
-}
 
 int read_rom( const char* fname ) {
     int ram_size;
@@ -105,8 +77,6 @@ void saturn_config_init( void ) {
 }
 
 void init_saturn( void ) {
-    int i;
-
     memset( &saturn, 0, sizeof( saturn ) - 4 * sizeof( unsigned char* ) );
     saturn.PC = 0x00000;
     saturn.magic = X48_MAGIC;
@@ -124,7 +94,7 @@ void init_saturn( void ) {
     saturn.timer1 = 0;
     saturn.timer2 = 0x2000;
     saturn.bank_switch = 0;
-    for ( i = 0; i < NR_MCTL; i++ ) {
+    for ( int i = 0; i < NR_MCTL; i++ ) {
         if ( i == 0 )
             saturn.mem_cntl[ i ].unconfigured = 1;
         else if ( i == 5 )
@@ -138,14 +108,18 @@ void init_saturn( void ) {
 }
 
 int init_emulator( void ) {
+    /* If not forced to initialize and files are readble => let's go */
     if ( !initialize && read_files() ) {
         if ( resetOnStartup )
             saturn.PC = 0x00000;
         return 0;
     }
 
-    init_saturn();
+    /* if forced initialize or files were not readble => initialize */
+    if ( verbose )
+        fprintf( stderr, "initialization of %s\n", homeDirectory );
 
+    init_saturn();
     if ( !read_rom( romFileName ) )
         exit( 1 );
 

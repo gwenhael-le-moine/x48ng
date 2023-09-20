@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <pwd.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
 #include <getopt.h>
 
@@ -51,6 +54,33 @@ char* smallFont = "-*-fixed-bold-r-normal-*-14-*-*-*-*-*-iso8859-1";
 char* mediumFont = "-*-fixed-bold-r-normal-*-15-*-*-*-*-*-iso8859-1";
 char* largeFont = "-*-fixed-medium-r-normal-*-20-*-*-*-*-*-iso8859-1";
 char* connFont = "-*-fixed-medium-r-normal-*-12-*-*-*-*-*-iso8859-1";
+
+void get_home_directory( char* path ) {
+    char* p;
+    struct passwd* pwd;
+
+    if ( homeDirectory[ 0 ] == '/' )
+        strcpy( path, homeDirectory );
+    else {
+        p = getenv( "HOME" );
+        if ( p ) {
+            strcpy( path, p );
+            strcat( path, "/" );
+        } else {
+            pwd = getpwuid( getuid() );
+            if ( pwd ) {
+                strcpy( path, pwd->pw_dir );
+                strcat( path, "/" );
+            } else {
+                if ( verbose )
+                    fprintf( stderr, "can\'t figure out your home directory, "
+                                     "trying /tmp\n" );
+                strcpy( path, "/tmp" );
+            }
+        }
+        strcat( path, homeDirectory );
+    }
+}
 
 int parse_args( int argc, char* argv[] ) {
     int option_index;
@@ -298,6 +328,53 @@ int parse_args( int argc, char* argv[] ) {
         fprintf( stderr, "mediumFont = %s\n", mediumFont );
         fprintf( stderr, "largeFont = %s\n", largeFont );
         fprintf( stderr, "connFont = %s\n", connFont );
+    }
+
+    /* check that homeDirectory exists, otherwise initialize */
+    char config_dir[ 1024 ];
+    char rom_filename[ 1024 ];
+    char config_filename[ 1024 ];
+    struct stat sb;
+
+    get_home_directory( config_dir );
+    if ( romFileName[ 0 ] == '/' )
+        strcpy( rom_filename, "" );
+    else
+        strcpy( rom_filename, config_dir );
+    strcat( rom_filename, romFileName );
+
+    if ( stat( config_dir, &sb ) == 0 && S_ISDIR( sb.st_mode ) &&
+         stat( rom_filename, &sb ) == 0 ) {
+        if ( verbose )
+            fprintf( stderr, "%s exists\n", config_dir );
+
+        /* a config_dir exists with a romFileName in it. */
+        /* we can initialize if necessary */
+        if ( !initialize ) {
+            /* Not forced to initialize but does stateFileName exist? */
+            if ( stateFileName[ 0 ] == '/' )
+                strcpy( config_filename, "" );
+            else
+                strcpy( config_filename, config_dir );
+            strcat( config_filename, stateFileName );
+            /* if not then initialize */
+            initialize = stat( config_filename, &sb ) == 0 ? 0 : 1;
+
+            /* Not forced to initialize but does ramFileName exist? */
+            if ( ramFileName[ 0 ] == '/' )
+                strcpy( config_filename, "" );
+            else
+                strcpy( config_filename, config_dir );
+            strcat( config_filename, ramFileName );
+            /* if not then initialize */
+            initialize = stat( config_filename, &sb ) == 0 ? 0 : 1;
+        }
+    } else {
+        if ( mkdir( config_dir, 0755 ) == 0 )
+            fprintf( stderr, "Created %s, please copy a rom in it.\n",
+                     config_dir );
+
+        exit( 1 );
     }
 
     return ( optind );
