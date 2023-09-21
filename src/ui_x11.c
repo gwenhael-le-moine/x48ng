@@ -300,20 +300,16 @@ typedef struct x11_ann_struct_t {
     Pixmap pixmap;
 } x11_ann_struct_t;
 
-typedef struct disp_t {
-    unsigned int w, h;
-
+typedef struct x11_lcd_t {
     Window win;
     GC gc;
-
-    short mapped;
 
     int display_update;
     XShmSegmentInfo disp_info;
     XImage* disp_image;
     XShmSegmentInfo menu_info;
     XImage* menu_image;
-} disp_t;
+} x11_lcd_t;
 
 typedef struct icon_t {
     unsigned int w;
@@ -322,12 +318,14 @@ typedef struct icon_t {
     unsigned char* bits;
 } icon_map_t;
 
+static short mapped;
+
 static x11_keypad_t keypad;
 static x11_color_t* colors;
 
 static int CompletionType = -1;
 
-static disp_t disp;
+static x11_lcd_t lcd;
 
 static int shm_flag;
 
@@ -1390,102 +1388,95 @@ static void fatal_exit( char* error, char* advice ) {
     exit( 1 );
 }
 
-/* static Visual* pick_visual_of_class( Display* dpy, int visual_class, */
-/*                                      unsigned int* depth ) { */
-/*     XVisualInfo vi_in, *vi_out; */
-/*     int out_count; */
+inline Visual* pick_visual_of_class( Display* dpy, int visual_class,
+                                     unsigned int* depth ) {
+    XVisualInfo vi_in, *vi_out;
+    int out_count;
 
-/*     vi_in.class = visual_class; */
-/*     vi_in.screen = DefaultScreen( dpy ); */
-/*     vi_out = XGetVisualInfo( dpy, VisualClassMask | VisualScreenMask, &vi_in,
- */
-/*                              &out_count ); */
-/*     if ( vi_out ) { /\* choose the 'best' one, if multiple *\/ */
-/*         int i, best; */
-/*         Visual* visual; */
-/*         for ( i = 0, best = 0; i < out_count; i++ ) */
-/*             if ( vi_out[ i ].depth > vi_out[ best ].depth ) */
-/*                 best = i; */
-/*         visual = vi_out[ best ].visual; */
-/*         *depth = vi_out[ best ].depth; */
-/*         XFree( ( char* )vi_out ); */
-/*         return visual; */
-/*     } else { */
-/*         *depth = DefaultDepth( dpy, DefaultScreen( dpy ) ); */
-/*         return DefaultVisual( dpy, DefaultScreen( dpy ) ); */
-/*     } */
-/* } */
-
-/* static Visual* id_to_visual( Display* dpy, int id, unsigned int* depth ) { */
-/*     XVisualInfo vi_in, *vi_out; */
-/*     int out_count; */
-
-/*     vi_in.screen = DefaultScreen( dpy ); */
-/*     vi_in.visualid = id; */
-/*     vi_out = XGetVisualInfo( dpy, VisualScreenMask | VisualIDMask, &vi_in, */
-/*                              &out_count ); */
-/*     if ( vi_out ) { */
-/*         Visual* v = vi_out[ 0 ].visual; */
-/*         *depth = vi_out[ 0 ].depth; */
-/*         XFree( ( char* )vi_out ); */
-/*         return v; */
-/*     } */
-/*     return 0; */
-/* } */
-
-static Visual* get_visual_resource( Display* dpy, char* name, char* class,
-                                    unsigned int* depth ) {
-    /* char c; */
-    /* char *tmp, *s; */
-    /* int vclass; */
-    /* int id; */
-
-    /* s = get_string_resource( name, class ); */
-    /* if ( s ) */
-    /*     for ( tmp = s; *tmp; tmp++ ) */
-    /*         if ( isupper( *tmp ) ) */
-    /*             *tmp = tolower( *tmp ); */
-
-    /* if ( !s || !strcmp( s, "default" ) ) */
-    /*     vclass = -1; */
-    /* else if ( !strcmp( s, "staticgray" ) ) */
-    /*     vclass = StaticGray; */
-    /* else if ( !strcmp( s, "staticcolor" ) ) */
-    /*     vclass = StaticColor; */
-    /* else if ( !strcmp( s, "truecolor" ) ) */
-    /*     vclass = TrueColor; */
-    /* else if ( !strcmp( s, "grayscale" ) ) */
-    /*     vclass = GrayScale; */
-    /* else if ( !strcmp( s, "pseudocolor" ) ) */
-    /*     vclass = PseudoColor; */
-    /* else if ( !strcmp( s, "directcolor" ) ) */
-    /*     vclass = DirectColor; */
-    /* else if ( 1 == sscanf( s, " %d %c", &id, &c ) ) */
-    /*     vclass = -2; */
-    /* else if ( 1 == sscanf( s, " 0x%x %c", &id, &c ) ) */
-    /*     vclass = -2; */
-    /* else { */
-    /*     fprintf( stderr, "unrecognized visual \"%s\".\n", s ); */
-    /* vclass = -1; */
-    /* } */
-    /* if ( s ) */
-    /*     free( s ); */
-
-    /* if ( vclass == -1 ) { */
-    *depth = DefaultDepth( dpy, DefaultScreen( dpy ) );
-    return DefaultVisual( dpy, DefaultScreen( dpy ) );
-    /* } else if ( vclass == -2 ) { */
-    /*     Visual* v = id_to_visual( dpy, id, depth ); */
-    /*     if ( v ) */
-    /*         return v; */
-    /*     fprintf( stderr, "no visual with id 0x%x.\n", id ); */
-    /*     *depth = DefaultDepth( dpy, DefaultScreen( dpy ) ); */
-    /*     return DefaultVisual( dpy, DefaultScreen( dpy ) ); */
-    /* } else */
-    /*     return pick_visual_of_class( dpy, vclass, depth ); */
+    vi_in.class = visual_class;
+    vi_in.screen = DefaultScreen( dpy );
+    vi_out = XGetVisualInfo( dpy, VisualClassMask | VisualScreenMask, &vi_in,
+                             &out_count );
+    if ( vi_out ) { /* choose the 'best' one, if multiple */
+        int i, best;
+        Visual* visual;
+        for ( i = 0, best = 0; i < out_count; i++ )
+            if ( vi_out[ i ].depth > vi_out[ best ].depth )
+                best = i;
+        visual = vi_out[ best ].visual;
+        *depth = vi_out[ best ].depth;
+        XFree( ( char* )vi_out );
+        return visual;
+    } else {
+        *depth = DefaultDepth( dpy, DefaultScreen( dpy ) );
+        return DefaultVisual( dpy, DefaultScreen( dpy ) );
+    }
 }
 
-static XFontStruct* load_x11_font( Display* dpy, char* fontname ) {
+inline Visual* id_to_visual( Display* dpy, int id, unsigned int* depth ) {
+    XVisualInfo vi_in, *vi_out;
+    int out_count;
+
+    vi_in.screen = DefaultScreen( dpy );
+    vi_in.visualid = id;
+    vi_out = XGetVisualInfo( dpy, VisualScreenMask | VisualIDMask, &vi_in,
+                             &out_count );
+    if ( vi_out ) {
+        Visual* v = vi_out[ 0 ].visual;
+        *depth = vi_out[ 0 ].depth;
+        XFree( ( char* )vi_out );
+        return v;
+    }
+    return 0;
+}
+
+Visual* get_visual_resource( Display* dpy, unsigned int* depth ) {
+    char c;
+    int vclass;
+    int id;
+
+    if ( !x11_visual || !strcmp( x11_visual, "default" ) )
+        vclass = -1;
+    else if ( !strcmp( x11_visual, "staticgray" ) )
+        vclass = StaticGray;
+    else if ( !strcmp( x11_visual, "staticcolor" ) )
+        vclass = StaticColor;
+    else if ( !strcmp( x11_visual, "truecolor" ) )
+        vclass = TrueColor;
+    else if ( !strcmp( x11_visual, "grayscale" ) )
+        vclass = GrayScale;
+    else if ( !strcmp( x11_visual, "pseudocolor" ) )
+        vclass = PseudoColor;
+    else if ( !strcmp( x11_visual, "directcolor" ) )
+        vclass = DirectColor;
+    else if ( 1 == sscanf( x11_visual, " %d %c", &id, &c ) )
+        vclass = -2;
+    else if ( 1 == sscanf( x11_visual, " 0x%x %c", &id, &c ) )
+        vclass = -2;
+    else {
+        fprintf( stderr, "unrecognized visual \"%s\".\n", x11_visual );
+        vclass = -1;
+    }
+
+    if ( vclass == -1 ) {
+        *depth = DefaultDepth( dpy, DefaultScreen( dpy ) );
+
+        return DefaultVisual( dpy, DefaultScreen( dpy ) );
+    } else if ( vclass == -2 ) {
+        Visual* v = id_to_visual( dpy, id, depth );
+        if ( v )
+            return v;
+
+        fprintf( stderr, "no visual with id 0x%x.\n", id );
+
+        *depth = DefaultDepth( dpy, DefaultScreen( dpy ) );
+
+        return DefaultVisual( dpy, DefaultScreen( dpy ) );
+    } else
+        return pick_visual_of_class( dpy, vclass, depth );
+}
+
+XFontStruct* load_x11_font( Display* dpy, char* fontname ) {
     XFontStruct* f = ( XFontStruct* )0;
 
     f = XLoadQueryFont( dpy, fontname );
@@ -2406,8 +2397,6 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
 
 void CreateBezel( x11_keypad_t* keypad ) {
     int i;
-    int display_height = DISPLAY_HEIGHT;
-    int display_width = DISPLAY_WIDTH;
 
     /*
      * draw the frame around the display
@@ -2416,18 +2405,18 @@ void CreateBezel( x11_keypad_t* keypad ) {
 
     for ( i = 0; i < DISP_FRAME; i++ ) {
         XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i ),
-                   ( int )( DISPLAY_OFFSET_Y + display_height + 2 * i ),
-                   ( int )( DISPLAY_OFFSET_X + display_width + i ),
-                   ( int )( DISPLAY_OFFSET_Y + display_height + 2 * i ) );
+                   ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i ),
+                   ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i ),
+                   ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i ) );
         XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i ),
-                   ( int )( DISPLAY_OFFSET_Y + display_height + 2 * i + 1 ),
-                   ( int )( DISPLAY_OFFSET_X + display_width + i ),
-                   ( int )( DISPLAY_OFFSET_Y + display_height + 2 * i + 1 ) );
+                   ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i + 1 ),
+                   ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i ),
+                   ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i + 1 ) );
         XDrawLine( dpy, keypad->pixmap, gc,
-                   ( int )( DISPLAY_OFFSET_X + display_width + i ),
+                   ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i ),
                    ( int )( DISPLAY_OFFSET_Y - i ),
-                   ( int )( DISPLAY_OFFSET_X + display_width + i ),
-                   ( int )( DISPLAY_OFFSET_Y + display_height + 2 * i ) );
+                   ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i ),
+                   ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i ) );
     }
 
     XSetForeground( dpy, gc, COLOR( DISP_PAD_BOT ) );
@@ -2435,12 +2424,12 @@ void CreateBezel( x11_keypad_t* keypad ) {
     for ( i = 0; i < DISP_FRAME; i++ ) {
         XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i - 1 ),
                    ( int )( DISPLAY_OFFSET_Y - i - 1 ),
-                   ( int )( DISPLAY_OFFSET_X + display_width + i - 1 ),
+                   ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i - 1 ),
                    ( int )( DISPLAY_OFFSET_Y - i - 1 ) );
         XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i - 1 ),
                    ( int )( DISPLAY_OFFSET_Y - i - 1 ),
                    ( int )( DISPLAY_OFFSET_X - i - 1 ),
-                   ( int )( DISPLAY_OFFSET_Y + display_height + 2 * i - 1 ) );
+                   ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i - 1 ) );
     }
 
     /*
@@ -2463,49 +2452,49 @@ void CreateBezel( x11_keypad_t* keypad ) {
                 ( int )( DISPLAY_OFFSET_Y - DISP_FRAME + 1 ) );
 
     XDrawLine( dpy, keypad->pixmap, gc,
-               ( int )( DISPLAY_OFFSET_X + display_width + DISP_FRAME - 4 ),
+               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 4 ),
                ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ),
-               ( int )( DISPLAY_OFFSET_X + display_width + DISP_FRAME - 1 ),
+               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
                ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ) );
     XDrawLine( dpy, keypad->pixmap, gc,
-               ( int )( DISPLAY_OFFSET_X + display_width + DISP_FRAME - 1 ),
+               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
                ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ),
-               ( int )( DISPLAY_OFFSET_X + display_width + DISP_FRAME - 1 ),
+               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
                ( int )( DISPLAY_OFFSET_Y - DISP_FRAME + 3 ) );
     XDrawPoint( dpy, keypad->pixmap, gc,
-                ( int )( DISPLAY_OFFSET_X + display_width + DISP_FRAME - 2 ),
+                ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 2 ),
                 ( int )( DISPLAY_OFFSET_Y - DISP_FRAME + 1 ) );
 
     XDrawLine(
         dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME ),
-        ( int )( DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 4 ),
+        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 4 ),
         ( int )( DISPLAY_OFFSET_X - DISP_FRAME ),
-        ( int )( DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 1 ) );
+        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ) );
     XDrawLine(
         dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME ),
-        ( int )( DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 1 ),
+        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ),
         ( int )( DISPLAY_OFFSET_X - DISP_FRAME + 3 ),
-        ( int )( DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 1 ) );
+        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ) );
     XDrawPoint(
         dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME + 1 ),
-        ( int )( DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 2 ) );
+        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 2 ) );
 
     XDrawLine(
         dpy, keypad->pixmap, gc,
-        ( int )( DISPLAY_OFFSET_X + display_width + DISP_FRAME - 1 ),
-        ( int )( DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 4 ),
-        ( int )( DISPLAY_OFFSET_X + display_width + DISP_FRAME - 1 ),
-        ( int )( DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 1 ) );
+        ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
+        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 4 ),
+        ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
+        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ) );
     XDrawLine(
         dpy, keypad->pixmap, gc,
-        ( int )( DISPLAY_OFFSET_X + display_width + DISP_FRAME - 4 ),
-        ( int )( DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 1 ),
-        ( int )( DISPLAY_OFFSET_X + display_width + DISP_FRAME - 1 ),
-        ( int )( DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 1 ) );
+        ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 4 ),
+        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ),
+        ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
+        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ) );
     XDrawPoint(
         dpy, keypad->pixmap, gc,
-        ( int )( DISPLAY_OFFSET_X + display_width + DISP_FRAME - 2 ),
-        ( int )( DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 2 ) );
+        ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 2 ),
+        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 2 ) );
 
     /*
      * simulate rounded lcd corners
@@ -2514,20 +2503,20 @@ void CreateBezel( x11_keypad_t* keypad ) {
 
     XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - 1 ),
                ( int )( DISPLAY_OFFSET_Y + 1 ), ( int )( DISPLAY_OFFSET_X - 1 ),
-               ( int )( DISPLAY_OFFSET_Y + display_height - 2 ) );
+               ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT - 2 ) );
     XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + 1 ),
                ( int )( DISPLAY_OFFSET_Y - 1 ),
-               ( int )( DISPLAY_OFFSET_X + display_width - 2 ),
+               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH - 2 ),
                ( int )( DISPLAY_OFFSET_Y - 1 ) );
     XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + 1 ),
-               ( int )( DISPLAY_OFFSET_Y + display_height ),
-               ( int )( DISPLAY_OFFSET_X + display_width - 2 ),
-               ( int )( DISPLAY_OFFSET_Y + display_height ) );
+               ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT ),
+               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH - 2 ),
+               ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT ) );
     XDrawLine( dpy, keypad->pixmap, gc,
-               ( int )( DISPLAY_OFFSET_X + display_width ),
+               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH ),
                ( int )( DISPLAY_OFFSET_Y + 1 ),
-               ( int )( DISPLAY_OFFSET_X + display_width ),
-               ( int )( DISPLAY_OFFSET_Y + display_height - 2 ) );
+               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH ),
+               ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT - 2 ) );
 }
 
 void DrawMore( unsigned int offset_y, x11_keypad_t* keypad ) {
@@ -2535,8 +2524,6 @@ void DrawMore( unsigned int offset_y, x11_keypad_t* keypad ) {
     int cut = 0;
     int x, y;
 
-    // int display_height = DISPLAY_HEIGHT;
-    int display_width = DISPLAY_WIDTH;
     /*
      * lower the whole thing
      */
@@ -2734,7 +2721,7 @@ void DrawMore( unsigned int offset_y, x11_keypad_t* keypad ) {
     XSetForeground( dpy, gc, COLOR( LABEL ) );
 
     if ( opt_gx ) {
-        x = DISPLAY_OFFSET_X + display_width - gx_128K_ram_width +
+        x = DISPLAY_OFFSET_X + DISPLAY_WIDTH - gx_128K_ram_width +
             gx_128K_ram_x_hot + 2;
         y = 10 + gx_128K_ram_y_hot;
         pix = XCreateBitmapFromData( dpy, keypad->pixmap,
@@ -2768,7 +2755,7 @@ void DrawMore( unsigned int offset_y, x11_keypad_t* keypad ) {
         XFreePixmap( dpy, pix );
 
         XSetForeground( dpy, gc, COLOR( RIGHT ) );
-        x = DISPLAY_OFFSET_X + display_width - gx_128K_ram_width +
+        x = DISPLAY_OFFSET_X + DISPLAY_WIDTH - gx_128K_ram_width +
             gx_green_x_hot + 2;
         y = 10 + gx_green_y_hot;
         pix = XCreateBitmapFromData( dpy, keypad->pixmap,
@@ -2795,7 +2782,7 @@ void DrawMore( unsigned int offset_y, x11_keypad_t* keypad ) {
 
         XFreePixmap( dpy, pix );
 
-        x = DISPLAY_OFFSET_X + display_width - 1 - science_width;
+        x = DISPLAY_OFFSET_X + DISPLAY_WIDTH - 1 - science_width;
         y = TOP_SKIP - DISP_FRAME - science_height - 4;
 
         pix =
@@ -2944,7 +2931,7 @@ int handle_xerror( Display* the_dpy, XErrorEvent* eev ) {
     return 0;
 }
 
-void CreateDispWindow( void ) {
+void CreateLCDWindow( void ) {
     XSetWindowAttributes xswa;
     XGCValues val;
     unsigned long gc_mask;
@@ -2953,19 +2940,16 @@ void CreateDispWindow( void ) {
     /*
      * create the display subwindow
      */
-    disp.w = DISPLAY_WIDTH;
-    disp.h = DISPLAY_HEIGHT;
+    lcd.win = XCreateSimpleWindow(
+        dpy, mainW, ( int )DISPLAY_OFFSET_X, ( int )DISPLAY_OFFSET_Y,
+        DISPLAY_WIDTH, DISPLAY_HEIGHT, 0, COLOR( BLACK ), COLOR( LCD ) );
 
-    disp.win = XCreateSimpleWindow( dpy, mainW, ( int )DISPLAY_OFFSET_X,
-                                    ( int )DISPLAY_OFFSET_Y, disp.w, disp.h, 0,
-                                    COLOR( BLACK ), COLOR( LCD ) );
-
-    disp.mapped = 1;
+    mapped = 1;
 
     xswa.event_mask = ExposureMask | StructureNotifyMask;
     xswa.backing_store = Always;
 
-    XChangeWindowAttributes( dpy, disp.win, CWEventMask | CWBackingStore,
+    XChangeWindowAttributes( dpy, lcd.win, CWEventMask | CWBackingStore,
                              &xswa );
 
     /*
@@ -2975,26 +2959,25 @@ void CreateDispWindow( void ) {
     val.background = COLOR( LCD );
     val.function = GXcopy;
     gc_mask = GCForeground | GCBackground | GCFunction;
-    disp.gc = XCreateGC( dpy, mainW, gc_mask, &val );
+    lcd.gc = XCreateGC( dpy, mainW, gc_mask, &val );
 
-    XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
+    XSetForeground( dpy, lcd.gc, COLOR( PIXEL ) );
 
-    disp.display_update = UPDATE_DISP | UPDATE_MENU;
+    lcd.display_update = UPDATE_DISP | UPDATE_MENU;
 
     xerror_flag = 0;
     XSetErrorHandler( handle_xerror );
     XFlush( dpy );
 
-    disp.disp_image = NULL;
-    disp.menu_image = NULL;
+    lcd.disp_image = NULL;
+    lcd.menu_image = NULL;
     if ( shm_flag ) {
-
         /*
          * create XShmImage for DISP
          */
-        disp.disp_image = XShmCreateImage( dpy, None, 1, XYBitmap, NULL,
-                                           &disp.disp_info, 262, 128 );
-        if ( disp.disp_image == NULL ) {
+        lcd.disp_image = XShmCreateImage( dpy, None, 1, XYBitmap, NULL,
+                                          &lcd.disp_info, 262, 128 );
+        if ( lcd.disp_image == NULL ) {
             shm_flag = 0;
             if ( verbose )
                 fprintf( stderr,
@@ -3005,13 +2988,13 @@ void CreateDispWindow( void ) {
         /*
          * get ID of shared memory block for DISP
          */
-        disp.disp_info.shmid = shmget(
-            IPC_PRIVATE,
-            ( disp.disp_image->bytes_per_line * disp.disp_image->height ),
-            IPC_CREAT | 0777 );
-        if ( disp.disp_info.shmid < 0 ) {
-            XDestroyImage( disp.disp_image );
-            disp.disp_image = NULL;
+        lcd.disp_info.shmid =
+            shmget( IPC_PRIVATE,
+                    ( lcd.disp_image->bytes_per_line * lcd.disp_image->height ),
+                    IPC_CREAT | 0777 );
+        if ( lcd.disp_info.shmid < 0 ) {
+            XDestroyImage( lcd.disp_image );
+            lcd.disp_image = NULL;
             shm_flag = 0;
             if ( verbose )
                 fprintf( stderr, "XShm error in shmget(DISP), disabling.\n" );
@@ -3021,27 +3004,27 @@ void CreateDispWindow( void ) {
         /*
          * get address of shared memory block for DISP
          */
-        disp.disp_info.shmaddr = ( char* )shmat( disp.disp_info.shmid, 0, 0 );
-        if ( disp.disp_info.shmaddr == ( ( char* )-1 ) ) {
-            XDestroyImage( disp.disp_image );
-            disp.disp_image = NULL;
+        lcd.disp_info.shmaddr = ( char* )shmat( lcd.disp_info.shmid, 0, 0 );
+        if ( lcd.disp_info.shmaddr == ( ( char* )-1 ) ) {
+            XDestroyImage( lcd.disp_image );
+            lcd.disp_image = NULL;
             shm_flag = 0;
             if ( verbose )
                 fprintf( stderr, "XShm error in shmat(DISP), disabling.\n" );
             goto shm_error;
         }
-        disp.disp_image->data = disp.disp_info.shmaddr;
-        disp.disp_info.readOnly = False;
-        XShmAttach( dpy, &disp.disp_info );
+        lcd.disp_image->data = lcd.disp_info.shmaddr;
+        lcd.disp_info.readOnly = False;
+        XShmAttach( dpy, &lcd.disp_info );
 
         /*
          * create XShmImage for MENU
          */
-        disp.menu_image = XShmCreateImage( dpy, None, 1, XYBitmap, NULL,
-                                           &disp.menu_info, 262, 128 );
-        if ( disp.menu_image == NULL ) {
-            XDestroyImage( disp.disp_image );
-            disp.disp_image = NULL;
+        lcd.menu_image = XShmCreateImage( dpy, None, 1, XYBitmap, NULL,
+                                          &lcd.menu_info, 262, 128 );
+        if ( lcd.menu_image == NULL ) {
+            XDestroyImage( lcd.disp_image );
+            lcd.disp_image = NULL;
             shm_flag = 0;
             if ( verbose )
                 fprintf( stderr,
@@ -3052,15 +3035,15 @@ void CreateDispWindow( void ) {
         /*
          * get ID of shared memory block for MENU
          */
-        disp.menu_info.shmid = shmget(
-            IPC_PRIVATE,
-            ( disp.menu_image->bytes_per_line * disp.menu_image->height ),
-            IPC_CREAT | 0777 );
-        if ( disp.menu_info.shmid < 0 ) {
-            XDestroyImage( disp.disp_image );
-            disp.disp_image = NULL;
-            XDestroyImage( disp.menu_image );
-            disp.menu_image = NULL;
+        lcd.menu_info.shmid =
+            shmget( IPC_PRIVATE,
+                    ( lcd.menu_image->bytes_per_line * lcd.menu_image->height ),
+                    IPC_CREAT | 0777 );
+        if ( lcd.menu_info.shmid < 0 ) {
+            XDestroyImage( lcd.disp_image );
+            lcd.disp_image = NULL;
+            XDestroyImage( lcd.menu_image );
+            lcd.menu_image = NULL;
             shm_flag = 0;
             if ( verbose )
                 fprintf( stderr, "XShm error in shmget(MENU), disabling.\n" );
@@ -3070,45 +3053,45 @@ void CreateDispWindow( void ) {
         /*
          * get address of shared memory block for MENU
          */
-        disp.menu_info.shmaddr = ( char* )shmat( disp.menu_info.shmid, 0, 0 );
-        if ( disp.menu_info.shmaddr == ( ( char* )-1 ) ) {
-            XDestroyImage( disp.disp_image );
-            disp.disp_image = NULL;
-            XDestroyImage( disp.menu_image );
-            disp.menu_image = NULL;
+        lcd.menu_info.shmaddr = ( char* )shmat( lcd.menu_info.shmid, 0, 0 );
+        if ( lcd.menu_info.shmaddr == ( ( char* )-1 ) ) {
+            XDestroyImage( lcd.disp_image );
+            lcd.disp_image = NULL;
+            XDestroyImage( lcd.menu_image );
+            lcd.menu_image = NULL;
             shm_flag = 0;
             if ( verbose )
                 fprintf( stderr, "XShm error in shmat(MENU), disabling.\n" );
             goto shm_error;
         }
-        disp.menu_image->data = disp.menu_info.shmaddr;
-        disp.menu_info.readOnly = False;
-        XShmAttach( dpy, &disp.menu_info );
+        lcd.menu_image->data = lcd.menu_info.shmaddr;
+        lcd.menu_info.readOnly = False;
+        XShmAttach( dpy, &lcd.menu_info );
 
         XFlush( dpy );
         XSync( dpy, 0 );
         sleep( 1 );
 
         if ( xerror_flag ) {
-            XDestroyImage( disp.disp_image );
-            disp.disp_image = NULL;
-            XDestroyImage( disp.menu_image );
-            disp.menu_image = NULL;
+            XDestroyImage( lcd.disp_image );
+            lcd.disp_image = NULL;
+            XDestroyImage( lcd.menu_image );
+            lcd.menu_image = NULL;
             shm_flag = 0;
             if ( verbose )
                 fprintf( stderr, "XShm error in shmget(MENU), disabling.\n" );
             goto shm_error;
         } else {
-            shmctl( disp.disp_info.shmid, IPC_RMID, 0 );
-            shmctl( disp.menu_info.shmid, IPC_RMID, 0 );
+            shmctl( lcd.disp_info.shmid, IPC_RMID, 0 );
+            shmctl( lcd.menu_info.shmid, IPC_RMID, 0 );
         }
 
-        memset( disp.disp_image->data, 0,
-                ( size_t )( disp.disp_image->bytes_per_line *
-                            disp.disp_image->height ) );
-        memset( disp.menu_image->data, 0,
-                ( size_t )( disp.menu_image->bytes_per_line *
-                            disp.menu_image->height ) );
+        memset( lcd.disp_image->data, 0,
+                ( size_t )( lcd.disp_image->bytes_per_line *
+                            lcd.disp_image->height ) );
+        memset( lcd.menu_image->data, 0,
+                ( size_t )( lcd.menu_image->bytes_per_line *
+                            lcd.menu_image->height ) );
 
         if ( verbose )
             printf( "using XShm extension.\n" );
@@ -3124,8 +3107,8 @@ shm_error:
         rect.x = 5;
         rect.y = 0;
         rect.width = 262;
-        rect.height = disp.h;
-        XSetClipRectangles( dpy, disp.gc, 0, 0, &rect, 1, Unsorted );
+        rect.height = DISPLAY_HEIGHT;
+        XSetClipRectangles( dpy, lcd.gc, 0, 0, &rect, 1, Unsorted );
     }
 }
 
@@ -3220,7 +3203,7 @@ int CreateWindows( int argc, char** argv ) {
     }
 
     class = InputOutput;
-    visual = get_visual_resource( dpy, "visual", "Visual", &depth );
+    visual = get_visual_resource( dpy, &depth );
     if ( visual != DefaultVisual( dpy, screen ) ) {
         if ( visual->class == DirectColor )
             cmap = XCreateColormap( dpy, RootWindow( dpy, screen ), visual,
@@ -3449,7 +3432,7 @@ int CreateWindows( int argc, char** argv ) {
     /*
      * create the display
      */
-    CreateDispWindow();
+    CreateLCDWindow();
 
     /*
      * create the keypad
@@ -3490,8 +3473,8 @@ int CreateWindows( int argc, char** argv ) {
     DrawSerialDevices( wire_name, ir_name );
 
     if ( shm_flag ) {
-        XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
-        XFillRectangle( dpy, disp.win, disp.gc, 5, 20, 262, 128 );
+        XSetForeground( dpy, lcd.gc, COLOR( PIXEL ) );
+        XFillRectangle( dpy, lcd.win, lcd.gc, 5, 20, 262, 128 );
     }
 
     return 0;
@@ -3540,22 +3523,22 @@ void refresh_display( void ) {
     if ( !shm_flag )
         return;
 
-    if ( disp.display_update & UPDATE_DISP ) {
-        XShmPutImage( dpy, disp.win, disp.gc, disp.disp_image,
-                      2 * display.offset, 0, 5, 20, 262,
+    if ( lcd.display_update & UPDATE_DISP ) {
+        XShmPutImage( dpy, lcd.win, lcd.gc, lcd.disp_image, 2 * display.offset,
+                      0, 5, 20, 262,
                       ( unsigned int )( ( 2 * display.lines ) + 2 ), 0 );
     }
     if ( ( ( 2 * display.lines ) < 126 ) &&
-         ( disp.display_update & UPDATE_MENU ) ) {
-        XShmPutImage( dpy, disp.win, disp.gc, disp.menu_image, 0, 0, 5,
+         ( lcd.display_update & UPDATE_MENU ) ) {
+        XShmPutImage( dpy, lcd.win, lcd.gc, lcd.menu_image, 0, 0, 5,
                       ( int )( ( 2 * display.lines ) + 22 ), 262,
                       ( unsigned int )( 126 - ( 2 * display.lines ) ), 0 );
     }
-    disp.display_update = 0;
+    lcd.display_update = 0;
 }
 
 void redraw_display( void ) {
-    XClearWindow( dpy, disp.win );
+    XClearWindow( dpy, lcd.win );
     memset( disp_buf, 0, sizeof( disp_buf ) );
     memset( lcd_buffer, 0, sizeof( lcd_buffer ) );
     x11_update_LCD();
@@ -3568,16 +3551,16 @@ void redraw_annunc( void ) {
 
 void DrawDisp( void ) {
     if ( shm_flag ) {
-        XShmPutImage( dpy, disp.win, disp.gc, disp.disp_image,
-                      2 * display.offset, 0, 5, 20, 262,
+        XShmPutImage( dpy, lcd.win, lcd.gc, lcd.disp_image, 2 * display.offset,
+                      0, 5, 20, 262,
                       ( unsigned int )( ( 2 * display.lines ) + 2 ), 0 );
         if ( display.lines < 63 ) {
-            XShmPutImage( dpy, disp.win, disp.gc, disp.menu_image, 0,
+            XShmPutImage( dpy, lcd.win, lcd.gc, lcd.menu_image, 0,
                           ( 2 * display.lines ) - 110, 5,
                           22 + ( 2 * display.lines ), 262,
                           ( unsigned int )( 126 - ( 2 * display.lines ) ), 0 );
         }
-        disp.display_update = 0;
+        lcd.display_update = 0;
     } else {
         redraw_display();
     }
@@ -4063,8 +4046,8 @@ static inline void draw_nibble( int c, int r, int val ) {
     y = ( r * 2 ) + 20;
     val &= 0x0f;
     if ( val != lcd_buffer[ r ][ c ] ) {
-        XCopyPlane( dpy, nibble_maps[ val ], disp.win, disp.gc, 0, 0, 8, 2, x,
-                    y, 1 );
+        XCopyPlane( dpy, nibble_maps[ val ], lcd.win, lcd.gc, 0, 0, 8, 2, x, y,
+                    1 );
         lcd_buffer[ r ][ c ] = val;
     }
 }
@@ -4088,7 +4071,7 @@ static inline void draw_row( long addr, int row ) {
 static inline void init_annunc( void ) {
     for ( int i = 0; ann_tbl[ i ].bit; i++ )
         ann_tbl[ i ].pixmap =
-            XCreateBitmapFromData( dpy, disp.win, ( char* )ann_tbl[ i ].bits,
+            XCreateBitmapFromData( dpy, lcd.win, ( char* )ann_tbl[ i ].bits,
                                    ann_tbl[ i ].width, ann_tbl[ i ].height );
 }
 
@@ -4163,7 +4146,7 @@ int x11_get_event( void ) {
                 case Expose:
 
                     if ( xev.xexpose.count == 0 ) {
-                        if ( xev.xexpose.window == disp.win ) {
+                        if ( xev.xexpose.window == lcd.win ) {
                             DrawDisp();
                         } else if ( xev.xexpose.window == iconW ) {
                             DrawIcon();
@@ -4180,13 +4163,13 @@ int x11_get_event( void ) {
                     break;
                 case UnmapNotify:
 
-                    disp.mapped = 0;
+                    mapped = 0;
                     break;
 
                 case MapNotify:
 
-                    if ( !disp.mapped ) {
-                        disp.mapped = 1;
+                    if ( !mapped ) {
+                        mapped = 1;
                         x11_update_LCD();
                         redraw_annunc();
                     }
@@ -4194,9 +4177,9 @@ int x11_get_event( void ) {
 
                 case ButtonPress:
 
-                    if ( xev.xbutton.subwindow == disp.win ) {
+                    if ( xev.xbutton.subwindow == lcd.win ) {
                         if ( xev.xbutton.button == Button2 ) {
-                            if ( xev.xbutton.subwindow == disp.win ) {
+                            if ( xev.xbutton.subwindow == lcd.win ) {
                                 int x;
                                 int flag = 0;
                                 char* paste_in = XFetchBuffer( dpy, &x, 0 );
@@ -4767,8 +4750,8 @@ void x11_adjust_contrast( void ) {
         colors[ PIXEL ].g = g;
         colors[ PIXEL ].b = b;
         AllocColors();
-        XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
-        disp.display_update = UPDATE_DISP | UPDATE_MENU;
+        XSetForeground( dpy, lcd.gc, COLOR( PIXEL ) );
+        lcd.display_update = UPDATE_DISP | UPDATE_MENU;
         refresh_display();
         redraw_annunc();
         last_icon_state = -1;
@@ -4782,8 +4765,8 @@ void x11_adjust_contrast( void ) {
                 fprintf( stderr, "warning: can\'t alloc new pixel color.\n" );
         } else {
             XFreeColors( dpy, cmap, &old, 1, 0 );
-            XSetForeground( dpy, disp.gc, COLOR( PIXEL ) );
-            disp.display_update = UPDATE_DISP | UPDATE_MENU;
+            XSetForeground( dpy, lcd.gc, COLOR( PIXEL ) );
+            lcd.display_update = UPDATE_DISP | UPDATE_MENU;
             refresh_display();
             redraw_annunc();
             last_icon_state = -1;
@@ -4826,12 +4809,12 @@ void x11_init_LCD( void ) {
     /* init nibble_maps */
     for ( int i = 0; i < 16; i++ )
         nibble_maps[ i ] =
-            XCreateBitmapFromData( dpy, disp.win, ( char* )nibbles[ i ], 8, 2 );
+            XCreateBitmapFromData( dpy, lcd.win, ( char* )nibbles[ i ], 8, 2 );
 
     if ( !shm_flag )
         return;
 
-    if ( disp.disp_image->bitmap_bit_order == MSBFirst ) {
+    if ( lcd.disp_image->bitmap_bit_order == MSBFirst ) {
         nibble_bitmap[ 0x0 ] = 0x00; /* ---- */
         nibble_bitmap[ 0x1 ] = 0xc0; /* *--- */
         nibble_bitmap[ 0x2 ] = 0x30; /* -*-- */
@@ -4877,7 +4860,7 @@ void x11_update_LCD( void ) {
     int val, line_pad, line_length;
     word_20 data_addr, data_addr_2;
 
-    if ( !disp.mapped ) {
+    if ( !mapped ) {
         refresh_icon();
         return;
     }
@@ -4885,24 +4868,24 @@ void x11_update_LCD( void ) {
         addr = display.disp_start;
         if ( shm_flag ) {
             data_addr = 0;
-            data_addr_2 = disp.disp_image->bytes_per_line;
+            data_addr_2 = lcd.disp_image->bytes_per_line;
             line_length = NIBBLES_PER_ROW;
             if ( display.offset > 3 )
                 line_length += 2;
-            line_pad = 2 * disp.disp_image->bytes_per_line - line_length;
+            line_pad = 2 * lcd.disp_image->bytes_per_line - line_length;
             addr_pad = display.nibs_per_line - line_length;
             for ( i = 0; i <= display.lines; i++ ) {
                 for ( j = 0; j < line_length; j++ ) {
                     val = read_nibble( addr++ );
-                    disp.disp_image->data[ data_addr++ ] = nibble_bitmap[ val ];
-                    disp.disp_image->data[ data_addr_2++ ] =
+                    lcd.disp_image->data[ data_addr++ ] = nibble_bitmap[ val ];
+                    lcd.disp_image->data[ data_addr_2++ ] =
                         nibble_bitmap[ val ];
                 }
                 addr += addr_pad;
                 data_addr += line_pad;
                 data_addr_2 += line_pad;
             }
-            disp.display_update |= UPDATE_DISP;
+            lcd.display_update |= UPDATE_DISP;
         } else {
             if ( display.offset != old_offset ) {
                 memset(
@@ -4929,21 +4912,20 @@ void x11_update_LCD( void ) {
             addr = display.menu_start;
             if ( shm_flag ) {
                 data_addr = 0;
-                data_addr_2 = disp.menu_image->bytes_per_line;
-                line_pad =
-                    2 * disp.menu_image->bytes_per_line - NIBBLES_PER_ROW;
+                data_addr_2 = lcd.menu_image->bytes_per_line;
+                line_pad = 2 * lcd.menu_image->bytes_per_line - NIBBLES_PER_ROW;
                 for ( ; i < DISP_ROWS; i++ ) {
                     for ( j = 0; j < NIBBLES_PER_ROW; j++ ) {
                         val = read_nibble( addr++ );
-                        disp.menu_image->data[ data_addr++ ] =
+                        lcd.menu_image->data[ data_addr++ ] =
                             nibble_bitmap[ val ];
-                        disp.menu_image->data[ data_addr_2++ ] =
+                        lcd.menu_image->data[ data_addr_2++ ] =
                             nibble_bitmap[ val ];
                     }
                     data_addr += line_pad;
                     data_addr_2 += line_pad;
                 }
-                disp.display_update |= UPDATE_MENU;
+                lcd.display_update |= UPDATE_MENU;
             } else {
                 for ( ; i < DISP_ROWS; i++ ) {
                     draw_row( addr, i );
@@ -4953,13 +4935,13 @@ void x11_update_LCD( void ) {
         }
     } else {
         if ( shm_flag ) {
-            memset( disp.disp_image->data, 0,
-                    ( size_t )( disp.disp_image->bytes_per_line *
-                                disp.disp_image->height ) );
-            memset( disp.menu_image->data, 0,
-                    ( size_t )( disp.menu_image->bytes_per_line *
-                                disp.menu_image->height ) );
-            disp.display_update = UPDATE_DISP | UPDATE_MENU;
+            memset( lcd.disp_image->data, 0,
+                    ( size_t )( lcd.disp_image->bytes_per_line *
+                                lcd.disp_image->height ) );
+            memset( lcd.menu_image->data, 0,
+                    ( size_t )( lcd.menu_image->bytes_per_line *
+                                lcd.menu_image->height ) );
+            lcd.display_update = UPDATE_DISP | UPDATE_MENU;
         } else {
             memset( disp_buf, 0xf0, sizeof( disp_buf ) );
             for ( i = 0; i < 64; i++ ) {
@@ -4970,12 +4952,12 @@ void x11_update_LCD( void ) {
         }
     }
 
-    if ( disp.display_update )
+    if ( lcd.display_update )
         refresh_display();
 }
 
 void x11_refresh_LCD( void ) {
-    if ( disp.display_update )
+    if ( lcd.display_update )
         refresh_display();
 }
 
@@ -4993,12 +4975,11 @@ void x11_disp_draw_nibble( word_20 addr, word_4 val ) {
         if ( y < 0 || y > 63 )
             return;
         if ( shm_flag ) {
-            shm_addr = ( 2 * y * disp.disp_image->bytes_per_line ) + x;
-            disp.disp_image->data[ shm_addr ] = nibble_bitmap[ val ];
-            disp.disp_image
-                ->data[ shm_addr + disp.disp_image->bytes_per_line ] =
+            shm_addr = ( 2 * y * lcd.disp_image->bytes_per_line ) + x;
+            lcd.disp_image->data[ shm_addr ] = nibble_bitmap[ val ];
+            lcd.disp_image->data[ shm_addr + lcd.disp_image->bytes_per_line ] =
                 nibble_bitmap[ val ];
-            disp.display_update |= UPDATE_DISP;
+            lcd.display_update |= UPDATE_DISP;
         } else {
             if ( val != disp_buf[ y ][ x ] ) {
                 disp_buf[ y ][ x ] = val;
@@ -5009,12 +4990,12 @@ void x11_disp_draw_nibble( word_20 addr, word_4 val ) {
         if ( shm_flag ) {
             shm_addr = x;
             for ( y = 0; y < display.lines; y++ ) {
-                disp.disp_image->data[ shm_addr ] = nibble_bitmap[ val ];
-                shm_addr += disp.disp_image->bytes_per_line;
-                disp.disp_image->data[ shm_addr ] = nibble_bitmap[ val ];
-                shm_addr += disp.disp_image->bytes_per_line;
+                lcd.disp_image->data[ shm_addr ] = nibble_bitmap[ val ];
+                shm_addr += lcd.disp_image->bytes_per_line;
+                lcd.disp_image->data[ shm_addr ] = nibble_bitmap[ val ];
+                shm_addr += lcd.disp_image->bytes_per_line;
             }
-            disp.display_update |= UPDATE_DISP;
+            lcd.display_update |= UPDATE_DISP;
         } else {
             for ( y = 0; y < display.lines; y++ ) {
                 if ( val != disp_buf[ y ][ x ] ) {
@@ -5034,12 +5015,12 @@ void x11_menu_draw_nibble( word_20 addr, word_4 val ) {
     offset = ( addr - display.menu_start );
     if ( shm_flag ) {
         shm_addr =
-            2 * ( offset / NIBBLES_PER_ROW ) * disp.menu_image->bytes_per_line +
+            2 * ( offset / NIBBLES_PER_ROW ) * lcd.menu_image->bytes_per_line +
             ( offset % NIBBLES_PER_ROW );
-        disp.menu_image->data[ shm_addr ] = nibble_bitmap[ val ];
-        disp.menu_image->data[ shm_addr + disp.menu_image->bytes_per_line ] =
+        lcd.menu_image->data[ shm_addr ] = nibble_bitmap[ val ];
+        lcd.menu_image->data[ shm_addr + lcd.menu_image->bytes_per_line ] =
             nibble_bitmap[ val ];
-        disp.display_update |= UPDATE_MENU;
+        lcd.display_update |= UPDATE_MENU;
     } else {
         x = offset % NIBBLES_PER_ROW;
         y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
@@ -5061,11 +5042,11 @@ void x11_draw_annunc( void ) {
 
     for ( int i = 0; ann_tbl[ i ].bit; i++ ) {
         if ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit )
-            XCopyPlane( dpy, ann_tbl[ i ].pixmap, disp.win, disp.gc, 0, 0,
+            XCopyPlane( dpy, ann_tbl[ i ].pixmap, lcd.win, lcd.gc, 0, 0,
                         ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].x,
                         ann_tbl[ i ].y, 1 );
         else
-            XClearArea( dpy, disp.win, ann_tbl[ i ].x, ann_tbl[ i ].y,
+            XClearArea( dpy, lcd.win, ann_tbl[ i ].x, ann_tbl[ i ].y,
                         ann_tbl[ i ].width, ann_tbl[ i ].height, False );
     }
     refresh_icon();

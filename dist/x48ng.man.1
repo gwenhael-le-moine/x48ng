@@ -29,7 +29,7 @@
 .\"
 .\" $XFree86: xc/programs/xcalc/xcalc.man,v 1.5 2003/03/19 01:49:28 dawes Exp $
 .\"
-.de EX		\"Begin example
+.de EX  \"Begin example
 .ne 5
 .if n .sp 1
 .if t .sp .5
@@ -57,15 +57,15 @@ where options include:
 .br
            \-\-config\-dir=<path>       use <path> as x48ng's home (default: ~/.x48ng/)
 .br
-           \-\-rom\-file=<filename>     use <filename> (relative to <config\-dir>) as ROM (default: rom)
+           \-\-rom=<filename>           use <filename> (absolute or relative to <config\-dir>) as ROM (default: rom)
 .br
-           \-\-ram\-file=<filename>     use <filename> (relative to <config\-dir>) as RAM (default: ram)
+           \-\-ram=<filename>           use <filename> (absolute or relative to <config\-dir>) as RAM (default: ram)
 .br
-           \-\-state\-file=<filename>   use <filename> (relative to <config\-dir>) as STATE (default: hp48)
+           \-\-state=<filename>         use <filename> (absolute or relative to <config\-dir>) as STATE (default: hp48)
 .br
-           \-\-port1\-file=<filename>   use <filename> (relative to <config\-dir>) as PORT1 (default: port1)
+           \-\-port1=<filename>         use <filename> (absolute or relative to <config\-dir>) as PORT1 (default: port1)
 .br
-           \-\-port2\-file=<filename>   use <filename> (relative to <config\-dir>) as PORT2 (default: port2)
+           \-\-port2=<filename>         use <filename> (absolute or relative to <config\-dir>) as PORT2 (default: port2)
 .br
            \-\-serial\-line=<path>      use <path> as serial device default: /dev/ttyS0)
 .br
@@ -91,23 +91,25 @@ where options include:
 .br
         \-T \-\-throttle                try to emulate real speed (default: false)
 .br
-           \-\-sdl\-no\-chrome              [SDL] only display the LCD (default: false)
+           \-\-sdl\-no\-chrome           only display the LCD (default: false)
 .br
-           \-\-sdl\-fullscreen             [SDL] make the UI fullscreen (default: false)
+           \-\-sdl\-fullscreen          make the UI fullscreen (default: false)
 .br
-           \-\-x11\-netbook                [X11] make the UI horizontal (default: false)
+           \-\-x11\-netbook             make the UI horizontal (default: false)
 .br
-           \-\-x11\-mono                   [X11] make the UI monochrome (default: false)
+           \-\-x11\-mono                make the UI monochrome (default: false)
 .br
-           \-\-x11\-gray                   [X11] make the UI grayscale (default: false)
+           \-\-x11\-gray                make the UI grayscale (default: false)
 .br
-           \-\-x11\-small\-font=<fontname>  [X11] use <fontname> as small font
+           \-\-x11\-visual=<X visual>   use visual <X visual> (default: default), possible values: <default | staticgray | staticcolor | truecolor | grayscale | pseudocolor | directcolor | 0xnn | nn>
 .br
-           \-\-x11\-medium\-font=<fontname> [X11] use <fontname> as medium font
+           \-\-x11\-small\-font=<fontname>  use <fontname> as small font
 .br
-           \-\-x11\-large\-font=<fontname>  [X11] use <fontname> as large font
+           \-\-x11\-medium\-font=<fontname> use <fontname> as medium font
 .br
-           \-\-x11\-connection\-font=<fontname> [X11] use <fontname> as connection font
+           \-\-x11\-large\-font=<fontname>  use <fontname> as large font
+.br
+           \-\-x11\-connection\-font=<fontname> use <fontname> as connection font
 
 .SH DESCRIPTION
 .I x48ng
@@ -174,15 +176,15 @@ The colors are therefore not selectable.
 .PP
 Bugs can be found and reported at: https://github.com/gwenhael-le-moine/x48ng
 .SH COPYRIGHT
-Copyright \(co 1994-2005 Eddie C. Dost
-.br
 Copyright \(co 2023- Gwenhael Le Moine
+.br
+Copyright \(co 1994-2005 Eddie C. Dost
 .br
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 .SH AUTHORS
+Gwenhael Le Moine
+.br
 Eddie C. Dost
 .br
 G. Allen Morris III <gam3@gam3.net>
-.br
-Gwenhael Le Moine
