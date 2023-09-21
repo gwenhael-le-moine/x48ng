@@ -24,9 +24,7 @@ typedef struct tui_ann_struct_t {
     int bit;
     int x;
     int y;
-    unsigned int width;
-    unsigned int height;
-    unsigned char* bits;
+    char icon;
 } tui_ann_struct_t;
 
 typedef struct tui_button_t {
@@ -56,13 +54,12 @@ typedef struct tui_button_t {
 /* variables */
 /*************/
 static tui_ann_struct_t ann_tbl[] = {
-    { ANN_LEFT, 16, 4, ann_left_width, ann_left_height, ann_left_bitmap },
-    { ANN_RIGHT, 61, 4, ann_right_width, ann_right_height, ann_right_bitmap },
-    { ANN_ALPHA, 106, 4, ann_alpha_width, ann_alpha_height, ann_alpha_bitmap },
-    { ANN_BATTERY, 151, 4, ann_battery_width, ann_battery_height,
-      ann_battery_bitmap },
-    { ANN_BUSY, 196, 4, ann_busy_width, ann_busy_height, ann_busy_bitmap },
-    { ANN_IO, 241, 4, ann_io_width, ann_io_height, ann_io_bitmap },
+    { ANN_LEFT, 16, 4, '<' },   /* '↰' */
+    { ANN_RIGHT, 61, 4, '>' },  /* '↱ */
+    { ANN_ALPHA, 106, 4, 'a' }, /* 'α' */
+    { ANN_BATTERY, 151, 4, 'B' }, /* '🪫' */
+    { ANN_BUSY, 196, 4, '*' }, /* '⌛' */
+    { ANN_IO, 241, 4, '^' }, /* '☃' */
     { 0 } };
 
 static tui_button_t* buttons = 0;
