@@ -1,14 +1,15 @@
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <fcntl.h>
 
 unsigned char* core;
 
 #define DEFAULT_ROM_FILE "rom.dump"
 
-int write_mem_file( char* name, unsigned char* mem, size_t size ) {
+int write_mem_file( char* name, unsigned char* mem, size_t size )
+{
     FILE* fp;
     unsigned char* tmp_mem;
     unsigned char byte;
@@ -49,7 +50,8 @@ int write_mem_file( char* name, unsigned char* mem, size_t size ) {
     return 1;
 }
 
-int main( int argc, char** argv ) {
+int main( int argc, char** argv )
+{
     FILE* dump;
     long addr;
     size_t size;
@@ -86,8 +88,7 @@ int main( int argc, char** argv ) {
             } else if ( ch >= 'A' && ch <= 'F' ) {
                 addr |= ch - 'A' + 10;
             } else {
-                fprintf( stderr, "%s: Illegal char %c at %lx\n", argv[ 0 ], ch,
-                         addr );
+                fprintf( stderr, "%s: Illegal char %c at %lx\n", argv[ 0 ], ch, addr );
                 error = 1;
                 break;
             }
@@ -101,14 +102,12 @@ int main( int argc, char** argv ) {
             break;
         }
         if ( ch != ':' ) {
-            fprintf( stderr, "%s: Illegal char %c, expected \':\' at %lx\n",
-                     argv[ 0 ], ch, addr );
+            fprintf( stderr, "%s: Illegal char %c, expected \':\' at %lx\n", argv[ 0 ], ch, addr );
             break;
         }
         for ( i = 0; i < 16; i++ ) {
             if ( ( ch = fgetc( dump ) ) < 0 ) {
-                fprintf( stderr, "%s: Unexpected EOF at %lx\n", argv[ 0 ],
-                         addr );
+                fprintf( stderr, "%s: Unexpected EOF at %lx\n", argv[ 0 ], addr );
                 error = 1;
                 break;
             }
@@ -117,8 +116,7 @@ int main( int argc, char** argv ) {
             } else if ( ch >= 'A' && ch <= 'F' ) {
                 core[ addr++ ] = ( unsigned char )( ch - 'A' + 10 );
             } else {
-                fprintf( stderr, "%s: Illegal char %c at %lx\n", argv[ 0 ], ch,
-                         addr );
+                fprintf( stderr, "%s: Illegal char %c at %lx\n", argv[ 0 ], ch, addr );
                 error = 1;
                 break;
             }
@@ -128,8 +126,7 @@ int main( int argc, char** argv ) {
         if ( ( ch = fgetc( dump ) ) < 0 )
             break;
         if ( ch != '\n' ) {
-            fprintf( stderr, "%s: Illegal char %c, expected \'\\n\' at %lx\n",
-                     argv[ 0 ], ch, addr );
+            fprintf( stderr, "%s: Illegal char %c, expected \'\\n\' at %lx\n", argv[ 0 ], ch, addr );
             break;
         }
     }
@@ -142,8 +139,7 @@ int main( int argc, char** argv ) {
     else
         size = 0x80000;
     if ( !write_mem_file( DEFAULT_ROM_FILE, core, size ) ) {
-        fprintf( stderr, "%s: can\'t write to %s\n", argv[ 0 ],
-                 DEFAULT_ROM_FILE );
+        fprintf( stderr, "%s: can\'t write to %s\n", argv[ 0 ], DEFAULT_ROM_FILE );
         exit( 1 );
     }
 

@@ -124,74 +124,64 @@ static char* opcode_0_tbl[ 32 ] = {
     /*
      * HP Mnemonics
      */
-    ( char* )"RTNSXM", ( char* )"RTN", ( char* )"RTNSC", ( char* )"RTNCC",
-    ( char* )"SETHEX", ( char* )"SETDEC", ( char* )"RSTK=C", ( char* )"C=RSTK",
-    ( char* )"CLRST", ( char* )"C=ST", ( char* )"ST=C", ( char* )"CSTEX",
-    ( char* )"P=P+1", ( char* )"P=P-1", ( char* )"(NULL)", ( char* )"RTI",
+    ( char* )"RTNSXM", ( char* )"RTN", ( char* )"RTNSC", ( char* )"RTNCC", ( char* )"SETHEX", ( char* )"SETDEC", ( char* )"RSTK=C",
+    ( char* )"C=RSTK", ( char* )"CLRST", ( char* )"C=ST", ( char* )"ST=C", ( char* )"CSTEX", ( char* )"P=P+1", ( char* )"P=P-1",
+    ( char* )"(NULL)", ( char* )"RTI",
     /*
      * Class Mnemonics
      */
-    ( char* )"rtnsxm", ( char* )"rtn", ( char* )"rtnsc", ( char* )"rtncc",
-    ( char* )"sethex", ( char* )"setdec", ( char* )"push", ( char* )"pop",
-    ( char* )"clr.3   st", ( char* )"move.3  st, c", ( char* )"move.3  c, st",
-    ( char* )"exg.3   c, st", ( char* )"inc.1   p", ( char* )"dec.1   p",
-    ( char* )"(null)", ( char* )"rti" };
+    ( char* )"rtnsxm", ( char* )"rtn", ( char* )"rtnsc", ( char* )"rtncc", ( char* )"sethex", ( char* )"setdec", ( char* )"push",
+    ( char* )"pop", ( char* )"clr.3   st", ( char* )"move.3  st, c", ( char* )"move.3  c, st", ( char* )"exg.3   c, st",
+    ( char* )"inc.1   p", ( char* )"dec.1   p", ( char* )"(null)", ( char* )"rti" };
 
 static char* op_str_0[ 16 ] = {
     /*
      * HP Mnemonics
      */
-    ( char* )"A=A%cB", ( char* )"B=B%cC", ( char* )"C=C%cA", ( char* )"D=D%cC",
-    ( char* )"B=B%cA", ( char* )"C=C%cB", ( char* )"A=A%cC", ( char* )"C=C%cD",
+    ( char* )"A=A%cB", ( char* )"B=B%cC", ( char* )"C=C%cA", ( char* )"D=D%cC", ( char* )"B=B%cA", ( char* )"C=C%cB", ( char* )"A=A%cC",
+    ( char* )"C=C%cD",
     /*
      * Class Mnemonics
      */
-    ( char* )"b, a", ( char* )"c, b", ( char* )"a, c", ( char* )"c, d",
-    ( char* )"a, b", ( char* )"b, c", ( char* )"c, a", ( char* )"d, c" };
+    ( char* )"b, a", ( char* )"c, b", ( char* )"a, c", ( char* )"c, d", ( char* )"a, b", ( char* )"b, c", ( char* )"c, a",
+    ( char* )"d, c" };
 
 static char* op_str_1[ 16 ] = {
     /*
      * HP Mnemonics
      */
-    ( char* )"DAT0=A", ( char* )"DAT1=A", ( char* )"A=DAT0", ( char* )"A=DAT1",
-    ( char* )"DAT0=C", ( char* )"DAT1=C", ( char* )"C=DAT0", ( char* )"C=DAT1",
+    ( char* )"DAT0=A", ( char* )"DAT1=A", ( char* )"A=DAT0", ( char* )"A=DAT1", ( char* )"DAT0=C", ( char* )"DAT1=C", ( char* )"C=DAT0",
+    ( char* )"C=DAT1",
     /*
      * Class Mnemonics
      */
-    ( char* )"a, (d0)", ( char* )"a, (d1)", ( char* )"(d0), a",
-    ( char* )"(d1), a", ( char* )"c, (d0)", ( char* )"c, (d1)",
+    ( char* )"a, (d0)", ( char* )"a, (d1)", ( char* )"(d0), a", ( char* )"(d1), a", ( char* )"c, (d0)", ( char* )"c, (d1)",
     ( char* )"(d0), c", ( char* )"(d1), c" };
 
 static char* in_str_80[ 32 ] = {
     /*
      * HP Mnemonics
      */
-    ( char* )"OUT=CS", ( char* )"OUT=C", ( char* )"A=IN", ( char* )"C=IN",
-    ( char* )"UNCNFG", ( char* )"CONFIG", ( char* )"C=ID", ( char* )"SHUTDN",
-    NULL, ( char* )"C+P+1", ( char* )"RESET", ( char* )"BUSCC", NULL, NULL,
-    ( char* )"SREQ?", NULL,
+    ( char* )"OUT=CS", ( char* )"OUT=C", ( char* )"A=IN", ( char* )"C=IN", ( char* )"UNCNFG", ( char* )"CONFIG", ( char* )"C=ID",
+    ( char* )"SHUTDN", NULL, ( char* )"C+P+1", ( char* )"RESET", ( char* )"BUSCC", NULL, NULL, ( char* )"SREQ?", NULL,
     /*
      * Class Mnemonics
      */
-    ( char* )"move.s  c, out", ( char* )"move.3  c, out",
-    ( char* )"move.4  in, a", ( char* )"move.4  in, c", ( char* )"uncnfg",
-    ( char* )"config", ( char* )"c=id", ( char* )"shutdn", NULL,
-    ( char* )"add.a   p+1, c", ( char* )"reset", ( char* )"buscc", NULL, NULL,
+    ( char* )"move.s  c, out", ( char* )"move.3  c, out", ( char* )"move.4  in, a", ( char* )"move.4  in, c", ( char* )"uncnfg",
+    ( char* )"config", ( char* )"c=id", ( char* )"shutdn", NULL, ( char* )"add.a   p+1, c", ( char* )"reset", ( char* )"buscc", NULL, NULL,
     ( char* )"sreq?", NULL };
 
 static char* in_str_808[ 32 ] = {
     /*
      * HP Mnemonics
      */
-    ( char* )"INTON", NULL, NULL, ( char* )"BUSCB", NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, ( char* )"PC=(A)", ( char* )"BUSCD",
+    ( char* )"INTON", NULL, NULL, ( char* )"BUSCB", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ( char* )"PC=(A)", ( char* )"BUSCD",
     ( char* )"PC=(C)", ( char* )"INTOFF",
     /*
      * Class Mnemonics
      */
-    ( char* )"inton", NULL, NULL, ( char* )"buscb", NULL, NULL, NULL, NULL,
-    NULL, NULL, NULL, NULL, ( char* )"jmp     (a)", ( char* )"buscd",
-    ( char* )"jmp     (c)", ( char* )"intoff" };
+    ( char* )"inton", NULL, NULL, ( char* )"buscb", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, ( char* )"jmp     (a)",
+    ( char* )"buscd", ( char* )"jmp     (c)", ( char* )"intoff" };
 
 static char* op_str_81[ 8 ] = {
     /*
@@ -255,41 +245,37 @@ static char* in_str_9[ 16 ] = {
     /*
      * HP Mnemonics
      */
-    ( char* )"=", ( char* )"#", ( char* )"=", ( char* )"#", ( char* )">",
-    ( char* )"<", ( char* )">=", ( char* )"<=",
+    ( char* )"=", ( char* )"#", ( char* )"=", ( char* )"#", ( char* )">", ( char* )"<", ( char* )">=", ( char* )"<=",
     /*
      * Class Mnemonics
      */
-    ( char* )"eq", ( char* )"ne", ( char* )"eq", ( char* )"ne", ( char* )"gt",
-    ( char* )"lt", ( char* )"ge", ( char* )"le" };
+    ( char* )"eq", ( char* )"ne", ( char* )"eq", ( char* )"ne", ( char* )"gt", ( char* )"lt", ( char* )"ge", ( char* )"le" };
 
 static char* op_str_9[ 16 ] = {
     /*
      * HP Mnemonics
      */
-    ( char* )"?A%sB", ( char* )"?B%sC", ( char* )"?C%sA", ( char* )"?D%sC",
-    ( char* )"?A%s0", ( char* )"?B%s0", ( char* )"?C%s0", ( char* )"?D%s0",
+    ( char* )"?A%sB", ( char* )"?B%sC", ( char* )"?C%sA", ( char* )"?D%sC", ( char* )"?A%s0", ( char* )"?B%s0", ( char* )"?C%s0",
+    ( char* )"?D%s0",
     /*
      * Class Mnemonics
      */
-    ( char* )"a, b", ( char* )"b, c", ( char* )"c, a", ( char* )"d, c",
-    ( char* )"a, 0", ( char* )"b, 0", ( char* )"c, 0", ( char* )"d, 0" };
+    ( char* )"a, b", ( char* )"b, c", ( char* )"c, a", ( char* )"d, c", ( char* )"a, 0", ( char* )"b, 0", ( char* )"c, 0",
+    ( char* )"d, 0" };
 
 static char* op_str_af[ 32 ] = {
     /*
      * HP Mnemonics
      */
-    ( char* )"A=A%sB", ( char* )"B=B%sC", ( char* )"C=C%sA", ( char* )"D=D%sC",
-    ( char* )"A=A%sA", ( char* )"B=B%sB", ( char* )"C=C%sC", ( char* )"D=D%sD",
-    ( char* )"B=B%sA", ( char* )"C=C%sB", ( char* )"A=A%sC", ( char* )"C=C%sD",
-    ( char* )"A=B%sA", ( char* )"B=C%sB", ( char* )"C=A%sC", ( char* )"D=C%sD",
+    ( char* )"A=A%sB", ( char* )"B=B%sC", ( char* )"C=C%sA", ( char* )"D=D%sC", ( char* )"A=A%sA", ( char* )"B=B%sB", ( char* )"C=C%sC",
+    ( char* )"D=D%sD", ( char* )"B=B%sA", ( char* )"C=C%sB", ( char* )"A=A%sC", ( char* )"C=C%sD", ( char* )"A=B%sA", ( char* )"B=C%sB",
+    ( char* )"C=A%sC", ( char* )"D=C%sD",
     /*
      * Class Mnemonics
      */
-    ( char* )"b, a", ( char* )"c, b", ( char* )"a, c", ( char* )"c, d",
-    ( char* )"a, a", ( char* )"b, b", ( char* )"c, c", ( char* )"d, d",
-    ( char* )"a, b", ( char* )"b, c", ( char* )"c, a", ( char* )"d, c",
-    ( char* )"b, a", ( char* )"c, b", ( char* )"a, c", ( char* )"c, d" };
+    ( char* )"b, a", ( char* )"c, b", ( char* )"a, c", ( char* )"c, d", ( char* )"a, a", ( char* )"b, b", ( char* )"c, c", ( char* )"d, d",
+    ( char* )"a, b", ( char* )"b, c", ( char* )"c, a", ( char* )"d, c", ( char* )"b, a", ( char* )"c, b", ( char* )"a, c",
+    ( char* )"c, d" };
 
 static char hp_reg_1_af[] = "ABCDABCDBCACABAC";
 static char hp_reg_2_af[] = "0000BCACABCDBCCD";
@@ -374,270 +360,274 @@ typedef struct trans_tbl_t {
     char* trans;
 } trans_tbl_t;
 
-static trans_tbl_t hp48_trans_tbl[ 256 ] = { { 0, ( char* )"\\0" },
-                                             { 1, ( char* )"\\001" },
-                                             { 2, ( char* )"\\002" },
-                                             { 3, ( char* )"\\003" },
-                                             { 4, ( char* )"\\004" },
-                                             { 5, ( char* )"\\005" },
-                                             { 6, ( char* )"\\006" },
-                                             { 7, ( char* )"\\007" },
-                                             { 8, ( char* )"\\b" },
-                                             { 9, ( char* )"\\t" },
-                                             { 10, ( char* )"\\n" },
-                                             { 11, ( char* )"\\011" },
-                                             { 12, ( char* )"\\f" },
-                                             { 13, ( char* )"\\r" },
-                                             { 14, ( char* )"\\014" },
-                                             { 15, ( char* )"\\015" },
-                                             { 16, ( char* )"\\016" },
-                                             { 17, ( char* )"\\017" },
-                                             { 18, ( char* )"\\018" },
-                                             { 19, ( char* )"\\019" },
-                                             { 20, ( char* )"\\020" },
-                                             { 21, ( char* )"\\021" },
-                                             { 22, ( char* )"\\022" },
-                                             { 23, ( char* )"\\023" },
-                                             { 24, ( char* )"\\024" },
-                                             { 25, ( char* )"\\025" },
-                                             { 26, ( char* )"\\026" },
-                                             { 27, ( char* )"\\027" },
-                                             { 28, ( char* )"\\028" },
-                                             { 29, ( char* )"\\029" },
-                                             { 30, ( char* )"\\030" },
-                                             { 31, ( char* )"\\031" },
-                                             { ' ', 0 },
-                                             { '!', 0 },
-                                             { '"', 0 },
-                                             { '#', 0 },
-                                             { '$', 0 },
-                                             { '%', 0 },
-                                             { '&', 0 },
-                                             { '\'', 0 },
-                                             { '(', 0 },
-                                             { ')', 0 },
-                                             { '*', 0 },
-                                             { '+', 0 },
-                                             { ',', 0 },
-                                             { '-', 0 },
-                                             { '.', 0 },
-                                             { '/', 0 },
-                                             { '0', 0 },
-                                             { '1', 0 },
-                                             { '2', 0 },
-                                             { '3', 0 },
-                                             { '4', 0 },
-                                             { '5', 0 },
-                                             { '6', 0 },
-                                             { '7', 0 },
-                                             { '8', 0 },
-                                             { '9', 0 },
-                                             { ':', 0 },
-                                             { ';', 0 },
-                                             { '<', 0 },
-                                             { '=', 0 },
-                                             { '>', 0 },
-                                             { '?', 0 },
-                                             { '@', 0 },
-                                             { 'A', 0 },
-                                             { 'B', 0 },
-                                             { 'C', 0 },
-                                             { 'D', 0 },
-                                             { 'E', 0 },
-                                             { 'F', 0 },
-                                             { 'G', 0 },
-                                             { 'H', 0 },
-                                             { 'I', 0 },
-                                             { 'J', 0 },
-                                             { 'K', 0 },
-                                             { 'L', 0 },
-                                             { 'M', 0 },
-                                             { 'N', 0 },
-                                             { 'O', 0 },
-                                             { 'P', 0 },
-                                             { 'Q', 0 },
-                                             { 'R', 0 },
-                                             { 'S', 0 },
-                                             { 'T', 0 },
-                                             { 'U', 0 },
-                                             { 'V', 0 },
-                                             { 'W', 0 },
-                                             { 'X', 0 },
-                                             { 'Y', 0 },
-                                             { 'Z', 0 },
-                                             { '[', 0 },
-                                             { '\\', 0 },
-                                             { ']', 0 },
-                                             { '^', 0 },
-                                             { '_', 0 },
-                                             { '`', 0 },
-                                             { 'a', 0 },
-                                             { 'b', 0 },
-                                             { 'c', 0 },
-                                             { 'd', 0 },
-                                             { 'e', 0 },
-                                             { 'f', 0 },
-                                             { 'g', 0 },
-                                             { 'h', 0 },
-                                             { 'i', 0 },
-                                             { 'j', 0 },
-                                             { 'k', 0 },
-                                             { 'l', 0 },
-                                             { 'm', 0 },
-                                             { 'n', 0 },
-                                             { 'o', 0 },
-                                             { 'p', 0 },
-                                             { 'q', 0 },
-                                             { 'r', 0 },
-                                             { 's', 0 },
-                                             { 't', 0 },
-                                             { 'u', 0 },
-                                             { 'v', 0 },
-                                             { 'w', 0 },
-                                             { 'x', 0 },
-                                             { 'y', 0 },
-                                             { 'z', 0 },
-                                             { '{', 0 },
-                                             { '|', 0 },
-                                             { '}', 0 },
-                                             { '~', 0 },
-                                             { 127, ( char* )"\\127" },
-                                             { 128, ( char* )"\\<)" },
-                                             { 129, ( char* )"\\x-" },
-                                             { 130, ( char* )"\\.V" },
-                                             { 131, ( char* )"\\v/" },
-                                             { 132, ( char* )"\\.S" },
-                                             { 133, ( char* )"\\GS" },
-                                             { 134, ( char* )"\\|>" },
-                                             { 135, ( char* )"\\pi" },
-                                             { 136, ( char* )"\\.d" },
-                                             { 137, ( char* )"\\<=" },
-                                             { 138, ( char* )"\\>=" },
-                                             { 139, ( char* )"\\=/" },
-                                             { 140, ( char* )"\\Ga" },
-                                             { 141, ( char* )"\\->" },
-                                             { 142, ( char* )"\\<-" },
-                                             { 143, ( char* )"\\|v" },
-                                             { 144, ( char* )"\\|^" },
-                                             { 145, ( char* )"\\Gg" },
-                                             { 146, ( char* )"\\Gd" },
-                                             { 147, ( char* )"\\Ge" },
-                                             { 148, ( char* )"\\Gn" },
-                                             { 149, ( char* )"\\Gh" },
-                                             { 150, ( char* )"\\Gl" },
-                                             { 151, ( char* )"\\Gr" },
-                                             { 152, ( char* )"\\Gs" },
-                                             { 153, ( char* )"\\Gt" },
-                                             { 154, ( char* )"\\Gw" },
-                                             { 155, ( char* )"\\GD" },
-                                             { 156, ( char* )"\\PI" },
-                                             { 157, ( char* )"\\GW" },
-                                             { 158, ( char* )"\\[]" },
-                                             { 159, ( char* )"\\oo" },
-                                             { 160, ( char* )"\\160" },
-                                             { 161, ( char* )"\\161" },
-                                             { 162, ( char* )"\\162" },
-                                             { 163, ( char* )"\\163" },
-                                             { 164, ( char* )"\\164" },
-                                             { 165, ( char* )"\\165" },
-                                             { 166, ( char* )"\\166" },
-                                             { 167, ( char* )"\\167" },
-                                             { 168, ( char* )"\\168" },
-                                             { 169, ( char* )"\\169" },
-                                             { 170, ( char* )"\\170" },
-                                             { 171, ( char* )"\\<<" },
-                                             { 172, ( char* )"\\172" },
-                                             { 173, ( char* )"\\173" },
-                                             { 174, ( char* )"\\174" },
-                                             { 175, ( char* )"\\175" },
-                                             { 176, ( char* )"\\^o" },
-                                             { 177, ( char* )"\\177" },
-                                             { 178, ( char* )"\\178" },
-                                             { 179, ( char* )"\\179" },
-                                             { 180, ( char* )"\\180" },
-                                             { 181, ( char* )"\\Gm" },
-                                             { 182, ( char* )"\\182" },
-                                             { 183, ( char* )"\\183" },
-                                             { 184, ( char* )"\\184" },
-                                             { 185, ( char* )"\\185" },
-                                             { 186, ( char* )"\\186" },
-                                             { 187, ( char* )"\\>>" },
-                                             { 188, ( char* )"\\188" },
-                                             { 189, ( char* )"\\189" },
-                                             { 190, ( char* )"\\190" },
-                                             { 191, ( char* )"\\191" },
-                                             { 192, ( char* )"\\192" },
-                                             { 193, ( char* )"\\193" },
-                                             { 194, ( char* )"\\194" },
-                                             { 195, ( char* )"\\195" },
-                                             { 196, ( char* )"\\196" },
-                                             { 197, ( char* )"\\197" },
-                                             { 198, ( char* )"\\198" },
-                                             { 199, ( char* )"\\199" },
-                                             { 200, ( char* )"\\200" },
-                                             { 201, ( char* )"\\201" },
-                                             { 202, ( char* )"\\202" },
-                                             { 203, ( char* )"\\203" },
-                                             { 204, ( char* )"\\204" },
-                                             { 205, ( char* )"\\205" },
-                                             { 206, ( char* )"\\206" },
-                                             { 207, ( char* )"\\207" },
-                                             { 208, ( char* )"\\208" },
-                                             { 209, ( char* )"\\209" },
-                                             { 210, ( char* )"\\210" },
-                                             { 211, ( char* )"\\211" },
-                                             { 212, ( char* )"\\212" },
-                                             { 213, ( char* )"\\213" },
-                                             { 214, ( char* )"\\214" },
-                                             { 215, ( char* )"\\.x" },
-                                             { 216, ( char* )"\\O/" },
-                                             { 217, ( char* )"\\217" },
-                                             { 218, ( char* )"\\218" },
-                                             { 219, ( char* )"\\219" },
-                                             { 220, ( char* )"\\220" },
-                                             { 221, ( char* )"\\221" },
-                                             { 222, ( char* )"\\222" },
-                                             { 223, ( char* )"\\223" },
-                                             { 224, ( char* )"\\224" },
-                                             { 225, ( char* )"\\225" },
-                                             { 226, ( char* )"\\226" },
-                                             { 227, ( char* )"\\227" },
-                                             { 228, ( char* )"\\228" },
-                                             { 229, ( char* )"\\229" },
-                                             { 230, ( char* )"\\230" },
-                                             { 231, ( char* )"\\231" },
-                                             { 232, ( char* )"\\232" },
-                                             { 233, ( char* )"\\233" },
-                                             { 234, ( char* )"\\234" },
-                                             { 235, ( char* )"\\235" },
-                                             { 236, ( char* )"\\236" },
-                                             { 237, ( char* )"\\237" },
-                                             { 238, ( char* )"\\238" },
-                                             { 239, ( char* )"\\239" },
-                                             { 240, ( char* )"\\240" },
-                                             { 241, ( char* )"\\241" },
-                                             { 242, ( char* )"\\242" },
-                                             { 243, ( char* )"\\243" },
-                                             { 244, ( char* )"\\244" },
-                                             { 245, ( char* )"\\245" },
-                                             { 246, ( char* )"\\246" },
-                                             { 247, ( char* )"\\:-" },
-                                             { 248, ( char* )"\\248" },
-                                             { 249, ( char* )"\\249" },
-                                             { 250, ( char* )"\\250" },
-                                             { 251, ( char* )"\\251" },
-                                             { 252, ( char* )"\\252" },
-                                             { 253, ( char* )"\\253" },
-                                             { 254, ( char* )"\\254" },
-                                             { 255, ( char* )"\\255" } };
+static trans_tbl_t hp48_trans_tbl[ 256 ] = {
+    {0,     ( char* )"\\0"  },
+    { 1,    ( char* )"\\001"},
+    { 2,    ( char* )"\\002"},
+    { 3,    ( char* )"\\003"},
+    { 4,    ( char* )"\\004"},
+    { 5,    ( char* )"\\005"},
+    { 6,    ( char* )"\\006"},
+    { 7,    ( char* )"\\007"},
+    { 8,    ( char* )"\\b"  },
+    { 9,    ( char* )"\\t"  },
+    { 10,   ( char* )"\\n"  },
+    { 11,   ( char* )"\\011"},
+    { 12,   ( char* )"\\f"  },
+    { 13,   ( char* )"\\r"  },
+    { 14,   ( char* )"\\014"},
+    { 15,   ( char* )"\\015"},
+    { 16,   ( char* )"\\016"},
+    { 17,   ( char* )"\\017"},
+    { 18,   ( char* )"\\018"},
+    { 19,   ( char* )"\\019"},
+    { 20,   ( char* )"\\020"},
+    { 21,   ( char* )"\\021"},
+    { 22,   ( char* )"\\022"},
+    { 23,   ( char* )"\\023"},
+    { 24,   ( char* )"\\024"},
+    { 25,   ( char* )"\\025"},
+    { 26,   ( char* )"\\026"},
+    { 27,   ( char* )"\\027"},
+    { 28,   ( char* )"\\028"},
+    { 29,   ( char* )"\\029"},
+    { 30,   ( char* )"\\030"},
+    { 31,   ( char* )"\\031"},
+    { ' ',  0               },
+    { '!',  0               },
+    { '"',  0               },
+    { '#',  0               },
+    { '$',  0               },
+    { '%',  0               },
+    { '&',  0               },
+    { '\'', 0               },
+    { '(',  0               },
+    { ')',  0               },
+    { '*',  0               },
+    { '+',  0               },
+    { ',',  0               },
+    { '-',  0               },
+    { '.',  0               },
+    { '/',  0               },
+    { '0',  0               },
+    { '1',  0               },
+    { '2',  0               },
+    { '3',  0               },
+    { '4',  0               },
+    { '5',  0               },
+    { '6',  0               },
+    { '7',  0               },
+    { '8',  0               },
+    { '9',  0               },
+    { ':',  0               },
+    { ';',  0               },
+    { '<',  0               },
+    { '=',  0               },
+    { '>',  0               },
+    { '?',  0               },
+    { '@',  0               },
+    { 'A',  0               },
+    { 'B',  0               },
+    { 'C',  0               },
+    { 'D',  0               },
+    { 'E',  0               },
+    { 'F',  0               },
+    { 'G',  0               },
+    { 'H',  0               },
+    { 'I',  0               },
+    { 'J',  0               },
+    { 'K',  0               },
+    { 'L',  0               },
+    { 'M',  0               },
+    { 'N',  0               },
+    { 'O',  0               },
+    { 'P',  0               },
+    { 'Q',  0               },
+    { 'R',  0               },
+    { 'S',  0               },
+    { 'T',  0               },
+    { 'U',  0               },
+    { 'V',  0               },
+    { 'W',  0               },
+    { 'X',  0               },
+    { 'Y',  0               },
+    { 'Z',  0               },
+    { '[',  0               },
+    { '\\', 0               },
+    { ']',  0               },
+    { '^',  0               },
+    { '_',  0               },
+    { '`',  0               },
+    { 'a',  0               },
+    { 'b',  0               },
+    { 'c',  0               },
+    { 'd',  0               },
+    { 'e',  0               },
+    { 'f',  0               },
+    { 'g',  0               },
+    { 'h',  0               },
+    { 'i',  0               },
+    { 'j',  0               },
+    { 'k',  0               },
+    { 'l',  0               },
+    { 'm',  0               },
+    { 'n',  0               },
+    { 'o',  0               },
+    { 'p',  0               },
+    { 'q',  0               },
+    { 'r',  0               },
+    { 's',  0               },
+    { 't',  0               },
+    { 'u',  0               },
+    { 'v',  0               },
+    { 'w',  0               },
+    { 'x',  0               },
+    { 'y',  0               },
+    { 'z',  0               },
+    { '{',  0               },
+    { '|',  0               },
+    { '}',  0               },
+    { '~',  0               },
+    { 127,  ( char* )"\\127"},
+    { 128,  ( char* )"\\<)" },
+    { 129,  ( char* )"\\x-" },
+    { 130,  ( char* )"\\.V" },
+    { 131,  ( char* )"\\v/" },
+    { 132,  ( char* )"\\.S" },
+    { 133,  ( char* )"\\GS" },
+    { 134,  ( char* )"\\|>" },
+    { 135,  ( char* )"\\pi" },
+    { 136,  ( char* )"\\.d" },
+    { 137,  ( char* )"\\<=" },
+    { 138,  ( char* )"\\>=" },
+    { 139,  ( char* )"\\=/" },
+    { 140,  ( char* )"\\Ga" },
+    { 141,  ( char* )"\\->" },
+    { 142,  ( char* )"\\<-" },
+    { 143,  ( char* )"\\|v" },
+    { 144,  ( char* )"\\|^" },
+    { 145,  ( char* )"\\Gg" },
+    { 146,  ( char* )"\\Gd" },
+    { 147,  ( char* )"\\Ge" },
+    { 148,  ( char* )"\\Gn" },
+    { 149,  ( char* )"\\Gh" },
+    { 150,  ( char* )"\\Gl" },
+    { 151,  ( char* )"\\Gr" },
+    { 152,  ( char* )"\\Gs" },
+    { 153,  ( char* )"\\Gt" },
+    { 154,  ( char* )"\\Gw" },
+    { 155,  ( char* )"\\GD" },
+    { 156,  ( char* )"\\PI" },
+    { 157,  ( char* )"\\GW" },
+    { 158,  ( char* )"\\[]" },
+    { 159,  ( char* )"\\oo" },
+    { 160,  ( char* )"\\160"},
+    { 161,  ( char* )"\\161"},
+    { 162,  ( char* )"\\162"},
+    { 163,  ( char* )"\\163"},
+    { 164,  ( char* )"\\164"},
+    { 165,  ( char* )"\\165"},
+    { 166,  ( char* )"\\166"},
+    { 167,  ( char* )"\\167"},
+    { 168,  ( char* )"\\168"},
+    { 169,  ( char* )"\\169"},
+    { 170,  ( char* )"\\170"},
+    { 171,  ( char* )"\\<<" },
+    { 172,  ( char* )"\\172"},
+    { 173,  ( char* )"\\173"},
+    { 174,  ( char* )"\\174"},
+    { 175,  ( char* )"\\175"},
+    { 176,  ( char* )"\\^o" },
+    { 177,  ( char* )"\\177"},
+    { 178,  ( char* )"\\178"},
+    { 179,  ( char* )"\\179"},
+    { 180,  ( char* )"\\180"},
+    { 181,  ( char* )"\\Gm" },
+    { 182,  ( char* )"\\182"},
+    { 183,  ( char* )"\\183"},
+    { 184,  ( char* )"\\184"},
+    { 185,  ( char* )"\\185"},
+    { 186,  ( char* )"\\186"},
+    { 187,  ( char* )"\\>>" },
+    { 188,  ( char* )"\\188"},
+    { 189,  ( char* )"\\189"},
+    { 190,  ( char* )"\\190"},
+    { 191,  ( char* )"\\191"},
+    { 192,  ( char* )"\\192"},
+    { 193,  ( char* )"\\193"},
+    { 194,  ( char* )"\\194"},
+    { 195,  ( char* )"\\195"},
+    { 196,  ( char* )"\\196"},
+    { 197,  ( char* )"\\197"},
+    { 198,  ( char* )"\\198"},
+    { 199,  ( char* )"\\199"},
+    { 200,  ( char* )"\\200"},
+    { 201,  ( char* )"\\201"},
+    { 202,  ( char* )"\\202"},
+    { 203,  ( char* )"\\203"},
+    { 204,  ( char* )"\\204"},
+    { 205,  ( char* )"\\205"},
+    { 206,  ( char* )"\\206"},
+    { 207,  ( char* )"\\207"},
+    { 208,  ( char* )"\\208"},
+    { 209,  ( char* )"\\209"},
+    { 210,  ( char* )"\\210"},
+    { 211,  ( char* )"\\211"},
+    { 212,  ( char* )"\\212"},
+    { 213,  ( char* )"\\213"},
+    { 214,  ( char* )"\\214"},
+    { 215,  ( char* )"\\.x" },
+    { 216,  ( char* )"\\O/" },
+    { 217,  ( char* )"\\217"},
+    { 218,  ( char* )"\\218"},
+    { 219,  ( char* )"\\219"},
+    { 220,  ( char* )"\\220"},
+    { 221,  ( char* )"\\221"},
+    { 222,  ( char* )"\\222"},
+    { 223,  ( char* )"\\223"},
+    { 224,  ( char* )"\\224"},
+    { 225,  ( char* )"\\225"},
+    { 226,  ( char* )"\\226"},
+    { 227,  ( char* )"\\227"},
+    { 228,  ( char* )"\\228"},
+    { 229,  ( char* )"\\229"},
+    { 230,  ( char* )"\\230"},
+    { 231,  ( char* )"\\231"},
+    { 232,  ( char* )"\\232"},
+    { 233,  ( char* )"\\233"},
+    { 234,  ( char* )"\\234"},
+    { 235,  ( char* )"\\235"},
+    { 236,  ( char* )"\\236"},
+    { 237,  ( char* )"\\237"},
+    { 238,  ( char* )"\\238"},
+    { 239,  ( char* )"\\239"},
+    { 240,  ( char* )"\\240"},
+    { 241,  ( char* )"\\241"},
+    { 242,  ( char* )"\\242"},
+    { 243,  ( char* )"\\243"},
+    { 244,  ( char* )"\\244"},
+    { 245,  ( char* )"\\245"},
+    { 246,  ( char* )"\\246"},
+    { 247,  ( char* )"\\:-" },
+    { 248,  ( char* )"\\248"},
+    { 249,  ( char* )"\\249"},
+    { 250,  ( char* )"\\250"},
+    { 251,  ( char* )"\\251"},
+    { 252,  ( char* )"\\252"},
+    { 253,  ( char* )"\\253"},
+    { 254,  ( char* )"\\254"},
+    { 255,  ( char* )"\\255"}
+};
 
-static char* append_str( char* buf, const char* str ) {
+static char* append_str( char* buf, const char* str )
+{
     while ( ( *buf = *str++ ) )
         buf++;
     return buf;
 }
 
-static char* append_tab( char* buf ) {
+static char* append_tab( char* buf )
+{
     int n;
     char* p;
 
@@ -649,7 +639,8 @@ static char* append_tab( char* buf ) {
     return p;
 }
 
-static int read_int( word_20* addr, int n ) {
+static int read_int( word_20* addr, int n )
+{
     int i, t;
 
     for ( i = 0, t = 0; i < n; i++ )
@@ -657,7 +648,8 @@ static int read_int( word_20* addr, int n ) {
     return t;
 }
 
-static char* append_tab_16( char* buf ) {
+static char* append_tab_16( char* buf )
+{
     int n;
     char* p;
 
@@ -669,12 +661,14 @@ static char* append_tab_16( char* buf ) {
     return p;
 }
 
-static char* append_field( char* buf, word_4 fn ) {
+static char* append_field( char* buf, word_4 fn )
+{
     buf = append_str( buf, field_tbl[ fn + 16 * disassembler_mode ] );
     return buf;
 }
 
-static char* append_imm_nibble( char* buf, word_20* addr, int n ) {
+static char* append_imm_nibble( char* buf, word_20* addr, int n )
+{
     int i;
     char t[ 16 ];
 
@@ -697,7 +691,8 @@ static char* append_imm_nibble( char* buf, word_20* addr, int n ) {
     return buf;
 }
 
-static char* append_addr( char* buf, word_20 addr ) {
+static char* append_addr( char* buf, word_20 addr )
+{
     int shift;
     long mask;
 
@@ -710,8 +705,8 @@ static char* append_addr( char* buf, word_20 addr ) {
     return buf;
 }
 
-static char* append_r_addr( char* buf, word_20* pc, long disp, int n,
-                            int offset ) {
+static char* append_r_addr( char* buf, word_20* pc, long disp, int n, int offset )
+{
     long sign;
 
     sign = 1 << ( n * 4 - 1 );
@@ -747,7 +742,8 @@ static char* append_r_addr( char* buf, word_20* pc, long disp, int n,
     return buf;
 }
 
-static char* append_pc_comment( char* buf, word_20 pc ) {
+static char* append_pc_comment( char* buf, word_20 pc )
+{
     char* p = buf;
 
     while ( strlen( buf ) < 4 * TAB_SKIP )
@@ -769,7 +765,8 @@ static char* append_pc_comment( char* buf, word_20 pc ) {
     return p;
 }
 
-static char* append_hst_bits( char* buf, int n ) {
+static char* append_hst_bits( char* buf, int n )
+{
     int i;
     char* p = buf;
 
@@ -805,7 +802,8 @@ static char* append_hst_bits( char* buf, int n ) {
     return p;
 }
 
-static char* disasm_1( word_20* addr, char* out ) {
+static char* disasm_1( word_20* addr, char* out )
+{
     word_4 n;
     word_4 fn;
     char* p;
@@ -890,10 +888,8 @@ static char* disasm_1( word_20* addr, char* out ) {
                     p = append_str( out, buf );
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, ( n & 2 ) ? ( char* )"exg."
-                                                   : ( char* )"move." );
-                    p = append_str( p,
-                                    ( n < 8 ) ? ( char* )"a" : ( char* )"4" );
+                    p = append_str( out, ( n & 2 ) ? ( char* )"exg." : ( char* )"move." );
+                    p = append_str( p, ( n < 8 ) ? ( char* )"a" : ( char* )"4" );
                     p = append_tab( out );
                     c = ( n & 4 ) ? 'c' : 'a';
                     sprintf( buf, ( char* )"%c, d%d", c, ( n & 1 ) );
@@ -910,12 +906,10 @@ static char* disasm_1( word_20* addr, char* out ) {
             fn = read_nibble( ( *addr )++ );
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
-                    p = append_str(
-                        out, op_str_1[ ( fn & 7 ) + 8 * disassembler_mode ] );
+                    p = append_str( out, op_str_1[ ( fn & 7 ) + 8 * disassembler_mode ] );
                     p = append_tab( out );
                     if ( n == 4 ) {
-                        p = append_str( p, ( fn < 8 ) ? ( char* )"A"
-                                                      : ( char* )"B" );
+                        p = append_str( p, ( fn < 8 ) ? ( char* )"A" : ( char* )"B" );
                     } else {
                         n = read_nibble( ( *addr )++ );
                         if ( fn < 8 ) {
@@ -930,8 +924,7 @@ static char* disasm_1( word_20* addr, char* out ) {
                     p = append_str( out, ( char* )"move" );
                     if ( n == 4 ) {
                         p = append_str( p, ( char* )"." );
-                        p = append_str( p, ( fn < 8 ) ? ( char* )"a"
-                                                      : ( char* )"b" );
+                        p = append_str( p, ( fn < 8 ) ? ( char* )"a" : ( char* )"b" );
                     } else {
                         n = read_nibble( ( *addr )++ );
                         if ( fn < 8 ) {
@@ -942,8 +935,7 @@ static char* disasm_1( word_20* addr, char* out ) {
                         }
                     }
                     p = append_tab( out );
-                    p = append_str(
-                        p, op_str_1[ ( fn & 7 ) + 8 * disassembler_mode ] );
+                    p = append_str( p, op_str_1[ ( fn & 7 ) + 8 * disassembler_mode ] );
                     break;
                 default:
                     p = append_str( out, ( char* )"Unknown disassembler mode" );
@@ -1040,7 +1032,8 @@ static char* disasm_1( word_20* addr, char* out ) {
     return p;
 }
 
-static char* disasm_8( word_20* addr, char* out ) {
+static char* disasm_8( word_20* addr, char* out )
+{
     word_4 n;
     word_4 fn;
     char* p = out;
@@ -1052,17 +1045,14 @@ static char* disasm_8( word_20* addr, char* out ) {
     switch ( fn ) {
         case 0:
             n = read_nibble( ( *addr )++ );
-            if ( NULL !=
-                 ( p = ( char* )in_str_80[ n + 16 * disassembler_mode ] ) ) {
+            if ( NULL != ( p = ( char* )in_str_80[ n + 16 * disassembler_mode ] ) ) {
                 p = append_str( out, p );
                 return p;
             }
             switch ( n ) {
                 case 8:
                     fn = read_nibble( ( *addr )++ );
-                    if ( NULL !=
-                         ( p = ( char* )
-                               in_str_808[ fn + 16 * disassembler_mode ] ) ) {
+                    if ( NULL != ( p = ( char* )in_str_808[ fn + 16 * disassembler_mode ] ) ) {
                         p = append_str( out, p );
                         return p;
                     }
@@ -1078,9 +1068,8 @@ static char* disasm_8( word_20* addr, char* out ) {
                                         p = append_str( out, ( char* )"rsi" );
                                         break;
                                     default:
-                                        p = append_str(
-                                            out, ( char* )"Unknown "
-                                                          "disassembler mode" );
+                                        p = append_str( out, ( char* )"Unknown "
+                                                                      "disassembler mode" );
                                         break;
                                 }
                             }
@@ -1090,8 +1079,7 @@ static char* disasm_8( word_20* addr, char* out ) {
                             switch ( disassembler_mode ) {
                                 case HP_MNEMONICS:
                                     if ( n < 5 ) {
-                                        sprintf( buf, ( char* )"LA(%d)",
-                                                 n + 1 );
+                                        sprintf( buf, ( char* )"LA(%d)", n + 1 );
                                     } else {
                                         sprintf( buf, ( char* )"LAHEX" );
                                     }
@@ -1108,9 +1096,7 @@ static char* disasm_8( word_20* addr, char* out ) {
                                     p = append_str( p, buf );
                                     break;
                                 default:
-                                    p = append_str(
-                                        out,
-                                        ( char* )"Unknown disassembler mode" );
+                                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                                     break;
                             }
                             break;
@@ -1122,27 +1108,19 @@ static char* disasm_8( word_20* addr, char* out ) {
 
                             switch ( disassembler_mode ) {
                                 case HP_MNEMONICS:
-                                    sprintf( buf, ( char* )"%cBIT=%d",
-                                             ( fn & 8 ) ? 'C' : 'A',
-                                             ( fn & 1 ) ? 1 : 0 );
+                                    sprintf( buf, ( char* )"%cBIT=%d", ( fn & 8 ) ? 'C' : 'A', ( fn & 1 ) ? 1 : 0 );
                                     p = append_str( out, buf );
                                     p = append_tab( out );
                                     p = append_imm_nibble( p, addr, 1 );
                                     break;
                                 case CLASS_MNEMONICS:
-                                    p = append_str(
-                                        out, ( fn & 1 ) ? ( char* )"bset"
-                                                        : ( char* )"bclr" );
+                                    p = append_str( out, ( fn & 1 ) ? ( char* )"bset" : ( char* )"bclr" );
                                     p = append_tab( out );
                                     p = append_imm_nibble( p, addr, 1 );
-                                    p = append_str( p, ( fn & 8 )
-                                                           ? ( char* )", c"
-                                                           : ( char* )", a" );
+                                    p = append_str( p, ( fn & 8 ) ? ( char* )", c" : ( char* )", a" );
                                     break;
                                 default:
-                                    p = append_str(
-                                        out,
-                                        ( char* )"Unknown disassembler mode" );
+                                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                                     break;
                             }
                             break;
@@ -1159,43 +1137,33 @@ static char* disasm_8( word_20* addr, char* out ) {
                             switch ( disassembler_mode ) {
                                 case HP_MNEMONICS:
                                     c = ( char )( ( fn < 0xa ) ? 'A' : 'C' );
-                                    sprintf( buf, ( char* )"?%cBIT=%d", c,
-                                             ( fn & 1 ) ? 1 : 0 );
+                                    sprintf( buf, ( char* )"?%cBIT=%d", c, ( fn & 1 ) ? 1 : 0 );
                                     p = append_str( out, buf );
                                     p = append_tab( out );
                                     sprintf( buf, ( char* )"%d", n );
                                     p = append_str( p, buf );
                                     if ( disp != 0 ) {
-                                        p = append_str(
-                                            p, ( char* )", GOYES (char*)" );
+                                        p = append_str( p, ( char* )", GOYES (char*)" );
                                         p = append_r_addr( p, &pc, disp, 2, 5 );
                                         p = append_pc_comment( out, pc );
                                     } else
-                                        p = append_str( p,
-                                                        ( char* )", RTNYES" );
+                                        p = append_str( p, ( char* )", RTNYES" );
                                     break;
                                 case CLASS_MNEMONICS:
                                     c = ( char )( ( fn < 0xa ) ? 'a' : 'c' );
-                                    p = append_str( out, ( disp == 0 )
-                                                             ? ( char* )"rt"
-                                                             : ( char* )"b" );
-                                    p = append_str( p, ( fn & 1 )
-                                                           ? ( char* )"bs"
-                                                           : ( char* )"bc" );
+                                    p = append_str( out, ( disp == 0 ) ? ( char* )"rt" : ( char* )"b" );
+                                    p = append_str( p, ( fn & 1 ) ? ( char* )"bs" : ( char* )"bc" );
                                     p = append_tab( out );
                                     sprintf( buf, ( char* )"#%d, %c", n, c );
                                     p = append_str( p, buf );
                                     if ( disp != 0 ) {
-                                        p = append_str( p,
-                                                        ( char* )", (char*)" );
+                                        p = append_str( p, ( char* )", (char*)" );
                                         p = append_r_addr( p, &pc, disp, 2, 5 );
                                         p = append_pc_comment( out, pc );
                                     }
                                     break;
                                 default:
-                                    p = append_str(
-                                        out,
-                                        ( char* )"Unknown disassembler mode" );
+                                    p = append_str( out, ( char* )"Unknown disassembler mode" );
                                     break;
                             }
                             break;
@@ -1211,10 +1179,7 @@ static char* disasm_8( word_20* addr, char* out ) {
                     fn = read_nibble( ( *addr )++ );
                     switch ( disassembler_mode ) {
                         case HP_MNEMONICS:
-                            sprintf( buf,
-                                     ( n == 0xf ) ? ( char* )"%c%cEX"
-                                                  : ( char* )"%c=%c",
-                                     ( n == 0xd ) ? 'P' : 'C',
+                            sprintf( buf, ( n == 0xf ) ? ( char* )"%c%cEX" : ( char* )"%c=%c", ( n == 0xd ) ? 'P' : 'C',
                                      ( n == 0xd ) ? 'C' : 'P' );
                             p = append_str( out, buf );
                             p = append_tab( out );
@@ -1222,19 +1187,13 @@ static char* disasm_8( word_20* addr, char* out ) {
                             p = append_str( p, buf );
                             break;
                         case CLASS_MNEMONICS:
-                            p = append_str( out, ( n == 0xf )
-                                                     ? ( char* )"exg.1"
-                                                     : ( char* )"move.1" );
+                            p = append_str( out, ( n == 0xf ) ? ( char* )"exg.1" : ( char* )"move.1" );
                             p = append_tab( out );
-                            sprintf( buf,
-                                     ( n == 0xd ) ? ( char* )"p, c.%d"
-                                                  : ( char* )"c.%d, p",
-                                     fn );
+                            sprintf( buf, ( n == 0xd ) ? ( char* )"p, c.%d" : ( char* )"c.%d, p", fn );
                             p = append_str( p, buf );
                             break;
                         default:
-                            p = append_str(
-                                out, ( char* )"Unknown disassembler mode" );
+                            p = append_str( out, ( char* )"Unknown disassembler mode" );
                             break;
                     }
                     break;
@@ -1252,22 +1211,17 @@ static char* disasm_8( word_20* addr, char* out ) {
                 case 3:
                     switch ( disassembler_mode ) {
                         case HP_MNEMONICS:
-                            sprintf( buf, ( char* )"%sSLC",
-                                     op_str_81[ ( n & 3 ) +
-                                                4 * disassembler_mode ] );
+                            sprintf( buf, ( char* )"%sSLC", op_str_81[ ( n & 3 ) + 4 * disassembler_mode ] );
                             p = append_str( out, buf );
                             break;
                         case CLASS_MNEMONICS:
                             p = append_str( out, ( char* )"rol.w" );
                             p = append_tab( out );
                             p = append_str( p, ( char* )"#4, (char*)" );
-                            p = append_str(
-                                p, op_str_81[ ( n & 3 ) +
-                                              4 * disassembler_mode ] );
+                            p = append_str( p, op_str_81[ ( n & 3 ) + 4 * disassembler_mode ] );
                             break;
                         default:
-                            p = append_str(
-                                out, ( char* )"Unknown disassembler mode" );
+                            p = append_str( out, ( char* )"Unknown disassembler mode" );
                             break;
                     }
                     break;
@@ -1278,22 +1232,17 @@ static char* disasm_8( word_20* addr, char* out ) {
                 case 7:
                     switch ( disassembler_mode ) {
                         case HP_MNEMONICS:
-                            sprintf( buf, ( char* )"%sSRC",
-                                     op_str_81[ ( n & 3 ) +
-                                                4 * disassembler_mode ] );
+                            sprintf( buf, ( char* )"%sSRC", op_str_81[ ( n & 3 ) + 4 * disassembler_mode ] );
                             p = append_str( out, buf );
                             break;
                         case CLASS_MNEMONICS:
                             p = append_str( out, ( char* )"ror.w" );
                             p = append_tab( out );
                             p = append_str( p, ( char* )"#4, (char*)" );
-                            p = append_str(
-                                p, op_str_81[ ( n & 3 ) +
-                                              4 * disassembler_mode ] );
+                            p = append_str( p, op_str_81[ ( n & 3 ) + 4 * disassembler_mode ] );
                             break;
                         default:
-                            p = append_str(
-                                out, ( char* )"Unknown disassembler mode" );
+                            p = append_str( out, ( char* )"Unknown disassembler mode" );
                             break;
                     }
                     break;
@@ -1303,11 +1252,8 @@ static char* disasm_8( word_20* addr, char* out ) {
                     n = read_nibble( ( *addr )++ );
                     switch ( disassembler_mode ) {
                         case HP_MNEMONICS:
-                            sprintf(
-                                buf, ( char* )"%s=%s%cCON",
-                                op_str_81[ ( n & 3 ) + 4 * disassembler_mode ],
-                                op_str_81[ ( n & 3 ) + 4 * disassembler_mode ],
-                                ( n < 8 ) ? '+' : '-' );
+                            sprintf( buf, ( char* )"%s=%s%cCON", op_str_81[ ( n & 3 ) + 4 * disassembler_mode ],
+                                     op_str_81[ ( n & 3 ) + 4 * disassembler_mode ], ( n < 8 ) ? '+' : '-' );
                             p = append_str( out, buf );
                             p = append_tab( out );
                             p = append_field( p, fn );
@@ -1316,20 +1262,16 @@ static char* disasm_8( word_20* addr, char* out ) {
                             p = append_str( p, buf );
                             break;
                         case CLASS_MNEMONICS:
-                            p = append_str( out, ( n < 8 ) ? ( char* )"add"
-                                                           : ( char* )"sub" );
+                            p = append_str( out, ( n < 8 ) ? ( char* )"add" : ( char* )"sub" );
                             p = append_field( p, fn );
                             p = append_tab( out );
                             fn = read_nibble( ( *addr )++ );
                             sprintf( buf, ( char* )"#%d, (char*)", fn + 1 );
                             p = append_str( p, buf );
-                            p = append_str(
-                                p, op_str_81[ ( n & 3 ) +
-                                              4 * disassembler_mode ] );
+                            p = append_str( p, op_str_81[ ( n & 3 ) + 4 * disassembler_mode ] );
                             break;
                         default:
-                            p = append_str(
-                                out, ( char* )"Unknown disassembler mode" );
+                            p = append_str( out, ( char* )"Unknown disassembler mode" );
                             break;
                     }
                     break;
@@ -1337,9 +1279,7 @@ static char* disasm_8( word_20* addr, char* out ) {
                 case 9:
                     switch ( disassembler_mode ) {
                         case HP_MNEMONICS:
-                            sprintf( buf, ( char* )"%sSRB.F",
-                                     op_str_81[ ( n & 3 ) +
-                                                4 * disassembler_mode ] );
+                            sprintf( buf, ( char* )"%sSRB.F", op_str_81[ ( n & 3 ) + 4 * disassembler_mode ] );
                             p = append_str( out, buf );
                             p = append_tab( out );
                             p = append_field( p, read_nibble( ( *addr )++ ) );
@@ -1349,13 +1289,10 @@ static char* disasm_8( word_20* addr, char* out ) {
                             p = append_field( p, read_nibble( ( *addr )++ ) );
                             p = append_tab( out );
                             p = append_str( p, ( char* )"#1, (char*)" );
-                            p = append_str(
-                                p, op_str_81[ ( n & 3 ) +
-                                              4 * disassembler_mode ] );
+                            p = append_str( p, op_str_81[ ( n & 3 ) + 4 * disassembler_mode ] );
                             break;
                         default:
-                            p = append_str(
-                                out, ( char* )"Unknown disassembler mode" );
+                            p = append_str( out, ( char* )"Unknown disassembler mode" );
                             break;
                     }
                     break;
@@ -1371,46 +1308,35 @@ static char* disasm_8( word_20* addr, char* out ) {
                     switch ( disassembler_mode ) {
                         case HP_MNEMONICS:
                             if ( n == 2 ) {
-                                sprintf( buf, ( char* )"%cR%dEX.F",
-                                         ( ( int )c < 8 ) ? 'A' : 'C',
-                                         ( int )c & 7 );
+                                sprintf( buf, ( char* )"%cR%dEX.F", ( ( int )c < 8 ) ? 'A' : 'C', ( int )c & 7 );
                             } else if ( n == 1 ) {
-                                sprintf( buf, ( char* )"%c=R%d.F",
-                                         ( ( int )c < 8 ) ? 'A' : 'C',
-                                         ( int )c & 7 );
+                                sprintf( buf, ( char* )"%c=R%d.F", ( ( int )c < 8 ) ? 'A' : 'C', ( int )c & 7 );
                             } else {
-                                sprintf( buf, ( char* )"R%d=%c.F", ( int )c & 7,
-                                         ( ( int )c < 8 ) ? 'A' : 'C' );
+                                sprintf( buf, ( char* )"R%d=%c.F", ( int )c & 7, ( ( int )c < 8 ) ? 'A' : 'C' );
                             }
                             p = append_str( out, buf );
                             p = append_tab( out );
                             p = append_field( p, fn );
                             break;
                         case CLASS_MNEMONICS:
-                            p = append_str( out, ( n == 2 ) ? ( char* )"exg"
-                                                            : ( char* )"move" );
+                            p = append_str( out, ( n == 2 ) ? ( char* )"exg" : ( char* )"move" );
                             p = append_field( p, fn );
                             p = append_tab( out );
                             if ( n == 1 ) {
                                 sprintf( buf, ( char* )"r%d", ( int )c & 7 );
                                 p = append_str( p, buf );
                             } else
-                                p = append_str( p, ( ( int )c < 8 )
-                                                       ? ( char* )"a"
-                                                       : ( char* )"c" );
+                                p = append_str( p, ( ( int )c < 8 ) ? ( char* )"a" : ( char* )"c" );
                             p = append_str( p, ( char* )", (char*)" );
                             if ( n == 1 )
-                                p = append_str( p, ( ( int )c < 8 )
-                                                       ? ( char* )"a"
-                                                       : ( char* )"c" );
+                                p = append_str( p, ( ( int )c < 8 ) ? ( char* )"a" : ( char* )"c" );
                             else {
                                 sprintf( buf, ( char* )"r%d", ( int )c & 7 );
                                 p = append_str( p, buf );
                             }
                             break;
                         default:
-                            p = append_str(
-                                out, ( char* )"Unknown disassembler mode" );
+                            p = append_str( out, ( char* )"Unknown disassembler mode" );
                             break;
                     }
                     break;
@@ -1420,8 +1346,7 @@ static char* disasm_8( word_20* addr, char* out ) {
                     if ( ( n < 2 ) || ( n > 7 ) )
                         break;
 
-                    p = append_str( out,
-                                    in_str_81b[ n + 16 * disassembler_mode ] );
+                    p = append_str( out, in_str_81b[ n + 16 * disassembler_mode ] );
                     break;
 
                 case 0xc:
@@ -1430,22 +1355,17 @@ static char* disasm_8( word_20* addr, char* out ) {
                 case 0xf:
                     switch ( disassembler_mode ) {
                         case HP_MNEMONICS:
-                            sprintf( buf, ( char* )"%sSRB",
-                                     op_str_81[ ( n & 3 ) +
-                                                4 * disassembler_mode ] );
+                            sprintf( buf, ( char* )"%sSRB", op_str_81[ ( n & 3 ) + 4 * disassembler_mode ] );
                             p = append_str( out, buf );
                             break;
                         case CLASS_MNEMONICS:
                             p = append_str( out, ( char* )"lsr.w" );
                             p = append_tab( out );
                             p = append_str( p, ( char* )"#1, (char*)" );
-                            p = append_str(
-                                p, op_str_81[ ( n & 3 ) +
-                                              4 * disassembler_mode ] );
+                            p = append_str( p, op_str_81[ ( n & 3 ) + 4 * disassembler_mode ] );
                             break;
                         default:
-                            p = append_str(
-                                out, ( char* )"Unknown disassembler mode" );
+                            p = append_str( out, ( char* )"Unknown disassembler mode" );
                             break;
                     }
                     break;
@@ -1497,8 +1417,7 @@ static char* disasm_8( word_20* addr, char* out ) {
                         p = append_str( p, ( char* )"RTNYES" );
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, ( disp == 0 ) ? ( char* )"rt"
-                                                       : ( char* )"b" );
+                    p = append_str( out, ( disp == 0 ) ? ( char* )"rt" : ( char* )"b" );
                     p = append_str( p, ( char* )"eq.1" );
                     p = append_tab( out );
                     sprintf( buf, ( char* )"#%d, hst", n );
@@ -1526,8 +1445,7 @@ static char* disasm_8( word_20* addr, char* out ) {
                     p = append_imm_nibble( p, addr, 1 );
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, ( fn == 4 ) ? ( char* )"bclr"
-                                                     : ( char* )"bset" );
+                    p = append_str( out, ( fn == 4 ) ? ( char* )"bclr" : ( char* )"bset" );
                     p = append_tab( out );
                     p = append_imm_nibble( p, addr, 1 );
                     p = append_str( p, ( char* )", st" );
@@ -1558,10 +1476,8 @@ static char* disasm_8( word_20* addr, char* out ) {
                         p = append_str( p, ( char* )", RTNYES" );
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, ( disp == 0 ) ? ( char* )"rt"
-                                                       : ( char* )"b" );
-                    p = append_str( p, ( fn == 6 ) ? ( char* )"bc"
-                                                   : ( char* )"bs" );
+                    p = append_str( out, ( disp == 0 ) ? ( char* )"rt" : ( char* )"b" );
+                    p = append_str( p, ( fn == 6 ) ? ( char* )"bc" : ( char* )"bs" );
                     p = append_tab( out );
                     sprintf( buf, ( char* )"#%d, st", n );
                     p = append_str( p, buf );
@@ -1597,10 +1513,8 @@ static char* disasm_8( word_20* addr, char* out ) {
                         p = append_str( p, ( char* )", RTNYES" );
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, ( disp == 0 ) ? ( char* )"rt"
-                                                       : ( char* )"b" );
-                    p = append_str( p, ( fn == 8 ) ? ( char* )"ne.1"
-                                                   : ( char* )"eq.1" );
+                    p = append_str( out, ( disp == 0 ) ? ( char* )"rt" : ( char* )"b" );
+                    p = append_str( p, ( fn == 8 ) ? ( char* )"ne.1" : ( char* )"eq.1" );
                     p = append_tab( out );
                     sprintf( buf, ( char* )"#%d, p", n );
                     p = append_str( p, buf );
@@ -1624,15 +1538,13 @@ static char* disasm_8( word_20* addr, char* out ) {
             disp = read_int( addr, 4 );
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
-                    p = append_str( out, ( fn == 0xc ) ? ( char* )"GOLONG"
-                                                       : ( char* )"GOSUBL" );
+                    p = append_str( out, ( fn == 0xc ) ? ( char* )"GOLONG" : ( char* )"GOSUBL" );
                     p = append_tab( out );
                     p = append_r_addr( p, &pc, disp, 4, ( fn == 0xc ) ? 2 : 6 );
                     p = append_pc_comment( out, pc );
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, ( fn == 0xc ) ? ( char* )"bra.4"
-                                                       : ( char* )"bsr.4" );
+                    p = append_str( out, ( fn == 0xc ) ? ( char* )"bra.4" : ( char* )"bsr.4" );
                     p = append_tab( out );
                     p = append_r_addr( p, &pc, disp, 4, ( fn == 0xc ) ? 2 : 6 );
                     p = append_pc_comment( out, pc );
@@ -1648,14 +1560,12 @@ static char* disasm_8( word_20* addr, char* out ) {
             pc = read_int( addr, 5 );
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
-                    p = append_str( out, ( fn == 0xc ) ? ( char* )"GOVLNG"
-                                                       : ( char* )"GOSBVL" );
+                    p = append_str( out, ( fn == 0xc ) ? ( char* )"GOVLNG" : ( char* )"GOSBVL" );
                     p = append_tab( out );
                     p = append_addr( p, pc );
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, ( fn == 0xc ) ? ( char* )"jmp"
-                                                       : ( char* )"jsr" );
+                    p = append_str( out, ( fn == 0xc ) ? ( char* )"jmp" : ( char* )"jsr" );
                     p = append_tab( out );
                     p = append_addr( p, pc );
                     break;
@@ -1671,7 +1581,8 @@ static char* disasm_8( word_20* addr, char* out ) {
     return p;
 }
 
-static word_20 disassemble( word_20 addr, char* out ) {
+static word_20 disassemble( word_20 addr, char* out )
+{
     word_4 n;
     word_4 fn;
     char* p = out;
@@ -1682,27 +1593,23 @@ static word_20 disassemble( word_20 addr, char* out ) {
     switch ( n = read_nibble( addr++ ) ) {
         case 0:
             if ( ( n = read_nibble( addr++ ) ) != 0xe ) {
-                p = append_str( out,
-                                opcode_0_tbl[ n + 16 * disassembler_mode ] );
+                p = append_str( out, opcode_0_tbl[ n + 16 * disassembler_mode ] );
                 break;
             }
             fn = read_nibble( addr++ );
             n = read_nibble( addr++ );
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
-                    sprintf( buf, op_str_0[ ( n & 7 ) + 8 * HP_MNEMONICS ],
-                             ( n < 8 ) ? '&' : '!' );
+                    sprintf( buf, op_str_0[ ( n & 7 ) + 8 * HP_MNEMONICS ], ( n < 8 ) ? '&' : '!' );
                     p = append_str( out, buf );
                     p = append_tab( out );
                     p = append_field( p, fn );
                     break;
                 case CLASS_MNEMONICS:
-                    p = append_str( out, ( n < 8 ) ? ( char* )"and"
-                                                   : ( char* )"or" );
+                    p = append_str( out, ( n < 8 ) ? ( char* )"and" : ( char* )"or" );
                     p = append_field( p, fn );
                     p = append_tab( out );
-                    p = append_str(
-                        p, op_str_0[ ( n & 7 ) + 8 * CLASS_MNEMONICS ] );
+                    p = append_str( p, op_str_0[ ( n & 7 ) + 8 * CLASS_MNEMONICS ] );
                     break;
                 default:
                     p = append_str( out, ( char* )"Unknown disassembler mode" );
@@ -1768,10 +1675,7 @@ static word_20 disassemble( word_20 addr, char* out ) {
                         p = append_str( out, ( char* )"NOP3" );
                         break;
                     }
-                    sprintf( buf,
-                             ( disp == 0 ) ? ( char* )"RTN%sC"
-                                           : ( char* )"GO%sC",
-                             ( n == 4 ) ? ( char* )"" : ( char* )"N" );
+                    sprintf( buf, ( disp == 0 ) ? ( char* )"RTN%sC" : ( char* )"GO%sC", ( n == 4 ) ? ( char* )"" : ( char* )"N" );
                     p = append_str( out, buf );
                     if ( disp != 0 ) {
                         p = append_tab( out );
@@ -1785,10 +1689,8 @@ static word_20 disassemble( word_20 addr, char* out ) {
                         p = append_str( out, ( char* )"nop3" );
                         break;
                     }
-                    p = append_str( out, ( disp == 0 ) ? ( char* )"rtc"
-                                                       : ( char* )"bc" );
-                    p = append_str( p,
-                                    ( n == 4 ) ? ( char* )"s" : ( char* )"c" );
+                    p = append_str( out, ( disp == 0 ) ? ( char* )"rtc" : ( char* )"bc" );
+                    p = append_str( p, ( n == 4 ) ? ( char* )"s" : ( char* )"c" );
                     if ( disp != 0 ) {
                         p = append_tab( out );
                         p = append_r_addr( p, &pc, disp, 2, 1 );
@@ -1891,21 +1793,15 @@ static word_20 disassemble( word_20 addr, char* out ) {
             switch ( disassembler_mode ) {
                 case HP_MNEMONICS:
                     if ( ( c == 0 ) && ( n >= 8 ) )
-                        sprintf( buf,
-                                 op_str_9[ ( n & 3 ) + 8 * HP_MNEMONICS + 4 ],
-                                 in_str_9[ ( ( n >> 2 ) & 3 ) + 4 * c +
-                                           8 * HP_MNEMONICS ] );
+                        sprintf( buf, op_str_9[ ( n & 3 ) + 8 * HP_MNEMONICS + 4 ],
+                                 in_str_9[ ( ( n >> 2 ) & 3 ) + 4 * c + 8 * HP_MNEMONICS ] );
                     else
-                        sprintf( buf, op_str_9[ ( n & 3 ) + 8 * HP_MNEMONICS ],
-                                 in_str_9[ ( ( n >> 2 ) & 3 ) + 4 * c +
-                                           8 * HP_MNEMONICS ] );
+                        sprintf( buf, op_str_9[ ( n & 3 ) + 8 * HP_MNEMONICS ], in_str_9[ ( ( n >> 2 ) & 3 ) + 4 * c + 8 * HP_MNEMONICS ] );
                     p = append_str( out, buf );
                     p = append_tab( out );
                     p = append_field( p, fn );
                     p = append_str( p, ( char* )", (char*)" );
-                    p = append_str( p, ( disp == 0 )
-                                           ? ( char* )"RTNYES"
-                                           : ( char* )"GOYES (char*)" );
+                    p = append_str( p, ( disp == 0 ) ? ( char* )"RTNYES" : ( char* )"GOYES (char*)" );
                     if ( disp != 0 ) {
                         p = append_r_addr( p, &pc, disp, 2, 3 );
                         p = append_pc_comment( out, pc );
@@ -1913,19 +1809,14 @@ static word_20 disassemble( word_20 addr, char* out ) {
                     break;
 
                 case CLASS_MNEMONICS:
-                    p = append_str( out, ( disp == 0 ) ? ( char* )"rt"
-                                                       : ( char* )"b" );
-                    p = append_str( p, in_str_9[ ( ( n >> 2 ) & 3 ) + 4 * c +
-                                                 8 * CLASS_MNEMONICS ] );
+                    p = append_str( out, ( disp == 0 ) ? ( char* )"rt" : ( char* )"b" );
+                    p = append_str( p, in_str_9[ ( ( n >> 2 ) & 3 ) + 4 * c + 8 * CLASS_MNEMONICS ] );
                     p = append_field( p, fn );
                     p = append_tab( out );
                     if ( ( c == 0 ) && ( n >= 8 ) )
-                        p = append_str(
-                            p,
-                            op_str_9[ ( n & 3 ) + 8 * CLASS_MNEMONICS + 4 ] );
+                        p = append_str( p, op_str_9[ ( n & 3 ) + 8 * CLASS_MNEMONICS + 4 ] );
                     else
-                        p = append_str(
-                            p, op_str_9[ ( n & 3 ) + 8 * CLASS_MNEMONICS ] );
+                        p = append_str( p, op_str_9[ ( n & 3 ) + 8 * CLASS_MNEMONICS ] );
                     if ( disp != 0 ) {
                         p = append_str( p, ( char* )", (char*)" );
                         p = append_r_addr( p, &pc, disp, 2, 3 );
@@ -2023,8 +1914,7 @@ static word_20 disassemble( word_20 addr, char* out ) {
                             break;
 
                         default:
-                            p = append_str(
-                                out, ( char* )"Unknown disassembler mode" );
+                            p = append_str( out, ( char* )"Unknown disassembler mode" );
                             return addr;
                     }
                     break;
@@ -2085,8 +1975,7 @@ static word_20 disassemble( word_20 addr, char* out ) {
                             break;
 
                         default:
-                            p = append_str(
-                                out, ( char* )"Unknown disassembler mode" );
+                            p = append_str( out, ( char* )"Unknown disassembler mode" );
                             return addr;
                     }
                     break;
@@ -2118,8 +2007,7 @@ static word_20 disassemble( word_20 addr, char* out ) {
                         sprintf( buf, ( char* )"%c", ( n & 3 ) + 'a' );
                         p = append_str( p, buf );
                     } else {
-                        p = append_str( p,
-                                        op_str_af[ n + 16 * CLASS_MNEMONICS ] );
+                        p = append_str( p, op_str_af[ n + 16 * CLASS_MNEMONICS ] );
                     }
                     break;
 
@@ -2134,7 +2022,8 @@ static word_20 disassemble( word_20 addr, char* out ) {
     return addr;
 }
 
-static char* skip_ob( word_20* addr, char* string ) {
+static char* skip_ob( word_20* addr, char* string )
+{
     word_20 size, type;
     char* p = string;
     struct objfunc* op;
@@ -2157,7 +2046,8 @@ static char* skip_ob( word_20* addr, char* string ) {
     return p;
 }
 
-static long hxs2real( long hxs ) {
+static long hxs2real( long hxs )
+{
     int n = 0, c = 1;
 
     while ( hxs ) {
@@ -2168,7 +2058,8 @@ static long hxs2real( long hxs ) {
     return n;
 }
 
-static char* dec_bin_int( word_20* addr, char* string ) {
+static char* dec_bin_int( word_20* addr, char* string )
+{
     char* p = string;
     word_20 n = 0;
 
@@ -2179,7 +2070,8 @@ static char* dec_bin_int( word_20* addr, char* string ) {
     return p;
 }
 
-static char* real_number( word_20* addr, char* string, int ml, int xl ) {
+static char* real_number( word_20* addr, char* string, int ml, int xl )
+{
     hp_real r;
     long re, xs;
     int i;
@@ -2278,15 +2170,12 @@ static char* real_number( word_20* addr, char* string, int ml, int xl ) {
     return p;
 }
 
-static char* dec_real( word_20* addr, char* string ) {
-    return real_number( addr, string, 11, 3 );
-}
+static char* dec_real( word_20* addr, char* string ) { return real_number( addr, string, 11, 3 ); }
 
-static char* dec_long_real( word_20* addr, char* string ) {
-    return real_number( addr, string, 14, 5 );
-}
+static char* dec_long_real( word_20* addr, char* string ) { return real_number( addr, string, 14, 5 ); }
 
-static char* dec_complex( word_20* addr, char* string ) {
+static char* dec_complex( word_20* addr, char* string )
+{
     char* p = string;
 
     *p++ = '(';
@@ -2298,7 +2187,8 @@ static char* dec_complex( word_20* addr, char* string ) {
     return p;
 }
 
-static char* dec_long_complex( word_20* addr, char* string ) {
+static char* dec_long_complex( word_20* addr, char* string )
+{
     char* p = string;
 
     *p++ = '(';
@@ -2310,7 +2200,8 @@ static char* dec_long_complex( word_20* addr, char* string ) {
     return p;
 }
 
-static char* dec_string( word_20* addr, char* string ) {
+static char* dec_string( word_20* addr, char* string )
+{
     word_20 len;
     unsigned char c;
     char* p = string;
@@ -2347,7 +2238,8 @@ static char* dec_string( word_20* addr, char* string ) {
     return p;
 }
 
-static char* dec_hex_string( word_20* addr, char* string ) {
+static char* dec_hex_string( word_20* addr, char* string )
+{
     int len, lead, i, n;
     static char hex[] = "0123456789ABCDEF";
     char* p = string;
@@ -2402,7 +2294,8 @@ static char* dec_hex_string( word_20* addr, char* string ) {
     return p;
 }
 
-static char* xlib_name( int lib, int command, char* string ) {
+static char* xlib_name( int lib, int command, char* string )
+{
     int n, len;
     int i, lib_n = 0;
     unsigned char c;
@@ -2560,7 +2453,8 @@ static char* xlib_name( int lib, int command, char* string ) {
     return p;
 }
 
-static short check_xlib( word_20 addr, char* string ) {
+static short check_xlib( word_20 addr, char* string )
+{
     int n, lib, command;
     word_20 romptab;
     word_20 offset, link_end;
@@ -2701,7 +2595,8 @@ static short check_xlib( word_20 addr, char* string ) {
     return 0;
 }
 
-static char* dec_rpl_obj( word_20* addr, char* string ) {
+static char* dec_rpl_obj( word_20* addr, char* string )
+{
     word_20 prolog = 0;
     word_20 prolog_2;
     char* p = string;
@@ -2739,7 +2634,8 @@ static char* dec_rpl_obj( word_20* addr, char* string ) {
     return p;
 }
 
-static char* dec_list( word_20* addr, char* string ) {
+static char* dec_list( word_20* addr, char* string )
+{
     word_20 semi;
     char* p = string;
 
@@ -2762,7 +2658,8 @@ static char* dec_list( word_20* addr, char* string ) {
     return p;
 }
 
-static char* dec_symb( word_20* addr, char* string ) {
+static char* dec_symb( word_20* addr, char* string )
+{
     word_20 semi;
     char* p = string;
 
@@ -2783,7 +2680,8 @@ static char* dec_symb( word_20* addr, char* string ) {
     return p;
 }
 
-static char* dec_unit( word_20* addr, char* string ) {
+static char* dec_unit( word_20* addr, char* string )
+{
     word_20 semi;
     char* p = string;
 
@@ -2800,7 +2698,8 @@ static char* dec_unit( word_20* addr, char* string ) {
     return p;
 }
 
-static char* dec_unit_op( word_20* addr, char* string ) {
+static char* dec_unit_op( word_20* addr, char* string )
+{
     word_20 op;
     char* p = string;
 
@@ -2828,7 +2727,8 @@ static char* dec_unit_op( word_20* addr, char* string ) {
     return p;
 }
 
-static char* dec_library( word_20* addr, char* string ) {
+static char* dec_library( word_20* addr, char* string )
+{
     word_20 libsize, libidsize;
     /*
       word_20        hashoff, mesgoff, linkoff, cfgoff;
@@ -2860,7 +2760,8 @@ static char* dec_library( word_20* addr, char* string ) {
     return p;
 }
 
-static char* dec_library_data( word_20* addr, char* string ) {
+static char* dec_library_data( word_20* addr, char* string )
+{
     word_20 size;
     char* p = string;
 
@@ -2875,7 +2776,8 @@ static char* dec_library_data( word_20* addr, char* string ) {
     return p;
 }
 
-static char* dec_acptr( word_20* addr, char* string ) {
+static char* dec_acptr( word_20* addr, char* string )
+{
     word_20 size;
     char* p = string;
     int i;
@@ -2902,7 +2804,8 @@ static char* dec_acptr( word_20* addr, char* string ) {
     return p;
 }
 
-static char* dec_prog( word_20* addr, char* string ) {
+static char* dec_prog( word_20* addr, char* string )
+{
     word_20 semi;
     char* p = string;
 
@@ -2919,7 +2822,8 @@ static char* dec_prog( word_20* addr, char* string ) {
     return p;
 }
 
-static char* dec_code( word_20* addr, char* string ) {
+static char* dec_code( word_20* addr, char* string )
+{
     char* p = string;
     word_20 n, len;
 
@@ -2939,7 +2843,8 @@ static char* dec_code( word_20* addr, char* string ) {
     return p;
 }
 
-static char* dec_local_ident( word_20* addr, char* string ) {
+static char* dec_local_ident( word_20* addr, char* string )
+{
     int len, i, n;
     char* p = string;
     unsigned char c;
@@ -2971,7 +2876,8 @@ static char* dec_local_ident( word_20* addr, char* string ) {
     return p;
 }
 
-static char* dec_global_ident( word_20* addr, char* string ) {
+static char* dec_global_ident( word_20* addr, char* string )
+{
     int len, i, n;
     char* p = string;
     unsigned char c;
@@ -3003,7 +2909,8 @@ static char* dec_global_ident( word_20* addr, char* string ) {
     return p;
 }
 
-static char* dec_xlib_name( word_20* addr, char* string ) {
+static char* dec_xlib_name( word_20* addr, char* string )
+{
     int lib, command;
 
     lib = read_nibbles( *addr, 3 );
@@ -3014,7 +2921,8 @@ static char* dec_xlib_name( word_20* addr, char* string ) {
     return xlib_name( lib, command, string );
 }
 
-static char* any_array( word_20* addr, char* string, short lnk_flag ) {
+static char* any_array( word_20* addr, char* string, short lnk_flag )
+{
     word_20 len, type, dim;
     word_20 *dim_lens, *dims;
     word_20 array_addr, elem_addr;
@@ -3099,15 +3007,12 @@ static char* any_array( word_20* addr, char* string, short lnk_flag ) {
     return p;
 }
 
-static char* dec_array( word_20* addr, char* string ) {
-    return any_array( addr, string, 0 );
-}
+static char* dec_array( word_20* addr, char* string ) { return any_array( addr, string, 0 ); }
 
-static char* dec_lnk_array( word_20* addr, char* string ) {
-    return any_array( addr, string, 1 );
-}
+static char* dec_lnk_array( word_20* addr, char* string ) { return any_array( addr, string, 1 ); }
 
-static char* dec_char( word_20* addr, char* string ) {
+static char* dec_char( word_20* addr, char* string )
+{
     char* p = string;
     unsigned char c;
 
@@ -3127,42 +3032,44 @@ static char* dec_char( word_20* addr, char* string ) {
 }
 
 objfunc_t objects[] = {
-    { ( char* )"System Binary", 0, DOBINT, dec_bin_int },
-    { ( char* )"Real", 0, DOREAL, dec_real },
-    { ( char* )"Long Real", 0, DOEREL, dec_long_real },
-    { ( char* )"Complex", 0, DOCMP, dec_complex },
-    { ( char* )"Long Complex", 0, DOECMP, dec_long_complex },
-    { ( char* )"Character", 0, DOCHAR, dec_char },
-    { ( char* )"Array", 0, DOARRY, dec_array },
-    { ( char* )"Linked Array", 0, DOLNKARRY, dec_lnk_array },
-    { ( char* )"String", 2, DOCSTR, dec_string },
-    { ( char* )"Hex String", 1, DOHSTR, dec_hex_string },
-    { ( char* )"List", 0, DOLIST, dec_list },
-    { ( char* )"Directory", 0, DORRP, skip_ob },
-    { ( char* )"Symbolic", 0, DOSYMB, dec_symb },
-    { ( char* )"Unit", 0, DOEXT, dec_unit },
-    { ( char* )"Tagged", 0, DOTAG, skip_ob },
-    { ( char* )"Graphic", 0, DOGROB, skip_ob },
-    { ( char* )"Library", 0, DOLIB, dec_library },
-    { ( char* )"Backup", 0, DOBAK, skip_ob },
-    { ( char* )"Library Data", 0, DOEXT0, dec_library_data },
-    { ( char* )"ACPTR", 0, DOACPTR, dec_acptr },
-    { ( char* )"External 2", 0, DOEXT2, skip_ob },
-    { ( char* )"External 3", 0, DOEXT3, skip_ob },
-    { ( char* )"External 4", 0, DOEXT4, skip_ob },
-    { ( char* )"Program", 0, DOCOL, dec_prog },
-    { ( char* )"Code", 1, DOCODE, dec_code },
-    { ( char* )"Global Ident", 0, DOIDNT, dec_global_ident },
-    { ( char* )"Local Ident", 0, DOLAM, dec_local_ident },
-    { ( char* )"XLib Name", 0, DOROMP, dec_xlib_name },
-    { ( char* )"*", 0, UM_MUL, dec_unit_op },
-    { ( char* )"/", 0, UM_DIV, dec_unit_op },
-    { ( char* )"^", 0, UM_POW, dec_unit_op },
-    { ( char* )" (char*)", 0, UM_PRE, dec_unit_op },
-    { ( char* )"_", 0, UM_END, dec_unit_op },
-    { 0, 0, 0, 0 } };
+    {( char* )"System Binary", 0, DOBINT,    dec_bin_int     },
+    { ( char* )"Real",         0, DOREAL,    dec_real        },
+    { ( char* )"Long Real",    0, DOEREL,    dec_long_real   },
+    { ( char* )"Complex",      0, DOCMP,     dec_complex     },
+    { ( char* )"Long Complex", 0, DOECMP,    dec_long_complex},
+    { ( char* )"Character",    0, DOCHAR,    dec_char        },
+    { ( char* )"Array",        0, DOARRY,    dec_array       },
+    { ( char* )"Linked Array", 0, DOLNKARRY, dec_lnk_array   },
+    { ( char* )"String",       2, DOCSTR,    dec_string      },
+    { ( char* )"Hex String",   1, DOHSTR,    dec_hex_string  },
+    { ( char* )"List",         0, DOLIST,    dec_list        },
+    { ( char* )"Directory",    0, DORRP,     skip_ob         },
+    { ( char* )"Symbolic",     0, DOSYMB,    dec_symb        },
+    { ( char* )"Unit",         0, DOEXT,     dec_unit        },
+    { ( char* )"Tagged",       0, DOTAG,     skip_ob         },
+    { ( char* )"Graphic",      0, DOGROB,    skip_ob         },
+    { ( char* )"Library",      0, DOLIB,     dec_library     },
+    { ( char* )"Backup",       0, DOBAK,     skip_ob         },
+    { ( char* )"Library Data", 0, DOEXT0,    dec_library_data},
+    { ( char* )"ACPTR",        0, DOACPTR,   dec_acptr       },
+    { ( char* )"External 2",   0, DOEXT2,    skip_ob         },
+    { ( char* )"External 3",   0, DOEXT3,    skip_ob         },
+    { ( char* )"External 4",   0, DOEXT4,    skip_ob         },
+    { ( char* )"Program",      0, DOCOL,     dec_prog        },
+    { ( char* )"Code",         1, DOCODE,    dec_code        },
+    { ( char* )"Global Ident", 0, DOIDNT,    dec_global_ident},
+    { ( char* )"Local Ident",  0, DOLAM,     dec_local_ident },
+    { ( char* )"XLib Name",    0, DOROMP,    dec_xlib_name   },
+    { ( char* )"*",            0, UM_MUL,    dec_unit_op     },
+    { ( char* )"/",            0, UM_DIV,    dec_unit_op     },
+    { ( char* )"^",            0, UM_POW,    dec_unit_op     },
+    { ( char* )" (char*)",     0, UM_PRE,    dec_unit_op     },
+    { ( char* )"_",            0, UM_END,    dec_unit_op     },
+    { 0,                       0, 0,         0               }
+};
 
-static char* decode_rpl_obj( word_20 addr, char* buf ) {
+static char* decode_rpl_obj( word_20 addr, char* buf )
+{
     word_20 prolog = 0;
     int len;
     char* p = buf;
@@ -3249,65 +3156,58 @@ struct cmd {
 }
 
 cmd_tbl[] = {
-    { "break", cmd_break,
-      "break [address]            Set breakpoint at `address\' or show "
-      "breakpoints" },
-    { "b", cmd_break, 0 },
+    {"break",   cmd_break,
+     "break [address]            Set breakpoint at `address\' or show "
+      "breakpoints"                                                                                },
+    { "b",      cmd_break,    0                                                                    },
 
-    { "cont", cmd_continue, "cont                       Continue execution" },
-    { "c", cmd_continue, 0 },
+    { "cont",   cmd_continue, "cont                       Continue execution"                      },
+    { "c",      cmd_continue, 0                                                                    },
 
     { "delete", cmd_delete,
-      "delete [all | n]           Delete breakpoint or watchpoint number "
+     "delete [all | n]           Delete breakpoint or watchpoint number "
       "`n\',\n                           all breakpoints, or current "
-      "breakpoint" },
-    { "d", cmd_delete, 0 },
+      "breakpoint"                                                                                 },
+    { "d",      cmd_delete,   0                                                                    },
 
-    { "exit", cmd_exit,
-      "exit                       Exit the emulator without saving" },
+    { "exit",   cmd_exit,     "exit                       Exit the emulator without saving"        },
 
-    { "go", cmd_go, "go address                 Set PC to `address\'" },
+    { "go",     cmd_go,       "go address                 Set PC to `address\'"                    },
 
-    { "help", cmd_help, "help                       Display this information" },
-    { "h", cmd_help, 0 },
-    { "?", cmd_help, 0 },
+    { "help",   cmd_help,     "help                       Display this information"                },
+    { "h",      cmd_help,     0                                                                    },
+    { "?",      cmd_help,     0                                                                    },
 
-    { "load", cmd_load,
-      "load                       Load emulator-state from files" },
+    { "load",   cmd_load,     "load                       Load emulator-state from files"          },
 
-    { "mode", cmd_mode,
-      "mode [hp | class]          Show or set disassembler mode" },
+    { "mode",   cmd_mode,     "mode [hp | class]          Show or set disassembler mode"           },
 
-    { "quit", cmd_quit,
-      "quit                       Exit the emulator after saving its state" },
-    { "q", cmd_quit, 0 },
+    { "quit",   cmd_quit,     "quit                       Exit the emulator after saving its state"},
+    { "q",      cmd_quit,     0                                                                    },
 
-    { "ram", cmd_ram, "ram                        Show RAM layout" },
+    { "ram",    cmd_ram,      "ram                        Show RAM layout"                         },
 
-    { "reg", cmd_regs,
-      "reg [register [hexvalue]]  Display or set register value" },
-    { "r", cmd_regs, 0 },
+    { "reg",    cmd_regs,     "reg [register [hexvalue]]  Display or set register value"           },
+    { "r",      cmd_regs,     0                                                                    },
 
-    { "reset", cmd_reset,
-      "reset                      Set the HP48\'s PC to ZERO" },
+    { "reset",  cmd_reset,    "reset                      Set the HP48\'s PC to ZERO"              },
 
-    { "save", cmd_save,
-      "save                       Save emulator-state to files" },
+    { "save",   cmd_save,     "save                       Save emulator-state to files"            },
 
-    { "stack", cmd_stack, "stack                      Display RPL stack" },
+    { "stack",  cmd_stack,    "stack                      Display RPL stack"                       },
 
-    { "stat", cmd_stat,
-      "stat                       Display statistics for the emulator" },
+    { "stat",   cmd_stat,     "stat                       Display statistics for the emulator"     },
 
-    { "step", cmd_step,
-      "step [n]                   Step one or n Instruction(s)" },
-    { "s", cmd_step, 0 },
+    { "step",   cmd_step,     "step [n]                   Step one or n Instruction(s)"            },
+    { "s",      cmd_step,     0                                                                    },
 
-    { "where", cmd_rstk, "where                      Show ML return stack" },
+    { "where",  cmd_rstk,     "where                      Show ML return stack"                    },
 
-    { 0, 0, 0 } };
+    { 0,        0,            0                                                                    }
+};
 
-static int check_breakpoint( int type, word_20 addr ) {
+static int check_breakpoint( int type, word_20 addr )
+{
     struct breakpoint* bp;
     int i, n;
 
@@ -3323,13 +3223,11 @@ static int check_breakpoint( int type, word_20 addr ) {
             goto hit_it;
 
         if ( bp->flags & type && addr == bp->addr ) {
-        hit_it:
+hit_it:
             if ( type == BP_READ ) {
-                printf( "%.5lX: Read watchpoint %d hit at %.5lX\n", saturn.PC,
-                        i, addr );
+                printf( "%.5lX: Read watchpoint %d hit at %.5lX\n", saturn.PC, i, addr );
             } else if ( type == BP_WRITE ) {
-                printf( "%.5lX: Write watchpoint %d hit at %.5lX\n", saturn.PC,
-                        i, addr );
+                printf( "%.5lX: Write watchpoint %d hit at %.5lX\n", saturn.PC, i, addr );
             } else
                 printf( "Breakpoint %d hit at %.5lX\n", i, addr );
 
@@ -3339,7 +3237,8 @@ static int check_breakpoint( int type, word_20 addr ) {
     return 0;
 }
 
-static char* read_str( char* str, int n, int fp ) {
+static char* read_str( char* str, int n, int fp )
+{
     int cc;
     int flags;
 
@@ -3366,13 +3265,15 @@ static char* read_str( char* str, int n, int fp ) {
     /* not reached */
 }
 
-static inline void str_to_upper( char* arg ) {
+static inline void str_to_upper( char* arg )
+{
     for ( unsigned long i = 0; i < strlen( arg ); i++ )
         if ( 'a' <= arg[ i ] && arg[ i ] <= 'z' )
             arg[ i ] = ( char )( ( int )arg[ i ] - ( int )'a' + ( int )'A' );
 }
 
-static int decode_dec( int* num, char* arg ) {
+static int decode_dec( int* num, char* arg )
+{
     if ( arg == ( char* )0 ) {
         printf( "Command requires an argument.\n" );
         return 0;
@@ -3393,7 +3294,8 @@ static int decode_dec( int* num, char* arg ) {
     return 1;
 }
 
-static int decode_20( word_20* addr, char* arg ) {
+static int decode_20( word_20* addr, char* arg )
+{
     if ( arg == ( char* )0 ) {
         printf( "Command requires an argument.\n" );
         return 0;
@@ -3416,7 +3318,8 @@ static int decode_20( word_20* addr, char* arg ) {
     return 1;
 }
 
-static int decode_32( word_32* addr, char* arg ) {
+static int decode_32( word_32* addr, char* arg )
+{
     if ( arg == ( char* )0 ) {
         printf( "Command requires an argument.\n" );
         return 0;
@@ -3438,7 +3341,8 @@ static int decode_32( word_32* addr, char* arg ) {
     return 1;
 }
 
-static int decode_64( word_64* addr, char* arg ) {
+static int decode_64( word_64* addr, char* arg )
+{
     if ( arg == ( char* )0 ) {
         printf( "Command requires an argument.\n" );
         return 0;
@@ -3460,7 +3364,8 @@ static int decode_64( word_64* addr, char* arg ) {
     return 1;
 }
 
-static char* str_nibbles( word_20 addr, int n ) {
+static char* str_nibbles( word_20 addr, int n )
+{
     static char str[ 1025 ];
     char* cp;
     int i;
@@ -3479,14 +3384,14 @@ static char* str_nibbles( word_20 addr, int n ) {
     return str;
 }
 
-static int confirm( const char* prompt ) {
+static int confirm( const char* prompt )
+{
     char ans[ 80 ];
 
     printf( "%s (y or n) ", prompt );
     fflush( stdout );
     read_str( ans, sizeof( ans ), 0 );
-    while ( ans[ 0 ] != 'y' && ans[ 0 ] != 'Y' && ans[ 0 ] != 'n' &&
-            ans[ 0 ] != 'N' ) {
+    while ( ans[ 0 ] != 'y' && ans[ 0 ] != 'Y' && ans[ 0 ] != 'n' && ans[ 0 ] != 'N' ) {
         printf( "Please answer y or n.\n" );
         printf( "%s (y or n) ", prompt );
         fflush( stdout );
@@ -3500,7 +3405,8 @@ static int confirm( const char* prompt ) {
     }
 }
 
-static void cmd_break( int argc, char** argv ) {
+static void cmd_break( int argc, char** argv )
+{
     int i;
     word_20 addr;
 
@@ -3509,14 +3415,11 @@ static void cmd_break( int argc, char** argv ) {
             if ( bkpt_tbl[ i ].flags == 0 )
                 continue;
             if ( bkpt_tbl[ i ].flags == BP_EXEC ) {
-                printf( "Breakpoint %d at 0x%.5lX\n", i + 1,
-                        bkpt_tbl[ i ].addr );
+                printf( "Breakpoint %d at 0x%.5lX\n", i + 1, bkpt_tbl[ i ].addr );
             } else if ( bkpt_tbl[ i ].flags == BP_RANGE ) {
-                printf( "Range watchpoint %d at 0x%.5lX - 0x%.5lX\n", i + 1,
-                        bkpt_tbl[ i ].addr, bkpt_tbl[ i ].end_addr );
+                printf( "Range watchpoint %d at 0x%.5lX - 0x%.5lX\n", i + 1, bkpt_tbl[ i ].addr, bkpt_tbl[ i ].end_addr );
             } else {
-                printf( "Watchpoint %d at 0x%.5lX\n", i + 1,
-                        bkpt_tbl[ i ].addr );
+                printf( "Watchpoint %d at 0x%.5lX\n", i + 1, bkpt_tbl[ i ].addr );
             }
         }
     } else {
@@ -3528,8 +3431,7 @@ static void cmd_break( int argc, char** argv ) {
             if ( bkpt_tbl[ i ].flags == 0 ) {
                 bkpt_tbl[ i ].flags = BP_EXEC;
                 bkpt_tbl[ i ].addr = addr;
-                printf( "Breakpoint %d at 0x%.5lX\n", i + 1,
-                        bkpt_tbl[ i ].addr );
+                printf( "Breakpoint %d at 0x%.5lX\n", i + 1, bkpt_tbl[ i ].addr );
                 num_bkpts++;
                 return;
             }
@@ -3540,23 +3442,20 @@ static void cmd_break( int argc, char** argv ) {
 
 static void cmd_continue( int argc, char** argv ) { continue_flag = 1; }
 
-static void cmd_delete( int argc, char** argv ) {
+static void cmd_delete( int argc, char** argv )
+{
     int num;
 
     if ( argc == 1 ) {
         for ( num = 0; num < MAX_BREAKPOINTS; num++ ) {
             if ( bkpt_tbl[ num ].addr == saturn.PC ) {
                 if ( bkpt_tbl[ num ].flags == BP_EXEC ) {
-                    printf( "Breakpoint %d at 0x%.5lX deleted.\n", num + 1,
-                            bkpt_tbl[ num ].addr );
+                    printf( "Breakpoint %d at 0x%.5lX deleted.\n", num + 1, bkpt_tbl[ num ].addr );
                 } else if ( bkpt_tbl[ num ].flags == BP_RANGE ) {
-                    printf(
-                        "Range watchpoint %d at 0x%.5lX - 0x%.5lX deleted.\n",
-                        num + 1, bkpt_tbl[ num ].addr,
-                        bkpt_tbl[ num ].end_addr );
+                    printf( "Range watchpoint %d at 0x%.5lX - 0x%.5lX deleted.\n", num + 1, bkpt_tbl[ num ].addr,
+                            bkpt_tbl[ num ].end_addr );
                 } else if ( bkpt_tbl[ num ].flags ) {
-                    printf( "Watchpoint %d at 0x%.5lX deleted.\n", num + 1,
-                            bkpt_tbl[ num ].addr );
+                    printf( "Watchpoint %d at 0x%.5lX deleted.\n", num + 1, bkpt_tbl[ num ].addr );
                 }
                 num_bkpts--;
                 bkpt_tbl[ num ].addr = 0;
@@ -3580,16 +3479,12 @@ static void cmd_delete( int argc, char** argv ) {
                 }
                 num -= 1;
                 if ( bkpt_tbl[ num ].flags == BP_EXEC ) {
-                    printf( "Breakpoint %d at 0x%.5lX deleted.\n", num + 1,
-                            bkpt_tbl[ num ].addr );
+                    printf( "Breakpoint %d at 0x%.5lX deleted.\n", num + 1, bkpt_tbl[ num ].addr );
                 } else if ( bkpt_tbl[ num ].flags == BP_RANGE ) {
-                    printf(
-                        "Range watchpoint %d at 0x%.5lX - 0x%.5lX deleted.\n",
-                        num + 1, bkpt_tbl[ num ].addr,
-                        bkpt_tbl[ num ].end_addr );
+                    printf( "Range watchpoint %d at 0x%.5lX - 0x%.5lX deleted.\n", num + 1, bkpt_tbl[ num ].addr,
+                            bkpt_tbl[ num ].end_addr );
                 } else if ( bkpt_tbl[ num ].flags ) {
-                    printf( "Watchpoint %d at 0x%.5lX deleted.\n", num + 1,
-                            bkpt_tbl[ num ].addr );
+                    printf( "Watchpoint %d at 0x%.5lX deleted.\n", num + 1, bkpt_tbl[ num ].addr );
                 }
                 num_bkpts--;
                 bkpt_tbl[ num ].addr = 0;
@@ -3599,14 +3494,16 @@ static void cmd_delete( int argc, char** argv ) {
     }
 }
 
-static void cmd_exit( int argc, char** argv ) {
+static void cmd_exit( int argc, char** argv )
+{
     if ( confirm( "Exit the emulator WITHOUT saving its state?" ) ) {
         printf( "Exit.\n" );
         exit( 0 );
     }
 }
 
-static void cmd_go( int argc, char** argv ) {
+static void cmd_go( int argc, char** argv )
+{
     word_20 addr;
 
     str_to_upper( argv[ 1 ] );
@@ -3616,7 +3513,8 @@ static void cmd_go( int argc, char** argv ) {
     }
 }
 
-static void cmd_help( int argc, char** argv ) {
+static void cmd_help( int argc, char** argv )
+{
     int i;
 
     for ( i = 0; cmd_tbl[ i ].name; i++ ) {
@@ -3626,7 +3524,8 @@ static void cmd_help( int argc, char** argv ) {
     }
 }
 
-static void cmd_load( int argc, char** argv ) {
+static void cmd_load( int argc, char** argv )
+{
     saturn_t tmp_saturn;
     device_t tmp_device;
 
@@ -3675,10 +3574,10 @@ static void cmd_load( int argc, char** argv ) {
     }
 }
 
-static void cmd_mode( int argc, char** argv ) {
+static void cmd_mode( int argc, char** argv )
+{
     if ( argc < 2 ) {
-        printf( "Disassembler uses %s mnemonics.\n",
-                mode_name[ disassembler_mode ] );
+        printf( "Disassembler uses %s mnemonics.\n", mode_name[ disassembler_mode ] );
     } else {
         str_to_upper( argv[ 1 ] );
         if ( !strcmp( "HP", argv[ 1 ] ) ) {
@@ -3686,13 +3585,13 @@ static void cmd_mode( int argc, char** argv ) {
         } else if ( !strcmp( "CLASS", argv[ 1 ] ) ) {
             disassembler_mode = CLASS_MNEMONICS;
         } else {
-            printf( "Unknown disassembler mode %s. Try \"help\".\n",
-                    argv[ 1 ] );
+            printf( "Unknown disassembler mode %s. Try \"help\".\n", argv[ 1 ] );
         }
     }
 }
 
-static void cmd_quit( int argc, char** argv ) {
+static void cmd_quit( int argc, char** argv )
+{
     if ( confirm( "Quit the emulator and save its state?" ) ) {
         printf( "Exit.\n" );
         exit_emulator();
@@ -3700,16 +3599,17 @@ static void cmd_quit( int argc, char** argv ) {
     }
 }
 
-static void set_reg( word_64 val, int n, unsigned char* r ) {
+static void set_reg( word_64 val, int n, unsigned char* r )
+{
     int i;
 
     for ( i = 0; i < n; i++ ) {
-        r[ i ] =
-            ( unsigned char )( ( val & ( 0xf << ( 4 * i ) ) ) >> ( 4 * i ) );
+        r[ i ] = ( unsigned char )( ( val & ( 0xf << ( 4 * i ) ) ) >> ( 4 * i ) );
     }
 }
 
-static void dump_reg( const char* reg, int n, unsigned char* r ) {
+static void dump_reg( const char* reg, int n, unsigned char* r )
+{
     int i;
 
     printf( "%s:\t", reg );
@@ -3719,14 +3619,16 @@ static void dump_reg( const char* reg, int n, unsigned char* r ) {
     printf( "\n" );
 }
 
-static void set_st( word_64 val ) {
+static void set_st( word_64 val )
+{
     int i;
 
     for ( i = 0; i < 16; i++ )
         saturn.PSTAT[ i ] = ( val & ( 1 << i ) ) ? 1 : 0;
 }
 
-static void dump_st( void ) {
+static void dump_st( void )
+{
     int i;
     int val;
 
@@ -3750,7 +3652,8 @@ static void dump_st( void ) {
     }
 }
 
-static void set_hst( word_64 val ) {
+static void set_hst( word_64 val )
+{
     saturn.XM = 0;
     saturn.SB = 0;
     saturn.SR = 0;
@@ -3766,7 +3669,8 @@ static void set_hst( word_64 val ) {
         saturn.MP = 1;
 }
 
-static void dump_hst( void ) {
+static void dump_hst( void )
+{
     short hst = 0;
     if ( saturn.XM != 0 )
         hst |= 1;
@@ -3776,19 +3680,16 @@ static void dump_hst( void ) {
         hst |= 3;
     if ( saturn.MP != 0 )
         hst |= 4;
-    printf( "   HST:\t%.1X    (%s%s%s%s)\n", hst, saturn.MP ? "MP " : "-- ",
-            saturn.SR ? "SR " : "-- ", saturn.SB ? "SB " : "-- ",
+    printf( "   HST:\t%.1X    (%s%s%s%s)\n", hst, saturn.MP ? "MP " : "-- ", saturn.SR ? "SR " : "-- ", saturn.SB ? "SB " : "-- ",
             saturn.XM ? "XM" : "--" );
 }
 
-static const char* mctl_str_gx[] = { "MMIO       ", "SysRAM     ",
-                                     "Bank Switch", "Port 1     ",
-                                     "Port 2     ", "SysROM     " };
+static const char* mctl_str_gx[] = { "MMIO       ", "SysRAM     ", "Bank Switch", "Port 1     ", "Port 2     ", "SysROM     " };
 
-static const char* mctl_str_sx[] = { "MMIO  ", "SysRAM", "Port 1",
-                                     "Port 2", "Extra ", "SysROM" };
+static const char* mctl_str_sx[] = { "MMIO  ", "SysRAM", "Port 1", "Port 2", "Extra ", "SysROM" };
 
-static void cmd_ram( int argc, char** argv ) {
+static void cmd_ram( int argc, char** argv )
+{
     int i;
 
     for ( i = 0; i < 5; i++ ) {
@@ -3796,20 +3697,17 @@ static void cmd_ram( int argc, char** argv ) {
         if ( saturn.mem_cntl[ i ].unconfigured )
             printf( "unconfigured\n" );
         else if ( i == 0 )
-            printf( "configured to 0x%.5lx\n",
-                    saturn.mem_cntl[ i ].config[ 0 ] );
+            printf( "configured to 0x%.5lx\n", saturn.mem_cntl[ i ].config[ 0 ] );
         else
-            printf( "configured to 0x%.5lX - 0x%.5lX\n",
-                    saturn.mem_cntl[ i ].config[ 0 ],
-                    ( saturn.mem_cntl[ i ].config[ 0 ] |
-                      ~saturn.mem_cntl[ i ].config[ 1 ] ) &
-                        0xfffff );
+            printf( "configured to 0x%.5lX - 0x%.5lX\n", saturn.mem_cntl[ i ].config[ 0 ],
+                    ( saturn.mem_cntl[ i ].config[ 0 ] | ~saturn.mem_cntl[ i ].config[ 1 ] ) & 0xfffff );
     }
     if ( opt_gx )
         printf( "Port 2      switched to bank %d\n", saturn.bank_switch );
 }
 
-static void cmd_regs( int argc, char** argv ) {
+static void cmd_regs( int argc, char** argv )
+{
     int i;
     word_64 val;
 
@@ -3817,8 +3715,7 @@ static void cmd_regs( int argc, char** argv ) {
         /*
          * dump all registers
          */
-        printf( "CPU is in %s mode. Registers:\n",
-                saturn.hexmode == HEX ? "HEX" : "DEC" );
+        printf( "CPU is in %s mode. Registers:\n", saturn.hexmode == HEX ? "HEX" : "DEC" );
         dump_reg( "     A", 16, saturn.A );
         dump_reg( "     B", 16, saturn.B );
         dump_reg( "     C", 16, saturn.C );
@@ -3981,7 +3878,8 @@ static void cmd_regs( int argc, char** argv ) {
     }
 }
 
-static void cmd_save( int argc, char** argv ) {
+static void cmd_save( int argc, char** argv )
+{
     if ( write_files() ) {
         printf( "Saving done.\n" );
     } else {
@@ -3995,7 +3893,8 @@ struct se {
     struct se* se_next;
 };
 
-static void cmd_stack( int argc, char** argv ) {
+static void cmd_stack( int argc, char** argv )
+{
     word_20 dsktop, dskbot;
     word_20 sp = 0, end = 0, ent = 0;
     word_20 ram_base, ram_mask;
@@ -4065,13 +3964,15 @@ static void cmd_stack( int argc, char** argv ) {
     saturn.mem_cntl[ 1 ].config[ 1 ] = ram_mask;
 }
 
-static void cmd_stat( int argc, char** argv ) {
+static void cmd_stat( int argc, char** argv )
+{
     printf( "Instructions/s: %ld\n", saturn.i_per_s );
     printf( "Timer 1 I/TICK: %d\n", saturn.t1_tick );
     printf( "Timer 2 I/TICK: %d\n", saturn.t2_tick );
 }
 
-static void cmd_step( int argc, char** argv ) {
+static void cmd_step( int argc, char** argv )
+{
     word_20 next_instr;
     word_32 n;
     int leave;
@@ -4134,14 +4035,16 @@ static void cmd_step( int argc, char** argv ) {
     }
 }
 
-static void cmd_reset( int argc, char** argv ) {
+static void cmd_reset( int argc, char** argv )
+{
     if ( confirm( "Do a RESET (PC = 00000)?" ) ) {
         saturn.PC = 0;
         enter_debugger &= ~ILLEGAL_INSTRUCTION;
     }
 }
 
-static void cmd_rstk( int argc, char** argv ) {
+static void cmd_rstk( int argc, char** argv )
+{
     int i, j;
 
     disassemble( saturn.PC, instr );
@@ -4158,7 +4061,8 @@ static void cmd_rstk( int argc, char** argv ) {
     }
 }
 
-int debug( void ) {
+int debug( void )
+{
     t1_t2_ticks ticks;
     struct cmd* cmdp;
     char* cp;
@@ -4175,8 +4079,7 @@ int debug( void ) {
     if ( !useDebugger ) {
         if ( enter_debugger & ILLEGAL_INSTRUCTION ) {
             if ( verbose )
-                fprintf( stderr, "reset (illegal instruction at 0x%.5lX)\n",
-                         saturn.PC );
+                fprintf( stderr, "reset (illegal instruction at 0x%.5lX)\n", saturn.PC );
             saturn.PC = 0;
         }
         if ( enter_debugger & USER_INTERRUPT )
@@ -4214,13 +4117,11 @@ int debug( void ) {
     continue_flag = 0;
 
     if ( enter_debugger & ILLEGAL_INSTRUCTION ) {
-        printf( "ILLEGAL INSTRUCTION at %.5lX : %s\n", saturn.PC,
-                str_nibbles( saturn.PC, 16 ) );
+        printf( "ILLEGAL INSTRUCTION at %.5lX : %s\n", saturn.PC, str_nibbles( saturn.PC, 16 ) );
     }
 
     if ( enter_debugger & TRAP_INSTRUCTION ) {
-        printf( "TRAP at %.5lX : %s\n", saturn.PC - 5,
-                str_nibbles( saturn.PC - 5, 16 ) );
+        printf( "TRAP at %.5lX : %s\n", saturn.PC - 5, str_nibbles( saturn.PC - 5, 16 ) );
         enter_debugger &= ~TRAP_INSTRUCTION;
     }
 
@@ -4341,7 +4242,8 @@ int debug( void ) {
     return 0;
 }
 
-void emulate_debug( void ) {
+void emulate_debug( void )
+{
     do {
         step_instruction();
 

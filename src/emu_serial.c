@@ -7,9 +7,9 @@
 #include <termios.h>
 #include <unistd.h>
 
-#include "runtime_options.h"
 #include "emulator.h"
 #include "emulator_inner.h"
+#include "runtime_options.h"
 
 static int wire_fd;
 static int ir_fd;
@@ -20,7 +20,8 @@ extern int rece_instr;
 char* wire_name = ( char* )0;
 char* ir_name = ( char* )0;
 
-void update_connection_display( void ) {
+void update_connection_display( void )
+{
     if ( wire_fd == -1 ) {
         if ( wire_name )
             free( wire_name );
@@ -33,7 +34,8 @@ void update_connection_display( void ) {
     }
 }
 
-int init_serial( void ) {
+int init_serial( void )
+{
     int c;
     int n;
     char tty_dev_name[ 128 ];
@@ -43,16 +45,14 @@ int init_serial( void ) {
     ttyp = -1;
     if ( useTerminal ) {
         /* Unix98 PTY (Preferred) */
-        if ( ( wire_fd = open( "/dev/ptmx", O_RDWR | O_NONBLOCK, 0666 ) ) >=
-             0 ) {
+        if ( ( wire_fd = open( "/dev/ptmx", O_RDWR | O_NONBLOCK, 0666 ) ) >= 0 ) {
             grantpt( wire_fd );
             unlockpt( wire_fd );
             if ( ptsname_r( wire_fd, tty_dev_name, 128 ) ) {
                 perror( "Could not get the name of the wire device." );
                 exit( -1 );
             }
-            if ( ( ttyp = open( tty_dev_name, O_RDWR | O_NDELAY, 0666 ) ) >=
-                 0 ) {
+            if ( ( ttyp = open( tty_dev_name, O_RDWR | O_NDELAY, 0666 ) ) >= 0 ) {
                 if ( verbose )
                     printf( "wire connection on %s\n", tty_dev_name );
                 wire_name = strdup( tty_dev_name );
@@ -64,9 +64,7 @@ int init_serial( void ) {
             do {
                 for ( n = 0; n < 16; n++ ) {
                     sprintf( tty_dev_name, "/dev/pty%c%x", c, n );
-                    if ( ( wire_fd =
-                               open( tty_dev_name, O_RDWR | O_EXCL | O_NDELAY,
-                                     0666 ) ) >= 0 ) {
+                    if ( ( wire_fd = open( tty_dev_name, O_RDWR | O_EXCL | O_NDELAY, 0666 ) ) >= 0 ) {
                         ttyp = wire_fd;
                         sprintf( tty_dev_name, "/dev/tty%c%x", c, n );
                         if ( verbose )
@@ -88,8 +86,7 @@ int init_serial( void ) {
 #endif
         {
             if ( verbose )
-                fprintf( stderr, "ioctl(wire, TCGETS) failed, errno = %d\n",
-                         errno );
+                fprintf( stderr, "ioctl(wire, TCGETS) failed, errno = %d\n", errno );
             wire_fd = -1;
             ttyp = -1;
         }
@@ -112,8 +109,7 @@ int init_serial( void ) {
 #endif
         {
             if ( verbose )
-                fprintf( stderr, "ioctl(wire, TCSETS) failed, errno = %d\n",
-                         errno );
+                fprintf( stderr, "ioctl(wire, TCSETS) failed, errno = %d\n", errno );
             wire_fd = -1;
             ttyp = -1;
         }
@@ -137,8 +133,7 @@ int init_serial( void ) {
 #endif
         {
             if ( verbose )
-                fprintf( stderr, "ioctl(IR, TCGETS) failed, errno = %d\n",
-                         errno );
+                fprintf( stderr, "ioctl(IR, TCGETS) failed, errno = %d\n", errno );
             ir_fd = -1;
         }
     }
@@ -160,8 +155,7 @@ int init_serial( void ) {
 #endif
         {
             if ( verbose )
-                fprintf( stderr, "ioctl(IR, TCSETS) failed, errno = %d\n",
-                         errno );
+                fprintf( stderr, "ioctl(IR, TCSETS) failed, errno = %d\n", errno );
             ir_fd = -1;
         }
     }
@@ -169,7 +163,8 @@ int init_serial( void ) {
     return 1;
 }
 
-void serial_baud( int baud ) {
+void serial_baud( int baud )
+{
     int error = 0;
     struct termios ttybuf;
 
@@ -181,8 +176,7 @@ void serial_baud( int baud ) {
 #endif
         {
             if ( verbose )
-                fprintf( stderr, "ioctl(IR,  TCGETS) failed, errno = %d\n",
-                         errno );
+                fprintf( stderr, "ioctl(IR,  TCGETS) failed, errno = %d\n", errno );
             ir_fd = -1;
             error = 1;
         }
@@ -195,33 +189,33 @@ void serial_baud( int baud ) {
             ttybuf.c_cflag |= B1200;
             break;
         case 1: /* 1920 */
-#ifdef B1920
+#  ifdef B1920
             ttybuf.c_cflag |= B1920;
-#endif
+#  endif
             break;
         case 2: /* 2400 */
             ttybuf.c_cflag |= B2400;
             break;
         case 3: /* 3840 */
-#ifdef B3840
+#  ifdef B3840
             ttybuf.c_cflag |= B3840;
-#endif
+#  endif
             break;
         case 4: /* 4800 */
             ttybuf.c_cflag |= B4800;
             break;
         case 5: /* 7680 */
-#ifdef B7680
+#  ifdef B7680
             ttybuf.c_cflag |= B7680;
-#endif
+#  endif
             break;
         case 6: /* 9600 */
             ttybuf.c_cflag |= B9600;
             break;
         case 7: /* 15360 */
-#ifdef B15360
+#  ifdef B15360
             ttybuf.c_cflag |= B15360;
-#endif
+#  endif
             break;
     }
 
@@ -239,33 +233,33 @@ void serial_baud( int baud ) {
             ttybuf.c_cflag |= B1200;
             break;
         case 1: /* 1920 */
-#ifdef B1920
+#  ifdef B1920
             ttybuf.c_cflag |= B1920;
-#endif
+#  endif
             break;
         case 2: /* 2400 */
             ttybuf.c_cflag |= B2400;
             break;
         case 3: /* 3840 */
-#ifdef B3840
+#  ifdef B3840
             ttybuf.c_cflag |= B3840;
-#endif
+#  endif
             break;
         case 4: /* 4800 */
             ttybuf.c_cflag |= B4800;
             break;
         case 5: /* 7680 */
-#ifdef B7680
+#  ifdef B7680
             ttybuf.c_cflag |= B7680;
-#endif
+#  endif
             break;
         case 6: /* 9600 */
             ttybuf.c_cflag |= B9600;
             break;
         case 7: /* 15360 */
-#ifdef B15360
+#  ifdef B15360
             ttybuf.c_cflag |= B15360;
-#endif
+#  endif
             break;
     }
 
@@ -283,8 +277,7 @@ void serial_baud( int baud ) {
 #endif
         {
             if ( verbose )
-                fprintf( stderr, "ioctl(IR,  TCSETS) failed, errno = %d\n",
-                         errno );
+                fprintf( stderr, "ioctl(IR,  TCSETS) failed, errno = %d\n", errno );
             ir_fd = -1;
             error = 1;
         }
@@ -298,8 +291,7 @@ void serial_baud( int baud ) {
 #endif
         {
             if ( verbose )
-                fprintf( stderr, "ioctl(wire, TCGETS) failed, errno = %d\n",
-                         errno );
+                fprintf( stderr, "ioctl(wire, TCGETS) failed, errno = %d\n", errno );
             wire_fd = -1;
             ttyp = -1;
             error = 1;
@@ -316,33 +308,33 @@ void serial_baud( int baud ) {
             ttybuf.c_cflag |= B1200;
             break;
         case 1: /* 1920 */
-#ifdef B1920
+#  ifdef B1920
             ttybuf.c_cflag |= B1920;
-#endif
+#  endif
             break;
         case 2: /* 2400 */
             ttybuf.c_cflag |= B2400;
             break;
         case 3: /* 3840 */
-#ifdef B3840
+#  ifdef B3840
             ttybuf.c_cflag |= B3840;
-#endif
+#  endif
             break;
         case 4: /* 4800 */
             ttybuf.c_cflag |= B4800;
             break;
         case 5: /* 7680 */
-#ifdef B7680
+#  ifdef B7680
             ttybuf.c_cflag |= B7680;
-#endif
+#  endif
             break;
         case 6: /* 9600 */
             ttybuf.c_cflag |= B9600;
             break;
         case 7: /* 15360 */
-#ifdef B15360
+#  ifdef B15360
             ttybuf.c_cflag |= B15360;
-#endif
+#  endif
             break;
     }
 
@@ -360,8 +352,7 @@ void serial_baud( int baud ) {
 #endif
         {
             if ( verbose )
-                fprintf( stderr, "ioctl(wire, TCSETS) failed, errno = %d\n",
-                         errno );
+                fprintf( stderr, "ioctl(wire, TCSETS) failed, errno = %d\n", errno );
             wire_fd = -1;
             ttyp = -1;
             error = 1;
@@ -371,7 +362,8 @@ void serial_baud( int baud ) {
         update_connection_display();
 }
 
-void transmit_char( void ) {
+void transmit_char( void )
+{
     if ( saturn.ir_ctrl & 0x04 ) {
         if ( ir_fd == -1 ) {
             saturn.tcs &= 0x0e;
@@ -426,7 +418,8 @@ void transmit_char( void ) {
 
 #define NR_BUFFER 256
 
-void receive_char( void ) {
+void receive_char( void )
+{
     struct timeval tout;
     fd_set rfds;
     int nfd;
@@ -455,8 +448,7 @@ void receive_char( void ) {
             FD_SET( wire_fd, &rfds );
             nfd = wire_fd + 1;
         }
-        if ( ( nfd = select( nfd, &rfds, ( fd_set* )0, ( fd_set* )0, &tout ) ) >
-             0 ) {
+        if ( ( nfd = select( nfd, &rfds, ( fd_set* )0, ( fd_set* )0, &tout ) ) > 0 ) {
             if ( saturn.ir_ctrl & 0x04 ) {
                 if ( FD_ISSET( ir_fd, &rfds ) ) {
                     nrd = read( ir_fd, buf, NR_BUFFER );

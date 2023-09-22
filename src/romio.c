@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 #include "romio.h"
 
@@ -11,7 +11,8 @@
 unsigned int opt_gx = 0;
 unsigned int rom_size = 0;
 
-int read_rom_file( const char* name, unsigned char** mem, unsigned int* size ) {
+int read_rom_file( const char* name, unsigned char** mem, unsigned int* size )
+{
     struct stat st;
     FILE* fp;
     unsigned char* tmp_mem;
@@ -38,11 +39,9 @@ int read_rom_file( const char* name, unsigned char** mem, unsigned int* size ) {
         return 0;
     }
 
-    if ( four[ 0 ] == 0x02 && four[ 1 ] == 0x03 && four[ 2 ] == 0x06 &&
-         four[ 3 ] == 0x09 ) {
+    if ( four[ 0 ] == 0x02 && four[ 1 ] == 0x03 && four[ 2 ] == 0x06 && four[ 3 ] == 0x09 ) {
         *size = st.st_size;
-    } else if ( four[ 0 ] == 0x32 && four[ 1 ] == 0x96 && four[ 2 ] == 0x1b &&
-                four[ 3 ] == 0x80 ) {
+    } else if ( four[ 0 ] == 0x32 && four[ 1 ] == 0x96 && four[ 2 ] == 0x1b && four[ 3 ] == 0x80 ) {
         *size = 2 * st.st_size;
     } else if ( four[ 1 ] == 0x49 ) {
         fprintf( stderr, "%s is an HP49 ROM\n", name );
@@ -83,8 +82,7 @@ int read_rom_file( const char* name, unsigned char** mem, unsigned int* size ) {
          */
 
         if ( st.st_size != *size / 2 ) {
-            fprintf( stderr, "strange size %s, expected %d, found %ld\n", name,
-                     *size / 2, st.st_size );
+            fprintf( stderr, "strange size %s, expected %d, found %ld\n", name, *size / 2, st.st_size );
             free( *mem );
             *mem = NULL;
             *size = 0;
@@ -92,8 +90,7 @@ int read_rom_file( const char* name, unsigned char** mem, unsigned int* size ) {
             return 0;
         }
 
-        if ( NULL ==
-             ( tmp_mem = ( unsigned char* )malloc( ( size_t )st.st_size ) ) ) {
+        if ( NULL == ( tmp_mem = ( unsigned char* )malloc( ( size_t )st.st_size ) ) ) {
             for ( i = 0, j = 0; i < *size / 2; i++ ) {
                 if ( 1 != fread( &byte, 1, 1, fp ) ) {
                     fprintf( stderr, "can\'t read %s\n", name );
@@ -132,16 +129,13 @@ int read_rom_file( const char* name, unsigned char** mem, unsigned int* size ) {
         if ( *size == ROM_SIZE_GX ) {
             opt_gx = 1;
         } else if ( *size == 4 * ROM_SIZE_GX ) {
-            fprintf( stderr, "%s seems to be HP49 ROM, but size is 0x%x\n",
-                     name, *size );
+            fprintf( stderr, "%s seems to be HP49 ROM, but size is 0x%x\n", name, *size );
             opt_gx = 2;
         } else if ( *size == 8 * ROM_SIZE_GX ) {
-            fprintf( stderr, "%s seems to be HP49 ROM, but size is 0x%x\n",
-                     name, *size );
+            fprintf( stderr, "%s seems to be HP49 ROM, but size is 0x%x\n", name, *size );
             opt_gx = 2;
         } else {
-            fprintf( stderr, "%s seems to be G/GX ROM, but size is 0x%x\n",
-                     name, *size );
+            fprintf( stderr, "%s seems to be G/GX ROM, but size is 0x%x\n", name, *size );
             free( *mem );
             *mem = NULL;
             *size = 0;
@@ -151,8 +145,7 @@ int read_rom_file( const char* name, unsigned char** mem, unsigned int* size ) {
         if ( *size == ROM_SIZE_SX ) {
             opt_gx = 0;
         } else {
-            fprintf( stderr, "%s seems to be S/SX ROM, but size is 0x%x\n",
-                     name, *size );
+            fprintf( stderr, "%s seems to be S/SX ROM, but size is 0x%x\n", name, *size );
             free( *mem );
             *mem = NULL;
             *size = 0;

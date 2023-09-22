@@ -6,14 +6,12 @@
 
 extern long nibble_masks[ 16 ];
 
-static int start_fields[] = { -1, 0, 2,  0, 15, 3, 0, 0, -1, 0,
-                              2,  0, 15, 3, 0,  0, 0, 0, 0 };
+static int start_fields[] = { -1, 0, 2, 0, 15, 3, 0, 0, -1, 0, 2, 0, 15, 3, 0, 0, 0, 0, 0 };
 
-static int end_fields[] = { -1, -1, 2,  2,  15, 14, 1, 15, -1, -1,
-                            2,  2,  15, 14, 1,  4,  3, 2,  0 };
+static int end_fields[] = { -1, -1, 2, 2, 15, 14, 1, 15, -1, -1, 2, 2, 15, 14, 1, 4, 3, 2, 0 };
 
-static inline int
-get_start( int code ) { /* FIXME: Duplicate from hp48emu_actions.c */
+static inline int get_start( int code )
+{ /* FIXME: Duplicate from hp48emu_actions.c */
     int s;
 
     if ( ( s = start_fields[ code ] ) == -1 )
@@ -22,8 +20,8 @@ get_start( int code ) { /* FIXME: Duplicate from hp48emu_actions.c */
     return s; /* FIXME: potentially return uninitialized s ? */
 }
 
-static inline int
-get_end( int code ) { /* FIXME: Duplicate from hp48emu_actions.c */
+static inline int get_end( int code )
+{ /* FIXME: Duplicate from hp48emu_actions.c */
     int e;
 
     if ( ( e = end_fields[ code ] ) == -1 )
@@ -32,8 +30,8 @@ get_end( int code ) { /* FIXME: Duplicate from hp48emu_actions.c */
     return e; /* FIXME: potentially return uninitialized e ? */
 }
 
-void add_register( unsigned char* res, unsigned char* r1, unsigned char* r2,
-                   int code ) {
+void add_register( unsigned char* res, unsigned char* r1, unsigned char* r2, int code )
+{
     int t;
     int s = get_start( code );
     int e = get_end( code );
@@ -53,7 +51,8 @@ void add_register( unsigned char* res, unsigned char* r1, unsigned char* r2,
     saturn.CARRY = c ? 1 : 0;
 }
 
-void add_p_plus_one( unsigned char* r ) {
+void add_p_plus_one( unsigned char* r )
+{
     int t;
     int s = 0;
     int e = 4;
@@ -73,8 +72,8 @@ void add_p_plus_one( unsigned char* r ) {
     saturn.CARRY = c ? 1 : 0;
 }
 
-void sub_register( unsigned char* res, unsigned char* r1, unsigned char* r2,
-                   int code ) {
+void sub_register( unsigned char* res, unsigned char* r1, unsigned char* r2, int code )
+{
     int t;
     int s = get_start( code );
     int e = get_end( code );
@@ -93,7 +92,8 @@ void sub_register( unsigned char* res, unsigned char* r1, unsigned char* r2,
     saturn.CARRY = c ? 1 : 0;
 }
 
-void complement_2_register( unsigned char* r, int code ) {
+void complement_2_register( unsigned char* r, int code )
+{
     int t;
     int s = get_start( code );
     int e = get_end( code );
@@ -115,7 +115,8 @@ void complement_2_register( unsigned char* r, int code ) {
     saturn.CARRY = carry ? 1 : 0;
 }
 
-void complement_1_register( unsigned char* r, int code ) {
+void complement_1_register( unsigned char* r, int code )
+{
     int t;
     int s = get_start( code );
     int e = get_end( code );
@@ -127,7 +128,8 @@ void complement_1_register( unsigned char* r, int code ) {
     saturn.CARRY = 0;
 }
 
-void inc_register( unsigned char* r, int code ) {
+void inc_register( unsigned char* r, int code )
+{
     int t;
     int s = get_start( code );
     int e = get_end( code );
@@ -148,7 +150,8 @@ void inc_register( unsigned char* r, int code ) {
     saturn.CARRY = c ? 1 : 0;
 }
 
-void add_register_constant( unsigned char* r, int code, int val ) {
+void add_register_constant( unsigned char* r, int code, int val )
+{
     int t;
     int s = get_start( code );
     int e = get_end( code );
@@ -169,7 +172,8 @@ void add_register_constant( unsigned char* r, int code, int val ) {
     saturn.CARRY = c ? 1 : 0;
 }
 
-void dec_register( unsigned char* r, int code ) {
+void dec_register( unsigned char* r, int code )
+{
     int t;
     int s = get_start( code );
     int e = get_end( code );
@@ -190,7 +194,8 @@ void dec_register( unsigned char* r, int code ) {
     saturn.CARRY = c ? 1 : 0;
 }
 
-void sub_register_constant( unsigned char* r, int code, int val ) {
+void sub_register_constant( unsigned char* r, int code, int val )
+{
     int t;
     int s = get_start( code );
     int e = get_end( code );
@@ -211,7 +216,8 @@ void sub_register_constant( unsigned char* r, int code, int val ) {
     saturn.CARRY = c ? 1 : 0;
 }
 
-void zero_register( unsigned char* r, int code ) {
+void zero_register( unsigned char* r, int code )
+{
     int s = get_start( code );
     int e = get_end( code );
 
@@ -219,8 +225,8 @@ void zero_register( unsigned char* r, int code ) {
         r[ i ] = 0;
 }
 
-void or_register( unsigned char* res, unsigned char* r1, unsigned char* r2,
-                  int code ) {
+void or_register( unsigned char* res, unsigned char* r1, unsigned char* r2, int code )
+{
     int s = get_start( code );
     int e = get_end( code );
 
@@ -228,8 +234,8 @@ void or_register( unsigned char* res, unsigned char* r1, unsigned char* r2,
         res[ i ] = ( r1[ i ] | r2[ i ] ) & 0xf;
 }
 
-void and_register( unsigned char* res, unsigned char* r1, unsigned char* r2,
-                   int code ) {
+void and_register( unsigned char* res, unsigned char* r1, unsigned char* r2, int code )
+{
     int s = get_start( code );
     int e = get_end( code );
 
@@ -237,7 +243,8 @@ void and_register( unsigned char* res, unsigned char* r1, unsigned char* r2,
         res[ i ] = ( r1[ i ] & r2[ i ] ) & 0xf;
 }
 
-void copy_register( unsigned char* to, unsigned char* from, int code ) {
+void copy_register( unsigned char* to, unsigned char* from, int code )
+{
     int s = get_start( code );
     int e = get_end( code );
 
@@ -245,7 +252,8 @@ void copy_register( unsigned char* to, unsigned char* from, int code ) {
         to[ i ] = from[ i ];
 }
 
-void exchange_register( unsigned char* r1, unsigned char* r2, int code ) {
+void exchange_register( unsigned char* r1, unsigned char* r2, int code )
+{
     int t;
     int s = get_start( code );
     int e = get_end( code );
@@ -257,7 +265,8 @@ void exchange_register( unsigned char* r1, unsigned char* r2, int code ) {
     }
 }
 
-void exchange_reg( unsigned char* r, word_20* d, int code ) {
+void exchange_reg( unsigned char* r, word_20* d, int code )
+{
     int t;
     int s = get_start( code );
     int e = get_end( code );
@@ -270,7 +279,8 @@ void exchange_reg( unsigned char* r, word_20* d, int code ) {
     }
 }
 
-void shift_left_register( unsigned char* r, int code ) {
+void shift_left_register( unsigned char* r, int code )
+{
     int s = get_start( code );
     int e = get_end( code );
 
@@ -280,7 +290,8 @@ void shift_left_register( unsigned char* r, int code ) {
     r[ s ] = 0;
 }
 
-void shift_left_circ_register( unsigned char* r, int code ) {
+void shift_left_circ_register( unsigned char* r, int code )
+{
     int s = get_start( code );
     int e = get_end( code );
     int t = r[ e ] & 0x0f;
@@ -291,7 +302,8 @@ void shift_left_circ_register( unsigned char* r, int code ) {
     r[ s ] = t;
 }
 
-void shift_right_register( unsigned char* r, int code ) {
+void shift_right_register( unsigned char* r, int code )
+{
     int s = get_start( code );
     int e = get_end( code );
 
@@ -304,7 +316,8 @@ void shift_right_register( unsigned char* r, int code ) {
     r[ e ] = 0;
 }
 
-void shift_right_circ_register( unsigned char* r, int code ) {
+void shift_right_circ_register( unsigned char* r, int code )
+{
     int s = get_start( code );
     int e = get_end( code );
     int t = r[ s ] & 0x0f;
@@ -317,7 +330,8 @@ void shift_right_circ_register( unsigned char* r, int code ) {
         saturn.SB = 1;
 }
 
-void shift_right_bit_register( unsigned char* r, int code ) {
+void shift_right_bit_register( unsigned char* r, int code )
+{
     int t;
     int s = get_start( code );
     int e = get_end( code );
@@ -332,7 +346,8 @@ void shift_right_bit_register( unsigned char* r, int code ) {
         saturn.SB = 1;
 }
 
-int is_zero_register( unsigned char* r, int code ) {
+int is_zero_register( unsigned char* r, int code )
+{
     int s = get_start( code );
     int e = get_end( code );
     int z = 1;
@@ -346,7 +361,8 @@ int is_zero_register( unsigned char* r, int code ) {
     return z;
 }
 
-int is_not_zero_register( unsigned char* r, int code ) {
+int is_not_zero_register( unsigned char* r, int code )
+{
     int s = get_start( code );
     int e = get_end( code );
     int z = 0;
@@ -360,7 +376,8 @@ int is_not_zero_register( unsigned char* r, int code ) {
     return z;
 }
 
-int is_equal_register( unsigned char* r1, unsigned char* r2, int code ) {
+int is_equal_register( unsigned char* r1, unsigned char* r2, int code )
+{
     int s = get_start( code );
     int e = get_end( code );
     int z = 1;
@@ -374,7 +391,8 @@ int is_equal_register( unsigned char* r1, unsigned char* r2, int code ) {
     return z;
 }
 
-int is_not_equal_register( unsigned char* r1, unsigned char* r2, int code ) {
+int is_not_equal_register( unsigned char* r1, unsigned char* r2, int code )
+{
     int s = get_start( code );
     int e = get_end( code );
     int z = 0;
@@ -388,7 +406,8 @@ int is_not_equal_register( unsigned char* r1, unsigned char* r2, int code ) {
     return z;
 }
 
-int is_less_register( unsigned char* r1, unsigned char* r2, int code ) {
+int is_less_register( unsigned char* r1, unsigned char* r2, int code )
+{
     int s = get_start( code );
     int e = get_end( code );
     int z = 0;
@@ -407,8 +426,8 @@ int is_less_register( unsigned char* r1, unsigned char* r2, int code ) {
     return z;
 }
 
-int is_less_or_equal_register( unsigned char* r1, unsigned char* r2,
-                               int code ) {
+int is_less_or_equal_register( unsigned char* r1, unsigned char* r2, int code )
+{
     int s = get_start( code );
     int e = get_end( code );
     int z = 1;
@@ -427,7 +446,8 @@ int is_less_or_equal_register( unsigned char* r1, unsigned char* r2,
     return z;
 }
 
-int is_greater_register( unsigned char* r1, unsigned char* r2, int code ) {
+int is_greater_register( unsigned char* r1, unsigned char* r2, int code )
+{
     int s = get_start( code );
     int e = get_end( code );
     int z = 0;
@@ -446,8 +466,8 @@ int is_greater_register( unsigned char* r1, unsigned char* r2, int code ) {
     return z;
 }
 
-int is_greater_or_equal_register( unsigned char* r1, unsigned char* r2,
-                                  int code ) {
+int is_greater_or_equal_register( unsigned char* r1, unsigned char* r2, int code )
+{
     int s = get_start( code );
     int e = get_end( code );
     int z = 1;

@@ -22,7 +22,8 @@ int conf_bank2 = 0x00000;
 short conf_tab_sx[] = { 1, 2, 2, 2, 2, 0 };
 short conf_tab_gx[] = { 1, 2, 2, 2, 2, 0 };
 
-void do_in( void ) {
+void do_in( void )
+{
     int i, in, out;
 
     out = 0;
@@ -65,7 +66,8 @@ void set_program_stat( int n ) { saturn.PSTAT[ n ] = 1; }
 
 int get_program_stat( int n ) { return saturn.PSTAT[ n ]; }
 
-void register_to_status( unsigned char* r ) {
+void register_to_status( unsigned char* r )
+{
     int i;
 
     for ( i = 0; i < 12; i++ ) {
@@ -73,7 +75,8 @@ void register_to_status( unsigned char* r ) {
     }
 }
 
-void status_to_register( unsigned char* r ) {
+void status_to_register( unsigned char* r )
+{
     int i;
 
     for ( i = 0; i < 12; i++ ) {
@@ -85,7 +88,8 @@ void status_to_register( unsigned char* r ) {
     }
 }
 
-void swap_register_status( unsigned char* r ) {
+void swap_register_status( unsigned char* r )
+{
     int i, tmp;
 
     for ( i = 0; i < 12; i++ ) {
@@ -98,32 +102,24 @@ void swap_register_status( unsigned char* r ) {
     }
 }
 
-void clear_status( void ) {
+void clear_status( void )
+{
     for ( int i = 0; i < 12; i++ )
         saturn.PSTAT[ i ] = 0;
 }
 
-void set_register_nibble( unsigned char* reg, int n, unsigned char val ) {
-    reg[ n ] = val;
-}
+void set_register_nibble( unsigned char* reg, int n, unsigned char val ) { reg[ n ] = val; }
 
-unsigned char get_register_nibble( unsigned char* reg, int n ) {
-    return reg[ n ];
-}
+unsigned char get_register_nibble( unsigned char* reg, int n ) { return reg[ n ]; }
 
-void set_register_bit( unsigned char* reg, int n ) {
-    reg[ n / 4 ] |= ( 1 << ( n % 4 ) );
-}
+void set_register_bit( unsigned char* reg, int n ) { reg[ n / 4 ] |= ( 1 << ( n % 4 ) ); }
 
-void clear_register_bit( unsigned char* reg, int n ) {
-    reg[ n / 4 ] &= ~( 1 << ( n % 4 ) );
-}
+void clear_register_bit( unsigned char* reg, int n ) { reg[ n / 4 ] &= ~( 1 << ( n % 4 ) ); }
 
-int get_register_bit( unsigned char* reg, int n ) {
-    return ( ( int )( reg[ n / 4 ] & ( 1 << ( n % 4 ) ) ) > 0 ) ? 1 : 0;
-}
+int get_register_bit( unsigned char* reg, int n ) { return ( ( int )( reg[ n / 4 ] & ( 1 << ( n % 4 ) ) ) > 0 ) ? 1 : 0; }
 
-void do_reset( void ) {
+void do_reset( void )
+{
     for ( int i = 0; i < 6; i++ ) {
         if ( opt_gx )
             saturn.mem_cntl[ i ].unconfigured = conf_tab_gx[ i ];
@@ -139,7 +135,8 @@ void do_inton( void ) { saturn.kbd_ien = 1; }
 
 void do_intoff( void ) { saturn.kbd_ien = 0; }
 
-void do_return_interupt( void ) {
+void do_return_interupt( void )
+{
     if ( saturn.int_pending ) {
         saturn.int_pending = 0;
         saturn.intenable = 0;
@@ -155,7 +152,8 @@ void do_return_interupt( void ) {
     }
 }
 
-void do_interupt( void ) {
+void do_interupt( void )
+{
     interrupt_called = 1;
     if ( saturn.intenable ) {
         push_return_addr( saturn.PC );
@@ -164,7 +162,8 @@ void do_interupt( void ) {
     }
 }
 
-void do_kbd_int( void ) {
+void do_kbd_int( void )
+{
     interrupt_called = 1;
     if ( saturn.intenable ) {
         push_return_addr( saturn.PC );
@@ -174,7 +173,8 @@ void do_kbd_int( void ) {
         saturn.int_pending = 1;
 }
 
-void do_reset_interrupt_system( void ) {
+void do_reset_interrupt_system( void )
+{
     saturn.kbd_ien = 1;
     int gen_intr = 0;
     for ( int i = 0; i < 9; i++ ) {
@@ -187,7 +187,8 @@ void do_reset_interrupt_system( void ) {
         do_kbd_int();
 }
 
-void do_unconfigure( void ) {
+void do_unconfigure( void )
+{
     int i;
     unsigned int conf = 0;
 
@@ -210,7 +211,8 @@ void do_unconfigure( void ) {
     }
 }
 
-void do_configure( void ) {
+void do_configure( void )
+{
     int i;
     unsigned long conf = 0;
 
@@ -222,25 +224,22 @@ void do_configure( void ) {
     for ( i = 0; i < 6; i++ ) {
         if ( saturn.mem_cntl[ i ].unconfigured ) {
             saturn.mem_cntl[ i ].unconfigured--;
-            saturn.mem_cntl[ i ].config[ saturn.mem_cntl[ i ].unconfigured ] =
-                conf;
+            saturn.mem_cntl[ i ].config[ saturn.mem_cntl[ i ].unconfigured ] = conf;
             break;
         }
     }
 }
 
-int get_identification( void ) {
+int get_identification( void )
+{
     int i;
-    static int chip_id[] = { 0,    0,    0,    0,    0x05, 0xf6,
-                             0x07, 0xf8, 0x01, 0xf2, 0,    0 };
+    static int chip_id[] = { 0, 0, 0, 0, 0x05, 0xf6, 0x07, 0xf8, 0x01, 0xf2, 0, 0 };
 
     for ( i = 0; i < 6; i++ )
         if ( saturn.mem_cntl[ i ].unconfigured )
             break;
 
-    int id = ( i < 6 )
-                 ? chip_id[ 2 * i + ( 2 - saturn.mem_cntl[ i ].unconfigured ) ]
-                 : 0;
+    int id = ( i < 6 ) ? chip_id[ 2 * i + ( 2 - saturn.mem_cntl[ i ].unconfigured ) ] : 0;
 
     for ( i = 0; i < 3; i++ ) {
         saturn.C[ i ] = id & 0x0f;
@@ -250,7 +249,8 @@ int get_identification( void ) {
     return 0;
 }
 
-void do_shutdown( void ) {
+void do_shutdown( void )
+{
     if ( device.display_touched ) {
         device.display_touched = 0;
         ui_refresh_LCD();
@@ -325,7 +325,8 @@ void do_shutdown( void ) {
     start_timer( RUN_TIMER );
 }
 
-void clear_hardware_stat( int op ) {
+void clear_hardware_stat( int op )
+{
     if ( op & 1 )
         saturn.XM = 0;
     if ( op & 2 )
@@ -336,7 +337,8 @@ void clear_hardware_stat( int op ) {
         saturn.MP = 0;
 }
 
-int is_zero_hardware_stat( int op ) {
+int is_zero_hardware_stat( int op )
+{
     if ( op & 1 )
         if ( saturn.XM != 0 )
             return 0;
@@ -353,7 +355,8 @@ int is_zero_hardware_stat( int op ) {
     return 1;
 }
 
-void push_return_addr( long addr ) {
+void push_return_addr( long addr )
+{
     int i;
 
     if ( ++saturn.rstkp >= NR_RSTK ) {
@@ -364,13 +367,15 @@ void push_return_addr( long addr ) {
     saturn.rstk[ saturn.rstkp ] = addr;
 }
 
-long pop_return_addr( void ) {
+long pop_return_addr( void )
+{
     if ( saturn.rstkp < 0 )
         return 0;
     return saturn.rstk[ saturn.rstkp-- ];
 }
 
-void load_constant( unsigned char* reg, int n, long addr ) {
+void load_constant( unsigned char* reg, int n, long addr )
+{
     int p = saturn.P;
 
     for ( int i = 0; i < n; i++ ) {
@@ -379,14 +384,16 @@ void load_constant( unsigned char* reg, int n, long addr ) {
     }
 }
 
-void load_addr( word_20* dat, long addr, int n ) {
+void load_addr( word_20* dat, long addr, int n )
+{
     for ( int i = 0; i < n; i++ ) {
         *dat &= ~nibble_masks[ i ];
         *dat |= read_nibble( addr + i ) << ( i * 4 );
     }
 }
 
-void register_to_address( unsigned char* reg, word_20* dat, int s ) {
+void register_to_address( unsigned char* reg, word_20* dat, int s )
+{
     int n;
 
     if ( s )
@@ -399,7 +406,8 @@ void register_to_address( unsigned char* reg, word_20* dat, int s ) {
     }
 }
 
-long dat_to_addr( unsigned char* dat ) {
+long dat_to_addr( unsigned char* dat )
+{
     long addr = 0;
 
     for ( int i = 4; i >= 0; i-- ) {
@@ -409,14 +417,16 @@ long dat_to_addr( unsigned char* dat ) {
     return addr;
 }
 
-void addr_to_dat( long addr, unsigned char* dat ) {
+void addr_to_dat( long addr, unsigned char* dat )
+{
     for ( int i = 0; i < 5; i++ ) {
         dat[ i ] = ( addr & 0xf );
         addr >>= 4;
     }
 }
 
-void add_address( word_20* dat, int add ) {
+void add_address( word_20* dat, int add )
+{
     *dat += add;
     if ( *dat & ( word_20 )0xfff00000 ) {
         saturn.CARRY = 1;
@@ -426,13 +436,12 @@ void add_address( word_20* dat, int add ) {
     *dat &= 0xfffff;
 }
 
-static int start_fields[] = { -1, 0, 2,  0, 15, 3, 0, 0, -1, 0,
-                              2,  0, 15, 3, 0,  0, 0, 0, 0 };
+static int start_fields[] = { -1, 0, 2, 0, 15, 3, 0, 0, -1, 0, 2, 0, 15, 3, 0, 0, 0, 0, 0 };
 
-static int end_fields[] = { -1, -1, 2,  2,  15, 14, 1, 15, -1, -1,
-                            2,  2,  15, 14, 1,  4,  3, 2,  0 };
+static int end_fields[] = { -1, -1, 2, 2, 15, 14, 1, 15, -1, -1, 2, 2, 15, 14, 1, 4, 3, 2, 0 };
 
-static inline int get_start( int code ) {
+static inline int get_start( int code )
+{
     int s;
 
     if ( ( s = start_fields[ code ] ) == -1 )
@@ -441,7 +450,8 @@ static inline int get_start( int code ) {
     return s; /* FIXME: potentially return uninitialized s ? */
 }
 
-static inline int get_end( int code ) {
+static inline int get_end( int code )
+{
     int e;
 
     if ( ( e = end_fields[ code ] ) == -1 )
@@ -450,7 +460,8 @@ static inline int get_end( int code ) {
     return e; /* FIXME: potentially return uninitialized e ? */
 }
 
-void store( word_20 dat, unsigned char* reg, int code ) {
+void store( word_20 dat, unsigned char* reg, int code )
+{
     int s = get_start( code );
     int e = get_end( code );
 
@@ -458,12 +469,14 @@ void store( word_20 dat, unsigned char* reg, int code ) {
         write_nibble( dat++, reg[ i ] );
 }
 
-void store_n( word_20 dat, unsigned char* reg, int n ) {
+void store_n( word_20 dat, unsigned char* reg, int n )
+{
     for ( int i = 0; i < n; i++ )
         write_nibble( dat++, reg[ i ] );
 }
 
-void recall( unsigned char* reg, word_20 dat, int code ) {
+void recall( unsigned char* reg, word_20 dat, int code )
+{
     int s = get_start( code );
     int e = get_end( code );
 
@@ -471,7 +484,8 @@ void recall( unsigned char* reg, word_20 dat, int code ) {
         reg[ i ] = read_nibble_crc( dat++ );
 }
 
-void recall_n( unsigned char* reg, word_20 dat, int n ) {
+void recall_n( unsigned char* reg, word_20 dat, int n )
+{
     for ( int i = 0; i < n; i++ )
         reg[ i ] = read_nibble_crc( dat++ );
 }

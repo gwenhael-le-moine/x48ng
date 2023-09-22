@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 #include "romio.h"
 
@@ -10,10 +10,10 @@ unsigned short rom_crc, crc;
 
 int verbose = 0;
 
-#define calc_crc( n )                                                          \
-    ( crc = ( ( crc >> 4 ) ^ ( ( ( crc ^ n ) & 0xf ) * 0x1081 ) ) )
+#define calc_crc( n ) ( crc = ( ( crc >> 4 ) ^ ( ( ( crc ^ n ) & 0xf ) * 0x1081 ) ) )
 
-int main( int argc, char** argv ) {
+int main( int argc, char** argv )
+{
     unsigned char version[ 7 ];
     long ver_addr;
     int i, a, c, d, d0, d1, D0, D1;
@@ -25,8 +25,7 @@ int main( int argc, char** argv ) {
     }
 
     if ( !read_rom_file( argv[ 1 ], &rom, &rom_size ) ) {
-        fprintf( stderr, "%s: can\'t read ROM from %s\n", argv[ 0 ],
-                 argv[ 1 ] );
+        fprintf( stderr, "%s: can\'t read ROM from %s\n", argv[ 0 ], argv[ 1 ] );
         exit( 1 );
     }
 

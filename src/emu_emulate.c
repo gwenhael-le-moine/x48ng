@@ -3,11 +3,11 @@
 
 #include <sys/time.h>
 
-#include "runtime_options.h" /* throttle */
-#include "ui.h" /* ui_get_event(); ui_adjust_contrast(); ui_update_LCD(); ui_draw_annunc(); */
 #include "debugger.h" /* enter_debugger, TRAP_INSTRUCTION, ILLEGAL_INSTRUCTION */
 #include "emulator.h"
 #include "emulator_inner.h"
+#include "runtime_options.h" /* throttle */
+#include "ui.h"              /* ui_get_event(); ui_adjust_contrast(); ui_update_LCD(); ui_draw_annunc(); */
 
 #define P_FIELD 0  /* unused? */
 #define WP_FIELD 1 /* unused? */
@@ -70,8 +70,7 @@ unsigned long delta_t_16;
 unsigned long delta_i;
 word_64 run;
 
-static word_20 jumpmasks[] = { 0xffffffff, 0xfffffff0, 0xffffff00, 0xfffff000,
-                               0xffff0000, 0xfff00000, 0xff000000, 0xf0000000 };
+static word_20 jumpmasks[] = { 0xffffffff, 0xfffffff0, 0xffffff00, 0xfffff000, 0xffff0000, 0xfff00000, 0xff000000, 0xf0000000 };
 
 saturn_t saturn;
 
@@ -79,7 +78,8 @@ extern int device_check;
 
 device_t device;
 
-int decode_group_80( void ) {
+int decode_group_80( void )
+{
     int t, op3, op4, op5, op6;
     unsigned char* REG;
     long addr;
@@ -173,8 +173,7 @@ int decode_group_80( void ) {
                         t = 0;
                     else
                         t = 1;
-                    saturn.CARRY =
-                        ( get_register_bit( REG, op5 ) == t ) ? 1 : 0;
+                    saturn.CARRY = ( get_register_bit( REG, op5 ) == t ) ? 1 : 0;
                     if ( saturn.CARRY ) {
                         saturn.PC += 5;
                         op6 = read_nibbles( saturn.PC, 2 );
@@ -248,7 +247,8 @@ int decode_group_80( void ) {
     }
 }
 
-int decode_group_1( void ) {
+int decode_group_1( void )
+{
     int op, op2, op3, op4;
 
     op2 = read_nibble( saturn.PC + 1 );
@@ -645,7 +645,8 @@ int decode_group_1( void ) {
     }
 }
 
-static inline int decode_8_thru_f( int op1 ) {
+static inline int decode_8_thru_f( int op1 )
+{
     int op2, op3, op4, op5, op6;
 
     op2 = read_nibble( saturn.PC + 1 );
@@ -697,23 +698,19 @@ static inline int decode_8_thru_f( int op1 ) {
                                 switch ( op5 & 3 ) {
                                     case 0: /* A=A+CON */
                                         saturn.PC += 6;
-                                        add_register_constant( saturn.A, op4,
-                                                               op6 + 1 );
+                                        add_register_constant( saturn.A, op4, op6 + 1 );
                                         return 0;
                                     case 1: /* B=B+CON */
                                         saturn.PC += 6;
-                                        add_register_constant( saturn.B, op4,
-                                                               op6 + 1 );
+                                        add_register_constant( saturn.B, op4, op6 + 1 );
                                         return 0;
                                     case 2: /* C=C+CON */
                                         saturn.PC += 6;
-                                        add_register_constant( saturn.C, op4,
-                                                               op6 + 1 );
+                                        add_register_constant( saturn.C, op4, op6 + 1 );
                                         return 0;
                                     case 3: /* D=D+CON */
                                         saturn.PC += 6;
-                                        add_register_constant( saturn.D, op4,
-                                                               op6 + 1 );
+                                        add_register_constant( saturn.D, op4, op6 + 1 );
                                         return 0;
                                     default:
                                         return 1;
@@ -722,23 +719,19 @@ static inline int decode_8_thru_f( int op1 ) {
                                 switch ( op5 & 3 ) {
                                     case 0: /* A=A-CON */
                                         saturn.PC += 6;
-                                        sub_register_constant( saturn.A, op4,
-                                                               op6 + 1 );
+                                        sub_register_constant( saturn.A, op4, op6 + 1 );
                                         return 0;
                                     case 1: /* B=B-CON */
                                         saturn.PC += 6;
-                                        sub_register_constant( saturn.B, op4,
-                                                               op6 + 1 );
+                                        sub_register_constant( saturn.B, op4, op6 + 1 );
                                         return 0;
                                     case 2: /* C=C-CON */
                                         saturn.PC += 6;
-                                        sub_register_constant( saturn.C, op4,
-                                                               op6 + 1 );
+                                        sub_register_constant( saturn.C, op4, op6 + 1 );
                                         return 0;
                                     case 3: /* D=D-CON */
                                         saturn.PC += 6;
-                                        sub_register_constant( saturn.D, op4,
-                                                               op6 + 1 );
+                                        sub_register_constant( saturn.D, op4, op6 + 1 );
                                         return 0;
                                     default:
                                         return 1;
@@ -776,59 +769,49 @@ static inline int decode_8_thru_f( int op1 ) {
                                     switch ( op6 ) {
                                         case 0: /* saturn.R0=A */
                                             saturn.PC += 6;
-                                            copy_register( saturn.R0, saturn.A,
-                                                           op4 );
+                                            copy_register( saturn.R0, saturn.A, op4 );
                                             return 0;
                                         case 1: /* saturn.R1=A */
                                         case 5:
                                             saturn.PC += 6;
-                                            copy_register( saturn.R1, saturn.A,
-                                                           op4 );
+                                            copy_register( saturn.R1, saturn.A, op4 );
                                             return 0;
                                         case 2: /* saturn.R2=A */
                                         case 6:
                                             saturn.PC += 6;
-                                            copy_register( saturn.R2, saturn.A,
-                                                           op4 );
+                                            copy_register( saturn.R2, saturn.A, op4 );
                                             return 0;
                                         case 3: /* saturn.R3=A */
                                         case 7:
                                             saturn.PC += 6;
-                                            copy_register( saturn.R3, saturn.A,
-                                                           op4 );
+                                            copy_register( saturn.R3, saturn.A, op4 );
                                             return 0;
                                         case 4: /* saturn.R4=A */
                                             saturn.PC += 6;
-                                            copy_register( saturn.R4, saturn.A,
-                                                           op4 );
+                                            copy_register( saturn.R4, saturn.A, op4 );
                                             return 0;
                                         case 8: /* saturn.R0=C */
                                             saturn.PC += 6;
-                                            copy_register( saturn.R0, saturn.C,
-                                                           op4 );
+                                            copy_register( saturn.R0, saturn.C, op4 );
                                             return 0;
                                         case 9: /* saturn.R1=C */
                                         case 0xd:
                                             saturn.PC += 6;
-                                            copy_register( saturn.R1, saturn.C,
-                                                           op4 );
+                                            copy_register( saturn.R1, saturn.C, op4 );
                                             return 0;
                                         case 0xa: /* saturn.R2=C */
                                         case 0xe:
                                             saturn.PC += 6;
-                                            copy_register( saturn.R2, saturn.C,
-                                                           op4 );
+                                            copy_register( saturn.R2, saturn.C, op4 );
                                             return 0;
                                         case 0xb: /* saturn.R3=C */
                                         case 0xf:
                                             saturn.PC += 6;
-                                            copy_register( saturn.R3, saturn.C,
-                                                           op4 );
+                                            copy_register( saturn.R3, saturn.C, op4 );
                                             return 0;
                                         case 0xc: /* saturn.R4=C */
                                             saturn.PC += 6;
-                                            copy_register( saturn.R4, saturn.C,
-                                                           op4 );
+                                            copy_register( saturn.R4, saturn.C, op4 );
                                             return 0;
                                         default:
                                             return 1;
@@ -837,59 +820,49 @@ static inline int decode_8_thru_f( int op1 ) {
                                     switch ( op6 ) {
                                         case 0: /* A=R0 */
                                             saturn.PC += 6;
-                                            copy_register( saturn.A, saturn.R0,
-                                                           op4 );
+                                            copy_register( saturn.A, saturn.R0, op4 );
                                             return 0;
                                         case 1: /* A=R1 */
                                         case 5:
                                             saturn.PC += 6;
-                                            copy_register( saturn.A, saturn.R1,
-                                                           op4 );
+                                            copy_register( saturn.A, saturn.R1, op4 );
                                             return 0;
                                         case 2: /* A=R2 */
                                         case 6:
                                             saturn.PC += 6;
-                                            copy_register( saturn.A, saturn.R2,
-                                                           op4 );
+                                            copy_register( saturn.A, saturn.R2, op4 );
                                             return 0;
                                         case 3: /* A=R3 */
                                         case 7:
                                             saturn.PC += 6;
-                                            copy_register( saturn.A, saturn.R3,
-                                                           op4 );
+                                            copy_register( saturn.A, saturn.R3, op4 );
                                             return 0;
                                         case 4: /* A=R4 */
                                             saturn.PC += 6;
-                                            copy_register( saturn.A, saturn.R4,
-                                                           op4 );
+                                            copy_register( saturn.A, saturn.R4, op4 );
                                             return 0;
                                         case 8: /* C=R0 */
                                             saturn.PC += 6;
-                                            copy_register( saturn.C, saturn.R0,
-                                                           op4 );
+                                            copy_register( saturn.C, saturn.R0, op4 );
                                             return 0;
                                         case 9: /* C=R1 */
                                         case 0xd:
                                             saturn.PC += 6;
-                                            copy_register( saturn.C, saturn.R1,
-                                                           op4 );
+                                            copy_register( saturn.C, saturn.R1, op4 );
                                             return 0;
                                         case 0xa: /* C=R2 */
                                         case 0xe:
                                             saturn.PC += 6;
-                                            copy_register( saturn.C, saturn.R2,
-                                                           op4 );
+                                            copy_register( saturn.C, saturn.R2, op4 );
                                             return 0;
                                         case 0xb: /* C=R3 */
                                         case 0xf:
                                             saturn.PC += 6;
-                                            copy_register( saturn.C, saturn.R3,
-                                                           op4 );
+                                            copy_register( saturn.C, saturn.R3, op4 );
                                             return 0;
                                         case 0xc: /* C=R4 */
                                             saturn.PC += 6;
-                                            copy_register( saturn.C, saturn.R4,
-                                                           op4 );
+                                            copy_register( saturn.C, saturn.R4, op4 );
                                             return 0;
                                         default:
                                             return 1;
@@ -898,59 +871,49 @@ static inline int decode_8_thru_f( int op1 ) {
                                     switch ( op6 ) {
                                         case 0: /* AR0EX */
                                             saturn.PC += 6;
-                                            exchange_register( saturn.A,
-                                                               saturn.R0, op4 );
+                                            exchange_register( saturn.A, saturn.R0, op4 );
                                             return 0;
                                         case 1: /* AR1EX */
                                         case 5:
                                             saturn.PC += 6;
-                                            exchange_register( saturn.A,
-                                                               saturn.R1, op4 );
+                                            exchange_register( saturn.A, saturn.R1, op4 );
                                             return 0;
                                         case 2: /* AR2EX */
                                         case 6:
                                             saturn.PC += 6;
-                                            exchange_register( saturn.A,
-                                                               saturn.R2, op4 );
+                                            exchange_register( saturn.A, saturn.R2, op4 );
                                             return 0;
                                         case 3: /* AR3EX */
                                         case 7:
                                             saturn.PC += 6;
-                                            exchange_register( saturn.A,
-                                                               saturn.R3, op4 );
+                                            exchange_register( saturn.A, saturn.R3, op4 );
                                             return 0;
                                         case 4: /* AR4EX */
                                             saturn.PC += 6;
-                                            exchange_register( saturn.A,
-                                                               saturn.R4, op4 );
+                                            exchange_register( saturn.A, saturn.R4, op4 );
                                             return 0;
                                         case 8: /* CR0EX */
                                             saturn.PC += 6;
-                                            exchange_register( saturn.C,
-                                                               saturn.R0, op4 );
+                                            exchange_register( saturn.C, saturn.R0, op4 );
                                             return 0;
                                         case 9: /* CR1EX */
                                         case 0xd:
                                             saturn.PC += 6;
-                                            exchange_register( saturn.C,
-                                                               saturn.R1, op4 );
+                                            exchange_register( saturn.C, saturn.R1, op4 );
                                             return 0;
                                         case 0xa: /* CR2EX */
                                         case 0xe:
                                             saturn.PC += 6;
-                                            exchange_register( saturn.C,
-                                                               saturn.R2, op4 );
+                                            exchange_register( saturn.C, saturn.R2, op4 );
                                             return 0;
                                         case 0xb: /* CR3EX */
                                         case 0xf:
                                             saturn.PC += 6;
-                                            exchange_register( saturn.C,
-                                                               saturn.R3, op4 );
+                                            exchange_register( saturn.C, saturn.R3, op4 );
                                             return 0;
                                         case 0xc: /* CR4EX */
                                             saturn.PC += 6;
-                                            exchange_register( saturn.C,
-                                                               saturn.R4, op4 );
+                                            exchange_register( saturn.C, saturn.R4, op4 );
                                             return 0;
                                         default:
                                             return 1;
@@ -1093,68 +1056,52 @@ static inline int decode_8_thru_f( int op1 ) {
                     op3 = read_nibble( saturn.PC + 2 );
                     switch ( op3 ) {
                         case 0: /* ?A=B */
-                            saturn.CARRY = is_equal_register(
-                                saturn.A, saturn.B, A_FIELD );
+                            saturn.CARRY = is_equal_register( saturn.A, saturn.B, A_FIELD );
                             break;
                         case 1: /* ?B=C */
-                            saturn.CARRY = is_equal_register(
-                                saturn.B, saturn.C, A_FIELD );
+                            saturn.CARRY = is_equal_register( saturn.B, saturn.C, A_FIELD );
                             break;
                         case 2: /* ?A=C */
-                            saturn.CARRY = is_equal_register(
-                                saturn.A, saturn.C, A_FIELD );
+                            saturn.CARRY = is_equal_register( saturn.A, saturn.C, A_FIELD );
                             break;
                         case 3: /* ?C=D */
-                            saturn.CARRY = is_equal_register(
-                                saturn.C, saturn.D, A_FIELD );
+                            saturn.CARRY = is_equal_register( saturn.C, saturn.D, A_FIELD );
                             break;
                         case 4: /* ?A#B */
-                            saturn.CARRY = is_not_equal_register(
-                                saturn.A, saturn.B, A_FIELD );
+                            saturn.CARRY = is_not_equal_register( saturn.A, saturn.B, A_FIELD );
                             break;
                         case 5: /* ?B#C */
-                            saturn.CARRY = is_not_equal_register(
-                                saturn.B, saturn.C, A_FIELD );
+                            saturn.CARRY = is_not_equal_register( saturn.B, saturn.C, A_FIELD );
                             break;
                         case 6: /* ?A#C */
-                            saturn.CARRY = is_not_equal_register(
-                                saturn.A, saturn.C, A_FIELD );
+                            saturn.CARRY = is_not_equal_register( saturn.A, saturn.C, A_FIELD );
                             break;
                         case 7: /* ?C#D */
-                            saturn.CARRY = is_not_equal_register(
-                                saturn.C, saturn.D, A_FIELD );
+                            saturn.CARRY = is_not_equal_register( saturn.C, saturn.D, A_FIELD );
                             break;
                         case 8: /* ?A=0 */
-                            saturn.CARRY =
-                                is_zero_register( saturn.A, A_FIELD );
+                            saturn.CARRY = is_zero_register( saturn.A, A_FIELD );
                             break;
                         case 9: /* ?B=0 */
-                            saturn.CARRY =
-                                is_zero_register( saturn.B, A_FIELD );
+                            saturn.CARRY = is_zero_register( saturn.B, A_FIELD );
                             break;
                         case 0xa: /* ?C=0 */
-                            saturn.CARRY =
-                                is_zero_register( saturn.C, A_FIELD );
+                            saturn.CARRY = is_zero_register( saturn.C, A_FIELD );
                             break;
                         case 0xb: /* ?D=0 */
-                            saturn.CARRY =
-                                is_zero_register( saturn.D, A_FIELD );
+                            saturn.CARRY = is_zero_register( saturn.D, A_FIELD );
                             break;
                         case 0xc: /* ?A#0 */
-                            saturn.CARRY =
-                                is_not_zero_register( saturn.A, A_FIELD );
+                            saturn.CARRY = is_not_zero_register( saturn.A, A_FIELD );
                             break;
                         case 0xd: /* ?B#0 */
-                            saturn.CARRY =
-                                is_not_zero_register( saturn.B, A_FIELD );
+                            saturn.CARRY = is_not_zero_register( saturn.B, A_FIELD );
                             break;
                         case 0xe: /* ?C#0 */
-                            saturn.CARRY =
-                                is_not_zero_register( saturn.C, A_FIELD );
+                            saturn.CARRY = is_not_zero_register( saturn.C, A_FIELD );
                             break;
                         case 0xf: /* ?D#0 */
-                            saturn.CARRY =
-                                is_not_zero_register( saturn.D, A_FIELD );
+                            saturn.CARRY = is_not_zero_register( saturn.D, A_FIELD );
                             break;
                         default:
                             return 1;
@@ -1178,68 +1125,52 @@ static inline int decode_8_thru_f( int op1 ) {
                     op3 = read_nibble( saturn.PC + 2 );
                     switch ( op3 ) {
                         case 0: /* ?A>B */
-                            saturn.CARRY = is_greater_register(
-                                saturn.A, saturn.B, A_FIELD );
+                            saturn.CARRY = is_greater_register( saturn.A, saturn.B, A_FIELD );
                             break;
                         case 1: /* ?B>C */
-                            saturn.CARRY = is_greater_register(
-                                saturn.B, saturn.C, A_FIELD );
+                            saturn.CARRY = is_greater_register( saturn.B, saturn.C, A_FIELD );
                             break;
                         case 2: /* ?C>A */
-                            saturn.CARRY = is_greater_register(
-                                saturn.C, saturn.A, A_FIELD );
+                            saturn.CARRY = is_greater_register( saturn.C, saturn.A, A_FIELD );
                             break;
                         case 3: /* ?D>C */
-                            saturn.CARRY = is_greater_register(
-                                saturn.D, saturn.C, A_FIELD );
+                            saturn.CARRY = is_greater_register( saturn.D, saturn.C, A_FIELD );
                             break;
                         case 4: /* ?A<B */
-                            saturn.CARRY =
-                                is_less_register( saturn.A, saturn.B, A_FIELD );
+                            saturn.CARRY = is_less_register( saturn.A, saturn.B, A_FIELD );
                             break;
                         case 5: /* ?B<C */
-                            saturn.CARRY =
-                                is_less_register( saturn.B, saturn.C, A_FIELD );
+                            saturn.CARRY = is_less_register( saturn.B, saturn.C, A_FIELD );
                             break;
                         case 6: /* ?C<A */
-                            saturn.CARRY =
-                                is_less_register( saturn.C, saturn.A, A_FIELD );
+                            saturn.CARRY = is_less_register( saturn.C, saturn.A, A_FIELD );
                             break;
                         case 7: /* ?D<C */
-                            saturn.CARRY =
-                                is_less_register( saturn.D, saturn.C, A_FIELD );
+                            saturn.CARRY = is_less_register( saturn.D, saturn.C, A_FIELD );
                             break;
                         case 8: /* ?A>=B */
-                            saturn.CARRY = is_greater_or_equal_register(
-                                saturn.A, saturn.B, A_FIELD );
+                            saturn.CARRY = is_greater_or_equal_register( saturn.A, saturn.B, A_FIELD );
                             break;
                         case 9: /* ?B>=C */
-                            saturn.CARRY = is_greater_or_equal_register(
-                                saturn.B, saturn.C, A_FIELD );
+                            saturn.CARRY = is_greater_or_equal_register( saturn.B, saturn.C, A_FIELD );
                             break;
                         case 0xa: /* ?C>=A */
-                            saturn.CARRY = is_greater_or_equal_register(
-                                saturn.C, saturn.A, A_FIELD );
+                            saturn.CARRY = is_greater_or_equal_register( saturn.C, saturn.A, A_FIELD );
                             break;
                         case 0xb: /* ?D>=C */
-                            saturn.CARRY = is_greater_or_equal_register(
-                                saturn.D, saturn.C, A_FIELD );
+                            saturn.CARRY = is_greater_or_equal_register( saturn.D, saturn.C, A_FIELD );
                             break;
                         case 0xc: /* ?A<=B */
-                            saturn.CARRY = is_less_or_equal_register(
-                                saturn.A, saturn.B, A_FIELD );
+                            saturn.CARRY = is_less_or_equal_register( saturn.A, saturn.B, A_FIELD );
                             break;
                         case 0xd: /* ?B<=C */
-                            saturn.CARRY = is_less_or_equal_register(
-                                saturn.B, saturn.C, A_FIELD );
+                            saturn.CARRY = is_less_or_equal_register( saturn.B, saturn.C, A_FIELD );
                             break;
                         case 0xe: /* ?C<=A */
-                            saturn.CARRY = is_less_or_equal_register(
-                                saturn.C, saturn.A, A_FIELD );
+                            saturn.CARRY = is_less_or_equal_register( saturn.C, saturn.A, A_FIELD );
                             break;
                         case 0xf: /* ?D<=C */
-                            saturn.CARRY = is_less_or_equal_register(
-                                saturn.D, saturn.C, A_FIELD );
+                            saturn.CARRY = is_less_or_equal_register( saturn.D, saturn.C, A_FIELD );
                             break;
                         default:
                             return 1;
@@ -1293,36 +1224,28 @@ static inline int decode_8_thru_f( int op1 ) {
             if ( op2 < 8 ) {
                 switch ( op3 ) {
                     case 0: /* ?A=B */
-                        saturn.CARRY =
-                            is_equal_register( saturn.A, saturn.B, op2 );
+                        saturn.CARRY = is_equal_register( saturn.A, saturn.B, op2 );
                         break;
                     case 1: /* ?B=C */
-                        saturn.CARRY =
-                            is_equal_register( saturn.B, saturn.C, op2 );
+                        saturn.CARRY = is_equal_register( saturn.B, saturn.C, op2 );
                         break;
                     case 2: /* ?A=C */
-                        saturn.CARRY =
-                            is_equal_register( saturn.A, saturn.C, op2 );
+                        saturn.CARRY = is_equal_register( saturn.A, saturn.C, op2 );
                         break;
                     case 3: /* ?C=D */
-                        saturn.CARRY =
-                            is_equal_register( saturn.C, saturn.D, op2 );
+                        saturn.CARRY = is_equal_register( saturn.C, saturn.D, op2 );
                         break;
                     case 4: /* ?A#B */
-                        saturn.CARRY =
-                            is_not_equal_register( saturn.A, saturn.B, op2 );
+                        saturn.CARRY = is_not_equal_register( saturn.A, saturn.B, op2 );
                         break;
                     case 5: /* ?B#C */
-                        saturn.CARRY =
-                            is_not_equal_register( saturn.B, saturn.C, op2 );
+                        saturn.CARRY = is_not_equal_register( saturn.B, saturn.C, op2 );
                         break;
                     case 6: /* ?A#C */
-                        saturn.CARRY =
-                            is_not_equal_register( saturn.A, saturn.C, op2 );
+                        saturn.CARRY = is_not_equal_register( saturn.A, saturn.C, op2 );
                         break;
                     case 7: /* ?C#D */
-                        saturn.CARRY =
-                            is_not_equal_register( saturn.C, saturn.D, op2 );
+                        saturn.CARRY = is_not_equal_register( saturn.C, saturn.D, op2 );
                         break;
                     case 8: /* ?A=0 */
                         saturn.CARRY = is_zero_register( saturn.A, op2 );
@@ -1355,68 +1278,52 @@ static inline int decode_8_thru_f( int op1 ) {
                 op2 &= 7;
                 switch ( op3 ) {
                     case 0: /* ?A>B */
-                        saturn.CARRY =
-                            is_greater_register( saturn.A, saturn.B, op2 );
+                        saturn.CARRY = is_greater_register( saturn.A, saturn.B, op2 );
                         break;
                     case 1: /* ?B>C */
-                        saturn.CARRY =
-                            is_greater_register( saturn.B, saturn.C, op2 );
+                        saturn.CARRY = is_greater_register( saturn.B, saturn.C, op2 );
                         break;
                     case 2: /* ?C>A */
-                        saturn.CARRY =
-                            is_greater_register( saturn.C, saturn.A, op2 );
+                        saturn.CARRY = is_greater_register( saturn.C, saturn.A, op2 );
                         break;
                     case 3: /* ?D>C */
-                        saturn.CARRY =
-                            is_greater_register( saturn.D, saturn.C, op2 );
+                        saturn.CARRY = is_greater_register( saturn.D, saturn.C, op2 );
                         break;
                     case 4: /* ?A<B */
-                        saturn.CARRY =
-                            is_less_register( saturn.A, saturn.B, op2 );
+                        saturn.CARRY = is_less_register( saturn.A, saturn.B, op2 );
                         break;
                     case 5: /* ?B<C */
-                        saturn.CARRY =
-                            is_less_register( saturn.B, saturn.C, op2 );
+                        saturn.CARRY = is_less_register( saturn.B, saturn.C, op2 );
                         break;
                     case 6: /* ?C<A */
-                        saturn.CARRY =
-                            is_less_register( saturn.C, saturn.A, op2 );
+                        saturn.CARRY = is_less_register( saturn.C, saturn.A, op2 );
                         break;
                     case 7: /* ?D<C */
-                        saturn.CARRY =
-                            is_less_register( saturn.D, saturn.C, op2 );
+                        saturn.CARRY = is_less_register( saturn.D, saturn.C, op2 );
                         break;
                     case 8: /* ?A>=B */
-                        saturn.CARRY = is_greater_or_equal_register(
-                            saturn.A, saturn.B, op2 );
+                        saturn.CARRY = is_greater_or_equal_register( saturn.A, saturn.B, op2 );
                         break;
                     case 9: /* ?B>=C */
-                        saturn.CARRY = is_greater_or_equal_register(
-                            saturn.B, saturn.C, op2 );
+                        saturn.CARRY = is_greater_or_equal_register( saturn.B, saturn.C, op2 );
                         break;
                     case 0xa: /* ?C>=A */
-                        saturn.CARRY = is_greater_or_equal_register(
-                            saturn.C, saturn.A, op2 );
+                        saturn.CARRY = is_greater_or_equal_register( saturn.C, saturn.A, op2 );
                         break;
                     case 0xb: /* ?D>=C */
-                        saturn.CARRY = is_greater_or_equal_register(
-                            saturn.D, saturn.C, op2 );
+                        saturn.CARRY = is_greater_or_equal_register( saturn.D, saturn.C, op2 );
                         break;
                     case 0xc: /* ?A<=B */
-                        saturn.CARRY = is_less_or_equal_register(
-                            saturn.A, saturn.B, op2 );
+                        saturn.CARRY = is_less_or_equal_register( saturn.A, saturn.B, op2 );
                         break;
                     case 0xd: /* ?B<=C */
-                        saturn.CARRY = is_less_or_equal_register(
-                            saturn.B, saturn.C, op2 );
+                        saturn.CARRY = is_less_or_equal_register( saturn.B, saturn.C, op2 );
                         break;
                     case 0xe: /* ?C<=A */
-                        saturn.CARRY = is_less_or_equal_register(
-                            saturn.C, saturn.A, op2 );
+                        saturn.CARRY = is_less_or_equal_register( saturn.C, saturn.A, op2 );
                         break;
                     case 0xf: /* ?D<=C */
-                        saturn.CARRY = is_less_or_equal_register(
-                            saturn.D, saturn.C, op2 );
+                        saturn.CARRY = is_less_or_equal_register( saturn.D, saturn.C, op2 );
                         break;
                     default:
                         return 1;
@@ -2002,7 +1909,8 @@ static inline int decode_8_thru_f( int op1 ) {
     }
 }
 
-inline int step_instruction( void ) {
+inline int step_instruction( void )
+{
     int op0, op1, op2, op3;
     int stop = 0;
 
@@ -2246,7 +2154,8 @@ inline int step_instruction( void ) {
     return stop;
 }
 
-inline void schedule( void ) {
+inline void schedule( void )
+{
     t1_t2_ticks ticks;
     unsigned long steps;
     static unsigned long old_stat_instr;
@@ -2413,13 +2322,9 @@ inline void schedule( void ) {
         delta_i = instructions - old_stat_instr;
         old_stat_instr = instructions;
         if ( delta_t_1 > 0 ) {
-            t1_i_per_tick = ( ( NR_SAMPLES - 1 ) * t1_i_per_tick +
-                              ( delta_i / delta_t_16 ) ) /
-                            NR_SAMPLES;
+            t1_i_per_tick = ( ( NR_SAMPLES - 1 ) * t1_i_per_tick + ( delta_i / delta_t_16 ) ) / NR_SAMPLES;
             t2_i_per_tick = t1_i_per_tick / 512;
-            saturn.i_per_s = ( ( NR_SAMPLES - 1 ) * saturn.i_per_s +
-                               ( delta_i / delta_t_1 ) ) /
-                             NR_SAMPLES;
+            saturn.i_per_s = ( ( NR_SAMPLES - 1 ) * saturn.i_per_s + ( delta_i / delta_t_1 ) ) / NR_SAMPLES;
         } else {
             t1_i_per_tick = 8192;
             t2_i_per_tick = 16;
@@ -2452,7 +2357,8 @@ inline void schedule( void ) {
     }
 }
 
-void emulate( void ) {
+void emulate( void )
+{
     struct timeval tv;
     struct timeval tv2;
     struct timezone tz;
@@ -2474,14 +2380,11 @@ void emulate( void ) {
     do {
         step_instruction();
 
-        for ( int i = 0; i < ( int )( sizeof( saturn.keybuf.rows ) /
-                                      sizeof( saturn.keybuf.rows[ 0 ] ) );
-              i++ ) {
+        for ( int i = 0; i < ( int )( sizeof( saturn.keybuf.rows ) / sizeof( saturn.keybuf.rows[ 0 ] ) ); i++ ) {
             if ( saturn.keybuf.rows[ i ] || throttle ) {
                 /* Throttling speed if needed */
                 gettimeofday( &tv, &tz );
-                while ( ( tv.tv_sec == tv2.tv_sec ) &&
-                        ( ( tv.tv_usec - tv2.tv_usec ) < 2 ) )
+                while ( ( tv.tv_sec == tv2.tv_sec ) && ( ( tv.tv_usec - tv2.tv_usec ) < 2 ) )
                     gettimeofday( &tv, &tz );
 
                 tv2.tv_usec = tv.tv_usec;

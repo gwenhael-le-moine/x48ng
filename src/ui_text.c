@@ -1,19 +1,19 @@
+#include <ctype.h>
 #include <fcntl.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <ctype.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/utsname.h>
+#include <unistd.h>
 
 #include <ncurses.h>
 
-#include "runtime_options.h"
 #include "emulator.h"
 #include "romio.h"
+#include "runtime_options.h"
 #include "ui.h"
 #include "ui_inner.h"
 
@@ -32,263 +32,176 @@ typedef struct tui_button_t {
     short pressed;
 
     int code;
-    int x;
-    int y;
-    unsigned int w;
-    unsigned int h;
+    /* int x; */
+    /* int y; */
+    /* unsigned int w; */
+    /* unsigned int h; */
 
-    int lc;
-    const char* label;
-    short font_size;
-    unsigned int lw;
-    unsigned int lh;
-    unsigned char* lb;
+    /* int lc; */
+    /* const char* label; */
+    /* short font_size; */
+    /* unsigned int lw; */
+    /* unsigned int lh; */
+    /* unsigned char* lb; */
 
-    const char* letter;
+    /* const char* letter; */
 
-    const char* left;
-    short is_menu;
-    const char* right;
-    const char* sub;
+    /* const char* left; */
+    /* short is_menu; */
+    /* const char* right; */
+    /* const char* sub; */
 } tui_button_t;
 
 /*************/
 /* variables */
 /*************/
 static tui_ann_struct_t ann_tbl[] = {
-    { ANN_LEFT, 16, 4, '<' },   /* '↰' */
-    { ANN_RIGHT, 61, 4, '>' },  /* '↱ */
-    { ANN_ALPHA, 106, 4, 'a' }, /* 'α' */
-    { ANN_BATTERY, 151, 4, 'B' }, /* '🪫' */
-    { ANN_BUSY, 196, 4, '*' }, /* '⌛' */
-    { ANN_IO, 241, 4, '^' }, /* '☃' */
-    { 0 } };
+    {ANN_LEFT,     16,  4, '<'}, /* '↰' */
+    { ANN_RIGHT,   61,  4, '>'}, /* '↱ */
+    { ANN_ALPHA,   106, 4, 'a'}, /* 'α' */
+    { ANN_BATTERY, 151, 4, 'B'}, /* '🪫' */
+    { ANN_BUSY,    196, 4, '*'}, /* '⌛' */
+    { ANN_IO,      241, 4, '^'}, /* '☃' */
+  /* { 0 } */
+};
 
 static tui_button_t* buttons = 0;
 
 static tui_button_t buttons_sx[] = {
-    { "A", 0, 0x14, 0, 0, 36, 23, WHITE, 0, 0, menu_label_width,
-      menu_label_height, menu_label_bitmap, "A", 0, 0, 0, 0 },
-    { "B", 0, 0x84, 50, 0, 36, 23, WHITE, 0, 0, menu_label_width,
-      menu_label_height, menu_label_bitmap, "B", 0, 0, 0, 0 },
-    { "C", 0, 0x83, 100, 0, 36, 23, WHITE, 0, 0, menu_label_width,
-      menu_label_height, menu_label_bitmap, "C", 0, 0, 0, 0 },
-    { "D", 0, 0x82, 150, 0, 36, 23, WHITE, 0, 0, menu_label_width,
-      menu_label_height, menu_label_bitmap, "D", 0, 0, 0, 0 },
-    { "E", 0, 0x81, 200, 0, 36, 23, WHITE, 0, 0, menu_label_width,
-      menu_label_height, menu_label_bitmap, "E", 0, 0, 0, 0 },
-    { "F", 0, 0x80, 250, 0, 36, 23, WHITE, 0, 0, menu_label_width,
-      menu_label_height, menu_label_bitmap, "F", 0, 0, 0, 0 },
+    {"A",       0, 0x14  },
+    { "B",      0, 0x84  },
+    { "C",      0, 0x83  },
+    { "D",      0, 0x82  },
+    { "E",      0, 0x81  },
+    { "F",      0, 0x80  },
 
-    { "MTH", 0, 0x24, 0, 50, 36, 26, WHITE, "MTH", 0, 0, 0, 0, "G", "PRINT",
-      1, 0, 0 },
-    { "PRG", 0, 0x74, 50, 50, 36, 26, WHITE, "PRG", 0, 0, 0, 0, "H", "I/O",
-      1, 0, 0 },
-    { "CST", 0, 0x73, 100, 50, 36, 26, WHITE, "CST", 0, 0, 0, 0, "I",
-      "MODES", 1, 0, 0 },
-    { "VAR", 0, 0x72, 150, 50, 36, 26, WHITE, "VAR", 0, 0, 0, 0, "J",
-      "MEMORY", 1, 0, 0 },
-    { "UP", 0, 0x71, 200, 50, 36, 26, WHITE, 0, 0, up_width, up_height,
-      up_bitmap, "K", "LIBRARY", 1, 0, 0 },
-    { "NXT", 0, 0x70, 250, 50, 36, 26, WHITE, "NXT", 0, 0, 0, 0, "L", "PREV",
-      0, 0, 0 },
+    { "MTH",    0, 0x24  },
+    { "PRG",    0, 0x74  },
+    { "CST",    0, 0x73  },
+    { "VAR",    0, 0x72  },
+    { "UP",     0, 0x71  },
+    { "NXT",    0, 0x70  },
 
-    { "COLON", 0, 0x04, 0, 100, 36, 26, WHITE, 0, 0, colon_width,
-      colon_height, colon_bitmap, "M", "UP", 0, "HOME", 0 },
-    { "STO", 0, 0x64, 50, 100, 36, 26, WHITE, "STO", 0, 0, 0, 0, "N", "DEF",
-      0, "RCL", 0 },
-    { "EVAL", 0, 0x63, 100, 100, 36, 26, WHITE, "EVAL", 0, 0, 0, 0, "O",
-      "aQ", 0, "aNUM", 0 },
-    { "LEFT", 0, 0x62, 150, 100, 36, 26, WHITE, 0, 0, left_width,
-      left_height, left_bitmap, "P", "GRAPH", 0, 0, 0 },
-    { "DOWN", 0, 0x61, 200, 100, 36, 26, WHITE, 0, 0, down_width,
-      down_height, down_bitmap, "Q", "REVIEW", 0, 0, 0 },
-    { "RIGHT", 0, 0x60, 250, 100, 36, 26, WHITE, 0, 0, right_width,
-      right_height, right_bitmap, "R", "SWAP", 0, 0, 0 },
+    { "COLON",  0, 0x04  },
+    { "STO",    0, 0x64  },
+    { "EVAL",   0, 0x63  },
+    { "LEFT",   0, 0x62  },
+    { "DOWN",   0, 0x61  },
+    { "RIGHT",  0, 0x60  },
 
-    { "SIN", 0, 0x34, 0, 150, 36, 26, WHITE, "SIN", 0, 0, 0, 0, "S", "ASIN",
-      0, "b", 0 },
-    { "COS", 0, 0x54, 50, 150, 36, 26, WHITE, "COS", 0, 0, 0, 0, "T", "ACOS",
-      0, "c", 0 },
-    { "TAN", 0, 0x53, 100, 150, 36, 26, WHITE, "TAN", 0, 0, 0, 0, "U",
-      "ATAN", 0, "d", 0 },
-    { "SQRT", 0, 0x52, 150, 150, 36, 26, WHITE, 0, 0, sqrt_width,
-      sqrt_height, sqrt_bitmap, "V", "e", 0, "f", 0 },
-    { "POWER", 0, 0x51, 200, 150, 36, 26, WHITE, 0, 0, power_width,
-      power_height, power_bitmap, "W", "g", 0, "LOG", 0 },
-    { "INV", 0, 0x50, 250, 150, 36, 26, WHITE, 0, 0, inv_width, inv_height,
-      inv_bitmap, "X", "h", 0, "LN", 0 },
+    { "SIN",    0, 0x34  },
+    { "COS",    0, 0x54  },
+    { "TAN",    0, 0x53  },
+    { "SQRT",   0, 0x52  },
+    { "POWER",  0, 0x51  },
+    { "INV",    0, 0x50  },
 
-    { "ENTER", 0, 0x44, 0, 200, 86, 26, WHITE, "ENTER", 2, 0, 0, 0, 0,
-      "EQUATION", 0, "MATRIX", 0 },
-    { "NEG", 0, 0x43, 100, 200, 36, 26, WHITE, 0, 0, neg_width, neg_height,
-      neg_bitmap, "Y", "EDIT", 0, "VISIT", 0 },
-    { "EEX", 0, 0x42, 150, 200, 36, 26, WHITE, "EEX", 0, 0, 0, 0, "Z", "2D",
-      0, "3D", 0 },
-    { "DEL", 0, 0x41, 200, 200, 36, 26, WHITE, "DEL", 0, 0, 0, 0, 0, "PURGE",
-      0, 0, 0 },
-    { "BS", 0, 0x40, 250, 200, 36, 26, WHITE, 0, 0, bs_width, bs_height,
-      bs_bitmap, 0, "DROP", 0, "CLR", 0 },
+    { "ENTER",  0, 0x44  },
+    { "NEG",    0, 0x43  },
+    { "EEX",    0, 0x42  },
+    { "DEL",    0, 0x41  },
+    { "BS",     0, 0x40  },
 
-    { "ALPHA", 0, 0x35, 0, 250, 36, 26, WHITE, 0, 0, alpha_width,
-      alpha_height, alpha_bitmap, 0, "USR", 0, "ENTRY", 0 },
-    { "7", 0, 0x33, 60, 250, 46, 26, WHITE, "7", 1, 0, 0, 0, 0, "SOLVE", 1,
-      0, 0 },
-    { "8", 0, 0x32, 120, 250, 46, 26, WHITE, "8", 1, 0, 0, 0, 0, "PLOT", 1,
-      0, 0 },
-    { "9", 0, 0x31, 180, 250, 46, 26, WHITE, "9", 1, 0, 0, 0, 0, "ALGEBRA",
-      1, 0, 0 },
-    { "DIV", 0, 0x30, 240, 250, 46, 26, WHITE, 0, 0, div_width, div_height,
-      div_bitmap, 0, "( )", 0, "#", 0 },
+    { "ALPHA",  0, 0x35  },
+    { "7",      0, 0x33  },
+    { "8",      0, 0x32  },
+    { "9",      0, 0x31  },
+    { "DIV",    0, 0x30  },
 
-    { "SHL", 0, 0x25, 0, 300, 36, 26, LEFT, 0, 0, shl_width, shl_height,
-      shl_bitmap, 0, 0, 0, 0, 0 },
-    { "4", 0, 0x23, 60, 300, 46, 26, WHITE, "4", 1, 0, 0, 0, 0, "TIME", 1, 0,
-      0 },
-    { "5", 0, 0x22, 120, 300, 46, 26, WHITE, "5", 1, 0, 0, 0, 0, "STAT", 1,
-      0, 0 },
-    { "6", 0, 0x21, 180, 300, 46, 26, WHITE, "6", 1, 0, 0, 0, 0, "UNITS", 1,
-      0, 0 },
-    { "MUL", 0, 0x20, 240, 300, 46, 26, WHITE, 0, 0, mul_width, mul_height,
-      mul_bitmap, 0, "[ ]", 0, "_", 0 },
+    { "SHL",    0, 0x25  },
+    { "4",      0, 0x23  },
+    { "5",      0, 0x22  },
+    { "6",      0, 0x21  },
+    { "MUL",    0, 0x20  },
 
-    { "SHR", 0, 0x15, 0, 350, 36, 26, RIGHT, 0, 0, shr_width, shr_height,
-      shr_bitmap, 0, 0, 0, 0, 0 },
-    { "1", 0, 0x13, 60, 350, 46, 26, WHITE, "1", 1, 0, 0, 0, 0, "RAD", 0,
-      "POLAR", 0 },
-    { "2", 0, 0x12, 120, 350, 46, 26, WHITE, "2", 1, 0, 0, 0, 0, "STACK", 0,
-      "ARG", 0 },
-    { "3", 0, 0x11, 180, 350, 46, 26, WHITE, "3", 1, 0, 0, 0, 0, "CMD", 0,
-      "MENU", 0 },
-    { "MINUS", 0, 0x10, 240, 350, 46, 26, WHITE, 0, 0, minus_width,
-      minus_height, minus_bitmap, 0, "i", 0, "j", 0 },
+    { "SHR",    0, 0x15  },
+    { "1",      0, 0x13  },
+    { "2",      0, 0x12  },
+    { "3",      0, 0x11  },
+    { "MINUS",  0, 0x10  },
 
-    { "ON", 0, 0x8000, 0, 400, 36, 26, WHITE, "ON", 0, 0, 0, 0, 0, "CONT", 0,
-      "OFF", "ATTN" },
-    { "0", 0, 0x03, 60, 400, 46, 26, WHITE, "0", 1, 0, 0, 0, 0, "= ", 0,
-      " a", 0 },
-    { "PERIOD", 0, 0x02, 120, 400, 46, 26, WHITE, ".", 1, 0, 0, 0, 0, ", ",
-      0, " k", 0 },
-    { "SPC", 0, 0x01, 180, 400, 46, 26, WHITE, "SPC", 0, 0, 0, 0, 0, "l ", 0,
-      " m", 0 },
-    { "PLUS", 0, 0x00, 240, 400, 46, 26, WHITE, 0, 0, plus_width,
-      plus_height, plus_bitmap, 0, "{ }", 0, ": :", 0 } };
+    { "ON",     0, 0x8000},
+    { "0",      0, 0x03  },
+    { "PERIOD", 0, 0x02  },
+    { "SPC",    0, 0x01  },
+    { "PLUS",   0, 0x00  },
+ /* { 0 } */
+};
 
 static tui_button_t buttons_gx[] = {
-    { "A", 0, 0x14, 0, 0, 36, 23, WHITE, 0, 0, menu_label_width,
-      menu_label_height, menu_label_bitmap, "A", 0, 0, 0, 0 },
-    { "B", 0, 0x84, 50, 0, 36, 23, WHITE, 0, 0, menu_label_width,
-      menu_label_height, menu_label_bitmap, "B", 0, 0, 0, 0 },
-    { "C", 0, 0x83, 100, 0, 36, 23, WHITE, 0, 0, menu_label_width,
-      menu_label_height, menu_label_bitmap, "C", 0, 0, 0, 0 },
-    { "D", 0, 0x82, 150, 0, 36, 23, WHITE, 0, 0, menu_label_width,
-      menu_label_height, menu_label_bitmap, "D", 0, 0, 0, 0 },
-    { "E", 0, 0x81, 200, 0, 36, 23, WHITE, 0, 0, menu_label_width,
-      menu_label_height, menu_label_bitmap, "E", 0, 0, 0, 0 },
-    { "F", 0, 0x80, 250, 0, 36, 23, WHITE, 0, 0, menu_label_width,
-      menu_label_height, menu_label_bitmap, "F", 0, 0, 0, 0 },
+    {"A",       0, 0x14  },
+    { "B",      0, 0x84  },
+    { "C",      0, 0x83  },
+    { "D",      0, 0x82  },
+    { "E",      0, 0x81  },
+    { "F",      0, 0x80  },
 
-    { "MTH", 0, 0x24, 0, 50, 36, 26, WHITE, "MTH", 0, 0, 0, 0, "G", "RAD", 0,
-      "POLAR", 0 },
-    { "PRG", 0, 0x74, 50, 50, 36, 26, WHITE, "PRG", 0, 0, 0, 0, "H", 0, 0,
-      "CHARS", 0 },
-    { "CST", 0, 0x73, 100, 50, 36, 26, WHITE, "CST", 0, 0, 0, 0, "I", 0, 0,
-      "MODES", 0 },
-    { "VAR", 0, 0x72, 150, 50, 36, 26, WHITE, "VAR", 0, 0, 0, 0, "J", 0, 0,
-      "MEMORY", 0 },
-    { "UP", 0, 0x71, 200, 50, 36, 26, WHITE, 0, 0, up_width, up_height,
-      up_bitmap, "K", 0, 0, "STACK", 0 },
-    { "NXT", 0, 0x70, 250, 50, 36, 26, WHITE, "NXT", 0, 0, 0, 0, "L", "PREV",
-      0, "MENU", 0 },
+    { "MTH",    0, 0x24  },
+    { "PRG",    0, 0x74  },
+    { "CST",    0, 0x73  },
+    { "VAR",    0, 0x72  },
+    { "UP",     0, 0x71  },
+    { "NXT",    0, 0x70  },
 
-    { "COLON", 0, 0x04, 0, 100, 36, 26, WHITE, 0, 0, colon_width,
-      colon_height, colon_bitmap, "M", "UP", 0, "HOME", 0 },
-    { "STO", 0, 0x64, 50, 100, 36, 26, WHITE, "STO", 0, 0, 0, 0, "N", "DEF",
-      0, "RCL", 0 },
-    { "EVAL", 0, 0x63, 100, 100, 36, 26, WHITE, "EVAL", 0, 0, 0, 0, "O",
-      "aNUM", 0, "UNDO", 0 },
-    { "LEFT", 0, 0x62, 150, 100, 36, 26, WHITE, 0, 0, left_width,
-      left_height, left_bitmap, "P", "PICTURE", 0, 0, 0 },
-    { "DOWN", 0, 0x61, 200, 100, 36, 26, WHITE, 0, 0, down_width,
-      down_height, down_bitmap, "Q", "VIEW", 0, 0, 0 },
-    { "RIGHT", 0, 0x60, 250, 100, 36, 26, WHITE, 0, 0, right_width,
-      right_height, right_bitmap, "R", "SWAP", 0, 0, 0 },
+    { "COLON",  0, 0x04  },
+    { "STO",    0, 0x64  },
+    { "EVAL",   0, 0x63  },
+    { "LEFT",   0, 0x62  },
+    { "DOWN",   0, 0x61  },
+    { "RIGHT",  0, 0x60  },
 
-    { "SIN", 0, 0x34, 0, 150, 36, 26, WHITE, "SIN", 0, 0, 0, 0, "S", "ASIN",
-      0, "b", 0 },
-    { "COS", 0, 0x54, 50, 150, 36, 26, WHITE, "COS", 0, 0, 0, 0, "T", "ACOS",
-      0, "c", 0 },
-    { "TAN", 0, 0x53, 100, 150, 36, 26, WHITE, "TAN", 0, 0, 0, 0, "U",
-      "ATAN", 0, "d", 0 },
-    { "SQRT", 0, 0x52, 150, 150, 36, 26, WHITE, 0, 0, sqrt_width,
-      sqrt_height, sqrt_bitmap, "V", "n", 0, "o", 0 },
-    { "POWER", 0, 0x51, 200, 150, 36, 26, WHITE, 0, 0, power_width,
-      power_height, power_bitmap, "W", "p", 0, "LOG", 0 },
-    { "INV", 0, 0x50, 250, 150, 36, 26, WHITE, 0, 0, inv_width, inv_height,
-      inv_bitmap, "X", "q", 0, "LN", 0 },
+    { "SIN",    0, 0x34  },
+    { "COS",    0, 0x54  },
+    { "TAN",    0, 0x53  },
+    { "SQRT",   0, 0x52  },
+    { "POWER",  0, 0x51  },
+    { "INV",    0, 0x50  },
 
-    { "ENTER", 0, 0x44, 0, 200, 86, 26, WHITE, "ENTER", 2, 0, 0, 0, 0,
-      "EQUATION", 0, "MATRIX", 0 },
-    { "NEG", 0, 0x43, 100, 200, 36, 26, WHITE, 0, 0, neg_width, neg_height,
-      neg_bitmap, "Y", "EDIT", 0, "CMD", 0 },
-    { "EEX", 0, 0x42, 150, 200, 36, 26, WHITE, "EEX", 0, 0, 0, 0, "Z",
-      "PURG", 0, "ARG", 0 },
-    { "DEL", 0, 0x41, 200, 200, 36, 26, WHITE, "DEL", 0, 0, 0, 0, 0, "CLEAR",
-      0, 0, 0 },
-    { "BS", 0, 0x40, 250, 200, 36, 26, WHITE, 0, 0, bs_width, bs_height,
-      bs_bitmap, 0, "DROP", 0, 0, 0 },
+    { "ENTER",  0, 0x44  },
+    { "NEG",    0, 0x43  },
+    { "EEX",    0, 0x42  },
+    { "DEL",    0, 0x41  },
+    { "BS",     0, 0x40  },
 
-    { "ALPHA", 0, 0x35, 0, 250, 36, 26, WHITE, 0, 0, alpha_width,
-      alpha_height, alpha_bitmap, 0, "USER", 0, "ENTRY", 0 },
-    { "7", 0, 0x33, 60, 250, 46, 26, WHITE, "7", 1, 0, 0, 0, 0, 0, 1,
-      "SOLVE", 0 },
-    { "8", 0, 0x32, 120, 250, 46, 26, WHITE, "8", 1, 0, 0, 0, 0, 0, 1,
-      "PLOT", 0 },
-    { "9", 0, 0x31, 180, 250, 46, 26, WHITE, "9", 1, 0, 0, 0, 0, 0, 1,
-      "SYMBOLIC", 0 },
-    { "DIV", 0, 0x30, 240, 250, 46, 26, WHITE, 0, 0, div_width, div_height,
-      div_bitmap, 0, "r ", 0, "s", 0 },
+    { "ALPHA",  0, 0x35  },
+    { "7",      0, 0x33  },
+    { "8",      0, 0x32  },
+    { "9",      0, 0x31  },
+    { "DIV",    0, 0x30  },
 
-    { "SHL", 0, 0x25, 0, 300, 36, 26, LEFT, 0, 0, shl_width, shl_height,
-      shl_bitmap, 0, 0, 0, 0, 0 },
-    { "4", 0, 0x23, 60, 300, 46, 26, WHITE, "4", 1, 0, 0, 0, 0, 0, 1, "TIME",
-      0 },
-    { "5", 0, 0x22, 120, 300, 46, 26, WHITE, "5", 1, 0, 0, 0, 0, 0, 1,
-      "STAT", 0 },
-    { "6", 0, 0x21, 180, 300, 46, 26, WHITE, "6", 1, 0, 0, 0, 0, 0, 1,
-      "UNITS", 0 },
-    { "MUL", 0, 0x20, 240, 300, 46, 26, WHITE, 0, 0, mul_width, mul_height,
-      mul_bitmap, 0, "t ", 0, "u", 0 },
+    { "SHL",    0, 0x25  },
+    { "4",      0, 0x23  },
+    { "5",      0, 0x22  },
+    { "6",      0, 0x21  },
+    { "MUL",    0, 0x20  },
 
-    { "SHR", 0, 0x15, 0, 350, 36, 26, RIGHT, 0, 0, shr_width, shr_height,
-      shr_bitmap, 0, 0, 1, " ", 0 },
-    { "1", 0, 0x13, 60, 350, 46, 26, WHITE, "1", 1, 0, 0, 0, 0, 0, 1, "I/O",
-      0 },
-    { "2", 0, 0x12, 120, 350, 46, 26, WHITE, "2", 1, 0, 0, 0, 0, 0, 1,
-      "LIBRARY", 0 },
-    { "3", 0, 0x11, 180, 350, 46, 26, WHITE, "3", 1, 0, 0, 0, 0, 0, 1,
-      "EQ LIB", 0 },
-    { "MINUS", 0, 0x10, 240, 350, 46, 26, WHITE, 0, 0, minus_width,
-      minus_height, minus_bitmap, 0, "v ", 0, "w", 0 },
+    { "SHR",    0, 0x15  },
+    { "1",      0, 0x13  },
+    { "2",      0, 0x12  },
+    { "3",      0, 0x11  },
+    { "MINUS",  0, 0x10  },
 
-    { "ON", 0, 0x8000, 0, 400, 36, 26, WHITE, "ON", 0, 0, 0, 0, 0, "CONT", 0,
-      "OFF", "CANCEL" },
-    { "0", 0, 0x03, 60, 400, 46, 26, WHITE, "0", 1, 0, 0, 0, 0, "\004 ", 0,
-      "\003", 0 },
-    { "PERIOD", 0, 0x02, 120, 400, 46, 26, WHITE, ".", 1, 0, 0, 0, 0,
-      "\002 ", 0, "\001", 0 },
-    { "SPC", 0, 0x01, 180, 400, 46, 26, WHITE, "SPC", 0, 0, 0, 0, 0, "\005 ",
-      0, "z", 0 },
-    { "PLUS", 0, 0x00, 240, 400, 46, 26, WHITE, 0, 0, plus_width,
-      plus_height, plus_bitmap, 0, "x ", 0, "y", 0 },
-
-    { 0 } };
+    { "ON",     0, 0x8000},
+    { "0",      0, 0x03  },
+    { "PERIOD", 0, 0x02  },
+    { "SPC",    0, 0x01  },
+    { "PLUS",   0, 0x00  },
+ /* { 0 } */
+};
 
 /****************************/
 /* functions implementation */
 /****************************/
 
-static inline void draw_nibble( int c, int r, int val ) {
+static int tui_draw_nibble( int x, int y, int val )
+{
+    /* TODO */
+
+    return 0;
+}
+
+static inline void draw_nibble( int c, int r, int val )
+{
     int x, y;
 
     x = ( c * 4 ); // x: start in pixels
@@ -301,11 +214,12 @@ static inline void draw_nibble( int c, int r, int val ) {
     if ( val != lcd_buffer[ r ][ c ] ) {
         lcd_buffer[ r ][ c ] = val;
 
-        /* TEXTDrawNibble( x, y, val ); */
+        tui_draw_nibble( x, y, val );
     }
 }
 
-static inline void draw_row( long addr, int row ) {
+static inline void draw_row( long addr, int row )
+{
     int i, v;
     int line_length;
 
@@ -321,7 +235,8 @@ static inline void draw_row( long addr, int row ) {
     }
 }
 
-static void tui_button_pressed( int b ) {
+static void tui_button_pressed( int b )
+{
     // Check not already pressed (may be important: avoids a useless do_kbd_int)
     if ( buttons[ b ].pressed == 1 )
         return;
@@ -347,7 +262,8 @@ static void tui_button_pressed( int b ) {
     }
 }
 
-static void tui_button_released( int b ) {
+static void tui_button_released( int b )
+{
     // Check not already released (not critical)
     if ( buttons[ b ].pressed == 0 )
         return;
@@ -365,7 +281,8 @@ static void tui_button_released( int b ) {
     }
 }
 
-static void tui_button_release_all( void ) {
+static void tui_button_release_all( void )
+{
     for ( int b = FIRST_BUTTON; b <= LAST_BUTTON; b++ )
         if ( buttons[ b ].pressed )
             tui_button_released( b );
@@ -374,7 +291,8 @@ static void tui_button_release_all( void ) {
 /**********/
 /* public */
 /**********/
-int text_get_event( void ) {
+int text_get_event( void )
+{
     int hpkey = -1;
 
     /* check for input */
@@ -581,7 +499,8 @@ int text_get_event( void ) {
 
 void text_adjust_contrast() {}
 
-void text_init_LCD( void ) {
+void text_init_LCD( void )
+{
     display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
 
     display.disp_start = ( saturn.disp_addr & 0xffffe );
@@ -592,14 +511,11 @@ void text_init_LCD( void ) {
         display.lines = 63;
 
     if ( display.offset > 3 )
-        display.nibs_per_line =
-            ( NIBBLES_PER_ROW + saturn.line_offset + 2 ) & 0xfff;
+        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset + 2 ) & 0xfff;
     else
-        display.nibs_per_line =
-            ( NIBBLES_PER_ROW + saturn.line_offset ) & 0xfff;
+        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset ) & 0xfff;
 
-    display.disp_end =
-        display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
+    display.disp_end = display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
 
     display.menu_start = saturn.menu_addr;
     display.menu_end = saturn.menu_addr + 0x110;
@@ -613,7 +529,8 @@ void text_init_LCD( void ) {
     memset( lcd_buffer, 0xf0, sizeof( lcd_buffer ) );
 }
 
-void text_update_LCD( void ) {
+void text_update_LCD( void )
+{
     int i, j;
     long addr;
     static int old_offset = -1;
@@ -622,17 +539,13 @@ void text_update_LCD( void ) {
     if ( display.on ) {
         addr = display.disp_start;
         if ( display.offset != old_offset ) {
-            memset( disp_buf, 0xf0,
-                    ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
-            memset( lcd_buffer, 0xf0,
-                    ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
+            memset( disp_buf, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
+            memset( lcd_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
             old_offset = display.offset;
         }
         if ( display.lines != old_lines ) {
-            memset( &disp_buf[ 56 ][ 0 ], 0xf0,
-                    ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
-            memset( &lcd_buffer[ 56 ][ 0 ], 0xf0,
-                    ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
+            memset( &disp_buf[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
+            memset( &lcd_buffer[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
             old_lines = display.lines;
         }
         for ( i = 0; i <= display.lines; i++ ) {
@@ -658,7 +571,8 @@ void text_update_LCD( void ) {
 
 void text_refresh_LCD( void ) {}
 
-void text_disp_draw_nibble( word_20 addr, word_4 val ) {
+void text_disp_draw_nibble( word_20 addr, word_4 val )
+{
     long offset;
     int x, y;
 
@@ -684,7 +598,8 @@ void text_disp_draw_nibble( word_20 addr, word_4 val ) {
     }
 }
 
-void text_menu_draw_nibble( word_20 addr, word_4 val ) {
+void text_menu_draw_nibble( word_20 addr, word_4 val )
+{
     long offset;
     int x, y;
 
@@ -697,7 +612,8 @@ void text_menu_draw_nibble( word_20 addr, word_4 val ) {
     }
 }
 
-void text_draw_annunc( void ) {
+void text_draw_annunc( void )
+{
     int val;
 
     val = display.annunc;
@@ -709,13 +625,13 @@ void text_draw_annunc( void ) {
 
     char annuncstate[ 6 ];
     for ( int i = 0; ann_tbl[ i ].bit; i++ )
-        annuncstate[ i ] =
-            ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit ) ? 1 : 0;
+        annuncstate[ i ] = ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit ) ? 1 : 0;
 
     /* TEXTDrawAnnunc( annuncstate ); */
 }
 
-void init_text_ui( int argc, char** argv ) {
+void init_text_ui( int argc, char** argv )
+{
     buttons = ( tui_button_t* )malloc( sizeof( buttons_gx ) );
 
     if ( opt_gx )

@@ -1,10 +1,10 @@
 #include <errno.h>
+#include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <pwd.h>
-#include <unistd.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 #include <getopt.h>
 
@@ -63,7 +63,8 @@ char normalized_state_path[ MAX_LENGTH_FILENAME ];
 char normalized_port1_path[ MAX_LENGTH_FILENAME ];
 char normalized_port2_path[ MAX_LENGTH_FILENAME ];
 
-void get_absolute_config_dir( char* source, char* dest ) {
+void get_absolute_config_dir( char* source, char* dest )
+{
     char* home;
     struct passwd* pwd;
 
@@ -90,14 +91,14 @@ void get_absolute_config_dir( char* source, char* dest ) {
         strcat( dest, "/" );
 }
 
-static inline void normalize_filenames( void ) {
+static inline void normalize_filenames( void )
+{
     struct stat st;
     int normalized_config_path_exist = 1;
 
     get_absolute_config_dir( configDir, normalized_config_path );
     if ( verbose )
-        fprintf( stderr, "normalized_config_path: %s\n",
-                 normalized_config_path );
+        fprintf( stderr, "normalized_config_path: %s\n", normalized_config_path );
 
     if ( stat( normalized_config_path, &st ) == -1 )
         if ( errno == ENOENT )
@@ -141,122 +142,121 @@ static inline void normalize_filenames( void ) {
     strcat( normalized_port2_path, port2FileName );
 }
 
-int parse_args( int argc, char* argv[] ) {
+int parse_args( int argc, char* argv[] )
+{
     int option_index;
     int c = '?';
 
     char* optstring = "c:S:u:hvVtsirT";
     static struct option long_options[] = {
-        { "config-dir", required_argument, NULL, 1000 },
-        { "rom", required_argument, NULL, 1010 },
-        { "ram", required_argument, NULL, 1011 },
-        { "state", required_argument, NULL, 1012 },
-        { "port1", required_argument, NULL, 1013 },
-        { "port2", required_argument, NULL, 1014 },
+        {"config-dir",           required_argument, NULL,                1000         },
+        { "rom",                 required_argument, NULL,                1010         },
+        { "ram",                 required_argument, NULL,                1011         },
+        { "state",               required_argument, NULL,                1012         },
+        { "port1",               required_argument, NULL,                1013         },
+        { "port2",               required_argument, NULL,                1014         },
 
-        { "serial-line", required_argument, NULL, 1015 },
+        { "serial-line",         required_argument, NULL,                1015         },
 
-        { "front-end", required_argument, NULL, 'u' },
+        { "front-end",           required_argument, NULL,                'u'          },
 
-        { "help", no_argument, NULL, 'h' },
-        { "version", no_argument, NULL, 'v' },
+        { "help",                no_argument,       NULL,                'h'          },
+        { "version",             no_argument,       NULL,                'v'          },
 
-        { "verbose", no_argument, &verbose, 1 },
-        { "use-terminal", no_argument, &useTerminal, 1 },
-        { "use-serial", no_argument, &useSerial, 1 },
+        { "verbose",             no_argument,       &verbose,            1            },
+        { "use-terminal",        no_argument,       &useTerminal,        1            },
+        { "use-serial",          no_argument,       &useSerial,          1            },
 
-        { "initialize", no_argument, &initialize, 1 },
-        { "reset", no_argument, &resetOnStartup, 1 },
-        { "throttle", no_argument, &throttle, 1 },
+        { "initialize",          no_argument,       &initialize,         1            },
+        { "reset",               no_argument,       &resetOnStartup,     1            },
+        { "throttle",            no_argument,       &throttle,           1            },
 
-        { "no-debug", no_argument, &useDebugger, 0 },
+        { "no-debug",            no_argument,       &useDebugger,        0            },
 
-        { "sdl", no_argument, &frontend_type, FRONTEND_SDL },
-        { "sdl-no-chrome", no_argument, &show_ui_chrome, 0 },
-        { "sdl-fullscreen", no_argument, &show_ui_fullscreen, 1 },
+        { "sdl",                 no_argument,       &frontend_type,      FRONTEND_SDL },
+        { "sdl-no-chrome",       no_argument,       &show_ui_chrome,     0            },
+        { "sdl-fullscreen",      no_argument,       &show_ui_fullscreen, 1            },
 
-        { "x11", no_argument, &frontend_type, FRONTEND_X11 },
-        { "x11-netbook", no_argument, &netbook, 1 },
-        { "x11-mono", no_argument, &mono, 1 },
-        { "x11-gray", no_argument, &gray, 1 },
-        { "x11-visual", required_argument, NULL, 8110 },
-        { "x11-small-font", required_argument, NULL, 8111 },
-        { "x11-medium-font", required_argument, NULL, 8112 },
-        { "x11-large-font", required_argument, NULL, 8113 },
-        { "x11-connection-font", required_argument, NULL, 8114 },
+        { "x11",                 no_argument,       &frontend_type,      FRONTEND_X11 },
+        { "x11-netbook",         no_argument,       &netbook,            1            },
+        { "x11-mono",            no_argument,       &mono,               1            },
+        { "x11-gray",            no_argument,       &gray,               1            },
+        { "x11-visual",          required_argument, NULL,                8110         },
+        { "x11-small-font",      required_argument, NULL,                8111         },
+        { "x11-medium-font",     required_argument, NULL,                8112         },
+        { "x11-large-font",      required_argument, NULL,                8113         },
+        { "x11-connection-font", required_argument, NULL,                8114         },
 
-        { "tui", no_argument, &frontend_type, FRONTEND_TEXT },
+        { "tui",                 no_argument,       &frontend_type,      FRONTEND_TEXT},
 
-        { 0, 0, 0, 0 } };
+        { 0,                     0,                 0,                   0            }
+    };
 
-    char* help_text =
-        "usage: %s [options]\n"
-        "options:\n"
-        "\t-h --help\t\t\twhat you are reading\n"
-        "\t-v --version\t\t\tshow version\n"
-        "\t   --config-dir=<path>\t\tuse <path> as x48ng's home (default: "
-        "~/.x48ng/)\n"
-        "\t   --rom=<filename>\tuse <filename> (absolute or relative to "
-        "<config-dir>) as ROM (default: rom)\n"
-        "\t   --ram=<filename>\tuse <filename> (absolute or relative to "
-        "<config-dir>) as RAM (default: ram)\n"
-        "\t   --state=<filename>\tuse <filename> (absolute or relative "
-        "to <config-dir>) as STATE (default: hp48)\n"
-        "\t   --port1=<filename>\tuse <filename> (absolute or relative "
-        "to <config-dir>) as PORT1 (default: port1)\n"
-        "\t   --port2=<filename>\tuse <filename> (absolute or relative "
-        "to <config-dir>) as PORT2 (default: port2)\n"
-        "\t   --serial-line=<path>\t\tuse <path> as serial device default: "
-        "%s)\n"
-        "\t-V --verbose\t\t\tbe verbose (default: false)\n"
-        "\t-u --front-end\t\t\tspecify a front-end (available: x11, sdl, "
-        "text; "
-        "default: x11)\n"
-        "\t   --x11\t\tuse X11 front-end (default: true)\n"
-        "\t   --sdl\t\tuse SDL front-end (default: false)\n"
-        "\t   --tui\t\tuse terminal front-end (default: false)\n"
-        "\t-t --use-terminal\t\tactivate pseudo terminal interface (default: "
-        "true)\n"
-        "\t-s --use-serial\t\t\tactivate serial interface (default: false)\n"
-        "\t   --no-debug\t\t\tdisable the debugger\n"
-        "\t-i --initialize\t\t\tinitialize the content of <config-dir>\n"
-        "\t-r --reset\t\t\tperform a reset on startup\n"
-        "\t-T --throttle\t\t\ttry to emulate real speed (default: false)\n"
-        "\t   --sdl-no-chrome\t\tonly display the LCD (default: "
-        "false)\n"
-        "\t   --sdl-fullscreen\t\tmake the UI fullscreen "
-        "(default: "
-        "false)\n"
-        "\t   --x11-netbook\t\tmake the UI horizontal (default: "
-        "false)\n"
-        "\t   --x11-mono\t\t\tmake the UI monochrome (default: "
-        "false)\n"
-        "\t   --x11-gray\t\t\tmake the UI grayscale (default: "
-        "false)\n"
-        "\t   --x11-visual=<X visual>\tuse visual <X visual> (default: "
-        "default), possible values: "
-        "<default | staticgray | staticcolor | truecolor | grayscale | "
-        "pseudocolor | directcolor | 0xnn | nn>\n"
-        "\t   --x11-small-font=<X font name>\tuse <X font name> as small "
-        "font (default: %s)\n"
-        "\t   --x11-medium-font=<X font name>\tuse <X font name> as medium "
-        "font (default: %s)\n"
-        "\t   --x11-large-font=<X font name>\tuse <X font name> as large "
-        "font (default: %s)\n"
-        "\t   --x11-connection-font=<X font name>\tuse <X font name> as "
-        "connection font (default: %s)\n";
+    char* help_text = "usage: %s [options]\n"
+                      "options:\n"
+                      "\t-h --help\t\t\twhat you are reading\n"
+                      "\t-v --version\t\t\tshow version\n"
+                      "\t   --config-dir=<path>\t\tuse <path> as x48ng's home (default: "
+                      "~/.x48ng/)\n"
+                      "\t   --rom=<filename>\tuse <filename> (absolute or relative to "
+                      "<config-dir>) as ROM (default: rom)\n"
+                      "\t   --ram=<filename>\tuse <filename> (absolute or relative to "
+                      "<config-dir>) as RAM (default: ram)\n"
+                      "\t   --state=<filename>\tuse <filename> (absolute or relative "
+                      "to <config-dir>) as STATE (default: hp48)\n"
+                      "\t   --port1=<filename>\tuse <filename> (absolute or relative "
+                      "to <config-dir>) as PORT1 (default: port1)\n"
+                      "\t   --port2=<filename>\tuse <filename> (absolute or relative "
+                      "to <config-dir>) as PORT2 (default: port2)\n"
+                      "\t   --serial-line=<path>\t\tuse <path> as serial device default: "
+                      "%s)\n"
+                      "\t-V --verbose\t\t\tbe verbose (default: false)\n"
+                      "\t-u --front-end\t\t\tspecify a front-end (available: x11, sdl, "
+                      "text; "
+                      "default: x11)\n"
+                      "\t   --x11\t\tuse X11 front-end (default: true)\n"
+                      "\t   --sdl\t\tuse SDL front-end (default: false)\n"
+                      "\t   --tui\t\tuse terminal front-end (default: false)\n"
+                      "\t-t --use-terminal\t\tactivate pseudo terminal interface (default: "
+                      "true)\n"
+                      "\t-s --use-serial\t\t\tactivate serial interface (default: false)\n"
+                      "\t   --no-debug\t\t\tdisable the debugger\n"
+                      "\t-i --initialize\t\t\tinitialize the content of <config-dir>\n"
+                      "\t-r --reset\t\t\tperform a reset on startup\n"
+                      "\t-T --throttle\t\t\ttry to emulate real speed (default: false)\n"
+                      "\t   --sdl-no-chrome\t\tonly display the LCD (default: "
+                      "false)\n"
+                      "\t   --sdl-fullscreen\t\tmake the UI fullscreen "
+                      "(default: "
+                      "false)\n"
+                      "\t   --x11-netbook\t\tmake the UI horizontal (default: "
+                      "false)\n"
+                      "\t   --x11-mono\t\t\tmake the UI monochrome (default: "
+                      "false)\n"
+                      "\t   --x11-gray\t\t\tmake the UI grayscale (default: "
+                      "false)\n"
+                      "\t   --x11-visual=<X visual>\tuse visual <X visual> (default: "
+                      "default), possible values: "
+                      "<default | staticgray | staticcolor | truecolor | grayscale | "
+                      "pseudocolor | directcolor | 0xnn | nn>\n"
+                      "\t   --x11-small-font=<X font name>\tuse <X font name> as small "
+                      "font (default: %s)\n"
+                      "\t   --x11-medium-font=<X font name>\tuse <X font name> as medium "
+                      "font (default: %s)\n"
+                      "\t   --x11-large-font=<X font name>\tuse <X font name> as large "
+                      "font (default: %s)\n"
+                      "\t   --x11-connection-font=<X font name>\tuse <X font name> as "
+                      "connection font (default: %s)\n";
     while ( c != EOF ) {
         c = getopt_long( argc, argv, optstring, long_options, &option_index );
 
         switch ( c ) {
             case 'h':
-                fprintf( stdout, help_text, progname, serialLine, smallFont,
-                         mediumFont, largeFont, connFont );
+                fprintf( stdout, help_text, progname, serialLine, smallFont, mediumFont, largeFont, connFont );
                 exit( 0 );
                 break;
             case 'v':
-                fprintf( stdout, "%s %d.%d.%d\n", progname, VERSION_MAJOR,
-                         VERSION_MINOR, PATCHLEVEL );
+                fprintf( stdout, "%s %d.%d.%d\n", progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
                 exit( 0 );
                 break;
             case 1000:
@@ -390,16 +390,12 @@ int parse_args( int argc, char* argv[] ) {
         fprintf( stderr, "largeFont = %s\n", largeFont );
         fprintf( stderr, "connFont = %s\n", connFont );
 
-        fprintf( stderr, "normalized_config_path = %s\n",
-                 normalized_config_path );
+        fprintf( stderr, "normalized_config_path = %s\n", normalized_config_path );
         fprintf( stderr, "normalized_rom_path = %s\n", normalized_rom_path );
         fprintf( stderr, "normalized_ram_path = %s\n", normalized_ram_path );
-        fprintf( stderr, "normalized_state_path = %s\n",
-                 normalized_state_path );
-        fprintf( stderr, "normalized_port1_path = %s\n",
-                 normalized_port1_path );
-        fprintf( stderr, "normalized_port2_path = %s\n",
-                 normalized_port2_path );
+        fprintf( stderr, "normalized_state_path = %s\n", normalized_state_path );
+        fprintf( stderr, "normalized_port1_path = %s\n", normalized_port1_path );
+        fprintf( stderr, "normalized_port2_path = %s\n", normalized_port2_path );
     }
 
     return ( optind );

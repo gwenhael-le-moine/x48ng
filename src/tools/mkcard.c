@@ -1,12 +1,13 @@
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <fcntl.h>
 
 unsigned char* mem;
 
-int write_mem_file( char* name, unsigned char* mem, size_t size ) {
+int write_mem_file( char* name, unsigned char* mem, size_t size )
+{
     FILE* fp;
 
     if ( NULL == ( fp = fopen( name, "w" ) ) ) {
@@ -24,15 +25,15 @@ int write_mem_file( char* name, unsigned char* mem, size_t size ) {
     return 1;
 }
 
-int main( int argc, char** argv ) {
+int main( int argc, char** argv )
+{
     size_t size;
     char* name;
     char* asize;
     unsigned char* core;
 
     if ( argc < 2 ) {
-        fprintf( stderr, "usage: %s [32K | 128K | 1M | 2M | 4M] file-name\n",
-                 argv[ 0 ] );
+        fprintf( stderr, "usage: %s [32K | 128K | 1M | 2M | 4M] file-name\n", argv[ 0 ] );
         exit( 1 );
     }
 
@@ -53,8 +54,7 @@ int main( int argc, char** argv ) {
     else if ( !strcmp( asize, "4M" ) )
         size = 0x400000;
     else {
-        fprintf( stderr,
-                 "size must be one of 32K, 128K, 256K, 512K, 1M, 2M, or 4M\n" );
+        fprintf( stderr, "size must be one of 32K, 128K, 256K, 512K, 1M, 2M, or 4M\n" );
         exit( 1 );
     }
 

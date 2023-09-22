@@ -1,26 +1,26 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include <ctype.h>
 #include <fcntl.h>
 #include <pwd.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <ctype.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/utsname.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
+#include <unistd.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xresource.h>
 #include <X11/Xutil.h>
-#include <X11/keysym.h>
-#include <X11/extensions/XShm.h>
 #include <X11/cursorfont.h>
+#include <X11/extensions/XShm.h>
+#include <X11/keysym.h>
 
-#include "runtime_options.h"
 #include "emulator.h"
 #include "romio.h"
+#include "runtime_options.h"
 #include "ui.h"
 #include "ui_inner.h"
 
@@ -55,194 +55,133 @@
 #define hp48_icon_width 32
 #define hp48_icon_height 64
 static unsigned char hp48_icon_bitmap[] = {
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x07, 0xe0, 0xff, 0xff,
-    0x07, 0xe0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0x07, 0xff, 0x01, 0xe0, 0xff, 0xff, 0xff, 0xff, 0x07, 0x00, 0x00, 0xe0,
-    0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0,
-    0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0,
-    0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0,
-    0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0x63, 0x8c, 0x31, 0xc6, 0x63, 0x8c, 0x31, 0xc6, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0x63, 0x8c, 0x31, 0xc6, 0x63, 0x8c, 0x31, 0xc6,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x63, 0x8c, 0x31, 0xc6,
-    0x63, 0x8c, 0x31, 0xc6, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0x63, 0x8c, 0x31, 0xc6, 0x63, 0x8c, 0x31, 0xc6, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0x03, 0x8c, 0x31, 0xc6, 0x03, 0x8c, 0x31, 0xc6,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xe3, 0x30, 0x0c, 0xc3,
-    0xe3, 0x30, 0x0c, 0xc3, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0xe3, 0x30, 0x0c, 0xc3, 0xe3, 0x30, 0x0c, 0xc3, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0xe3, 0x30, 0x0c, 0xc3, 0xe3, 0x30, 0x0c, 0xc3,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xe3, 0x30, 0x0c, 0xc3,
-    0xe3, 0x30, 0x0c, 0xc3, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff };
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x07, 0xe0, 0xff, 0xff, 0x07, 0xe0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0xff, 0xff, 0x07, 0xff, 0x01, 0xe0, 0xff, 0xff, 0xff, 0xff, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0,
+    0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00,
+    0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0xff, 0xff, 0xff, 0xff,
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x63, 0x8c,
+    0x31, 0xc6, 0x63, 0x8c, 0x31, 0xc6, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x63, 0x8c, 0x31, 0xc6, 0x63, 0x8c, 0x31, 0xc6,
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x63, 0x8c, 0x31, 0xc6, 0x63, 0x8c, 0x31, 0xc6, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0xff, 0xff, 0x63, 0x8c, 0x31, 0xc6, 0x63, 0x8c, 0x31, 0xc6, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x03, 0x8c, 0x31, 0xc6,
+    0x03, 0x8c, 0x31, 0xc6, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xe3, 0x30, 0x0c, 0xc3, 0xe3, 0x30, 0x0c, 0xc3, 0xff, 0xff,
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xe3, 0x30, 0x0c, 0xc3, 0xe3, 0x30, 0x0c, 0xc3, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0xe3, 0x30, 0x0c, 0xc3, 0xe3, 0x30, 0x0c, 0xc3, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xe3, 0x30, 0x0c, 0xc3, 0xe3, 0x30,
+    0x0c, 0xc3, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 
 #define hp48_top_width 32
 #define hp48_top_height 30
 static unsigned char hp48_top_bitmap[] = {
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x07, 0xe0, 0xff, 0xff,
-    0x07, 0xe0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0x07, 0xff, 0x01, 0xe0, 0xff, 0xff, 0xff, 0xff, 0x07, 0x00, 0x00, 0xe0,
-    0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0,
-    0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0,
-    0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0,
-    0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0x63, 0x8c, 0x31, 0xc6, 0x63, 0x8c, 0x31, 0xc6, 0xff, 0xff, 0xff, 0xff };
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x07, 0xe0, 0xff, 0xff, 0x07, 0xe0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0xff, 0xff, 0xff, 0xff, 0x07, 0xff, 0x01, 0xe0, 0xff, 0xff, 0xff, 0xff, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0,
+    0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0,
+    0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0,
+    0x07, 0x00, 0x00, 0xe0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x63, 0x8c, 0x31, 0xc6, 0x63, 0x8c, 0x31, 0xc6, 0xff, 0xff, 0xff, 0xff };
 
 #define hp48_bottom_width 32
 #define hp48_bottom_height 64
 static unsigned char hp48_bottom_bitmap[] = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0xff, 0xff, 0xff, 0xff, 0x63, 0x8c, 0x31, 0xc6, 0x63, 0x8c, 0x31, 0xc6,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x63, 0x8c, 0x31, 0xc6,
-    0x63, 0x8c, 0x31, 0xc6, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0x63, 0x8c, 0x31, 0xc6, 0x63, 0x8c, 0x31, 0xc6, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0x03, 0x8c, 0x31, 0xc6, 0x03, 0x8c, 0x31, 0xc6,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xe3, 0x30, 0x0c, 0xc3,
-    0xe3, 0x30, 0x0c, 0xc3, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0xe3, 0x30, 0x0c, 0xc3, 0xe3, 0x30, 0x0c, 0xc3, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0xe3, 0x30, 0x0c, 0xc3, 0xe3, 0x30, 0x0c, 0xc3,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xe3, 0x30, 0x0c, 0xc3,
-    0xe3, 0x30, 0x0c, 0xc3, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff };
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x63, 0x8c, 0x31, 0xc6, 0x63, 0x8c, 0x31, 0xc6,
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x63, 0x8c, 0x31, 0xc6, 0x63, 0x8c, 0x31, 0xc6, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0xff, 0xff, 0x63, 0x8c, 0x31, 0xc6, 0x63, 0x8c, 0x31, 0xc6, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x03, 0x8c, 0x31, 0xc6,
+    0x03, 0x8c, 0x31, 0xc6, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xe3, 0x30, 0x0c, 0xc3, 0xe3, 0x30, 0x0c, 0xc3, 0xff, 0xff,
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xe3, 0x30, 0x0c, 0xc3, 0xe3, 0x30, 0x0c, 0xc3, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0xe3, 0x30, 0x0c, 0xc3, 0xe3, 0x30, 0x0c, 0xc3, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xe3, 0x30, 0x0c, 0xc3, 0xe3, 0x30,
+    0x0c, 0xc3, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 
 #define hp48_logo_width 13
 #define hp48_logo_height 4
-static unsigned char hp48_logo_bitmap[] = { 0x00, 0x00, 0x00, 0x00,
-                                            0xf8, 0x1f, 0xf8, 0x1f };
+static unsigned char hp48_logo_bitmap[] = { 0x00, 0x00, 0x00, 0x00, 0xf8, 0x1f, 0xf8, 0x1f };
 
 #define hp48_text_width 29
 #define hp48_text_height 7
-static unsigned char hp48_text_bitmap[] = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0xf8, 0x00, 0xfe, 0x1f };
+static unsigned char hp48_text_bitmap[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf8, 0x00, 0xfe, 0x1f };
 
 #define hp48_disp_width 29
 #define hp48_disp_height 21
 static unsigned char hp48_disp_bitmap[] = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf8, 0xff, 0xff, 0x1f,
-    0xf8, 0xff, 0xff, 0x1f, 0xf8, 0xff, 0xff, 0x1f, 0xf8, 0xff, 0xff, 0x1f,
-    0xf8, 0xff, 0xff, 0x1f, 0xf8, 0xff, 0xff, 0x1f, 0xf8, 0xff, 0xff, 0x1f,
-    0xf8, 0xff, 0xff, 0x1f, 0xf8, 0xff, 0xff, 0x1f, 0xf8, 0xff, 0xff, 0x1f,
-    0xf8, 0xff, 0xff, 0x1f, 0xf8, 0xff, 0xff, 0x1f, 0xf8, 0xff, 0xff, 0x1f };
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xf8, 0xff, 0xff, 0x1f, 0xf8, 0xff, 0xff, 0x1f, 0xf8, 0xff,
+    0xff, 0x1f, 0xf8, 0xff, 0xff, 0x1f, 0xf8, 0xff, 0xff, 0x1f, 0xf8, 0xff, 0xff, 0x1f, 0xf8, 0xff, 0xff, 0x1f, 0xf8, 0xff, 0xff,
+    0x1f, 0xf8, 0xff, 0xff, 0x1f, 0xf8, 0xff, 0xff, 0x1f, 0xf8, 0xff, 0xff, 0x1f, 0xf8, 0xff, 0xff, 0x1f, 0xf8, 0xff, 0xff, 0x1f };
 
 #define hp48_keys_width 30
 #define hp48_keys_height 61
 static unsigned char hp48_keys_bitmap[] = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x9c, 0x73, 0xce, 0x39, 0x9c, 0x73, 0xce, 0x39, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x9c, 0x73, 0xce, 0x39, 0x9c, 0x73, 0xce, 0x39,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x9c, 0x73, 0xce, 0x39,
-    0x9c, 0x73, 0xce, 0x39, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x9c, 0x73, 0xce, 0x39, 0x9c, 0x73, 0xce, 0x39, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0xfc, 0x73, 0xce, 0x39, 0xfc, 0x73, 0xce, 0x39,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1c, 0xcf, 0xf3, 0x3c,
-    0x1c, 0xcf, 0xf3, 0x3c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0xcf, 0xf3, 0x3c, 0x00, 0xcf, 0xf3, 0x3c, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0xcf, 0xf3, 0x3c, 0x00, 0xcf, 0xf3, 0x3c,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1c, 0xcf, 0xf3, 0x3c,
-    0x1c, 0xcf, 0xf3, 0x3c };
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x9c, 0x73, 0xce, 0x39, 0x9c, 0x73, 0xce, 0x39, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x9c, 0x73,
+    0xce, 0x39, 0x9c, 0x73, 0xce, 0x39, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x9c, 0x73, 0xce, 0x39, 0x9c, 0x73, 0xce,
+    0x39, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x9c, 0x73, 0xce, 0x39, 0x9c, 0x73, 0xce, 0x39, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0xfc, 0x73, 0xce, 0x39, 0xfc, 0x73, 0xce, 0x39, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1c,
+    0xcf, 0xf3, 0x3c, 0x1c, 0xcf, 0xf3, 0x3c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xcf, 0xf3, 0x3c, 0x00, 0xcf,
+    0xf3, 0x3c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xcf, 0xf3, 0x3c, 0x00, 0xcf, 0xf3, 0x3c, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x1c, 0xcf, 0xf3, 0x3c, 0x1c, 0xcf, 0xf3, 0x3c };
 
 #define hp48_orange_width 5
 #define hp48_orange_height 53
-static unsigned char hp48_orange_bitmap[] = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x1c };
+static unsigned char hp48_orange_bitmap[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                              0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x1c };
 
 #define hp48_blue_width 5
 #define hp48_blue_height 57
-static unsigned char hp48_blue_bitmap[] = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x1c };
+static unsigned char hp48_blue_bitmap[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x1c };
 
 #define hp48_on_width 25
 #define hp48_on_height 19
-static unsigned char hp48_on_bitmap[] = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xe2, 0x00,
-    0x00, 0x00, 0x13, 0x01, 0x00, 0x80, 0x12, 0x01, 0x80, 0x48, 0x12,
-    0x01, 0x80, 0xc8, 0xe7, 0x00, 0x00, 0x05, 0x12, 0x01, 0x00, 0x02,
-    0x12, 0x01, 0x00, 0x05, 0x12, 0x01, 0x80, 0x08, 0xe2, 0x00 };
+static unsigned char hp48_on_bitmap[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                          0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xe2, 0x00, 0x00, 0x00, 0x13, 0x01,
+                                          0x00, 0x80, 0x12, 0x01, 0x80, 0x48, 0x12, 0x01, 0x80, 0xc8, 0xe7, 0x00, 0x00, 0x05, 0x12, 0x01,
+                                          0x00, 0x02, 0x12, 0x01, 0x00, 0x05, 0x12, 0x01, 0x80, 0x08, 0xe2, 0x00 };
 
 #define hp48_top_gx_width 32
 #define hp48_top_gx_height 30
 static unsigned char hp48_top_gx_bitmap[] = {
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x07, 0x08, 0xff, 0xe1,
-    0x07, 0x08, 0xff, 0xe0, 0xff, 0xff, 0xff, 0xf0, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xe0, 0xff, 0xff, 0xff, 0xff, 0x07, 0x00, 0x00, 0xe0,
-    0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0,
-    0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0,
-    0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0,
-    0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0x63, 0x8c, 0x31, 0xc6, 0x63, 0x8c, 0x31, 0xc6, 0xff, 0xff, 0xff, 0xff };
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x07, 0x08, 0xff, 0xe1, 0x07, 0x08, 0xff, 0xe0, 0xff, 0xff, 0xff, 0xf0,
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xe0, 0xff, 0xff, 0xff, 0xff, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0,
+    0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0,
+    0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0, 0x07, 0x00, 0x00, 0xe0,
+    0x07, 0x00, 0x00, 0xe0, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x63, 0x8c, 0x31, 0xc6, 0x63, 0x8c, 0x31, 0xc6, 0xff, 0xff, 0xff, 0xff };
 
 #define hp48_logo_gx_width 16
 #define hp48_logo_gx_height 4
-static unsigned char hp48_logo_gx_bitmap[] = { 0x00, 0x00, 0x00, 0x00,
-                                               0xf8, 0xf7, 0xf8, 0xf7 };
+static unsigned char hp48_logo_gx_bitmap[] = { 0x00, 0x00, 0x00, 0x00, 0xf8, 0xf7, 0xf8, 0xf7 };
 
 #define hp48_text_gx_width 29
 #define hp48_text_gx_height 7
-static unsigned char hp48_text_gx_bitmap[] = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x0f, 0x00, 0x00, 0x00, 0x0f,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1f };
+static unsigned char hp48_text_gx_bitmap[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                                               0x00, 0x0f, 0x00, 0x00, 0x00, 0x0f, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1f };
 
 #define hp48_green_gx_width 29
 #define hp48_green_gx_height 57
 static unsigned char hp48_green_gx_bitmap[] = {
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1e,
-    0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x00, 0x00, 0x00, 0x00, 0x1c, 0x00, 0x00, 0x00, 0x1c, 0x00, 0x00, 0x00 };
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1e, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x00, 0x00, 0x00, 0x1c, 0x00, 0x00, 0x00 };
 
 typedef struct x11_color_t {
     const char* name;
@@ -356,916 +295,176 @@ static char* res_name;
 static char* res_class;
 
 static x11_color_t colors_sx[] = {
-    { "white",
-      255,
-      255,
-      255,
-      255,
-      255,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "left",
-      255,
-      166,
-      0,
-      255,
-      230,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "right",
-      0,
-      210,
-      255,
-      255,
-      169,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "but_top",
-      109,
-      93,
-      93,
-      0,
-      91,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "button",
-      90,
-      77,
-      77,
-      0,
-      81,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "but_bot",
-      76,
-      65,
-      65,
-      0,
-      69,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "lcd_col",
-      202,
-      221,
-      92,
-      255,
-      205,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "pix_col",
-      0,
-      0,
-      128,
-      0,
-      20,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "pad_top",
-      109,
-      78,
-      78,
-      0,
-      88,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "pad", 90, 64, 64, 0, 73, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "pad_bot",
-      76,
-      54,
-      54,
-      0,
-      60,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "disp_pad_top",
-      155,
-      118,
-      84,
-      0,
-      124,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "disp_pad",
-      124,
-      94,
-      67,
-      0,
-      99,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "disp_pad_bot",
-      100,
-      75,
-      53,
-      0,
-      79,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "logo",
-      204,
-      169,
-      107,
-      255,
-      172,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "logo_back",
-      64,
-      64,
-      64,
-      0,
-      65,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "label",
-      202,
-      184,
-      144,
-      255,
-      185,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "frame", 0, 0, 0, 255, 0, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "underlay",
-      60,
-      42,
-      42,
-      0,
-      48,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "black", 0, 0, 0, 0, 0, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { 0 } };
+    {"white",         255, 255, 255, 255, 255, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "left",         255, 166, 0,   255, 230, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "right",        0,   210, 255, 255, 169, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "but_top",      109, 93,  93,  0,   91,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "button",       90,  77,  77,  0,   81,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "but_bot",      76,  65,  65,  0,   69,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "lcd_col",      202, 221, 92,  255, 205, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "pix_col",      0,   0,   128, 0,   20,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "pad_top",      109, 78,  78,  0,   88,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "pad",          90,  64,  64,  0,   73,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "pad_bot",      76,  54,  54,  0,   60,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "disp_pad_top", 155, 118, 84,  0,   124, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "disp_pad",     124, 94,  67,  0,   99,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "disp_pad_bot", 100, 75,  53,  0,   79,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "logo",         204, 169, 107, 255, 172, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "logo_back",    64,  64,  64,  0,   65,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "label",        202, 184, 144, 255, 185, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "frame",        0,   0,   0,   255, 0,   { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "underlay",     60,  42,  42,  0,   48,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "black",        0,   0,   0,   0,   0,   { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+ /* { 0 } */
+};
 
 static x11_color_t colors_gx[] = {
-    { "white",
-      255,
-      255,
-      255,
-      255,
-      255,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "left",
-      255,
-      186,
-      255,
-      255,
-      220,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "right",
-      0,
-      255,
-      204,
-      255,
-      169,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "but_top",
-      104,
-      104,
-      104,
-      0,
-      104,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "button",
-      88,
-      88,
-      88,
-      0,
-      88,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "but_bot",
-      74,
-      74,
-      74,
-      0,
-      74,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "lcd_col",
-      202,
-      221,
-      92,
-      255,
-      205,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "pix_col",
-      0,
-      0,
-      128,
-      0,
-      20,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "pad_top",
-      88,
-      88,
-      88,
-      0,
-      88,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "pad", 74, 74, 74, 0, 74, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "pad_bot",
-      64,
-      64,
-      64,
-      0,
-      64,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "disp_pad_top",
-      128,
-      128,
-      138,
-      0,
-      128,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "disp_pad",
-      104,
-      104,
-      110,
-      0,
-      104,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "disp_pad_bot",
-      84,
-      84,
-      90,
-      0,
-      84,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "logo",
-      176,
-      176,
-      184,
-      255,
-      176,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "logo_back",
-      104,
-      104,
-      110,
-      0,
-      104,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "label",
-      240,
-      240,
-      240,
-      255,
-      240,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "frame", 0, 0, 0, 255, 0, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "underlay",
-      104,
-      104,
-      110,
-      0,
-      104,
-      { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { "black", 0, 0, 0, 0, 0, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 } },
-    { 0 } };
+    {"white",         255, 255, 255, 255, 255, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "left",         255, 186, 255, 255, 220, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "right",        0,   255, 204, 255, 169, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "but_top",      104, 104, 104, 0,   104, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "button",       88,  88,  88,  0,   88,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "but_bot",      74,  74,  74,  0,   74,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "lcd_col",      202, 221, 92,  255, 205, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "pix_col",      0,   0,   128, 0,   20,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "pad_top",      88,  88,  88,  0,   88,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "pad",          74,  74,  74,  0,   74,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "pad_bot",      64,  64,  64,  0,   64,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "disp_pad_top", 128, 128, 138, 0,   128, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "disp_pad",     104, 104, 110, 0,   104, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "disp_pad_bot", 84,  84,  90,  0,   84,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "logo",         176, 176, 184, 255, 176, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "logo_back",    104, 104, 110, 0,   104, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "label",        240, 240, 240, 255, 240, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "frame",        0,   0,   0,   255, 0,   { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "underlay",     104, 104, 110, 0,   104, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    { "black",        0,   0,   0,   0,   0,   { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+ /* { 0 } */
+};
 
 static x11_button_t* buttons = 0;
 
 static x11_button_t buttons_sx[] = {
-    { "A",
-      0,
-      0x14,
-      0,
-      0,
-      36,
-      23,
-      WHITE,
-      0,
-      0,
-      menu_label_width,
-      menu_label_height,
-      menu_label_bitmap,
-      "A",
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0 },
-    { "B",
-      0,
-      0x84,
-      50,
-      0,
-      36,
-      23,
-      WHITE,
-      0,
-      0,
-      menu_label_width,
-      menu_label_height,
-      menu_label_bitmap,
-      "B",
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0 },
-    { "C",
-      0,
-      0x83,
-      100,
-      0,
-      36,
-      23,
-      WHITE,
-      0,
-      0,
-      menu_label_width,
-      menu_label_height,
-      menu_label_bitmap,
-      "C",
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0 },
-    { "D",
-      0,
-      0x82,
-      150,
-      0,
-      36,
-      23,
-      WHITE,
-      0,
-      0,
-      menu_label_width,
-      menu_label_height,
-      menu_label_bitmap,
-      "D",
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0 },
-    { "E",
-      0,
-      0x81,
-      200,
-      0,
-      36,
-      23,
-      WHITE,
-      0,
-      0,
-      menu_label_width,
-      menu_label_height,
-      menu_label_bitmap,
-      "E",
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0 },
-    { "F",
-      0,
-      0x80,
-      250,
-      0,
-      36,
-      23,
-      WHITE,
-      0,
-      0,
-      menu_label_width,
-      menu_label_height,
-      menu_label_bitmap,
-      "F",
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0 },
+    {"A",       0, 0x14,   0,   0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "A", 0,          0, 0,        0,      0, 0, 0},
+    { "B",      0, 0x84,   50,  0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "B", 0,          0, 0,        0,      0, 0, 0},
+    { "C",      0, 0x83,   100, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "C", 0,          0, 0,        0,      0, 0, 0},
+    { "D",      0, 0x82,   150, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "D", 0,          0, 0,        0,      0, 0, 0},
+    { "E",      0, 0x81,   200, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "E", 0,          0, 0,        0,      0, 0, 0},
+    { "F",      0, 0x80,   250, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "F", 0,          0, 0,        0,      0, 0, 0},
 
-    { "MTH", 0, 0x24, 0,       50, 36, 26, WHITE, "MTH", 0,
-      0,     0, 0, "G",  "PRINT", 1,  0,  0,  0,     0,     0 },
-    { "PRG", 0, 0x74, 50,    50, 36, 26, WHITE, "PRG", 0,
-      0,     0, 0, "H",  "I/O", 1,  0,  0,  0,     0,     0 },
-    { "CST", 0, 0x73, 100,     50, 36, 26, WHITE, "CST", 0,
-      0,     0, 0, "I",  "MODES", 1,  0,  0,  0,     0,     0 },
-    { "VAR", 0, 0x72, 150,      50, 36, 26, WHITE, "VAR", 0,
-      0,     0, 0, "J",  "MEMORY", 1,  0,  0,  0,     0,     0 },
-    { "UP",  0, 0x71,     200,       50,        36,  26,
-      WHITE, 0, 0, up_width, up_height, up_bitmap, "K", "LIBRARY",
-      1,     0, 0, 0,        0,         0 },
-    { "NXT", 0, 0x70, 250,    50, 36, 26, WHITE, "NXT", 0,
-      0,     0, 0, "L",  "PREV", 0,  0,  0,  0,     0,     0 },
+    { "MTH",    0, 0x24,   0,   50,  36, 26, WHITE, "MTH",   0, 0,                0,                 0,                 "G", "PRINT",    1, 0,        0,      0, 0, 0},
+    { "PRG",    0, 0x74,   50,  50,  36, 26, WHITE, "PRG",   0, 0,                0,                 0,                 "H", "I/O",      1, 0,        0,      0, 0, 0},
+    { "CST",    0, 0x73,   100, 50,  36, 26, WHITE, "CST",   0, 0,                0,                 0,                 "I", "MODES",    1, 0,        0,      0, 0, 0},
+    { "VAR",    0, 0x72,   150, 50,  36, 26, WHITE, "VAR",   0, 0,                0,                 0,                 "J", "MEMORY",   1, 0,        0,      0, 0, 0},
+    { "UP",     0, 0x71,   200, 50,  36, 26, WHITE, 0,       0, up_width,         up_height,         up_bitmap,         "K", "LIBRARY",  1, 0,        0,      0, 0, 0},
+    { "NXT",    0, 0x70,   250, 50,  36, 26, WHITE, "NXT",   0, 0,                0,                 0,                 "L", "PREV",     0, 0,        0,      0, 0, 0},
 
-    { "COLON",
-      0,
-      0x04,
-      0,
-      100,
-      36,
-      26,
-      WHITE,
-      0,
-      0,
-      colon_width,
-      colon_height,
-      colon_bitmap,
-      "M",
-      "UP",
-      0,
-      "HOME",
-      0,
-      0,
-      0,
-      0 },
-    { "STO", 0, 0x64, 50,    100, 36,    26, WHITE, "STO", 0,
-      0,     0, 0, "N",  "DEF", 0,   "RCL", 0,  0,     0,     0 },
-    { "EVAL", 0, 0x63, 100,  100, 36,     26, WHITE, "EVAL", 0,
-      0,      0, 0, "O",  "aQ", 0,   "aNUM", 0,  0,     0,      0 },
-    { "LEFT",      0,     0x62,    150, 100,
-      36,          26,          WHITE, 0,       0,   left_width,
-      left_height, left_bitmap, "P",   "GRAPH", 0,   0,
-      0,           0,           0,     0 },
-    { "DOWN",      0,     0x61,     200, 100,
-      36,          26,          WHITE, 0,        0,   down_width,
-      down_height, down_bitmap, "Q",   "REVIEW", 0,   0,
-      0,           0,           0,     0 },
-    { "RIGHT",
-      0,
-      0x60,
-      250,
-      100,
-      36,
-      26,
-      WHITE,
-      0,
-      0,
-      right_width,
-      right_height,
-      right_bitmap,
-      "R",
-      "SWAP",
-      0,
-      0,
-      0,
-      0,
-      0,
-      0 },
+    { "COLON",  0, 0x04,   0,   100, 36, 26, WHITE, 0,       0, colon_width,      colon_height,      colon_bitmap,      "M", "UP",       0, "HOME",   0,      0, 0, 0},
+    { "STO",    0, 0x64,   50,  100, 36, 26, WHITE, "STO",   0, 0,                0,                 0,                 "N", "DEF",      0, "RCL",    0,      0, 0, 0},
+    { "EVAL",   0, 0x63,   100, 100, 36, 26, WHITE, "EVAL",  0, 0,                0,                 0,                 "O", "aQ",       0, "aNUM",   0,      0, 0, 0},
+    { "LEFT",   0, 0x62,   150, 100, 36, 26, WHITE, 0,       0, left_width,       left_height,       left_bitmap,       "P", "GRAPH",    0, 0,        0,      0, 0, 0},
+    { "DOWN",   0, 0x61,   200, 100, 36, 26, WHITE, 0,       0, down_width,       down_height,       down_bitmap,       "Q", "REVIEW",   0, 0,        0,      0, 0, 0},
+    { "RIGHT",  0, 0x60,   250, 100, 36, 26, WHITE, 0,       0, right_width,      right_height,      right_bitmap,      "R", "SWAP",     0, 0,        0,      0, 0, 0},
 
-    { "SIN", 0, 0x34, 0,      150, 36,  26, WHITE, "SIN", 0,
-      0,     0, 0, "S",  "ASIN", 0,   "b", 0,  0,     0,     0 },
-    { "COS", 0, 0x54, 50,     150, 36,  26, WHITE, "COS", 0,
-      0,     0, 0, "T",  "ACOS", 0,   "c", 0,  0,     0,     0 },
-    { "TAN", 0, 0x53, 100,    150, 36,  26, WHITE, "TAN", 0,
-      0,     0, 0, "U",  "ATAN", 0,   "d", 0,  0,     0,     0 },
-    { "SQRT", 0,           0x52,        150, 150, 36, 26,  WHITE, 0,
-      0,      sqrt_width, sqrt_height, sqrt_bitmap, "V", "e", 0,  "f", 0,     0,
-      0,      0 },
-    { "POWER",
-      0,
-      0x51,
-      200,
-      150,
-      36,
-      26,
-      WHITE,
-      0,
-      0,
-      power_width,
-      power_height,
-      power_bitmap,
-      "W",
-      "g",
-      0,
-      "LOG",
-      0,
-      0,
-      0,
-      0 },
-    { "INV", 0, 0x50,      250,        150,        36,  26,
-      WHITE, 0,    0, inv_width, inv_height, inv_bitmap, "X", "h",
-      0,     "LN", 0, 0,         0,          0 },
+    { "SIN",    0, 0x34,   0,   150, 36, 26, WHITE, "SIN",   0, 0,                0,                 0,                 "S", "ASIN",     0, "b",      0,      0, 0, 0},
+    { "COS",    0, 0x54,   50,  150, 36, 26, WHITE, "COS",   0, 0,                0,                 0,                 "T", "ACOS",     0, "c",      0,      0, 0, 0},
+    { "TAN",    0, 0x53,   100, 150, 36, 26, WHITE, "TAN",   0, 0,                0,                 0,                 "U", "ATAN",     0, "d",      0,      0, 0, 0},
+    { "SQRT",   0, 0x52,   150, 150, 36, 26, WHITE, 0,       0, sqrt_width,       sqrt_height,       sqrt_bitmap,       "V", "e",        0, "f",      0,      0, 0, 0},
+    { "POWER",  0, 0x51,   200, 150, 36, 26, WHITE, 0,       0, power_width,      power_height,      power_bitmap,      "W", "g",        0, "LOG",    0,      0, 0, 0},
+    { "INV",    0, 0x50,   250, 150, 36, 26, WHITE, 0,       0, inv_width,        inv_height,        inv_bitmap,        "X", "h",        0, "LN",     0,      0, 0, 0},
 
-    { "ENTER", 0, 0x44, 0,          200, 86,       26, WHITE, "ENTER", 2,
-      0,       0, 0, 0,    "EQUATION", 0,   "MATRIX", 0,  0,     0,       0 },
-    { "NEG", 0, 0x43,      100,        200,        36,  26,
-      WHITE, 0,       0, neg_width, neg_height, neg_bitmap, "Y", "EDIT",
-      0,     "VISIT", 0, 0,         0,          0 },
-    { "EEX", 0, 0x42, 150,  200, 36,   26, WHITE, "EEX", 0,
-      0,     0, 0, "Z",  "2D", 0,   "3D", 0,  0,     0,     0 },
-    { "DEL", 0, 0x41, 200,     200, 36, 26, WHITE, "DEL", 0,
-      0,     0, 0, 0,    "PURGE", 0,   0,  0,  0,     0,     0 },
-    { "BS",  0, 0x40,     250,       200,       36, 26,
-      WHITE, 0,     0, bs_width, bs_height, bs_bitmap, 0,  "DROP",
-      0,     "CLR", 0, 0,        0,         0 },
+    { "ENTER",  0, 0x44,   0,   200, 86, 26, WHITE, "ENTER", 2, 0,                0,                 0,                 0,   "EQUATION", 0, "MATRIX", 0,      0, 0, 0},
+    { "NEG",    0, 0x43,   100, 200, 36, 26, WHITE, 0,       0, neg_width,        neg_height,        neg_bitmap,        "Y", "EDIT",     0, "VISIT",  0,      0, 0, 0},
+    { "EEX",    0, 0x42,   150, 200, 36, 26, WHITE, "EEX",   0, 0,                0,                 0,                 "Z", "2D",       0, "3D",     0,      0, 0, 0},
+    { "DEL",    0, 0x41,   200, 200, 36, 26, WHITE, "DEL",   0, 0,                0,                 0,                 0,   "PURGE",    0, 0,        0,      0, 0, 0},
+    { "BS",     0, 0x40,   250, 200, 36, 26, WHITE, 0,       0, bs_width,         bs_height,         bs_bitmap,         0,   "DROP",     0, "CLR",    0,      0, 0, 0},
 
-    { "ALPHA",
-      0,
-      0x35,
-      0,
-      250,
-      36,
-      26,
-      WHITE,
-      0,
-      0,
-      alpha_width,
-      alpha_height,
-      alpha_bitmap,
-      0,
-      "USR",
-      0,
-      "ENTRY",
-      0,
-      0,
-      0,
-      0 },
-    { "7", 0, 0x33, 60,      250, 46, 26, WHITE, "7", 1,
-      0,   0, 0, 0,    "SOLVE", 1,   0,  0,  0,     0,   0 },
-    { "8", 0, 0x32, 120,    250, 46, 26, WHITE, "8", 1,
-      0,   0, 0, 0,    "PLOT", 1,   0,  0,  0,     0,   0 },
-    { "9", 0, 0x31, 180,       250, 46, 26, WHITE, "9", 1,
-      0,   0, 0, 0,    "ALGEBRA", 1,   0,  0,  0,     0,   0 },
-    { "DIV", 0, 0x30,      240,        250,        46, 26,
-      WHITE, 0,   0, div_width, div_height, div_bitmap, 0,  "( )",
-      0,     "#", 0, 0,         0,          0 },
+    { "ALPHA",  0, 0x35,   0,   250, 36, 26, WHITE, 0,       0, alpha_width,      alpha_height,      alpha_bitmap,      0,   "USR",      0, "ENTRY",  0,      0, 0, 0},
+    { "7",      0, 0x33,   60,  250, 46, 26, WHITE, "7",     1, 0,                0,                 0,                 0,   "SOLVE",    1, 0,        0,      0, 0, 0},
+    { "8",      0, 0x32,   120, 250, 46, 26, WHITE, "8",     1, 0,                0,                 0,                 0,   "PLOT",     1, 0,        0,      0, 0, 0},
+    { "9",      0, 0x31,   180, 250, 46, 26, WHITE, "9",     1, 0,                0,                 0,                 0,   "ALGEBRA",  1, 0,        0,      0, 0, 0},
+    { "DIV",    0, 0x30,   240, 250, 46, 26, WHITE, 0,       0, div_width,        div_height,        div_bitmap,        0,   "( )",      0, "#",      0,      0, 0, 0},
 
-    { "SHL",     0,          0x25, 0, 300, 36, 26, LEFT, 0, 0,
-      shl_width, shl_height, shl_bitmap, 0,    0, 0,   0,  0,  0,    0, 0 },
-    { "4", 0, 0x23, 60,     300, 46, 26, WHITE, "4", 1,
-      0,   0, 0, 0,    "TIME", 1,   0,  0,  0,     0,   0 },
-    { "5", 0, 0x22, 120,    300, 46, 26, WHITE, "5", 1,
-      0,   0, 0, 0,    "STAT", 1,   0,  0,  0,     0,   0 },
-    { "6", 0, 0x21, 180,     300, 46, 26, WHITE, "6", 1,
-      0,   0, 0, 0,    "UNITS", 1,   0,  0,  0,     0,   0 },
-    { "MUL", 0, 0x20,      240,        300,        46, 26,
-      WHITE, 0,   0, mul_width, mul_height, mul_bitmap, 0,  "[ ]",
-      0,     "_", 0, 0,         0,          0 },
+    { "SHL",    0, 0x25,   0,   300, 36, 26, LEFT,  0,       0, shl_width,        shl_height,        shl_bitmap,        0,   0,          0, 0,        0,      0, 0, 0},
+    { "4",      0, 0x23,   60,  300, 46, 26, WHITE, "4",     1, 0,                0,                 0,                 0,   "TIME",     1, 0,        0,      0, 0, 0},
+    { "5",      0, 0x22,   120, 300, 46, 26, WHITE, "5",     1, 0,                0,                 0,                 0,   "STAT",     1, 0,        0,      0, 0, 0},
+    { "6",      0, 0x21,   180, 300, 46, 26, WHITE, "6",     1, 0,                0,                 0,                 0,   "UNITS",    1, 0,        0,      0, 0, 0},
+    { "MUL",    0, 0x20,   240, 300, 46, 26, WHITE, 0,       0, mul_width,        mul_height,        mul_bitmap,        0,   "[ ]",      0, "_",      0,      0, 0, 0},
 
-    { "SHR",     0,          0x15, 0, 350, 36, 26, RIGHT, 0, 0,
-      shr_width, shr_height, shr_bitmap, 0,    0, 0,   0,  0,  0,     0, 0 },
-    { "1", 0, 0x13, 60,    350, 46,      26, WHITE, "1", 1,
-      0,   0, 0, 0,    "RAD", 0,   "POLAR", 0,  0,     0,   0 },
-    { "2", 0, 0x12, 120,     350, 46,    26, WHITE, "2", 1,
-      0,   0, 0, 0,    "STACK", 0,   "ARG", 0,  0,     0,   0 },
-    { "3", 0, 0x11, 180,   350, 46,     26, WHITE, "3", 1,
-      0,   0, 0, 0,    "CMD", 0,   "MENU", 0,  0,     0,   0 },
-    { "MINUS",
-      0,
-      0x10,
-      240,
-      350,
-      46,
-      26,
-      WHITE,
-      0,
-      0,
-      minus_width,
-      minus_height,
-      minus_bitmap,
-      0,
-      "i",
-      0,
-      "j",
-      0,
-      0,
-      0,
-      0 },
+    { "SHR",    0, 0x15,   0,   350, 36, 26, RIGHT, 0,       0, shr_width,        shr_height,        shr_bitmap,        0,   0,          0, 0,        0,      0, 0, 0},
+    { "1",      0, 0x13,   60,  350, 46, 26, WHITE, "1",     1, 0,                0,                 0,                 0,   "RAD",      0, "POLAR",  0,      0, 0, 0},
+    { "2",      0, 0x12,   120, 350, 46, 26, WHITE, "2",     1, 0,                0,                 0,                 0,   "STACK",    0, "ARG",    0,      0, 0, 0},
+    { "3",      0, 0x11,   180, 350, 46, 26, WHITE, "3",     1, 0,                0,                 0,                 0,   "CMD",      0, "MENU",   0,      0, 0, 0},
+    { "MINUS",  0, 0x10,   240, 350, 46, 26, WHITE, 0,       0, minus_width,      minus_height,      minus_bitmap,      0,   "i",        0, "j",      0,      0, 0, 0},
 
-    { "ON", 0, 0x8000, 0,      400, 36,    26,     WHITE, "ON", 0,
-      0,    0, 0, 0,      "CONT", 0,   "OFF", "ATTN", 0,     0,    0 },
-    { "0", 0, 0x03, 60,   400, 46,   26, WHITE, "0", 1,
-      0,   0, 0, 0,    "= ", 0,   " a", 0,  0,     0,   0 },
-    { "PERIOD", 0, 0x02, 120,  400, 46,   26, WHITE, ".", 1,
-      0,        0, 0, 0,    ", ", 0,   " k", 0,  0,     0,   0 },
-    { "SPC", 0, 0x01, 180,  400, 46,   26, WHITE, "SPC", 0,
-      0,     0, 0, 0,    "l ", 0,   " m", 0,  0,     0,     0 },
-    { "PLUS",      0,     0x00,  240, 400,
-      46,          26,          WHITE, 0,     0,   plus_width,
-      plus_height, plus_bitmap, 0,     "{ }", 0,   ": :",
-      0,           0,           0,     0 },
-
-    { 0 } };
+    { "ON",     0, 0x8000, 0,   400, 36, 26, WHITE, "ON",    0, 0,                0,                 0,                 0,   "CONT",     0, "OFF",    "ATTN", 0, 0, 0},
+    { "0",      0, 0x03,   60,  400, 46, 26, WHITE, "0",     1, 0,                0,                 0,                 0,   "= ",       0, " a",     0,      0, 0, 0},
+    { "PERIOD", 0, 0x02,   120, 400, 46, 26, WHITE, ".",     1, 0,                0,                 0,                 0,   ", ",       0, " k",     0,      0, 0, 0},
+    { "SPC",    0, 0x01,   180, 400, 46, 26, WHITE, "SPC",   0, 0,                0,                 0,                 0,   "l ",       0, " m",     0,      0, 0, 0},
+    { "PLUS",   0, 0x00,   240, 400, 46, 26, WHITE, 0,       0, plus_width,       plus_height,       plus_bitmap,       0,   "{ }",      0, ": :",    0,      0, 0, 0},
+ /* { 0 } */
+};
 
 static x11_button_t buttons_gx[] = {
-    { "A",
-      0,
-      0x14,
-      0,
-      0,
-      36,
-      23,
-      WHITE,
-      0,
-      0,
-      menu_label_width,
-      menu_label_height,
-      menu_label_bitmap,
-      "A",
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0 },
-    { "B",
-      0,
-      0x84,
-      50,
-      0,
-      36,
-      23,
-      WHITE,
-      0,
-      0,
-      menu_label_width,
-      menu_label_height,
-      menu_label_bitmap,
-      "B",
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0 },
-    { "C",
-      0,
-      0x83,
-      100,
-      0,
-      36,
-      23,
-      WHITE,
-      0,
-      0,
-      menu_label_width,
-      menu_label_height,
-      menu_label_bitmap,
-      "C",
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0 },
-    { "D",
-      0,
-      0x82,
-      150,
-      0,
-      36,
-      23,
-      WHITE,
-      0,
-      0,
-      menu_label_width,
-      menu_label_height,
-      menu_label_bitmap,
-      "D",
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0 },
-    { "E",
-      0,
-      0x81,
-      200,
-      0,
-      36,
-      23,
-      WHITE,
-      0,
-      0,
-      menu_label_width,
-      menu_label_height,
-      menu_label_bitmap,
-      "E",
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0 },
-    { "F",
-      0,
-      0x80,
-      250,
-      0,
-      36,
-      23,
-      WHITE,
-      0,
-      0,
-      menu_label_width,
-      menu_label_height,
-      menu_label_bitmap,
-      "F",
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0 },
+    {"A",       0, 0x14,   0,   0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "A", 0,          0, 0,          0,        0, 0, 0},
+    { "B",      0, 0x84,   50,  0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "B", 0,          0, 0,          0,        0, 0, 0},
+    { "C",      0, 0x83,   100, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "C", 0,          0, 0,          0,        0, 0, 0},
+    { "D",      0, 0x82,   150, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "D", 0,          0, 0,          0,        0, 0, 0},
+    { "E",      0, 0x81,   200, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "E", 0,          0, 0,          0,        0, 0, 0},
+    { "F",      0, 0x80,   250, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "F", 0,          0, 0,          0,        0, 0, 0},
 
-    { "MTH", 0, 0x24, 0,     50, 36,      26, WHITE, "MTH", 0,
-      0,     0, 0, "G",  "RAD", 0,  "POLAR", 0,  0,     0,     0 },
-    { "PRG", 0, 0x74, 50, 50, 36,      26, WHITE, "PRG", 0,
-      0,     0, 0, "H",  0,  0,  "CHARS", 0,  0,     0,     0 },
-    { "CST", 0, 0x73, 100, 50, 36,      26, WHITE, "CST", 0,
-      0,     0, 0, "I",  0,   0,  "MODES", 0,  0,     0,     0 },
-    { "VAR", 0, 0x72, 150, 50, 36,       26, WHITE, "VAR", 0,
-      0,     0, 0, "J",  0,   0,  "MEMORY", 0,  0,     0,     0 },
-    { "UP",     0,         0x71, 200, 50, 36,      26, WHITE, 0, 0,
-      up_width, up_height, up_bitmap, "K",  0,   0,  "STACK", 0,  0,     0, 0 },
-    { "NXT", 0, 0x70, 250,    50, 36,     26, WHITE, "NXT", 0,
-      0,     0, 0, "L",  "PREV", 0,  "MENU", 0,  0,     0,     0 },
+    { "MTH",    0, 0x24,   0,   50,  36, 26, WHITE, "MTH",   0, 0,                0,                 0,                 "G", "RAD",      0, "POLAR",    0,        0, 0, 0},
+    { "PRG",    0, 0x74,   50,  50,  36, 26, WHITE, "PRG",   0, 0,                0,                 0,                 "H", 0,          0, "CHARS",    0,        0, 0, 0},
+    { "CST",    0, 0x73,   100, 50,  36, 26, WHITE, "CST",   0, 0,                0,                 0,                 "I", 0,          0, "MODES",    0,        0, 0, 0},
+    { "VAR",    0, 0x72,   150, 50,  36, 26, WHITE, "VAR",   0, 0,                0,                 0,                 "J", 0,          0, "MEMORY",   0,        0, 0, 0},
+    { "UP",     0, 0x71,   200, 50,  36, 26, WHITE, 0,       0, up_width,         up_height,         up_bitmap,         "K", 0,          0, "STACK",    0,        0, 0, 0},
+    { "NXT",    0, 0x70,   250, 50,  36, 26, WHITE, "NXT",   0, 0,                0,                 0,                 "L", "PREV",     0, "MENU",     0,        0, 0, 0},
 
-    { "COLON",
-      0,
-      0x04,
-      0,
-      100,
-      36,
-      26,
-      WHITE,
-      0,
-      0,
-      colon_width,
-      colon_height,
-      colon_bitmap,
-      "M",
-      "UP",
-      0,
-      "HOME",
-      0,
-      0,
-      0,
-      0 },
-    { "STO", 0, 0x64, 50,    100, 36,    26, WHITE, "STO", 0,
-      0,     0, 0, "N",  "DEF", 0,   "RCL", 0,  0,     0,     0 },
-    { "EVAL", 0, 0x63, 100,    100, 36,     26, WHITE, "EVAL", 0,
-      0,      0, 0, "O",  "aNUM", 0,   "UNDO", 0,  0,     0,      0 },
-    { "LEFT",      0,     0x62,      150, 100,
-      36,          26,          WHITE, 0,         0,   left_width,
-      left_height, left_bitmap, "P",   "PICTURE", 0,   0,
-      0,           0,           0,     0 },
-    { "DOWN",      0,     0x61,   200, 100,
-      36,          26,          WHITE, 0,      0,   down_width,
-      down_height, down_bitmap, "Q",   "VIEW", 0,   0,
-      0,           0,           0,     0 },
-    { "RIGHT",
-      0,
-      0x60,
-      250,
-      100,
-      36,
-      26,
-      WHITE,
-      0,
-      0,
-      right_width,
-      right_height,
-      right_bitmap,
-      "R",
-      "SWAP",
-      0,
-      0,
-      0,
-      0,
-      0,
-      0 },
+    { "COLON",  0, 0x04,   0,   100, 36, 26, WHITE, 0,       0, colon_width,      colon_height,      colon_bitmap,      "M", "UP",       0, "HOME",     0,        0, 0, 0},
+    { "STO",    0, 0x64,   50,  100, 36, 26, WHITE, "STO",   0, 0,                0,                 0,                 "N", "DEF",      0, "RCL",      0,        0, 0, 0},
+    { "EVAL",   0, 0x63,   100, 100, 36, 26, WHITE, "EVAL",  0, 0,                0,                 0,                 "O", "aNUM",     0, "UNDO",     0,        0, 0, 0},
+    { "LEFT",   0, 0x62,   150, 100, 36, 26, WHITE, 0,       0, left_width,       left_height,       left_bitmap,       "P", "PICTURE",  0, 0,          0,        0, 0, 0},
+    { "DOWN",   0, 0x61,   200, 100, 36, 26, WHITE, 0,       0, down_width,       down_height,       down_bitmap,       "Q", "VIEW",     0, 0,          0,        0, 0, 0},
+    { "RIGHT",  0, 0x60,   250, 100, 36, 26, WHITE, 0,       0, right_width,      right_height,      right_bitmap,      "R", "SWAP",     0, 0,          0,        0, 0, 0},
 
-    { "SIN", 0, 0x34, 0,      150, 36,  26, WHITE, "SIN", 0,
-      0,     0, 0, "S",  "ASIN", 0,   "b", 0,  0,     0,     0 },
-    { "COS", 0, 0x54, 50,     150, 36,  26, WHITE, "COS", 0,
-      0,     0, 0, "T",  "ACOS", 0,   "c", 0,  0,     0,     0 },
-    { "TAN", 0, 0x53, 100,    150, 36,  26, WHITE, "TAN", 0,
-      0,     0, 0, "U",  "ATAN", 0,   "d", 0,  0,     0,     0 },
-    { "SQRT", 0,           0x52,        150, 150, 36, 26,  WHITE, 0,
-      0,      sqrt_width, sqrt_height, sqrt_bitmap, "V", "n", 0,  "o", 0,     0,
-      0,      0 },
-    { "POWER",
-      0,
-      0x51,
-      200,
-      150,
-      36,
-      26,
-      WHITE,
-      0,
-      0,
-      power_width,
-      power_height,
-      power_bitmap,
-      "W",
-      "p",
-      0,
-      "LOG",
-      0,
-      0,
-      0,
-      0 },
-    { "INV", 0, 0x50,      250,        150,        36,  26,
-      WHITE, 0,    0, inv_width, inv_height, inv_bitmap, "X", "q",
-      0,     "LN", 0, 0,         0,          0 },
+    { "SIN",    0, 0x34,   0,   150, 36, 26, WHITE, "SIN",   0, 0,                0,                 0,                 "S", "ASIN",     0, "b",        0,        0, 0, 0},
+    { "COS",    0, 0x54,   50,  150, 36, 26, WHITE, "COS",   0, 0,                0,                 0,                 "T", "ACOS",     0, "c",        0,        0, 0, 0},
+    { "TAN",    0, 0x53,   100, 150, 36, 26, WHITE, "TAN",   0, 0,                0,                 0,                 "U", "ATAN",     0, "d",        0,        0, 0, 0},
+    { "SQRT",   0, 0x52,   150, 150, 36, 26, WHITE, 0,       0, sqrt_width,       sqrt_height,       sqrt_bitmap,       "V", "n",        0, "o",        0,        0, 0, 0},
+    { "POWER",  0, 0x51,   200, 150, 36, 26, WHITE, 0,       0, power_width,      power_height,      power_bitmap,      "W", "p",        0, "LOG",      0,        0, 0, 0},
+    { "INV",    0, 0x50,   250, 150, 36, 26, WHITE, 0,       0, inv_width,        inv_height,        inv_bitmap,        "X", "q",        0, "LN",       0,        0, 0, 0},
 
-    { "ENTER", 0, 0x44, 0,          200, 86,       26, WHITE, "ENTER", 2,
-      0,       0, 0, 0,    "EQUATION", 0,   "MATRIX", 0,  0,     0,       0 },
-    { "NEG", 0, 0x43,      100,        200,        36,  26,
-      WHITE, 0,     0, neg_width, neg_height, neg_bitmap, "Y", "EDIT",
-      0,     "CMD", 0, 0,         0,          0 },
-    { "EEX", 0, 0x42, 150,    200, 36,    26, WHITE, "EEX", 0,
-      0,     0, 0, "Z",  "PURG", 0,   "ARG", 0,  0,     0,     0 },
-    { "DEL", 0, 0x41, 200,     200, 36, 26, WHITE, "DEL", 0,
-      0,     0, 0, 0,    "CLEAR", 0,   0,  0,  0,     0,     0 },
-    { "BS",     0,         0x40, 250,    200, 36, 26, WHITE, 0, 0,
-      bs_width, bs_height, bs_bitmap, 0,    "DROP", 0,   0,  0,  0,     0, 0 },
+    { "ENTER",  0, 0x44,   0,   200, 86, 26, WHITE, "ENTER", 2, 0,                0,                 0,                 0,   "EQUATION", 0, "MATRIX",   0,        0, 0, 0},
+    { "NEG",    0, 0x43,   100, 200, 36, 26, WHITE, 0,       0, neg_width,        neg_height,        neg_bitmap,        "Y", "EDIT",     0, "CMD",      0,        0, 0, 0},
+    { "EEX",    0, 0x42,   150, 200, 36, 26, WHITE, "EEX",   0, 0,                0,                 0,                 "Z", "PURG",     0, "ARG",      0,        0, 0, 0},
+    { "DEL",    0, 0x41,   200, 200, 36, 26, WHITE, "DEL",   0, 0,                0,                 0,                 0,   "CLEAR",    0, 0,          0,        0, 0, 0},
+    { "BS",     0, 0x40,   250, 200, 36, 26, WHITE, 0,       0, bs_width,         bs_height,         bs_bitmap,         0,   "DROP",     0, 0,          0,        0, 0, 0},
 
-    { "ALPHA",
-      0,
-      0x35,
-      0,
-      250,
-      36,
-      26,
-      WHITE,
-      0,
-      0,
-      alpha_width,
-      alpha_height,
-      alpha_bitmap,
-      0,
-      "USER",
-      0,
-      "ENTRY",
-      0,
-      0,
-      0,
-      0 },
-    { "7", 0, 0x33, 60, 250, 46,      26, WHITE, "7", 1,
-      0,   0, 0, 0,    0,  1,   "SOLVE", 0,  0,     0,   0 },
-    { "8", 0, 0x32, 120, 250, 46,     26, WHITE, "8", 1,
-      0,   0, 0, 0,    0,   1,   "PLOT", 0,  0,     0,   0 },
-    { "9", 0, 0x31, 180, 250, 46,         26, WHITE, "9", 1,
-      0,   0, 0, 0,    0,   1,   "SYMBOLIC", 0,  0,     0,   0 },
-    { "DIV",      0, 0x30, 240, 250, 46, 26, WHITE, 0, 0, div_width,
-      div_height, div_bitmap, 0, "r ", 0,   "s", 0,  0,  0,     0 },
+    { "ALPHA",  0, 0x35,   0,   250, 36, 26, WHITE, 0,       0, alpha_width,      alpha_height,      alpha_bitmap,      0,   "USER",     0, "ENTRY",    0,        0, 0, 0},
+    { "7",      0, 0x33,   60,  250, 46, 26, WHITE, "7",     1, 0,                0,                 0,                 0,   0,          1, "SOLVE",    0,        0, 0, 0},
+    { "8",      0, 0x32,   120, 250, 46, 26, WHITE, "8",     1, 0,                0,                 0,                 0,   0,          1, "PLOT",     0,        0, 0, 0},
+    { "9",      0, 0x31,   180, 250, 46, 26, WHITE, "9",     1, 0,                0,                 0,                 0,   0,          1, "SYMBOLIC", 0,        0, 0, 0},
+    { "DIV",    0, 0x30,   240, 250, 46, 26, WHITE, 0,       0, div_width,        div_height,        div_bitmap,        0,   "r ",       0, "s",        0,        0, 0, 0},
 
-    { "SHL",     0,          0x25, 0, 300, 36, 26, LEFT, 0, 0,
-      shl_width, shl_height, shl_bitmap, 0,    0, 0,   0,  0,  0,    0, 0 },
-    { "4", 0, 0x23, 60, 300, 46,     26, WHITE, "4", 1,
-      0,   0, 0, 0,    0,  1,   "TIME", 0,  0,     0,   0 },
-    { "5", 0, 0x22, 120, 300, 46,     26, WHITE, "5", 1,
-      0,   0, 0, 0,    0,   1,   "STAT", 0,  0,     0,   0 },
-    { "6", 0, 0x21, 180, 300, 46,      26, WHITE, "6", 1,
-      0,   0, 0, 0,    0,   1,   "UNITS", 0,  0,     0,   0 },
-    { "MUL",      0, 0x20, 240, 300, 46, 26, WHITE, 0, 0, mul_width,
-      mul_height, mul_bitmap, 0, "t ", 0,   "u", 0,  0,  0,     0 },
+    { "SHL",    0, 0x25,   0,   300, 36, 26, LEFT,  0,       0, shl_width,        shl_height,        shl_bitmap,        0,   0,          0, 0,          0,        0, 0, 0},
+    { "4",      0, 0x23,   60,  300, 46, 26, WHITE, "4",     1, 0,                0,                 0,                 0,   0,          1, "TIME",     0,        0, 0, 0},
+    { "5",      0, 0x22,   120, 300, 46, 26, WHITE, "5",     1, 0,                0,                 0,                 0,   0,          1, "STAT",     0,        0, 0, 0},
+    { "6",      0, 0x21,   180, 300, 46, 26, WHITE, "6",     1, 0,                0,                 0,                 0,   0,          1, "UNITS",    0,        0, 0, 0},
+    { "MUL",    0, 0x20,   240, 300, 46, 26, WHITE, 0,       0, mul_width,        mul_height,        mul_bitmap,        0,   "t ",       0, "u",        0,        0, 0, 0},
 
-    { "SHR",     0,          0x15, 0, 350, 36,  26, RIGHT, 0, 0,
-      shr_width, shr_height, shr_bitmap, 0,    0, 1,   " ", 0,  0,     0, 0 },
-    { "1", 0, 0x13, 60, 350, 46,    26, WHITE, "1", 1,
-      0,   0, 0, 0,    0,  1,   "I/O", 0,  0,     0,   0 },
-    { "2", 0, 0x12, 120, 350, 46,        26, WHITE, "2", 1,
-      0,   0, 0, 0,    0,   1,   "LIBRARY", 0,  0,     0,   0 },
-    { "3", 0, 0x11, 180, 350, 46,       26, WHITE, "3", 1,
-      0,   0, 0, 0,    0,   1,   "EQ LIB", 0,  0,     0,   0 },
-    { "MINUS",
-      0,
-      0x10,
-      240,
-      350,
-      46,
-      26,
-      WHITE,
-      0,
-      0,
-      minus_width,
-      minus_height,
-      minus_bitmap,
-      0,
-      "v ",
-      0,
-      "w",
-      0,
-      0,
-      0,
-      0 },
+    { "SHR",    0, 0x15,   0,   350, 36, 26, RIGHT, 0,       0, shr_width,        shr_height,        shr_bitmap,        0,   0,          1, " ",        0,        0, 0, 0},
+    { "1",      0, 0x13,   60,  350, 46, 26, WHITE, "1",     1, 0,                0,                 0,                 0,   0,          1, "I/O",      0,        0, 0, 0},
+    { "2",      0, 0x12,   120, 350, 46, 26, WHITE, "2",     1, 0,                0,                 0,                 0,   0,          1, "LIBRARY",  0,        0, 0, 0},
+    { "3",      0, 0x11,   180, 350, 46, 26, WHITE, "3",     1, 0,                0,                 0,                 0,   0,          1, "EQ LIB",   0,        0, 0, 0},
+    { "MINUS",  0, 0x10,   240, 350, 46, 26, WHITE, 0,       0, minus_width,      minus_height,      minus_bitmap,      0,   "v ",       0, "w",        0,        0, 0, 0},
 
-    { "ON", 0, 0x8000, 0,      400, 36,    26,       WHITE, "ON", 0,
-      0,    0, 0, 0,      "CONT", 0,   "OFF", "CANCEL", 0,     0,    0 },
-    { "0", 0, 0x03, 60,      400, 46,     26, WHITE, "0", 1,
-      0,   0, 0, 0,    "\004 ", 0,   "\003", 0,  0,     0,   0 },
-    { "PERIOD", 0, 0x02, 120,     400, 46,     26, WHITE, ".", 1,
-      0,        0, 0, 0,    "\002 ", 0,   "\001", 0,  0,     0,   0 },
-    { "SPC", 0, 0x01, 180,     400, 46,  26, WHITE, "SPC", 0,
-      0,     0, 0, 0,    "\005 ", 0,   "z", 0,  0,     0,     0 },
-    { "PLUS",      0,     0x00, 240, 400,
-      46,          26,          WHITE, 0,    0,   plus_width,
-      plus_height, plus_bitmap, 0,     "x ", 0,   "y",
-      0,           0,           0,     0 },
-
-    { 0 } };
+    { "ON",     0, 0x8000, 0,   400, 36, 26, WHITE, "ON",    0, 0,                0,                 0,                 0,   "CONT",     0, "OFF",      "CANCEL", 0, 0, 0},
+    { "0",      0, 0x03,   60,  400, 46, 26, WHITE, "0",     1, 0,                0,                 0,                 0,   "\004 ",    0, "\003",     0,        0, 0, 0},
+    { "PERIOD", 0, 0x02,   120, 400, 46, 26, WHITE, ".",     1, 0,                0,                 0,                 0,   "\002 ",    0, "\001",     0,        0, 0, 0},
+    { "SPC",    0, 0x01,   180, 400, 46, 26, WHITE, "SPC",   0, 0,                0,                 0,                 0,   "\005 ",    0, "z",        0,        0, 0, 0},
+    { "PLUS",   0, 0x00,   240, 400, 46, 26, WHITE, 0,       0, plus_width,       plus_height,       plus_bitmap,       0,   "x ",       0, "y",        0,        0, 0, 0},
+ /* { 0 } */
+};
 
 #define MAX_PASTE 128
 static int paste[ MAX_PASTE * 3 ];
@@ -1288,62 +487,61 @@ static icon_map_t* icon_maps;
 static Pixmap nibble_maps[ 16 ];
 
 static unsigned char nibbles[ 16 ][ 2 ] = {
-    { 0x00, 0x00 }, /* ---- */
-    { 0x03, 0x03 }, /* *--- */
-    { 0x0c, 0x0c }, /* -*-- */
-    { 0x0f, 0x0f }, /* **-- */
-    { 0x30, 0x30 }, /* --*- */
-    { 0x33, 0x33 }, /* *-*- */
-    { 0x3c, 0x3c }, /* -**- */
-    { 0x3f, 0x3f }, /* ***- */
-    { 0xc0, 0xc0 }, /* ---* */
-    { 0xc3, 0xc3 }, /* *--* */
-    { 0xcc, 0xcc }, /* -*-* */
-    { 0xcf, 0xcf }, /* **-* */
-    { 0xf0, 0xf0 }, /* --** */
-    { 0xf3, 0xf3 }, /* *-** */
-    { 0xfc, 0xfc }, /* -*** */
-    { 0xff, 0xff }  /* **** */
+    {0x00,  0x00}, /* ---- */
+    { 0x03, 0x03}, /* *--- */
+    { 0x0c, 0x0c}, /* -*-- */
+    { 0x0f, 0x0f}, /* **-- */
+    { 0x30, 0x30}, /* --*- */
+    { 0x33, 0x33}, /* *-*- */
+    { 0x3c, 0x3c}, /* -**- */
+    { 0x3f, 0x3f}, /* ***- */
+    { 0xc0, 0xc0}, /* ---* */
+    { 0xc3, 0xc3}, /* *--* */
+    { 0xcc, 0xcc}, /* -*-* */
+    { 0xcf, 0xcf}, /* **-* */
+    { 0xf0, 0xf0}, /* --** */
+    { 0xf3, 0xf3}, /* *-** */
+    { 0xfc, 0xfc}, /* -*** */
+    { 0xff, 0xff}  /* **** */
 };
 
 static unsigned char nibble_bitmap[ 16 ];
 
 static x11_ann_struct_t ann_tbl[] = {
-    { ANN_LEFT, 16, 4, ann_left_width, ann_left_height, ann_left_bitmap, 0 },
-    { ANN_RIGHT, 61, 4, ann_right_width, ann_right_height, ann_right_bitmap,
-      0 },
-    { ANN_ALPHA, 106, 4, ann_alpha_width, ann_alpha_height, ann_alpha_bitmap,
-      0 },
-    { ANN_BATTERY, 151, 4, ann_battery_width, ann_battery_height,
-      ann_battery_bitmap, 0 },
-    { ANN_BUSY, 196, 4, ann_busy_width, ann_busy_height, ann_busy_bitmap, 0 },
-    { ANN_IO, 241, 4, ann_io_width, ann_io_height, ann_io_bitmap, 0 },
-    { 0 } };
+    {ANN_LEFT,     16,  4, ann_left_width,    ann_left_height,    ann_left_bitmap,    0},
+    { ANN_RIGHT,   61,  4, ann_right_width,   ann_right_height,   ann_right_bitmap,   0},
+    { ANN_ALPHA,   106, 4, ann_alpha_width,   ann_alpha_height,   ann_alpha_bitmap,   0},
+    { ANN_BATTERY, 151, 4, ann_battery_width, ann_battery_height, ann_battery_bitmap, 0},
+    { ANN_BUSY,    196, 4, ann_busy_width,    ann_busy_height,    ann_busy_bitmap,    0},
+    { ANN_IO,      241, 4, ann_io_width,      ann_io_height,      ann_io_bitmap,      0},
+ /* { 0 } */
+};
 
 static icon_map_t icon_maps_sx[] = {
-    { hp48_icon_width, hp48_icon_height, BLACK, hp48_icon_bitmap },
-    { hp48_on_width, hp48_on_height, PIXEL, hp48_on_bitmap },
-    { hp48_disp_width, hp48_disp_height, LCD, hp48_disp_bitmap },
-    { hp48_top_width, hp48_top_height, DISP_PAD, hp48_top_bitmap },
-    { hp48_bottom_width, hp48_bottom_height, PAD, hp48_bottom_bitmap },
-    { hp48_logo_width, hp48_logo_height, LOGO, hp48_logo_bitmap },
-    { hp48_text_width, hp48_text_height, LABEL, hp48_text_bitmap },
-    { hp48_keys_width, hp48_keys_height, BLACK, hp48_keys_bitmap },
-    { hp48_orange_width, hp48_orange_height, LEFT, hp48_orange_bitmap },
-    { hp48_blue_width, hp48_blue_height, RIGHT, hp48_blue_bitmap } };
+    {hp48_icon_width,    hp48_icon_height,   BLACK,    hp48_icon_bitmap  },
+    { hp48_on_width,     hp48_on_height,     PIXEL,    hp48_on_bitmap    },
+    { hp48_disp_width,   hp48_disp_height,   LCD,      hp48_disp_bitmap  },
+    { hp48_top_width,    hp48_top_height,    DISP_PAD, hp48_top_bitmap   },
+    { hp48_bottom_width, hp48_bottom_height, PAD,      hp48_bottom_bitmap},
+    { hp48_logo_width,   hp48_logo_height,   LOGO,     hp48_logo_bitmap  },
+    { hp48_text_width,   hp48_text_height,   LABEL,    hp48_text_bitmap  },
+    { hp48_keys_width,   hp48_keys_height,   BLACK,    hp48_keys_bitmap  },
+    { hp48_orange_width, hp48_orange_height, LEFT,     hp48_orange_bitmap},
+    { hp48_blue_width,   hp48_blue_height,   RIGHT,    hp48_blue_bitmap  }
+};
 
 static icon_map_t icon_maps_gx[] = {
-    { hp48_icon_width, hp48_icon_height, BLACK, hp48_icon_bitmap },
-    { hp48_on_width, hp48_on_height, PIXEL, hp48_on_bitmap },
-    { hp48_disp_width, hp48_disp_height, LCD, hp48_disp_bitmap },
-    { hp48_top_gx_width, hp48_top_gx_height, DISP_PAD, hp48_top_gx_bitmap },
-    { hp48_bottom_width, hp48_bottom_height, PAD, hp48_bottom_bitmap },
-    { hp48_logo_gx_width, hp48_logo_gx_height, LOGO, hp48_logo_gx_bitmap },
-    { hp48_text_gx_width, hp48_text_gx_height, LABEL, hp48_text_gx_bitmap },
-    { hp48_keys_width, hp48_keys_height, BLACK, hp48_keys_bitmap },
-    { hp48_orange_width, hp48_orange_height, LEFT, hp48_orange_bitmap },
-    { hp48_green_gx_width, hp48_green_gx_height, RIGHT,
-      hp48_green_gx_bitmap } };
+    {hp48_icon_width,      hp48_icon_height,     BLACK,    hp48_icon_bitmap    },
+    { hp48_on_width,       hp48_on_height,       PIXEL,    hp48_on_bitmap      },
+    { hp48_disp_width,     hp48_disp_height,     LCD,      hp48_disp_bitmap    },
+    { hp48_top_gx_width,   hp48_top_gx_height,   DISP_PAD, hp48_top_gx_bitmap  },
+    { hp48_bottom_width,   hp48_bottom_height,   PAD,      hp48_bottom_bitmap  },
+    { hp48_logo_gx_width,  hp48_logo_gx_height,  LOGO,     hp48_logo_gx_bitmap },
+    { hp48_text_gx_width,  hp48_text_gx_height,  LABEL,    hp48_text_gx_bitmap },
+    { hp48_keys_width,     hp48_keys_height,     BLACK,    hp48_keys_bitmap    },
+    { hp48_orange_width,   hp48_orange_height,   LEFT,     hp48_orange_bitmap  },
+    { hp48_green_gx_width, hp48_green_gx_height, RIGHT,    hp48_green_gx_bitmap}
+};
 
 static int saved_argc;
 static char** saved_argv;
@@ -1351,7 +549,8 @@ static char** saved_argv;
 /*************/
 /* functions */
 /*************/
-static void fatal_exit( char* error, char* advice ) {
+static void fatal_exit( char* error, char* advice )
+{
     if ( error[ 0 ] == '\0' ) {
         fprintf( stderr, "FATAL ERROR, exit.\n" );
         exit( 1 );
@@ -1365,15 +564,14 @@ static void fatal_exit( char* error, char* advice ) {
     exit( 1 );
 }
 
-inline Visual* pick_visual_of_class( Display* dpy, int visual_class,
-                                     unsigned int* depth ) {
+inline Visual* pick_visual_of_class( Display* dpy, int visual_class, unsigned int* depth )
+{
     XVisualInfo vi_in, *vi_out;
     int out_count;
 
     vi_in.class = visual_class;
     vi_in.screen = DefaultScreen( dpy );
-    vi_out = XGetVisualInfo( dpy, VisualClassMask | VisualScreenMask, &vi_in,
-                             &out_count );
+    vi_out = XGetVisualInfo( dpy, VisualClassMask | VisualScreenMask, &vi_in, &out_count );
     if ( vi_out ) { /* choose the 'best' one, if multiple */
         int i, best;
         Visual* visual;
@@ -1390,14 +588,14 @@ inline Visual* pick_visual_of_class( Display* dpy, int visual_class,
     }
 }
 
-inline Visual* id_to_visual( Display* dpy, int id, unsigned int* depth ) {
+inline Visual* id_to_visual( Display* dpy, int id, unsigned int* depth )
+{
     XVisualInfo vi_in, *vi_out;
     int out_count;
 
     vi_in.screen = DefaultScreen( dpy );
     vi_in.visualid = id;
-    vi_out = XGetVisualInfo( dpy, VisualScreenMask | VisualIDMask, &vi_in,
-                             &out_count );
+    vi_out = XGetVisualInfo( dpy, VisualScreenMask | VisualIDMask, &vi_in, &out_count );
     if ( vi_out ) {
         Visual* v = vi_out[ 0 ].visual;
         *depth = vi_out[ 0 ].depth;
@@ -1407,7 +605,8 @@ inline Visual* id_to_visual( Display* dpy, int id, unsigned int* depth ) {
     return 0;
 }
 
-Visual* get_visual_resource( Display* dpy, unsigned int* depth ) {
+Visual* get_visual_resource( Display* dpy, unsigned int* depth )
+{
     char c;
     int vclass;
     int id;
@@ -1453,7 +652,8 @@ Visual* get_visual_resource( Display* dpy, unsigned int* depth ) {
         return pick_visual_of_class( dpy, vclass, depth );
 }
 
-XFontStruct* load_x11_font( Display* dpy, char* fontname ) {
+XFontStruct* load_x11_font( Display* dpy, char* fontname )
+{
     XFontStruct* f = ( XFontStruct* )0;
 
     f = XLoadQueryFont( dpy, fontname );
@@ -1469,7 +669,8 @@ XFontStruct* load_x11_font( Display* dpy, char* fontname ) {
     return f;
 }
 
-int AllocColors( void ) {
+int AllocColors( void )
+{
     int c, error, dyn;
     int r_shift = 0, g_shift = 0, b_shift = 0;
     XSetWindowAttributes xswa;
@@ -1514,16 +715,13 @@ int AllocColors( void ) {
                 break;
         }
         if ( direct_color ) {
-            colors[ c ].xcolor.pixel =
-                ( ( colors[ c ].xcolor.red >> r_shift ) & visual->red_mask ) |
-                ( ( colors[ c ].xcolor.green >> g_shift ) &
-                  visual->green_mask ) |
-                ( ( colors[ c ].xcolor.blue >> b_shift ) & visual->blue_mask );
+            colors[ c ].xcolor.pixel = ( ( colors[ c ].xcolor.red >> r_shift ) & visual->red_mask ) |
+                                       ( ( colors[ c ].xcolor.green >> g_shift ) & visual->green_mask ) |
+                                       ( ( colors[ c ].xcolor.blue >> b_shift ) & visual->blue_mask );
             XStoreColor( dpy, cmap, &colors[ c ].xcolor );
         } else {
             if ( dynamic_color && c == PIXEL ) {
-                if ( XAllocColorCells( dpy, cmap, True, ( unsigned long* )0, 0,
-                                       &colors[ c ].xcolor.pixel, 1 ) == 0 ) {
+                if ( XAllocColorCells( dpy, cmap, True, ( unsigned long* )0, 0, &colors[ c ].xcolor.pixel, 1 ) == 0 ) {
                     dyn = 0;
                     if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 ) {
                         if ( verbose )
@@ -1602,8 +800,7 @@ int AllocColors( void ) {
                     break;
             }
             if ( dynamic_color && c == PIXEL ) {
-                if ( XAllocColorCells( dpy, cmap, True, ( unsigned long* )0, 0,
-                                       &colors[ c ].xcolor.pixel, 1 ) == 0 ) {
+                if ( XAllocColorCells( dpy, cmap, True, ( unsigned long* )0, 0, &colors[ c ].xcolor.pixel, 1 ) == 0 ) {
                     dyn = 0;
                     if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 )
                         fatal_exit( "can\'t alloc Color.\n", "" );
@@ -1627,7 +824,8 @@ int AllocColors( void ) {
     return 0;
 }
 
-int InitDisplay( int argc, char** argv ) {
+int InitDisplay( int argc, char** argv )
+{
     /*
      * open the display
      */
@@ -1660,19 +858,15 @@ int InitDisplay( int argc, char** argv ) {
     return 0;
 }
 
-int DrawSmallString( Display* the_dpy, Drawable d, GC the_gc, int x, int y,
-                     const char* string, unsigned int length ) {
+int DrawSmallString( Display* the_dpy, Drawable d, GC the_gc, int x, int y, const char* string, unsigned int length )
+{
     Pixmap pix;
 
     for ( unsigned int i = 0; i < length; i++ ) {
         if ( small_font[ ( int )string[ i ] ].h != 0 ) {
-            pix = XCreateBitmapFromData(
-                the_dpy, d, ( char* )small_font[ ( int )string[ i ] ].bits,
-                small_font[ ( int )string[ i ] ].w,
-                small_font[ ( int )string[ i ] ].h );
-            XCopyPlane( the_dpy, pix, d, the_gc, 0, 0,
-                        small_font[ ( int )string[ i ] ].w,
-                        small_font[ ( int )string[ i ] ].h, x,
+            pix = XCreateBitmapFromData( the_dpy, d, ( char* )small_font[ ( int )string[ i ] ].bits, small_font[ ( int )string[ i ] ].w,
+                                         small_font[ ( int )string[ i ] ].h );
+            XCopyPlane( the_dpy, pix, d, the_gc, 0, 0, small_font[ ( int )string[ i ] ].w, small_font[ ( int )string[ i ] ].h, x,
                         ( int )( y - small_font[ ( int )string[ i ] ].h ), 1 );
             XFreePixmap( the_dpy, pix );
         }
@@ -1681,8 +875,8 @@ int DrawSmallString( Display* the_dpy, Drawable d, GC the_gc, int x, int y,
     return 0;
 }
 
-void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small,
-                   XFontStruct* f_med, XFontStruct* f_big ) {
+void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small, XFontStruct* f_med, XFontStruct* f_big )
+{
     int x, y;
     XSetWindowAttributes xswa;
     XFontStruct* finfo;
@@ -1706,32 +900,26 @@ void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small,
         /*
          * create the buttons subwindows
          */
-        buttons[ i ].xwin = XCreateSimpleWindow(
-            dpy, mainW, off_x + buttons[ i ].x, off_y + buttons[ i ].y,
-            buttons[ i ].w, buttons[ i ].h, 0, COLOR( BLACK ), pixel );
+        buttons[ i ].xwin = XCreateSimpleWindow( dpy, mainW, off_x + buttons[ i ].x, off_y + buttons[ i ].y, buttons[ i ].w, buttons[ i ].h,
+                                                 0, COLOR( BLACK ), pixel );
 
-        XDefineCursor( dpy, buttons[ i ].xwin,
-                       XCreateFontCursor( dpy, XC_hand1 ) );
+        XDefineCursor( dpy, buttons[ i ].xwin, XCreateFontCursor( dpy, XC_hand1 ) );
 
         xswa.event_mask = LeaveWindowMask | ExposureMask | StructureNotifyMask;
         xswa.backing_store = Always;
 
-        XChangeWindowAttributes( dpy, buttons[ i ].xwin,
-                                 CWEventMask | CWBackingStore, &xswa );
+        XChangeWindowAttributes( dpy, buttons[ i ].xwin, CWEventMask | CWBackingStore, &xswa );
 
         /*
          * draw the released button
          */
-        buttons[ i ].map = XCreatePixmap(
-            dpy, buttons[ i ].xwin, buttons[ i ].w, buttons[ i ].h, depth );
+        buttons[ i ].map = XCreatePixmap( dpy, buttons[ i ].xwin, buttons[ i ].w, buttons[ i ].h, depth );
 
         XSetForeground( dpy, gc, pixel );
-        XFillRectangle( dpy, buttons[ i ].map, gc, 0, 0, buttons[ i ].w,
-                        buttons[ i ].h );
+        XFillRectangle( dpy, buttons[ i ].map, gc, 0, 0, buttons[ i ].w, buttons[ i ].h );
 
         XSetForeground( dpy, gc, COLOR( BUTTON ) );
-        XFillRectangle( dpy, buttons[ i ].map, gc, 1, 1, buttons[ i ].w - 2,
-                        buttons[ i ].h - 2 );
+        XFillRectangle( dpy, buttons[ i ].map, gc, 1, 1, buttons[ i ].w - 2, buttons[ i ].h - 2 );
 
         if ( buttons[ i ].label != ( char* )0 ) {
 
@@ -1762,15 +950,10 @@ void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small,
             XSetBackground( dpy, gc, COLOR( BUTTON ) );
             XSetForeground( dpy, gc, COLOR( buttons[ i ].lc ) );
 
-            XTextExtents( finfo, buttons[ i ].label,
-                          ( int )strlen( buttons[ i ].label ), &dir, &fa, &fd,
-                          &xchar );
+            XTextExtents( finfo, buttons[ i ].label, ( int )strlen( buttons[ i ].label ), &dir, &fa, &fd, &xchar );
             x = ( buttons[ i ].w - xchar.width ) / 2;
-            y = ( 1 + buttons[ i ].h - ( xchar.ascent + xchar.descent ) ) / 2 +
-                xchar.ascent + 1;
-            XDrawImageString( dpy, buttons[ i ].map, gc, x, y,
-                              buttons[ i ].label,
-                              ( int )strlen( buttons[ i ].label ) );
+            y = ( 1 + buttons[ i ].h - ( xchar.ascent + xchar.descent ) ) / 2 + xchar.ascent + 1;
+            XDrawImageString( dpy, buttons[ i ].map, gc, x, y, buttons[ i ].label, ( int )strlen( buttons[ i ].label ) );
 
             XSetBackground( dpy, gc, COLOR( BLACK ) );
 
@@ -1782,15 +965,12 @@ void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small,
             XSetBackground( dpy, gc, COLOR( BUTTON ) );
             XSetForeground( dpy, gc, COLOR( buttons[ i ].lc ) );
 
-            pix = XCreateBitmapFromData( dpy, buttons[ i ].xwin,
-                                         ( char* )buttons[ i ].lb,
-                                         buttons[ i ].lw, buttons[ i ].lh );
+            pix = XCreateBitmapFromData( dpy, buttons[ i ].xwin, ( char* )buttons[ i ].lb, buttons[ i ].lw, buttons[ i ].lh );
 
             x = ( 1 + buttons[ i ].w - buttons[ i ].lw ) / 2;
             y = ( 1 + buttons[ i ].h - buttons[ i ].lh ) / 2 + 1;
 
-            XCopyPlane( dpy, pix, buttons[ i ].map, gc, 0, 0, buttons[ i ].lw,
-                        buttons[ i ].lh, x, y, 1 );
+            XCopyPlane( dpy, pix, buttons[ i ].map, gc, 0, 0, buttons[ i ].lw, buttons[ i ].lh, x, y, 1 );
 
             XFreePixmap( dpy, pix );
 
@@ -1802,91 +982,66 @@ void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small,
          */
         XSetForeground( dpy, gc, COLOR( BUT_TOP ) );
 
-        XDrawLine( dpy, buttons[ i ].map, gc, 1, ( int )( buttons[ i ].h - 2 ),
-                   1, 1 );
-        XDrawLine( dpy, buttons[ i ].map, gc, 2, ( int )( buttons[ i ].h - 3 ),
-                   2, 2 );
-        XDrawLine( dpy, buttons[ i ].map, gc, 3, ( int )( buttons[ i ].h - 4 ),
-                   3, 3 );
+        XDrawLine( dpy, buttons[ i ].map, gc, 1, ( int )( buttons[ i ].h - 2 ), 1, 1 );
+        XDrawLine( dpy, buttons[ i ].map, gc, 2, ( int )( buttons[ i ].h - 3 ), 2, 2 );
+        XDrawLine( dpy, buttons[ i ].map, gc, 3, ( int )( buttons[ i ].h - 4 ), 3, 3 );
 
-        XDrawLine( dpy, buttons[ i ].map, gc, 1, 1,
-                   ( int )( buttons[ i ].w - 2 ), 1 );
-        XDrawLine( dpy, buttons[ i ].map, gc, 2, 2,
-                   ( int )( buttons[ i ].w - 3 ), 2 );
-        XDrawLine( dpy, buttons[ i ].map, gc, 3, 3,
-                   ( int )( buttons[ i ].w - 4 ), 3 );
-        XDrawLine( dpy, buttons[ i ].map, gc, 4, 4,
-                   ( int )( buttons[ i ].w - 5 ), 4 );
+        XDrawLine( dpy, buttons[ i ].map, gc, 1, 1, ( int )( buttons[ i ].w - 2 ), 1 );
+        XDrawLine( dpy, buttons[ i ].map, gc, 2, 2, ( int )( buttons[ i ].w - 3 ), 2 );
+        XDrawLine( dpy, buttons[ i ].map, gc, 3, 3, ( int )( buttons[ i ].w - 4 ), 3 );
+        XDrawLine( dpy, buttons[ i ].map, gc, 4, 4, ( int )( buttons[ i ].w - 5 ), 4 );
 
         XDrawPoint( dpy, buttons[ i ].map, gc, 4, 5 );
 
         XSetForeground( dpy, gc, COLOR( BUT_BOT ) );
 
-        XDrawLine( dpy, buttons[ i ].map, gc, 3, ( int )( buttons[ i ].h - 2 ),
-                   ( int )( buttons[ i ].w - 2 ),
+        XDrawLine( dpy, buttons[ i ].map, gc, 3, ( int )( buttons[ i ].h - 2 ), ( int )( buttons[ i ].w - 2 ),
                    ( int )( buttons[ i ].h - 2 ) );
-        XDrawLine( dpy, buttons[ i ].map, gc, 4, ( int )( buttons[ i ].h - 3 ),
-                   ( int )( buttons[ i ].w - 3 ),
+        XDrawLine( dpy, buttons[ i ].map, gc, 4, ( int )( buttons[ i ].h - 3 ), ( int )( buttons[ i ].w - 3 ),
                    ( int )( buttons[ i ].h - 3 ) );
 
-        XDrawLine( dpy, buttons[ i ].map, gc, ( int )( buttons[ i ].w - 2 ),
-                   ( int )( buttons[ i ].h - 2 ), ( int )( buttons[ i ].w - 2 ),
+        XDrawLine( dpy, buttons[ i ].map, gc, ( int )( buttons[ i ].w - 2 ), ( int )( buttons[ i ].h - 2 ), ( int )( buttons[ i ].w - 2 ),
                    3 );
-        XDrawLine( dpy, buttons[ i ].map, gc, ( int )( buttons[ i ].w - 3 ),
-                   ( int )( buttons[ i ].h - 3 ), ( int )( buttons[ i ].w - 3 ),
+        XDrawLine( dpy, buttons[ i ].map, gc, ( int )( buttons[ i ].w - 3 ), ( int )( buttons[ i ].h - 3 ), ( int )( buttons[ i ].w - 3 ),
                    4 );
-        XDrawLine( dpy, buttons[ i ].map, gc, ( int )( buttons[ i ].w - 4 ),
-                   ( int )( buttons[ i ].h - 4 ), ( int )( buttons[ i ].w - 4 ),
+        XDrawLine( dpy, buttons[ i ].map, gc, ( int )( buttons[ i ].w - 4 ), ( int )( buttons[ i ].h - 4 ), ( int )( buttons[ i ].w - 4 ),
                    5 );
 
-        XDrawPoint( dpy, buttons[ i ].map, gc, ( int )( buttons[ i ].w - 5 ),
-                    ( int )( buttons[ i ].h - 4 ) );
+        XDrawPoint( dpy, buttons[ i ].map, gc, ( int )( buttons[ i ].w - 5 ), ( int )( buttons[ i ].h - 4 ) );
 
         /*
          * draw frame around button
          */
         XSetForeground( dpy, gc, COLOR( FRAME ) );
 
-        XDrawLine( dpy, buttons[ i ].map, gc, 0, ( int )( buttons[ i ].h - 3 ),
-                   0, 2 );
-        XDrawLine( dpy, buttons[ i ].map, gc, 2, 0,
-                   ( int )( buttons[ i ].w - 3 ), 0 );
-        XDrawLine( dpy, buttons[ i ].map, gc, 2, ( int )( buttons[ i ].h - 1 ),
-                   ( int )( buttons[ i ].w - 3 ),
+        XDrawLine( dpy, buttons[ i ].map, gc, 0, ( int )( buttons[ i ].h - 3 ), 0, 2 );
+        XDrawLine( dpy, buttons[ i ].map, gc, 2, 0, ( int )( buttons[ i ].w - 3 ), 0 );
+        XDrawLine( dpy, buttons[ i ].map, gc, 2, ( int )( buttons[ i ].h - 1 ), ( int )( buttons[ i ].w - 3 ),
                    ( int )( buttons[ i ].h - 1 ) );
-        XDrawLine( dpy, buttons[ i ].map, gc, ( int )( buttons[ i ].w - 1 ),
-                   ( int )( buttons[ i ].h - 3 ), ( int )( buttons[ i ].w - 1 ),
+        XDrawLine( dpy, buttons[ i ].map, gc, ( int )( buttons[ i ].w - 1 ), ( int )( buttons[ i ].h - 3 ), ( int )( buttons[ i ].w - 1 ),
                    2 );
 
         if ( i == BUTTON_ON ) {
-            XDrawLine( dpy, buttons[ i ].map, gc, 1, 1,
-                       ( int )( buttons[ i ].w - 2 ), 1 );
+            XDrawLine( dpy, buttons[ i ].map, gc, 1, 1, ( int )( buttons[ i ].w - 2 ), 1 );
             XDrawPoint( dpy, buttons[ i ].map, gc, 1, 2 );
-            XDrawPoint( dpy, buttons[ i ].map, gc,
-                        ( int )( buttons[ i ].w - 2 ), 2 );
+            XDrawPoint( dpy, buttons[ i ].map, gc, ( int )( buttons[ i ].w - 2 ), 2 );
         } else {
             XDrawPoint( dpy, buttons[ i ].map, gc, 1, 1 );
-            XDrawPoint( dpy, buttons[ i ].map, gc,
-                        ( int )( buttons[ i ].w - 2 ), 1 );
+            XDrawPoint( dpy, buttons[ i ].map, gc, ( int )( buttons[ i ].w - 2 ), 1 );
         }
-        XDrawPoint( dpy, buttons[ i ].map, gc, 1,
-                    ( int )( buttons[ i ].h - 2 ) );
-        XDrawPoint( dpy, buttons[ i ].map, gc, ( int )( buttons[ i ].w - 2 ),
-                    ( int )( buttons[ i ].h - 2 ) );
+        XDrawPoint( dpy, buttons[ i ].map, gc, 1, ( int )( buttons[ i ].h - 2 ) );
+        XDrawPoint( dpy, buttons[ i ].map, gc, ( int )( buttons[ i ].w - 2 ), ( int )( buttons[ i ].h - 2 ) );
 
         /*
          * draw the depressed button
          */
-        buttons[ i ].down = XCreatePixmap(
-            dpy, buttons[ i ].xwin, buttons[ i ].w, buttons[ i ].h, depth );
+        buttons[ i ].down = XCreatePixmap( dpy, buttons[ i ].xwin, buttons[ i ].w, buttons[ i ].h, depth );
 
         XSetForeground( dpy, gc, pixel );
-        XFillRectangle( dpy, buttons[ i ].down, gc, 0, 0, buttons[ i ].w,
-                        buttons[ i ].h );
+        XFillRectangle( dpy, buttons[ i ].down, gc, 0, 0, buttons[ i ].w, buttons[ i ].h );
 
         XSetForeground( dpy, gc, COLOR( BUTTON ) );
-        XFillRectangle( dpy, buttons[ i ].down, gc, 1, 1, buttons[ i ].w - 2,
-                        buttons[ i ].h - 2 );
+        XFillRectangle( dpy, buttons[ i ].down, gc, 1, 1, buttons[ i ].w - 2, buttons[ i ].h - 2 );
 
         if ( buttons[ i ].label != ( char* )0 ) {
 
@@ -1917,15 +1072,10 @@ void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small,
             XSetBackground( dpy, gc, COLOR( BUTTON ) );
             XSetForeground( dpy, gc, COLOR( buttons[ i ].lc ) );
 
-            XTextExtents( finfo, buttons[ i ].label,
-                          ( int )strlen( buttons[ i ].label ), &dir, &fa, &fd,
-                          &xchar );
+            XTextExtents( finfo, buttons[ i ].label, ( int )strlen( buttons[ i ].label ), &dir, &fa, &fd, &xchar );
             x = ( buttons[ i ].w - xchar.width ) / 2;
-            y = ( 1 + buttons[ i ].h - ( xchar.ascent + xchar.descent ) ) / 2 +
-                xchar.ascent;
-            XDrawImageString( dpy, buttons[ i ].down, gc, x, y,
-                              buttons[ i ].label,
-                              ( int )strlen( buttons[ i ].label ) );
+            y = ( 1 + buttons[ i ].h - ( xchar.ascent + xchar.descent ) ) / 2 + xchar.ascent;
+            XDrawImageString( dpy, buttons[ i ].down, gc, x, y, buttons[ i ].label, ( int )strlen( buttons[ i ].label ) );
 
             XSetBackground( dpy, gc, COLOR( BLACK ) );
 
@@ -1937,15 +1087,12 @@ void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small,
             XSetBackground( dpy, gc, COLOR( BUTTON ) );
             XSetForeground( dpy, gc, COLOR( buttons[ i ].lc ) );
 
-            pix = XCreateBitmapFromData( dpy, buttons[ i ].xwin,
-                                         ( char* )buttons[ i ].lb,
-                                         buttons[ i ].lw, buttons[ i ].lh );
+            pix = XCreateBitmapFromData( dpy, buttons[ i ].xwin, ( char* )buttons[ i ].lb, buttons[ i ].lw, buttons[ i ].lh );
 
             x = ( 1 + buttons[ i ].w - buttons[ i ].lw ) / 2;
             y = ( 1 + buttons[ i ].h - buttons[ i ].lh ) / 2;
 
-            XCopyPlane( dpy, pix, buttons[ i ].down, gc, 0, 0, buttons[ i ].lw,
-                        buttons[ i ].lh, x, y, 1 );
+            XCopyPlane( dpy, pix, buttons[ i ].down, gc, 0, 0, buttons[ i ].lw, buttons[ i ].lh, x, y, 1 );
 
             XFreePixmap( dpy, pix );
 
@@ -1957,115 +1104,89 @@ void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small,
          */
         XSetForeground( dpy, gc, COLOR( BUT_TOP ) );
 
-        XDrawLine( dpy, buttons[ i ].down, gc, 2, ( int )( buttons[ i ].h - 4 ),
-                   2, 2 );
-        XDrawLine( dpy, buttons[ i ].down, gc, 3, ( int )( buttons[ i ].h - 5 ),
-                   3, 3 );
+        XDrawLine( dpy, buttons[ i ].down, gc, 2, ( int )( buttons[ i ].h - 4 ), 2, 2 );
+        XDrawLine( dpy, buttons[ i ].down, gc, 3, ( int )( buttons[ i ].h - 5 ), 3, 3 );
 
-        XDrawLine( dpy, buttons[ i ].down, gc, 2, 2,
-                   ( int )( buttons[ i ].w - 4 ), 2 );
-        XDrawLine( dpy, buttons[ i ].down, gc, 3, 3,
-                   ( int )( buttons[ i ].w - 5 ), 3 );
+        XDrawLine( dpy, buttons[ i ].down, gc, 2, 2, ( int )( buttons[ i ].w - 4 ), 2 );
+        XDrawLine( dpy, buttons[ i ].down, gc, 3, 3, ( int )( buttons[ i ].w - 5 ), 3 );
 
         XDrawPoint( dpy, buttons[ i ].down, gc, 4, 4 );
 
         XSetForeground( dpy, gc, COLOR( BUT_BOT ) );
 
-        XDrawLine( dpy, buttons[ i ].down, gc, 3, ( int )( buttons[ i ].h - 3 ),
-                   ( int )( buttons[ i ].w - 3 ),
+        XDrawLine( dpy, buttons[ i ].down, gc, 3, ( int )( buttons[ i ].h - 3 ), ( int )( buttons[ i ].w - 3 ),
                    ( int )( buttons[ i ].h - 3 ) );
-        XDrawLine( dpy, buttons[ i ].down, gc, 4, ( int )( buttons[ i ].h - 4 ),
-                   ( int )( buttons[ i ].w - 4 ),
+        XDrawLine( dpy, buttons[ i ].down, gc, 4, ( int )( buttons[ i ].h - 4 ), ( int )( buttons[ i ].w - 4 ),
                    ( int )( buttons[ i ].h - 4 ) );
 
-        XDrawLine( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 3 ),
-                   ( int )( buttons[ i ].h - 3 ), ( int )( buttons[ i ].w - 3 ),
+        XDrawLine( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 3 ), ( int )( buttons[ i ].h - 3 ), ( int )( buttons[ i ].w - 3 ),
                    3 );
-        XDrawLine( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 4 ),
-                   ( int )( buttons[ i ].h - 4 ), ( int )( buttons[ i ].w - 4 ),
+        XDrawLine( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 4 ), ( int )( buttons[ i ].h - 4 ), ( int )( buttons[ i ].w - 4 ),
                    4 );
 
-        XDrawPoint( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 5 ),
-                    ( int )( buttons[ i ].h - 5 ) );
+        XDrawPoint( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 5 ), ( int )( buttons[ i ].h - 5 ) );
 
         /*
          * draw frame around button
          */
         XSetForeground( dpy, gc, COLOR( FRAME ) );
 
-        XDrawLine( dpy, buttons[ i ].down, gc, 0, ( int )( buttons[ i ].h - 3 ),
-                   0, 2 );
-        XDrawLine( dpy, buttons[ i ].down, gc, 2, 0,
-                   ( int )( buttons[ i ].w - 3 ), 0 );
-        XDrawLine( dpy, buttons[ i ].down, gc, 2, ( int )( buttons[ i ].h - 1 ),
-                   ( int )( buttons[ i ].w - 3 ),
+        XDrawLine( dpy, buttons[ i ].down, gc, 0, ( int )( buttons[ i ].h - 3 ), 0, 2 );
+        XDrawLine( dpy, buttons[ i ].down, gc, 2, 0, ( int )( buttons[ i ].w - 3 ), 0 );
+        XDrawLine( dpy, buttons[ i ].down, gc, 2, ( int )( buttons[ i ].h - 1 ), ( int )( buttons[ i ].w - 3 ),
                    ( int )( buttons[ i ].h - 1 ) );
-        XDrawLine( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 1 ),
-                   ( int )( buttons[ i ].h - 3 ), ( int )( buttons[ i ].w - 1 ),
+        XDrawLine( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 1 ), ( int )( buttons[ i ].h - 3 ), ( int )( buttons[ i ].w - 1 ),
                    2 );
 
         if ( i == BUTTON_ON ) {
-            XDrawLine( dpy, buttons[ i ].down, gc, 1, 1,
-                       ( int )( buttons[ i ].w - 2 ), 1 );
+            XDrawLine( dpy, buttons[ i ].down, gc, 1, 1, ( int )( buttons[ i ].w - 2 ), 1 );
             XDrawPoint( dpy, buttons[ i ].down, gc, 1, 2 );
-            XDrawPoint( dpy, buttons[ i ].down, gc,
-                        ( int )( buttons[ i ].w - 2 ), 2 );
+            XDrawPoint( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 2 ), 2 );
         } else {
             XDrawPoint( dpy, buttons[ i ].down, gc, 1, 1 );
-            XDrawPoint( dpy, buttons[ i ].down, gc,
-                        ( int )( buttons[ i ].w - 2 ), 1 );
+            XDrawPoint( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 2 ), 1 );
         }
-        XDrawPoint( dpy, buttons[ i ].down, gc, 1,
-                    ( int )( buttons[ i ].h - 2 ) );
-        XDrawPoint( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 2 ),
-                    ( int )( buttons[ i ].h - 2 ) );
+        XDrawPoint( dpy, buttons[ i ].down, gc, 1, ( int )( buttons[ i ].h - 2 ) );
+        XDrawPoint( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 2 ), ( int )( buttons[ i ].h - 2 ) );
 
         if ( i == BUTTON_ON ) {
-            XDrawRectangle( dpy, buttons[ i ].down, gc, 1, 2,
-                            buttons[ i ].w - 3, buttons[ i ].h - 4 );
+            XDrawRectangle( dpy, buttons[ i ].down, gc, 1, 2, buttons[ i ].w - 3, buttons[ i ].h - 4 );
             XDrawPoint( dpy, buttons[ i ].down, gc, 2, 3 );
-            XDrawPoint( dpy, buttons[ i ].down, gc,
-                        ( int )( buttons[ i ].w - 3 ), 3 );
+            XDrawPoint( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 3 ), 3 );
         } else {
-            XDrawRectangle( dpy, buttons[ i ].down, gc, 1, 1,
-                            buttons[ i ].w - 3, buttons[ i ].h - 3 );
+            XDrawRectangle( dpy, buttons[ i ].down, gc, 1, 1, buttons[ i ].w - 3, buttons[ i ].h - 3 );
             XDrawPoint( dpy, buttons[ i ].down, gc, 2, 2 );
-            XDrawPoint( dpy, buttons[ i ].down, gc,
-                        ( int )( buttons[ i ].w - 3 ), 2 );
+            XDrawPoint( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 3 ), 2 );
         }
-        XDrawPoint( dpy, buttons[ i ].down, gc, 2,
-                    ( int )( buttons[ i ].h - 3 ) );
-        XDrawPoint( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 3 ),
-                    ( int )( buttons[ i ].h - 3 ) );
+        XDrawPoint( dpy, buttons[ i ].down, gc, 2, ( int )( buttons[ i ].h - 3 ) );
+        XDrawPoint( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 3 ), ( int )( buttons[ i ].h - 3 ) );
     }
 }
 
-void DrawButtons( void ) {
+void DrawButtons( void )
+{
     int i;
 
     for ( i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
         if ( buttons[ i ].pressed ) {
-            XCopyArea( dpy, buttons[ i ].down, buttons[ i ].xwin, gc, 0, 0,
-                       buttons[ i ].w, buttons[ i ].h, 0, 0 );
+            XCopyArea( dpy, buttons[ i ].down, buttons[ i ].xwin, gc, 0, 0, buttons[ i ].w, buttons[ i ].h, 0, 0 );
         } else {
-            XCopyArea( dpy, buttons[ i ].map, buttons[ i ].xwin, gc, 0, 0,
-                       buttons[ i ].w, buttons[ i ].h, 0, 0 );
+            XCopyArea( dpy, buttons[ i ].map, buttons[ i ].xwin, gc, 0, 0, buttons[ i ].w, buttons[ i ].h, 0, 0 );
         }
     }
 }
 
-void DrawButton( int i ) {
+void DrawButton( int i )
+{
     if ( buttons[ i ].pressed ) {
-        XCopyArea( dpy, buttons[ i ].down, buttons[ i ].xwin, gc, 0, 0,
-                   buttons[ i ].w, buttons[ i ].h, 0, 0 );
+        XCopyArea( dpy, buttons[ i ].down, buttons[ i ].xwin, gc, 0, 0, buttons[ i ].w, buttons[ i ].h, 0, 0 );
     } else {
-        XCopyArea( dpy, buttons[ i ].map, buttons[ i ].xwin, gc, 0, 0,
-                   buttons[ i ].w, buttons[ i ].h, 0, 0 );
+        XCopyArea( dpy, buttons[ i ].map, buttons[ i ].xwin, gc, 0, 0, buttons[ i ].w, buttons[ i ].h, 0, 0 );
     }
 }
 
-void CreateBackground( int width, int height, int w_top, int h_top,
-                       x11_keypad_t* keypad ) {
+void CreateBackground( int width, int height, int w_top, int h_top, x11_keypad_t* keypad )
+{
     XSetBackground( dpy, gc, COLOR( PAD ) );
     XSetForeground( dpy, gc, COLOR( PAD ) );
 
@@ -2077,8 +1198,8 @@ void CreateBackground( int width, int height, int w_top, int h_top,
     XFillRectangle( dpy, keypad->pixmap, gc, 0, 0, width, height );
 }
 
-void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
-                   x11_keypad_t* keypad ) {
+void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* keypad )
+{
     int i, x, y;
     int wl, wr, ws;
     Pixmap pix;
@@ -2111,13 +1232,11 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
                 x = offset_x + buttons[ i ].x + buttons[ i ].w + 3;
                 y = offset_y + buttons[ i ].y + buttons[ i ].h + 1;
             } else {
-                x = offset_x + buttons[ i ].x + buttons[ i ].w -
-                    SmallTextWidth( buttons[ i ].letter, 1 ) / 2 + 5;
+                x = offset_x + buttons[ i ].x + buttons[ i ].w - SmallTextWidth( buttons[ i ].letter, 1 ) / 2 + 5;
                 y = offset_y + buttons[ i ].y + buttons[ i ].h - 2;
             }
 
-            DrawSmallString( dpy, keypad->pixmap, gc, x, y, buttons[ i ].letter,
-                             1 );
+            DrawSmallString( dpy, keypad->pixmap, gc, x, y, buttons[ i ].letter, 1 );
         }
     }
 
@@ -2135,15 +1254,10 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
             XSetBackground( dpy, gc, pixel );
             XSetForeground( dpy, gc, COLOR( WHITE ) );
 
-            x = offset_x + buttons[ i ].x +
-                ( 1 + buttons[ i ].w -
-                  SmallTextWidth( buttons[ i ].sub,
-                                  strlen( buttons[ i ].sub ) ) ) /
-                    2;
+            x = offset_x + buttons[ i ].x + ( 1 + buttons[ i ].w - SmallTextWidth( buttons[ i ].sub, strlen( buttons[ i ].sub ) ) ) / 2;
             y = offset_y + buttons[ i ].y + buttons[ i ].h + small_ascent + 2;
 
-            DrawSmallString( dpy, keypad->pixmap, gc, x, y, buttons[ i ].sub,
-                             strlen( buttons[ i ].sub ) );
+            DrawSmallString( dpy, keypad->pixmap, gc, x, y, buttons[ i ].sub, strlen( buttons[ i ].sub ) );
         }
     }
 
@@ -2176,17 +1290,13 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
                 XSetBackground( dpy, gc, COLOR( UNDERLAY ) );
                 XSetForeground( dpy, gc, COLOR( LEFT ) );
 
-                x = ( pw + 1 -
-                      SmallTextWidth( buttons[ i ].left,
-                                      strlen( buttons[ i ].left ) ) ) /
-                    2;
+                x = ( pw + 1 - SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) ) ) / 2;
                 if ( opt_gx )
                     y = 14;
                 else
                     y = 9;
 
-                DrawSmallString( dpy, pix, gc, x, y, buttons[ i ].left,
-                                 strlen( buttons[ i ].left ) );
+                DrawSmallString( dpy, pix, gc, x, y, buttons[ i ].left, strlen( buttons[ i ].left ) );
 
                 XSetForeground( dpy, gc, pixel );
 
@@ -2199,12 +1309,10 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
 
                 if ( opt_gx ) {
                     x = offset_x + buttons[ i ].x - 6;
-                    y = offset_y + buttons[ i ].y - small_ascent -
-                        small_descent - 6;
+                    y = offset_y + buttons[ i ].y - small_ascent - small_descent - 6;
                 } else {
                     x = offset_x + buttons[ i ].x + ( buttons[ i ].w - pw ) / 2;
-                    y = offset_y + buttons[ i ].y - small_ascent -
-                        small_descent;
+                    y = offset_y + buttons[ i ].y - small_ascent - small_descent;
                 }
 
                 XCopyArea( dpy, pix, keypad->pixmap, gc, 0, 0, pw, ph, x, y );
@@ -2219,28 +1327,20 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
                 if ( buttons[ i ].right == ( char* )0 ) { /* centered label */
 
                     x = offset_x + buttons[ i ].x +
-                        ( 1 + buttons[ i ].w -
-                          SmallTextWidth( buttons[ i ].left,
-                                          strlen( buttons[ i ].left ) ) ) /
-                            2;
+                        ( 1 + buttons[ i ].w - SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) ) ) / 2;
 
                 } else { /* label to the left */
 
-                    wl = SmallTextWidth( buttons[ i ].left,
-                                         strlen( buttons[ i ].left ) );
-                    wr = SmallTextWidth( buttons[ i ].right,
-                                         strlen( buttons[ i ].right ) );
+                    wl = SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) );
+                    wr = SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) );
                     ws = SmallTextWidth( " ", 1 );
 
-                    x = offset_x + buttons[ i ].x +
-                        ( 1 + buttons[ i ].w - ( wl + wr + ws ) ) / 2;
+                    x = offset_x + buttons[ i ].x + ( 1 + buttons[ i ].w - ( wl + wr + ws ) ) / 2;
                 }
 
                 y = offset_y + buttons[ i ].y - small_descent;
 
-                DrawSmallString( dpy, keypad->pixmap, gc, x, y,
-                                 buttons[ i ].left,
-                                 strlen( buttons[ i ].left ) );
+                DrawSmallString( dpy, keypad->pixmap, gc, x, y, buttons[ i ].left, strlen( buttons[ i ].left ) );
             }
         }
     }
@@ -2279,17 +1379,13 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
                 XSetBackground( dpy, gc, COLOR( UNDERLAY ) );
                 XSetForeground( dpy, gc, COLOR( RIGHT ) );
 
-                x = ( pw + 1 -
-                      SmallTextWidth( buttons[ i ].right,
-                                      strlen( buttons[ i ].right ) ) ) /
-                    2;
+                x = ( pw + 1 - SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) ) ) / 2;
                 if ( opt_gx )
                     y = 14;
                 else
                     y = 8;
 
-                DrawSmallString( dpy, pix, gc, x, y, buttons[ i ].right,
-                                 strlen( buttons[ i ].right ) );
+                DrawSmallString( dpy, pix, gc, x, y, buttons[ i ].right, strlen( buttons[ i ].right ) );
 
                 XSetForeground( dpy, gc, pixel );
 
@@ -2302,12 +1398,10 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
 
                 if ( opt_gx ) {
                     x = offset_x + buttons[ i ].x - 6;
-                    y = offset_y + buttons[ i ].y - small_ascent -
-                        small_descent - 6;
+                    y = offset_y + buttons[ i ].y - small_ascent - small_descent - 6;
                 } else {
                     x = offset_x + buttons[ i ].x + ( buttons[ i ].w - pw ) / 2;
-                    y = offset_y + buttons[ i ].y - small_ascent -
-                        small_descent;
+                    y = offset_y + buttons[ i ].y - small_ascent - small_descent;
                 }
 
                 XCopyArea( dpy, pix, keypad->pixmap, gc, 0, 0, pw, ph, x, y );
@@ -2322,28 +1416,20 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
                 if ( buttons[ i ].left == ( char* )0 ) { /* centered label */
 
                     x = offset_x + buttons[ i ].x +
-                        ( 1 + buttons[ i ].w -
-                          SmallTextWidth( buttons[ i ].right,
-                                          strlen( buttons[ i ].right ) ) ) /
-                            2;
+                        ( 1 + buttons[ i ].w - SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) ) ) / 2;
 
                 } else { /* label to the right */
 
-                    wl = SmallTextWidth( buttons[ i ].left,
-                                         strlen( buttons[ i ].left ) );
-                    wr = SmallTextWidth( buttons[ i ].right,
-                                         strlen( buttons[ i ].right ) );
+                    wl = SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) );
+                    wr = SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) );
                     ws = SmallTextWidth( " ", 1 );
 
-                    x = offset_x + buttons[ i ].x +
-                        ( 1 + buttons[ i ].w - ( wl + wr + ws ) ) / 2 + wl + ws;
+                    x = offset_x + buttons[ i ].x + ( 1 + buttons[ i ].w - ( wl + wr + ws ) ) / 2 + wl + ws;
                 }
 
                 y = offset_y + buttons[ i ].y - small_descent;
 
-                DrawSmallString( dpy, keypad->pixmap, gc, x, y,
-                                 buttons[ i ].right,
-                                 strlen( buttons[ i ].right ) );
+                DrawSmallString( dpy, keypad->pixmap, gc, x, y, buttons[ i ].right, strlen( buttons[ i ].right ) );
             }
         }
     }
@@ -2356,23 +1442,20 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x,
         XSetBackground( dpy, gc, COLOR( PAD ) );
         XSetForeground( dpy, gc, COLOR( WHITE ) );
 
-        pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )last_bitmap,
-                                     last_width, last_height );
+        pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )last_bitmap, last_width, last_height );
 
         x = offset_x + buttons[ BUTTON_1 ].x + buttons[ BUTTON_1 ].w +
-            ( buttons[ BUTTON_2 ].x - buttons[ BUTTON_1 ].x -
-              buttons[ BUTTON_1 ].w ) /
-                2;
+            ( buttons[ BUTTON_2 ].x - buttons[ BUTTON_1 ].x - buttons[ BUTTON_1 ].w ) / 2;
         y = offset_y + buttons[ BUTTON_5 ].y + buttons[ BUTTON_5 ].h + 2;
 
-        XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, last_width, last_height,
-                    x, y, 1 );
+        XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, last_width, last_height, x, y, 1 );
 
         XFreePixmap( dpy, pix );
     }
 }
 
-void CreateBezel( x11_keypad_t* keypad ) {
+void CreateBezel( x11_keypad_t* keypad )
+{
     int i;
 
     /*
@@ -2381,32 +1464,21 @@ void CreateBezel( x11_keypad_t* keypad ) {
     XSetForeground( dpy, gc, COLOR( DISP_PAD_TOP ) );
 
     for ( i = 0; i < DISP_FRAME; i++ ) {
-        XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i ),
-                   ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i ),
-                   ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i ),
-                   ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i ) );
-        XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i ),
-                   ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i + 1 ),
-                   ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i ),
-                   ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i + 1 ) );
-        XDrawLine( dpy, keypad->pixmap, gc,
-                   ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i ),
-                   ( int )( DISPLAY_OFFSET_Y - i ),
-                   ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i ),
-                   ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i ) );
+        XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i ),
+                   ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i ) );
+        XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i + 1 ),
+                   ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i + 1 ) );
+        XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i ), ( int )( DISPLAY_OFFSET_Y - i ),
+                   ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i ) );
     }
 
     XSetForeground( dpy, gc, COLOR( DISP_PAD_BOT ) );
 
     for ( i = 0; i < DISP_FRAME; i++ ) {
-        XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i - 1 ),
-                   ( int )( DISPLAY_OFFSET_Y - i - 1 ),
-                   ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i - 1 ),
-                   ( int )( DISPLAY_OFFSET_Y - i - 1 ) );
-        XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i - 1 ),
-                   ( int )( DISPLAY_OFFSET_Y - i - 1 ),
-                   ( int )( DISPLAY_OFFSET_X - i - 1 ),
-                   ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i - 1 ) );
+        XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i - 1 ), ( int )( DISPLAY_OFFSET_Y - i - 1 ),
+                   ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i - 1 ), ( int )( DISPLAY_OFFSET_Y - i - 1 ) );
+        XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i - 1 ), ( int )( DISPLAY_OFFSET_Y - i - 1 ),
+                   ( int )( DISPLAY_OFFSET_X - i - 1 ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i - 1 ) );
     }
 
     /*
@@ -2414,89 +1486,58 @@ void CreateBezel( x11_keypad_t* keypad ) {
      */
     XSetForeground( dpy, gc, COLOR( DISP_PAD ) );
 
-    XDrawLine( dpy, keypad->pixmap, gc,
-               ( int )( DISPLAY_OFFSET_X - DISP_FRAME ),
-               ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ),
-               ( int )( DISPLAY_OFFSET_X - DISP_FRAME + 3 ),
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME ), ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ),
+               ( int )( DISPLAY_OFFSET_X - DISP_FRAME + 3 ), ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ) );
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME ), ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ),
+               ( int )( DISPLAY_OFFSET_X - DISP_FRAME ), ( int )( DISPLAY_OFFSET_Y - DISP_FRAME + 3 ) );
+    XDrawPoint( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME + 1 ), ( int )( DISPLAY_OFFSET_Y - DISP_FRAME + 1 ) );
+
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 4 ),
+               ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ), ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
                ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ) );
-    XDrawLine( dpy, keypad->pixmap, gc,
-               ( int )( DISPLAY_OFFSET_X - DISP_FRAME ),
-               ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ),
-               ( int )( DISPLAY_OFFSET_X - DISP_FRAME ),
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
+               ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ), ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
                ( int )( DISPLAY_OFFSET_Y - DISP_FRAME + 3 ) );
-    XDrawPoint( dpy, keypad->pixmap, gc,
-                ( int )( DISPLAY_OFFSET_X - DISP_FRAME + 1 ),
+    XDrawPoint( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 2 ),
                 ( int )( DISPLAY_OFFSET_Y - DISP_FRAME + 1 ) );
 
-    XDrawLine( dpy, keypad->pixmap, gc,
-               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 4 ),
-               ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ),
-               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
-               ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ) );
-    XDrawLine( dpy, keypad->pixmap, gc,
-               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
-               ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ),
-               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
-               ( int )( DISPLAY_OFFSET_Y - DISP_FRAME + 3 ) );
-    XDrawPoint( dpy, keypad->pixmap, gc,
-                ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 2 ),
-                ( int )( DISPLAY_OFFSET_Y - DISP_FRAME + 1 ) );
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME ),
+               ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 4 ), ( int )( DISPLAY_OFFSET_X - DISP_FRAME ),
+               ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ) );
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME ),
+               ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ), ( int )( DISPLAY_OFFSET_X - DISP_FRAME + 3 ),
+               ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ) );
+    XDrawPoint( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME + 1 ),
+                ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 2 ) );
 
-    XDrawLine(
-        dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME ),
-        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 4 ),
-        ( int )( DISPLAY_OFFSET_X - DISP_FRAME ),
-        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ) );
-    XDrawLine(
-        dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME ),
-        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ),
-        ( int )( DISPLAY_OFFSET_X - DISP_FRAME + 3 ),
-        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ) );
-    XDrawPoint(
-        dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME + 1 ),
-        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 2 ) );
-
-    XDrawLine(
-        dpy, keypad->pixmap, gc,
-        ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
-        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 4 ),
-        ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
-        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ) );
-    XDrawLine(
-        dpy, keypad->pixmap, gc,
-        ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 4 ),
-        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ),
-        ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
-        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ) );
-    XDrawPoint(
-        dpy, keypad->pixmap, gc,
-        ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 2 ),
-        ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 2 ) );
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
+               ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 4 ),
+               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
+               ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ) );
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 4 ),
+               ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ),
+               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
+               ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ) );
+    XDrawPoint( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 2 ),
+                ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 2 ) );
 
     /*
      * simulate rounded lcd corners
      */
     XSetForeground( dpy, gc, COLOR( LCD ) );
 
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - 1 ),
-               ( int )( DISPLAY_OFFSET_Y + 1 ), ( int )( DISPLAY_OFFSET_X - 1 ),
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - 1 ), ( int )( DISPLAY_OFFSET_Y + 1 ), ( int )( DISPLAY_OFFSET_X - 1 ),
                ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT - 2 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + 1 ),
-               ( int )( DISPLAY_OFFSET_Y - 1 ),
-               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH - 2 ),
-               ( int )( DISPLAY_OFFSET_Y - 1 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + 1 ),
-               ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT ),
-               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH - 2 ),
-               ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT ) );
-    XDrawLine( dpy, keypad->pixmap, gc,
-               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH ),
-               ( int )( DISPLAY_OFFSET_Y + 1 ),
-               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH ),
-               ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT - 2 ) );
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + 1 ), ( int )( DISPLAY_OFFSET_Y - 1 ),
+               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH - 2 ), ( int )( DISPLAY_OFFSET_Y - 1 ) );
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + 1 ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT ),
+               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH - 2 ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT ) );
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH ), ( int )( DISPLAY_OFFSET_Y + 1 ),
+               ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT - 2 ) );
 }
 
-void DrawMore( unsigned int offset_y, x11_keypad_t* keypad ) {
+void DrawMore( unsigned int offset_y, x11_keypad_t* keypad )
+{
     Pixmap pix;
     int cut = 0;
     int x, y;
@@ -2508,26 +1549,18 @@ void DrawMore( unsigned int offset_y, x11_keypad_t* keypad ) {
 
     /* bottom lines */
     int keypad_width = keypad->width;
-    XDrawLine( dpy, keypad->pixmap, gc, 1, ( int )( keypad->height - 1 ),
-               ( int )( keypad_width - 1 ), ( int )( keypad->height - 1 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, 2, ( int )( keypad->height - 2 ),
-               ( int )( keypad_width - 2 ), ( int )( keypad->height - 2 ) );
+    XDrawLine( dpy, keypad->pixmap, gc, 1, ( int )( keypad->height - 1 ), ( int )( keypad_width - 1 ), ( int )( keypad->height - 1 ) );
+    XDrawLine( dpy, keypad->pixmap, gc, 2, ( int )( keypad->height - 2 ), ( int )( keypad_width - 2 ), ( int )( keypad->height - 2 ) );
 
     /* right lines */
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 1 ),
-               ( int )( keypad->height - 1 ), ( int )( keypad->width - 1 ),
-               cut );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 2 ),
-               ( int )( keypad->height - 2 ), ( int )( keypad->width - 2 ),
-               cut );
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 1 ), ( int )( keypad->height - 1 ), ( int )( keypad->width - 1 ), cut );
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 2 ), ( int )( keypad->height - 2 ), ( int )( keypad->width - 2 ), cut );
 
     XSetForeground( dpy, gc, COLOR( DISP_PAD_TOP ) );
 
     /* right lines */
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 1 ), cut - 1,
-               ( int )( keypad->width - 1 ), 1 );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 2 ), cut - 1,
-               ( int )( keypad->width - 2 ), 2 );
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 1 ), cut - 1, ( int )( keypad->width - 1 ), 1 );
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 2 ), cut - 1, ( int )( keypad->width - 2 ), 2 );
 
     XSetForeground( dpy, gc, COLOR( DISP_PAD_BOT ) );
 
@@ -2542,10 +1575,8 @@ void DrawMore( unsigned int offset_y, x11_keypad_t* keypad ) {
     XSetForeground( dpy, gc, COLOR( PAD_BOT ) );
 
     /* left lines */
-    XDrawLine( dpy, keypad->pixmap, gc, 0, ( int )( keypad->height - 2 ), 0,
-               cut );
-    XDrawLine( dpy, keypad->pixmap, gc, 1, ( int )( keypad->height - 3 ), 1,
-               cut );
+    XDrawLine( dpy, keypad->pixmap, gc, 0, ( int )( keypad->height - 2 ), 0, cut );
+    XDrawLine( dpy, keypad->pixmap, gc, 1, ( int )( keypad->height - 3 ), 1, cut );
 
     /*
      * lower the menu buttons
@@ -2553,34 +1584,24 @@ void DrawMore( unsigned int offset_y, x11_keypad_t* keypad ) {
     XSetForeground( dpy, gc, COLOR( PAD_TOP ) );
 
     /* bottom lines */
-    XDrawLine( dpy, keypad->pixmap, gc, 3, ( int )( keypad->height - 3 ),
-               ( int )( keypad->width - 3 ), ( int )( keypad->height - 3 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, 4, ( int )( keypad->height - 4 ),
-               ( int )( keypad->width - 4 ), ( int )( keypad->height - 4 ) );
+    XDrawLine( dpy, keypad->pixmap, gc, 3, ( int )( keypad->height - 3 ), ( int )( keypad->width - 3 ), ( int )( keypad->height - 3 ) );
+    XDrawLine( dpy, keypad->pixmap, gc, 4, ( int )( keypad->height - 4 ), ( int )( keypad->width - 4 ), ( int )( keypad->height - 4 ) );
 
     /* right lines */
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 3 ),
-               ( int )( keypad->height - 3 ), ( int )( keypad->width - 3 ),
-               cut );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 4 ),
-               ( int )( keypad->height - 4 ), ( int )( keypad->width - 4 ),
-               cut );
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 3 ), ( int )( keypad->height - 3 ), ( int )( keypad->width - 3 ), cut );
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 4 ), ( int )( keypad->height - 4 ), ( int )( keypad->width - 4 ), cut );
 
     XSetForeground( dpy, gc, COLOR( DISP_PAD_TOP ) );
 
     /* right lines */
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 3 ), cut - 1,
-               ( int )( keypad->width - 3 ), offset_y - 24 );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 4 ), cut - 1,
-               ( int )( keypad->width - 4 ), offset_y - 23 );
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 3 ), cut - 1, ( int )( keypad->width - 3 ), offset_y - 24 );
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 4 ), cut - 1, ( int )( keypad->width - 4 ), offset_y - 23 );
 
     XSetForeground( dpy, gc, COLOR( DISP_PAD_BOT ) );
 
     /* top lines */
-    XDrawLine( dpy, keypad->pixmap, gc, 2, offset_y - 25,
-               ( int )( keypad->width - 4 ), offset_y - 25 );
-    XDrawLine( dpy, keypad->pixmap, gc, 3, offset_y - 24,
-               ( int )( keypad->width - 5 ), offset_y - 24 );
+    XDrawLine( dpy, keypad->pixmap, gc, 2, offset_y - 25, ( int )( keypad->width - 4 ), offset_y - 25 );
+    XDrawLine( dpy, keypad->pixmap, gc, 3, offset_y - 24, ( int )( keypad->width - 5 ), offset_y - 24 );
 
     /* left lines */
     XDrawLine( dpy, keypad->pixmap, gc, 2, cut - 1, 2, offset_y - 24 );
@@ -2589,10 +1610,8 @@ void DrawMore( unsigned int offset_y, x11_keypad_t* keypad ) {
     XSetForeground( dpy, gc, COLOR( PAD_BOT ) );
 
     /* left lines */
-    XDrawLine( dpy, keypad->pixmap, gc, 2, ( int )( keypad->height - 4 ), 2,
-               cut );
-    XDrawLine( dpy, keypad->pixmap, gc, 3, ( int )( keypad->height - 5 ), 3,
-               cut );
+    XDrawLine( dpy, keypad->pixmap, gc, 2, ( int )( keypad->height - 4 ), 2, cut );
+    XDrawLine( dpy, keypad->pixmap, gc, 3, ( int )( keypad->height - 5 ), 3, cut );
 
     /*
      * lower the keyboard
@@ -2600,64 +1619,47 @@ void DrawMore( unsigned int offset_y, x11_keypad_t* keypad ) {
     XSetForeground( dpy, gc, COLOR( PAD_TOP ) );
 
     /* bottom lines */
-    XDrawLine( dpy, keypad->pixmap, gc, 5, ( int )( keypad->height - 5 ),
-               ( int )( keypad->width - 3 ), ( int )( keypad->height - 5 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, 6, ( int )( keypad->height - 6 ),
-               ( int )( keypad->width - 4 ), ( int )( keypad->height - 6 ) );
+    XDrawLine( dpy, keypad->pixmap, gc, 5, ( int )( keypad->height - 5 ), ( int )( keypad->width - 3 ), ( int )( keypad->height - 5 ) );
+    XDrawLine( dpy, keypad->pixmap, gc, 6, ( int )( keypad->height - 6 ), ( int )( keypad->width - 4 ), ( int )( keypad->height - 6 ) );
 
     /* right lines */
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 5 ),
-               ( int )( keypad->height - 5 ), ( int )( keypad->width - 5 ),
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 5 ), ( int )( keypad->height - 5 ), ( int )( keypad->width - 5 ),
                cut + 1 );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 6 ),
-               ( int )( keypad->height - 6 ), ( int )( keypad->width - 6 ),
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 6 ), ( int )( keypad->height - 6 ), ( int )( keypad->width - 6 ),
                cut + 2 );
 
     XSetForeground( dpy, gc, COLOR( DISP_PAD_BOT ) );
 
     /* top lines */
-    XDrawLine( dpy, keypad->pixmap, gc, 4, cut, ( int )( keypad->width - 6 ),
-               cut );
-    XDrawLine( dpy, keypad->pixmap, gc, 5, cut + 1,
-               ( int )( keypad->width - 7 ), cut + 1 );
+    XDrawLine( dpy, keypad->pixmap, gc, 4, cut, ( int )( keypad->width - 6 ), cut );
+    XDrawLine( dpy, keypad->pixmap, gc, 5, cut + 1, ( int )( keypad->width - 7 ), cut + 1 );
 
     XSetForeground( dpy, gc, COLOR( PAD_BOT ) );
 
     /* left lines */
-    XDrawLine( dpy, keypad->pixmap, gc, 4, ( int )( keypad->height - 6 ), 4,
-               cut + 1 );
-    XDrawLine( dpy, keypad->pixmap, gc, 5, ( int )( keypad->height - 7 ), 5,
-               cut + 2 );
+    XDrawLine( dpy, keypad->pixmap, gc, 4, ( int )( keypad->height - 6 ), 4, cut + 1 );
+    XDrawLine( dpy, keypad->pixmap, gc, 5, ( int )( keypad->height - 7 ), 5, cut + 2 );
 
     /*
      * round off the bottom edge
      */
     XSetForeground( dpy, gc, COLOR( PAD_TOP ) );
 
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 7 ),
-               ( int )( keypad->height - 7 ), ( int )( keypad->width - 7 ),
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 7 ), ( int )( keypad->height - 7 ), ( int )( keypad->width - 7 ),
                ( int )( keypad->height - 14 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 8 ),
-               ( int )( keypad->height - 8 ), ( int )( keypad->width - 8 ),
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 8 ), ( int )( keypad->height - 8 ), ( int )( keypad->width - 8 ),
                ( int )( keypad->height - 11 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 7 ),
-               ( int )( keypad->height - 7 ), ( int )( keypad->width - 14 ),
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 7 ), ( int )( keypad->height - 7 ), ( int )( keypad->width - 14 ),
                ( int )( keypad->height - 7 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 7 ),
-               ( int )( keypad->height - 8 ), ( int )( keypad->width - 11 ),
+    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 7 ), ( int )( keypad->height - 8 ), ( int )( keypad->width - 11 ),
                ( int )( keypad->height - 8 ) );
-    XDrawPoint( dpy, keypad->pixmap, gc, ( int )( keypad->width - 9 ),
-                ( int )( keypad->height - 9 ) );
+    XDrawPoint( dpy, keypad->pixmap, gc, ( int )( keypad->width - 9 ), ( int )( keypad->height - 9 ) );
 
-    XDrawLine( dpy, keypad->pixmap, gc, 7, ( int )( keypad->height - 7 ), 13,
-               ( int )( keypad->height - 7 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, 8, ( int )( keypad->height - 8 ), 10,
-               ( int )( keypad->height - 8 ) );
+    XDrawLine( dpy, keypad->pixmap, gc, 7, ( int )( keypad->height - 7 ), 13, ( int )( keypad->height - 7 ) );
+    XDrawLine( dpy, keypad->pixmap, gc, 8, ( int )( keypad->height - 8 ), 10, ( int )( keypad->height - 8 ) );
     XSetForeground( dpy, gc, COLOR( PAD_BOT ) );
-    XDrawLine( dpy, keypad->pixmap, gc, 6, ( int )( keypad->height - 8 ), 6,
-               ( int )( keypad->height - 14 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, 7, ( int )( keypad->height - 9 ), 7,
-               ( int )( keypad->height - 11 ) );
+    XDrawLine( dpy, keypad->pixmap, gc, 6, ( int )( keypad->height - 8 ), 6, ( int )( keypad->height - 14 ) );
+    XDrawLine( dpy, keypad->pixmap, gc, 7, ( int )( keypad->height - 9 ), 7, ( int )( keypad->height - 11 ) );
 
     /*
      * insert the HP Logo
@@ -2666,29 +1668,23 @@ void DrawMore( unsigned int offset_y, x11_keypad_t* keypad ) {
     XSetBackground( dpy, gc, COLOR( LOGO_BACK ) );
     XSetForeground( dpy, gc, COLOR( LOGO ) );
 
-    pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )hp_bitmap,
-                                 hp_width, hp_height );
+    pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )hp_bitmap, hp_width, hp_height );
 
     x = opt_gx ? DISPLAY_OFFSET_X - 6 : DISPLAY_OFFSET_X;
 
-    XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, hp_width, hp_height, x, 10,
-                1 );
+    XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, hp_width, hp_height, x, 10, 1 );
 
     XFreePixmap( dpy, pix );
 
     if ( !opt_gx ) {
         XSetForeground( dpy, gc, COLOR( FRAME ) );
 
-        XDrawLine( dpy, keypad->pixmap, gc, ( int )DISPLAY_OFFSET_X, 9,
-                   ( int )( DISPLAY_OFFSET_X + hp_width - 1 ), 9 );
-        XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - 1 ), 10,
-                   ( int )( DISPLAY_OFFSET_X - 1 ), 10 + hp_height - 1 );
-        XDrawLine( dpy, keypad->pixmap, gc, ( int )DISPLAY_OFFSET_X,
-                   10 + hp_height, ( int )( DISPLAY_OFFSET_X + hp_width - 1 ),
+        XDrawLine( dpy, keypad->pixmap, gc, ( int )DISPLAY_OFFSET_X, 9, ( int )( DISPLAY_OFFSET_X + hp_width - 1 ), 9 );
+        XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - 1 ), 10, ( int )( DISPLAY_OFFSET_X - 1 ), 10 + hp_height - 1 );
+        XDrawLine( dpy, keypad->pixmap, gc, ( int )DISPLAY_OFFSET_X, 10 + hp_height, ( int )( DISPLAY_OFFSET_X + hp_width - 1 ),
                    10 + hp_height );
-        XDrawLine( dpy, keypad->pixmap, gc,
-                   ( int )( DISPLAY_OFFSET_X + hp_width ), 10,
-                   ( int )( DISPLAY_OFFSET_X + hp_width ), 10 + hp_height - 1 );
+        XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + hp_width ), 10, ( int )( DISPLAY_OFFSET_X + hp_width ),
+                   10 + hp_height - 1 );
     }
 
     /*
@@ -2698,50 +1694,35 @@ void DrawMore( unsigned int offset_y, x11_keypad_t* keypad ) {
     XSetForeground( dpy, gc, COLOR( LABEL ) );
 
     if ( opt_gx ) {
-        x = DISPLAY_OFFSET_X + DISPLAY_WIDTH - gx_128K_ram_width +
-            gx_128K_ram_x_hot + 2;
+        x = DISPLAY_OFFSET_X + DISPLAY_WIDTH - gx_128K_ram_width + gx_128K_ram_x_hot + 2;
         y = 10 + gx_128K_ram_y_hot;
-        pix = XCreateBitmapFromData( dpy, keypad->pixmap,
-                                     ( char* )gx_128K_ram_bitmap,
-                                     gx_128K_ram_width, gx_128K_ram_height );
-        XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, gx_128K_ram_width,
-                    gx_128K_ram_height, x, y, 1 );
+        pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )gx_128K_ram_bitmap, gx_128K_ram_width, gx_128K_ram_height );
+        XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, gx_128K_ram_width, gx_128K_ram_height, x, y, 1 );
         XFreePixmap( dpy, pix );
 
         XSetForeground( dpy, gc, COLOR( LOGO ) );
         x = DISPLAY_OFFSET_X + hp_width;
         y = hp_height + 8 - hp48gx_height;
-        pix =
-            XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )hp48gx_bitmap,
-                                   hp48gx_width, hp48gx_height );
-        XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, hp48gx_width,
-                    hp48gx_height, x, y, 1 );
+        pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )hp48gx_bitmap, hp48gx_width, hp48gx_height );
+        XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, hp48gx_width, hp48gx_height, x, y, 1 );
         XFreePixmap( dpy, pix );
 
         XSetFillStyle( dpy, gc, FillStippled );
-        x = DISPLAY_OFFSET_X + DISPLAY_WIDTH - gx_128K_ram_width +
-            gx_silver_x_hot + 2;
+        x = DISPLAY_OFFSET_X + DISPLAY_WIDTH - gx_128K_ram_width + gx_silver_x_hot + 2;
         y = 10 + gx_silver_y_hot;
-        pix = XCreateBitmapFromData( dpy, keypad->pixmap,
-                                     ( char* )gx_silver_bitmap, gx_silver_width,
-                                     gx_silver_height );
+        pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )gx_silver_bitmap, gx_silver_width, gx_silver_height );
         XSetStipple( dpy, gc, pix );
         XSetTSOrigin( dpy, gc, x, y );
-        XFillRectangle( dpy, keypad->pixmap, gc, x, y, gx_silver_width,
-                        gx_silver_height );
+        XFillRectangle( dpy, keypad->pixmap, gc, x, y, gx_silver_width, gx_silver_height );
         XFreePixmap( dpy, pix );
 
         XSetForeground( dpy, gc, COLOR( RIGHT ) );
-        x = DISPLAY_OFFSET_X + DISPLAY_WIDTH - gx_128K_ram_width +
-            gx_green_x_hot + 2;
+        x = DISPLAY_OFFSET_X + DISPLAY_WIDTH - gx_128K_ram_width + gx_green_x_hot + 2;
         y = 10 + gx_green_y_hot;
-        pix = XCreateBitmapFromData( dpy, keypad->pixmap,
-                                     ( char* )gx_green_bitmap, gx_green_width,
-                                     gx_green_height );
+        pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )gx_green_bitmap, gx_green_width, gx_green_height );
         XSetStipple( dpy, gc, pix );
         XSetTSOrigin( dpy, gc, x, y );
-        XFillRectangle( dpy, keypad->pixmap, gc, x, y, gx_green_width,
-                        gx_green_height );
+        XFillRectangle( dpy, keypad->pixmap, gc, x, y, gx_green_width, gx_green_height );
         XFreePixmap( dpy, pix );
 
         XSetTSOrigin( dpy, gc, 0, 0 );
@@ -2750,33 +1731,25 @@ void DrawMore( unsigned int offset_y, x11_keypad_t* keypad ) {
         x = DISPLAY_OFFSET_X;
         y = TOP_SKIP - DISP_FRAME - hp48sx_height - 3;
 
-        pix =
-            XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )hp48sx_bitmap,
-                                   hp48sx_width, hp48sx_height );
+        pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )hp48sx_bitmap, hp48sx_width, hp48sx_height );
 
-        XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, hp48sx_width,
-                    hp48sx_height, x, y, 1 );
+        XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, hp48sx_width, hp48sx_height, x, y, 1 );
 
         XFreePixmap( dpy, pix );
 
         x = DISPLAY_OFFSET_X + DISPLAY_WIDTH - 1 - science_width;
         y = TOP_SKIP - DISP_FRAME - science_height - 4;
 
-        pix =
-            XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )science_bitmap,
-                                   science_width, science_height );
+        pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )science_bitmap, science_width, science_height );
 
-        XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, science_width,
-                    science_height, x, y, 1 );
+        XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, science_width, science_height, x, y, 1 );
     }
 }
 
-void DrawKeypad( x11_keypad_t* keypad ) {
-    XCopyArea( dpy, keypad->pixmap, mainW, gc, 0, 0, keypad->width,
-               keypad->height, 0, 0 );
-}
+void DrawKeypad( x11_keypad_t* keypad ) { XCopyArea( dpy, keypad->pixmap, mainW, gc, 0, 0, keypad->width, keypad->height, 0, 0 ); }
 
-void CreateIcon( void ) {
+void CreateIcon( void )
+{
     XSetWindowAttributes xswa;
     XWindowAttributes xwa;
     Pixmap tmp_pix;
@@ -2787,31 +1760,25 @@ void CreateIcon( void ) {
     xswa.backing_store = Always;
     XChangeWindowAttributes( dpy, iconW, CWEventMask | CWBackingStore, &xswa );
 
-    icon_pix =
-        XCreatePixmap( dpy, iconW, hp48_icon_width, hp48_icon_height, depth );
+    icon_pix = XCreatePixmap( dpy, iconW, hp48_icon_width, hp48_icon_height, depth );
 
     /*
      * draw the icon pixmap
      */
     if ( icon_color_mode == COLOR_MODE_MONO ) {
-        tmp_pix = XCreateBitmapFromData(
-            dpy, iconW, ( char* )icon_maps[ ICON_MAP ].bits,
-            icon_maps[ ICON_MAP ].w, icon_maps[ ICON_MAP ].h );
+        tmp_pix =
+            XCreateBitmapFromData( dpy, iconW, ( char* )icon_maps[ ICON_MAP ].bits, icon_maps[ ICON_MAP ].w, icon_maps[ ICON_MAP ].h );
         XSetForeground( dpy, gc, COLOR( BLACK ) );
         XSetBackground( dpy, gc, COLOR( WHITE ) );
-        XCopyPlane( dpy, tmp_pix, icon_pix, gc, 0, 0, icon_maps[ ICON_MAP ].w,
-                    icon_maps[ ICON_MAP ].h, 0, 0, 1 );
+        XCopyPlane( dpy, tmp_pix, icon_pix, gc, 0, 0, icon_maps[ ICON_MAP ].w, icon_maps[ ICON_MAP ].h, 0, 0, 1 );
         XFreePixmap( dpy, tmp_pix );
     } else {
         XSetFillStyle( dpy, gc, FillStippled );
         for ( p = FIRST_MAP; p <= LAST_MAP; p++ ) {
-            tmp_pix =
-                XCreateBitmapFromData( dpy, iconW, ( char* )icon_maps[ p ].bits,
-                                       icon_maps[ p ].w, icon_maps[ p ].h );
+            tmp_pix = XCreateBitmapFromData( dpy, iconW, ( char* )icon_maps[ p ].bits, icon_maps[ p ].w, icon_maps[ p ].h );
             XSetStipple( dpy, gc, tmp_pix );
             XSetForeground( dpy, gc, COLOR( icon_maps[ p ].c ) );
-            XFillRectangle( dpy, icon_pix, gc, 0, 0, icon_maps[ p ].w,
-                            icon_maps[ p ].h );
+            XFillRectangle( dpy, icon_pix, gc, 0, 0, icon_maps[ p ].w, icon_maps[ p ].h );
             XFreePixmap( dpy, tmp_pix );
         }
         XSetFillStyle( dpy, gc, FillSolid );
@@ -2820,47 +1787,41 @@ void CreateIcon( void ) {
          * draw frame around icon
          */
         XSetForeground( dpy, gc, COLOR( BLACK ) );
-        XDrawRectangle( dpy, icon_pix, gc, 0, 0, icon_maps[ ICON_MAP ].w - 1,
-                        icon_maps[ ICON_MAP ].h - 1 );
+        XDrawRectangle( dpy, icon_pix, gc, 0, 0, icon_maps[ ICON_MAP ].w - 1, icon_maps[ ICON_MAP ].h - 1 );
     }
 
     /*
      * draw the display
      */
     XSetFillStyle( dpy, gc, FillStippled );
-    icon_disp_pix = XCreateBitmapFromData(
-        dpy, iconW, ( char* )icon_maps[ DISP_MAP ].bits,
-        icon_maps[ DISP_MAP ].w, icon_maps[ DISP_MAP ].h );
+    icon_disp_pix =
+        XCreateBitmapFromData( dpy, iconW, ( char* )icon_maps[ DISP_MAP ].bits, icon_maps[ DISP_MAP ].w, icon_maps[ DISP_MAP ].h );
     XSetStipple( dpy, gc, icon_disp_pix );
     if ( icon_color_mode == COLOR_MODE_MONO )
         XSetForeground( dpy, gc, COLOR( WHITE ) );
     else
         XSetForeground( dpy, gc, COLOR( icon_maps[ DISP_MAP ].c ) );
-    XFillRectangle( dpy, icon_pix, gc, 0, 0, icon_maps[ DISP_MAP ].w,
-                    icon_maps[ DISP_MAP ].h );
+    XFillRectangle( dpy, icon_pix, gc, 0, 0, icon_maps[ DISP_MAP ].w, icon_maps[ DISP_MAP ].h );
 
     /*
      * draw the 'x48' string
      */
-    icon_text_pix =
-        XCreateBitmapFromData( dpy, iconW, ( char* )icon_maps[ ON_MAP ].bits,
-                               icon_maps[ ON_MAP ].w, icon_maps[ ON_MAP ].h );
+    icon_text_pix = XCreateBitmapFromData( dpy, iconW, ( char* )icon_maps[ ON_MAP ].bits, icon_maps[ ON_MAP ].w, icon_maps[ ON_MAP ].h );
     XSetStipple( dpy, gc, icon_text_pix );
     if ( icon_color_mode == COLOR_MODE_MONO )
         XSetForeground( dpy, gc, COLOR( BLACK ) );
     else
         XSetForeground( dpy, gc, COLOR( icon_maps[ ON_MAP ].c ) );
-    XFillRectangle( dpy, icon_pix, gc, 0, 0, icon_maps[ ON_MAP ].w,
-                    icon_maps[ ON_MAP ].h );
+    XFillRectangle( dpy, icon_pix, gc, 0, 0, icon_maps[ ON_MAP ].w, icon_maps[ ON_MAP ].h );
     XSetFillStyle( dpy, gc, FillSolid );
 }
 
-void refresh_icon( void ) {
+void refresh_icon( void )
+{
     int icon_state;
 
-    icon_state =
-        ( ( display.on && !( ( ANN_IO & display.annunc ) == ANN_IO ) ) ||
-          ( display.on && !( ( ANN_ALPHA & display.annunc ) == ANN_ALPHA ) ) );
+    icon_state = ( ( display.on && !( ( ANN_IO & display.annunc ) == ANN_IO ) ) ||
+                   ( display.on && !( ( ANN_ALPHA & display.annunc ) == ANN_ALPHA ) ) );
     if ( icon_state == last_icon_state )
         return;
 
@@ -2875,8 +1836,7 @@ void refresh_icon( void ) {
             XSetForeground( dpy, gc, COLOR( BLACK ) );
         else
             XSetForeground( dpy, gc, COLOR( icon_maps[ ON_MAP ].c ) );
-        XFillRectangle( dpy, icon_pix, gc, 0, 0, icon_maps[ ON_MAP ].w,
-                        icon_maps[ ON_MAP ].h );
+        XFillRectangle( dpy, icon_pix, gc, 0, 0, icon_maps[ ON_MAP ].w, icon_maps[ ON_MAP ].h );
     } else {
         /*
          * clear the display
@@ -2887,28 +1847,25 @@ void refresh_icon( void ) {
             XSetForeground( dpy, gc, COLOR( WHITE ) );
         else
             XSetForeground( dpy, gc, COLOR( icon_maps[ DISP_MAP ].c ) );
-        XFillRectangle( dpy, icon_pix, gc, 0, 0, icon_maps[ DISP_MAP ].w,
-                        icon_maps[ DISP_MAP ].h );
+        XFillRectangle( dpy, icon_pix, gc, 0, 0, icon_maps[ DISP_MAP ].w, icon_maps[ DISP_MAP ].h );
     }
     XSetFillStyle( dpy, gc, FillSolid );
     if ( iconW ) {
-        XCopyArea( dpy, icon_pix, iconW, gc, 0, 0, hp48_icon_width,
-                   hp48_icon_height, 0, 0 );
+        XCopyArea( dpy, icon_pix, iconW, gc, 0, 0, hp48_icon_width, hp48_icon_height, 0, 0 );
     }
 }
 
-void DrawIcon( void ) {
-    XCopyArea( dpy, icon_pix, iconW, gc, 0, 0, hp48_icon_width,
-               hp48_icon_height, 0, 0 );
-}
+void DrawIcon( void ) { XCopyArea( dpy, icon_pix, iconW, gc, 0, 0, hp48_icon_width, hp48_icon_height, 0, 0 ); }
 
-int handle_xerror( Display* the_dpy, XErrorEvent* eev ) {
+int handle_xerror( Display* the_dpy, XErrorEvent* eev )
+{
     xerror_flag = 1;
 
     return 0;
 }
 
-void CreateLCDWindow( void ) {
+void CreateLCDWindow( void )
+{
     XSetWindowAttributes xswa;
     XGCValues val;
     unsigned long gc_mask;
@@ -2917,17 +1874,15 @@ void CreateLCDWindow( void ) {
     /*
      * create the display subwindow
      */
-    lcd.win = XCreateSimpleWindow(
-        dpy, mainW, ( int )DISPLAY_OFFSET_X, ( int )DISPLAY_OFFSET_Y,
-        DISPLAY_WIDTH, DISPLAY_HEIGHT, 0, COLOR( BLACK ), COLOR( LCD ) );
+    lcd.win = XCreateSimpleWindow( dpy, mainW, ( int )DISPLAY_OFFSET_X, ( int )DISPLAY_OFFSET_Y, DISPLAY_WIDTH, DISPLAY_HEIGHT, 0,
+                                   COLOR( BLACK ), COLOR( LCD ) );
 
     mapped = 1;
 
     xswa.event_mask = ExposureMask | StructureNotifyMask;
     xswa.backing_store = Always;
 
-    XChangeWindowAttributes( dpy, lcd.win, CWEventMask | CWBackingStore,
-                             &xswa );
+    XChangeWindowAttributes( dpy, lcd.win, CWEventMask | CWBackingStore, &xswa );
 
     /*
      * set up the gc
@@ -2952,23 +1907,18 @@ void CreateLCDWindow( void ) {
         /*
          * create XShmImage for DISP
          */
-        lcd.disp_image = XShmCreateImage( dpy, None, 1, XYBitmap, NULL,
-                                          &lcd.disp_info, 262, 128 );
+        lcd.disp_image = XShmCreateImage( dpy, None, 1, XYBitmap, NULL, &lcd.disp_info, 262, 128 );
         if ( lcd.disp_image == NULL ) {
             shm_flag = 0;
             if ( verbose )
-                fprintf( stderr,
-                         "XShm error in CreateImage(DISP), disabling.\n" );
+                fprintf( stderr, "XShm error in CreateImage(DISP), disabling.\n" );
             goto shm_error;
         }
 
         /*
          * get ID of shared memory block for DISP
          */
-        lcd.disp_info.shmid =
-            shmget( IPC_PRIVATE,
-                    ( lcd.disp_image->bytes_per_line * lcd.disp_image->height ),
-                    IPC_CREAT | 0777 );
+        lcd.disp_info.shmid = shmget( IPC_PRIVATE, ( lcd.disp_image->bytes_per_line * lcd.disp_image->height ), IPC_CREAT | 0777 );
         if ( lcd.disp_info.shmid < 0 ) {
             XDestroyImage( lcd.disp_image );
             lcd.disp_image = NULL;
@@ -2997,25 +1947,20 @@ void CreateLCDWindow( void ) {
         /*
          * create XShmImage for MENU
          */
-        lcd.menu_image = XShmCreateImage( dpy, None, 1, XYBitmap, NULL,
-                                          &lcd.menu_info, 262, 128 );
+        lcd.menu_image = XShmCreateImage( dpy, None, 1, XYBitmap, NULL, &lcd.menu_info, 262, 128 );
         if ( lcd.menu_image == NULL ) {
             XDestroyImage( lcd.disp_image );
             lcd.disp_image = NULL;
             shm_flag = 0;
             if ( verbose )
-                fprintf( stderr,
-                         "XShm error in CreateImage(MENU), disabling.\n" );
+                fprintf( stderr, "XShm error in CreateImage(MENU), disabling.\n" );
             goto shm_error;
         }
 
         /*
          * get ID of shared memory block for MENU
          */
-        lcd.menu_info.shmid =
-            shmget( IPC_PRIVATE,
-                    ( lcd.menu_image->bytes_per_line * lcd.menu_image->height ),
-                    IPC_CREAT | 0777 );
+        lcd.menu_info.shmid = shmget( IPC_PRIVATE, ( lcd.menu_image->bytes_per_line * lcd.menu_image->height ), IPC_CREAT | 0777 );
         if ( lcd.menu_info.shmid < 0 ) {
             XDestroyImage( lcd.disp_image );
             lcd.disp_image = NULL;
@@ -3063,12 +2008,8 @@ void CreateLCDWindow( void ) {
             shmctl( lcd.menu_info.shmid, IPC_RMID, 0 );
         }
 
-        memset( lcd.disp_image->data, 0,
-                ( size_t )( lcd.disp_image->bytes_per_line *
-                            lcd.disp_image->height ) );
-        memset( lcd.menu_image->data, 0,
-                ( size_t )( lcd.menu_image->bytes_per_line *
-                            lcd.menu_image->height ) );
+        memset( lcd.disp_image->data, 0, ( size_t )( lcd.disp_image->bytes_per_line * lcd.disp_image->height ) );
+        memset( lcd.menu_image->data, 0, ( size_t )( lcd.menu_image->bytes_per_line * lcd.menu_image->height ) );
 
         if ( verbose )
             printf( "using XShm extension.\n" );
@@ -3089,7 +2030,8 @@ shm_error:
     }
 }
 
-void DrawSerialDevices( char* wire, char* ir ) {
+void DrawSerialDevices( char* wire, char* ir )
+{
     char name[ 128 ];
     int x, y, w, h;
     int conn_top;
@@ -3107,8 +2049,7 @@ void DrawSerialDevices( char* wire, char* ir ) {
 
     conn_top = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 18;
 
-    XTextExtents( finfo, "TEST", ( int )strlen( "TEST" ), &dir, &fa, &fd,
-                  &xchar );
+    XTextExtents( finfo, "TEST", ( int )strlen( "TEST" ), &dir, &fa, &fd, &xchar );
     w = DISPLAY_WIDTH;
     h = fa + fd;
 
@@ -3133,8 +2074,7 @@ void DrawSerialDevices( char* wire, char* ir ) {
 
     x = DISPLAY_OFFSET_X;
     y = conn_top;
-    XCopyArea( dpy, pix, keypad.pixmap, gc, 0, 0, w, h, x,
-               y ); /* FIXME keypad? */
+    XCopyArea( dpy, pix, keypad.pixmap, gc, 0, 0, w, h, x, y ); /* FIXME keypad? */
 
     DrawKeypad( &keypad );
 
@@ -3142,7 +2082,8 @@ void DrawSerialDevices( char* wire, char* ir ) {
     XFreeFont( dpy, finfo );
 }
 
-int CreateWindows( int argc, char** argv ) {
+int CreateWindows( int argc, char** argv )
+{
     XSizeHints hint, ih;
     XWMHints wmh;
     XClassHint clh;
@@ -3183,11 +2124,9 @@ int CreateWindows( int argc, char** argv ) {
     visual = get_visual_resource( dpy, &depth );
     if ( visual != DefaultVisual( dpy, screen ) ) {
         if ( visual->class == DirectColor )
-            cmap = XCreateColormap( dpy, RootWindow( dpy, screen ), visual,
-                                    AllocAll );
+            cmap = XCreateColormap( dpy, RootWindow( dpy, screen ), visual, AllocAll );
         else
-            cmap = XCreateColormap( dpy, RootWindow( dpy, screen ), visual,
-                                    AllocNone );
+            cmap = XCreateColormap( dpy, RootWindow( dpy, screen ), visual, AllocNone );
     } else
         cmap = DefaultColormap( dpy, screen );
 
@@ -3233,8 +2172,7 @@ int CreateWindows( int argc, char** argv ) {
         if ( name == ( char* )0 )
             fatal_exit( "malloc failed.\n", "" );
 
-        sprintf( name, "%s-%d.%d.%d", progname, saturn.version[ 0 ],
-                 saturn.version[ 1 ], saturn.version[ 2 ] );
+        sprintf( name, "%s-%d.%d.%d", progname, saturn.version[ 0 ], saturn.version[ 1 ], saturn.version[ 2 ] );
     }
 
     if ( !XStringListToTextProperty( &name, 1, &wname ) )
@@ -3253,12 +2191,10 @@ int CreateWindows( int argc, char** argv ) {
     if ( netbook ) {
         height = KEYBOARD_HEIGHT;
     } else {
-        height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP +
-                 KEYBOARD_HEIGHT + BOTTOM_SKIP;
+        height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP + KEYBOARD_HEIGHT + BOTTOM_SKIP;
     }
 
-    mainW = XCreateWindow( dpy, RootWindow( dpy, screen ), 0, 0, width, height,
-                           0, ( int )depth, class, visual, mask, &xswa );
+    mainW = XCreateWindow( dpy, RootWindow( dpy, screen ), 0, 0, width, height, 0, ( int )depth, class, visual, mask, &xswa );
 
     if ( mainW == 0 )
         return -1;
@@ -3280,8 +2216,7 @@ int CreateWindows( int argc, char** argv ) {
     sprintf( def_geom, "%ux%u", width, height );
     user_geom = geometry; // get_string_resource( "geometry", "Geometry" );
 
-    info = XWMGeometry( dpy, screen, user_geom, def_geom, 0, &hint, &x, &y, &w,
-                        &h, &hint.win_gravity );
+    info = XWMGeometry( dpy, screen, user_geom, def_geom, 0, &hint, &x, &y, &w, &h, &hint.win_gravity );
 
     if ( info & ( XValue | YValue ) ) {
         if ( info & XValue )
@@ -3309,11 +2244,9 @@ int CreateWindows( int argc, char** argv ) {
     xswa.backing_store = Always;
     xswa.win_gravity = hint.win_gravity;
     xswa.bit_gravity = NorthWestGravity;
-    xswa.event_mask = KeyPressMask | KeyReleaseMask | ButtonPressMask |
-                      ButtonReleaseMask | ExposureMask | KeymapStateMask |
+    xswa.event_mask = KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask | ExposureMask | KeymapStateMask |
                       EnterWindowMask | StructureNotifyMask | FocusChangeMask;
-    mask = CWBackPixel | CWBorderPixel | CWBackingStore | CWEventMask |
-           CWBitGravity | CWWinGravity;
+    mask = CWBackPixel | CWBorderPixel | CWBackingStore | CWEventMask | CWBitGravity | CWWinGravity;
     XChangeWindowAttributes( dpy, mainW, mask, &xswa );
     XMoveWindow( dpy, mainW, hint.x, hint.y );
 
@@ -3322,9 +2255,8 @@ int CreateWindows( int argc, char** argv ) {
      */
     xswa.colormap = cmap;
     mask = CWColormap;
-    iconW = XCreateWindow( dpy, RootWindow( dpy, screen ), 0, 0,
-                           hp48_icon_width, hp48_icon_height, 0, ( int )depth,
-                           class, visual, mask, &xswa );
+    iconW = XCreateWindow( dpy, RootWindow( dpy, screen ), 0, 0, hp48_icon_width, hp48_icon_height, 0, ( int )depth, class, visual, mask,
+                           &xswa );
 
     if ( iconW == 0 )
         return -1;
@@ -3363,15 +2295,13 @@ int CreateWindows( int argc, char** argv ) {
     xswa.backing_store = NotUseful;
     xswa.win_gravity = ih.win_gravity;
     xswa.bit_gravity = NorthWestGravity;
-    mask = CWBackPixel | CWBorderPixel | CWBackingStore | CWBitGravity |
-           CWWinGravity;
+    mask = CWBackPixel | CWBorderPixel | CWBackingStore | CWBitGravity | CWWinGravity;
     XChangeWindowAttributes( dpy, iconW, mask, &xswa );
 
     /*
      * tell window manager all the stuff we dug out
      */
-    XSetWMProperties( dpy, mainW, &wname, &iname, argv, argc, &hint, &wmh,
-                      &clh );
+    XSetWMProperties( dpy, mainW, &wname, &iname, argv, argc, &hint, &wmh, &clh );
 
     /*
      * turn on WM_DELETE_WINDOW
@@ -3389,8 +2319,7 @@ int CreateWindows( int argc, char** argv ) {
     ol_decor_icon_name = XInternAtom( dpy, "_OL_DECOR_ICON_NAME", 0 );
     ol_decor_del = XInternAtom( dpy, "_OL_DECOR_DEL", 0 );
     atom_type = XInternAtom( dpy, "ATOM", 0 );
-    XChangeProperty( dpy, mainW, ol_decor_del, atom_type, 32, PropModeReplace,
-                     ( unsigned char* )&ol_decor_icon_name, 1 );
+    XChangeProperty( dpy, mainW, ol_decor_del, atom_type, 32, PropModeReplace, ( unsigned char* )&ol_decor_icon_name, 1 );
 
     /*
      * set up the GC's
@@ -3423,8 +2352,7 @@ int CreateWindows( int argc, char** argv ) {
     keypad.pixmap = XCreatePixmap( dpy, mainW, width, height, depth );
 
     if ( netbook ) {
-        int cut =
-            buttons[ BUTTON_MTH ].y - ( small_ascent + small_descent + 6 + 4 );
+        int cut = buttons[ BUTTON_MTH ].y - ( small_ascent + small_descent + 6 + 4 );
         CreateBackground( width / 2, height, width, height, &keypad );
         DrawMore( KEYBOARD_OFFSET_Y, &keypad );
         CreateBezel( &keypad );
@@ -3457,7 +2385,8 @@ int CreateWindows( int argc, char** argv ) {
     return 0;
 }
 
-int key_event( int b, XEvent* xev ) {
+int key_event( int b, XEvent* xev )
+{
     int code;
     int i, r, c;
 
@@ -3496,45 +2425,43 @@ int key_event( int b, XEvent* xev ) {
     return 0;
 }
 
-void refresh_display( void ) {
+void refresh_display( void )
+{
     if ( !shm_flag )
         return;
 
     if ( lcd.display_update & UPDATE_DISP ) {
-        XShmPutImage( dpy, lcd.win, lcd.gc, lcd.disp_image, 2 * display.offset,
-                      0, 5, 20, 262,
+        XShmPutImage( dpy, lcd.win, lcd.gc, lcd.disp_image, 2 * display.offset, 0, 5, 20, 262,
                       ( unsigned int )( ( 2 * display.lines ) + 2 ), 0 );
     }
-    if ( ( ( 2 * display.lines ) < 126 ) &&
-         ( lcd.display_update & UPDATE_MENU ) ) {
-        XShmPutImage( dpy, lcd.win, lcd.gc, lcd.menu_image, 0, 0, 5,
-                      ( int )( ( 2 * display.lines ) + 22 ), 262,
+    if ( ( ( 2 * display.lines ) < 126 ) && ( lcd.display_update & UPDATE_MENU ) ) {
+        XShmPutImage( dpy, lcd.win, lcd.gc, lcd.menu_image, 0, 0, 5, ( int )( ( 2 * display.lines ) + 22 ), 262,
                       ( unsigned int )( 126 - ( 2 * display.lines ) ), 0 );
     }
     lcd.display_update = 0;
 }
 
-void redraw_display( void ) {
+void redraw_display( void )
+{
     XClearWindow( dpy, lcd.win );
     memset( disp_buf, 0, sizeof( disp_buf ) );
     memset( lcd_buffer, 0, sizeof( lcd_buffer ) );
     x11_update_LCD();
 }
 
-void redraw_annunc( void ) {
+void redraw_annunc( void )
+{
     last_annunc_state = -1;
     x11_draw_annunc();
 }
 
-void DrawDisp( void ) {
+void DrawDisp( void )
+{
     if ( shm_flag ) {
-        XShmPutImage( dpy, lcd.win, lcd.gc, lcd.disp_image, 2 * display.offset,
-                      0, 5, 20, 262,
+        XShmPutImage( dpy, lcd.win, lcd.gc, lcd.disp_image, 2 * display.offset, 0, 5, 20, 262,
                       ( unsigned int )( ( 2 * display.lines ) + 2 ), 0 );
         if ( display.lines < 63 ) {
-            XShmPutImage( dpy, lcd.win, lcd.gc, lcd.menu_image, 0,
-                          ( 2 * display.lines ) - 110, 5,
-                          22 + ( 2 * display.lines ), 262,
+            XShmPutImage( dpy, lcd.win, lcd.gc, lcd.menu_image, 0, ( 2 * display.lines ) - 110, 5, 22 + ( 2 * display.lines ), 262,
                           ( unsigned int )( 126 - ( 2 * display.lines ) ), 0 );
         }
         lcd.display_update = 0;
@@ -3545,7 +2472,8 @@ void DrawDisp( void ) {
     redraw_annunc();
 }
 
-void get_Window_geometry_string( Window win, char* s, int allow_off_screen ) {
+void get_Window_geometry_string( Window win, char* s, int allow_off_screen )
+{
     XWindowAttributes xwa;
     Window root, parent, window;
     Window* children = ( Window* )0;
@@ -3591,11 +2519,11 @@ void get_Window_geometry_string( Window win, char* s, int allow_off_screen ) {
     }
 
     XGetWindowAttributes( dpy, win, &xwa );
-    sprintf( s, "%ux%u%s%d%s%d", xwa.width, xwa.height, ( x_s > 0 ) ? "+" : "-",
-             x, ( y_s > 0 ) ? "+" : "-", y );
+    sprintf( s, "%ux%u%s%d%s%d", xwa.width, xwa.height, ( x_s > 0 ) ? "+" : "-", x, ( y_s > 0 ) ? "+" : "-", y );
 }
 
-void save_options( int argc, char** argv ) {
+void save_options( int argc, char** argv )
+{
     int l;
 
     saved_argc = argc;
@@ -3616,7 +2544,8 @@ void save_options( int argc, char** argv ) {
     }
 }
 
-void save_command_line( void ) {
+void save_command_line( void )
+{
     int wm_argc = 0;
     char** wm_argv = ( char** )malloc( ( saved_argc + 5 ) * sizeof( char* ) );
 
@@ -3630,7 +2559,8 @@ void save_command_line( void ) {
     XSetCommand( dpy, mainW, wm_argv, wm_argc );
 }
 
-int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen ) {
+int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
+{
     int wake = 0;
 
     if ( buflen == 1 )
@@ -3939,7 +2869,8 @@ int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen ) {
     return wake;
 }
 
-int x11_button_pressed( int b ) {
+int x11_button_pressed( int b )
+{
     int code;
     int i, r, c;
 
@@ -3972,7 +2903,8 @@ int x11_button_pressed( int b ) {
     return 0;
 }
 
-int x11_button_released( int b ) {
+int x11_button_released( int b )
+{
     int code;
 
     // Check not already released (not critical)
@@ -3996,7 +2928,8 @@ int x11_button_released( int b ) {
     return 0;
 }
 
-void button_release_all( void ) {
+void button_release_all( void )
+{
     for ( int b = FIRST_BUTTON; b <= LAST_BUTTON; b++ )
         if ( buttons[ b ].pressed ) {
             int code = buttons[ b ].code;
@@ -4014,7 +2947,8 @@ void button_release_all( void ) {
         }
 }
 
-static inline void draw_nibble( int c, int r, int val ) {
+static inline void draw_nibble( int c, int r, int val )
+{
     int x, y;
 
     x = ( c * 8 ) + 5;
@@ -4023,13 +2957,13 @@ static inline void draw_nibble( int c, int r, int val ) {
     y = ( r * 2 ) + 20;
     val &= 0x0f;
     if ( val != lcd_buffer[ r ][ c ] ) {
-        XCopyPlane( dpy, nibble_maps[ val ], lcd.win, lcd.gc, 0, 0, 8, 2, x, y,
-                    1 );
+        XCopyPlane( dpy, nibble_maps[ val ], lcd.win, lcd.gc, 0, 0, 8, 2, x, y, 1 );
         lcd_buffer[ r ][ c ] = val;
     }
 }
 
-static inline void draw_row( long addr, int row ) {
+static inline void draw_row( long addr, int row )
+{
     int i, v;
     int line_length;
 
@@ -4045,18 +2979,18 @@ static inline void draw_row( long addr, int row ) {
     }
 }
 
-static inline void init_annunc( void ) {
+static inline void init_annunc( void )
+{
     for ( int i = 0; ann_tbl[ i ].bit; i++ )
-        ann_tbl[ i ].pixmap =
-            XCreateBitmapFromData( dpy, lcd.win, ( char* )ann_tbl[ i ].bits,
-                                   ann_tbl[ i ].width, ann_tbl[ i ].height );
+        ann_tbl[ i ].pixmap = XCreateBitmapFromData( dpy, lcd.win, ( char* )ann_tbl[ i ].bits, ann_tbl[ i ].width, ann_tbl[ i ].height );
 }
 
 /**********/
 /* public */
 /**********/
 
-int x11_get_event( void ) {
+int x11_get_event( void )
+{
     XEvent xev;
     XClientMessageEvent* cm;
     int i, wake, bufs = 2;
@@ -4174,8 +3108,7 @@ int x11_get_event( void ) {
                                     char c = *p++;
                                     switch ( c ) {
                                         case '.':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_PERIOD;
+                                            paste[ paste_size++ ] = BUTTON_PERIOD;
                                             break;
                                         case '0':
                                             paste[ paste_size++ ] = BUTTON_0;
@@ -4209,34 +3142,27 @@ int x11_get_event( void ) {
                                             break;
                                         case '\n':
                                             paste[ paste_size++ ] = BUTTON_SHR;
-                                            paste[ paste_size++ ] =
-                                                BUTTON_PERIOD;
+                                            paste[ paste_size++ ] = BUTTON_PERIOD;
                                             break;
                                         case '!':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_DEL;
                                             break;
                                         case '+':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             paste[ paste_size++ ] = BUTTON_PLUS;
                                             break;
                                         case '-':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
-                                            paste[ paste_size++ ] =
-                                                BUTTON_MINUS;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_MINUS;
                                             break;
                                         case '*':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             paste[ paste_size++ ] = BUTTON_MUL;
                                             break;
                                         case '/':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             paste[ paste_size++ ] = BUTTON_DIV;
                                             break;
                                         case ' ':
@@ -4252,19 +3178,14 @@ int x11_get_event( void ) {
                                             break;
                                         case '<':
                                             if ( x > 1 && *p == '<' ) {
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_MINUS;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_MINUS;
                                                 x--;
                                                 p++;
                                             } else {
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_ALPHA;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_2;
+                                                paste[ paste_size++ ] = BUTTON_ALPHA;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_2;
                                             }
                                             break;
                                         case '{':
@@ -4274,26 +3195,19 @@ int x11_get_event( void ) {
                                         case ')':
                                         case ']':
                                         case '}':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_RIGHT;
+                                            paste[ paste_size++ ] = BUTTON_RIGHT;
                                             break;
                                         case '>':
                                             if ( x > 1 && *p == '>' ) {
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_RIGHT;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_RIGHT;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_RIGHT;
+                                                paste[ paste_size++ ] = BUTTON_RIGHT;
+                                                paste[ paste_size++ ] = BUTTON_RIGHT;
+                                                paste[ paste_size++ ] = BUTTON_RIGHT;
                                                 x--;
                                                 p++;
                                             } else {
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_ALPHA;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHR;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_2;
+                                                paste[ paste_size++ ] = BUTTON_ALPHA;
+                                                paste[ paste_size++ ] = BUTTON_SHR;
+                                                paste[ paste_size++ ] = BUTTON_2;
                                             }
                                             break;
                                         case '#':
@@ -4307,276 +3221,213 @@ int x11_get_event( void ) {
                                         case '"':
                                             if ( flag & 1 ) {
                                                 flag &= ~1;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_RIGHT;
+                                                paste[ paste_size++ ] = BUTTON_RIGHT;
                                             } else {
                                                 flag |= 1;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHR;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_MINUS;
+                                                paste[ paste_size++ ] = BUTTON_SHR;
+                                                paste[ paste_size++ ] = BUTTON_MINUS;
                                             }
                                             break;
                                         case ':':
                                             if ( flag & 2 ) {
                                                 flag &= ~2;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_RIGHT;
+                                                paste[ paste_size++ ] = BUTTON_RIGHT;
                                             } else {
                                                 flag |= 2;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHR;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_PLUS;
+                                                paste[ paste_size++ ] = BUTTON_SHR;
+                                                paste[ paste_size++ ] = BUTTON_PLUS;
                                             }
                                             break;
                                         case '\'':
                                             if ( flag & 4 ) {
                                                 flag &= ~4;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_RIGHT;
+                                                paste[ paste_size++ ] = BUTTON_RIGHT;
                                             } else {
                                                 flag |= 4;
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_COLON;
+                                                paste[ paste_size++ ] = BUTTON_COLON;
                                             }
                                             break;
                                         case 'a':
                                         case 'A':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_A;
                                             break;
                                         case 'b':
                                         case 'B':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_B;
                                             break;
                                         case 'c':
                                         case 'C':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_C;
                                             break;
                                         case 'd':
                                         case 'D':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_D;
                                             break;
                                         case 'e':
                                         case 'E':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_E;
                                             break;
                                         case 'f':
                                         case 'F':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_F;
                                             break;
                                         case 'g':
                                         case 'G':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_MTH;
                                             break;
                                         case 'h':
                                         case 'H':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_PRG;
                                             break;
                                         case 'i':
                                         case 'I':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_CST;
                                             break;
                                         case 'j':
                                         case 'J':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_VAR;
                                             break;
                                         case 'k':
                                         case 'K':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_UP;
                                             break;
                                         case 'l':
                                         case 'L':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_NXT;
                                             break;
 
                                         case 'm':
                                         case 'M':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] =
-                                                BUTTON_COLON;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_COLON;
                                             break;
                                         case 'n':
                                         case 'N':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_STO;
                                             break;
                                         case 'o':
                                         case 'O':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_EVAL;
                                             break;
                                         case 'p':
                                         case 'P':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_LEFT;
                                             break;
                                         case 'q':
                                         case 'Q':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_DOWN;
                                             break;
                                         case 'r':
                                         case 'R':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] =
-                                                BUTTON_RIGHT;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_RIGHT;
                                             break;
                                         case 's':
                                         case 'S':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_SIN;
                                             break;
                                         case 't':
                                         case 'T':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_COS;
                                             break;
                                         case 'u':
                                         case 'U':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_TAN;
                                             break;
                                         case 'v':
                                         case 'V':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_SQRT;
                                             break;
                                         case 'w':
                                         case 'W':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
-                                            paste[ paste_size++ ] =
-                                                BUTTON_POWER;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
+                                            paste[ paste_size++ ] = BUTTON_POWER;
                                             break;
                                         case 'x':
                                         case 'X':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_INV;
                                             break;
                                         case 'y':
                                         case 'Y':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_NEG;
                                             break;
                                         case 'z':
                                         case 'Z':
-                                            paste[ paste_size++ ] =
-                                                BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = BUTTON_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] =
-                                                    BUTTON_SHL;
+                                                paste[ paste_size++ ] = BUTTON_SHL;
                                             paste[ paste_size++ ] = BUTTON_EEX;
                                             break;
                                         default:
@@ -4592,12 +3443,9 @@ int x11_get_event( void ) {
                             }
                         }
                     } else {
-                        if ( xev.xbutton.button == Button1 ||
-                             xev.xbutton.button == Button2 ||
-                             xev.xbutton.button == Button3 ) {
+                        if ( xev.xbutton.button == Button1 || xev.xbutton.button == Button2 || xev.xbutton.button == Button3 ) {
                             for ( i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
-                                if ( xev.xbutton.subwindow ==
-                                     buttons[ i ].xwin ) {
+                                if ( xev.xbutton.subwindow == buttons[ i ].xwin ) {
                                     if ( buttons[ i ].pressed ) {
                                         if ( xev.xbutton.button == Button3 ) {
                                             x11_button_released( i );
@@ -4689,7 +3537,8 @@ int x11_get_event( void ) {
     return wake;
 }
 
-void x11_adjust_contrast( void ) {
+void x11_adjust_contrast( void )
+{
     int gray = 0;
     int r = 0, g = 0, b = 0;
     unsigned long old;
@@ -4714,8 +3563,7 @@ void x11_adjust_contrast( void ) {
         default:
             r = ( 0x13 - contrast ) * ( colors[ LCD ].r / 0x10 );
             g = ( 0x13 - contrast ) * ( colors[ LCD ].g / 0x10 );
-            b = 128 -
-                ( ( 0x13 - contrast ) * ( ( 128 - colors[ LCD ].b ) / 0x10 ) );
+            b = 128 - ( ( 0x13 - contrast ) * ( ( 128 - colors[ LCD ].b ) / 0x10 ) );
             colors[ PIXEL ].xcolor.red = r << 8;
             colors[ PIXEL ].xcolor.green = g << 8;
             colors[ PIXEL ].xcolor.blue = b << 8;
@@ -4752,7 +3600,8 @@ void x11_adjust_contrast( void ) {
     }
 }
 
-void x11_init_LCD( void ) {
+void x11_init_LCD( void )
+{
     display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
 
     display.disp_start = ( saturn.disp_addr & 0xffffe );
@@ -4763,14 +3612,11 @@ void x11_init_LCD( void ) {
         display.lines = 63;
 
     if ( display.offset > 3 )
-        display.nibs_per_line =
-            ( NIBBLES_PER_ROW + saturn.line_offset + 2 ) & 0xfff;
+        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset + 2 ) & 0xfff;
     else
-        display.nibs_per_line =
-            ( NIBBLES_PER_ROW + saturn.line_offset ) & 0xfff;
+        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset ) & 0xfff;
 
-    display.disp_end =
-        display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
+    display.disp_end = display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
 
     display.menu_start = saturn.menu_addr;
     display.menu_end = saturn.menu_addr + 0x110;
@@ -4785,8 +3631,7 @@ void x11_init_LCD( void ) {
 
     /* init nibble_maps */
     for ( int i = 0; i < 16; i++ )
-        nibble_maps[ i ] =
-            XCreateBitmapFromData( dpy, lcd.win, ( char* )nibbles[ i ], 8, 2 );
+        nibble_maps[ i ] = XCreateBitmapFromData( dpy, lcd.win, ( char* )nibbles[ i ], 8, 2 );
 
     if ( !shm_flag )
         return;
@@ -4828,7 +3673,8 @@ void x11_init_LCD( void ) {
     }
 }
 
-void x11_update_LCD( void ) {
+void x11_update_LCD( void )
+{
     int i, j;
     long addr;
     static int old_offset = -1;
@@ -4855,8 +3701,7 @@ void x11_update_LCD( void ) {
                 for ( j = 0; j < line_length; j++ ) {
                     val = read_nibble( addr++ );
                     lcd.disp_image->data[ data_addr++ ] = nibble_bitmap[ val ];
-                    lcd.disp_image->data[ data_addr_2++ ] =
-                        nibble_bitmap[ val ];
+                    lcd.disp_image->data[ data_addr_2++ ] = nibble_bitmap[ val ];
                 }
                 addr += addr_pad;
                 data_addr += line_pad;
@@ -4865,19 +3710,13 @@ void x11_update_LCD( void ) {
             lcd.display_update |= UPDATE_DISP;
         } else {
             if ( display.offset != old_offset ) {
-                memset(
-                    disp_buf, 0xf0,
-                    ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
-                memset(
-                    lcd_buffer, 0xf0,
-                    ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
+                memset( disp_buf, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
+                memset( lcd_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
                 old_offset = display.offset;
             }
             if ( display.lines != old_lines ) {
-                memset( &disp_buf[ 56 ][ 0 ], 0xf0,
-                        ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
-                memset( &lcd_buffer[ 56 ][ 0 ], 0xf0,
-                        ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
+                memset( &disp_buf[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
+                memset( &lcd_buffer[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
                 old_lines = display.lines;
             }
             for ( i = 0; i <= display.lines; i++ ) {
@@ -4894,10 +3733,8 @@ void x11_update_LCD( void ) {
                 for ( ; i < DISP_ROWS; i++ ) {
                     for ( j = 0; j < NIBBLES_PER_ROW; j++ ) {
                         val = read_nibble( addr++ );
-                        lcd.menu_image->data[ data_addr++ ] =
-                            nibble_bitmap[ val ];
-                        lcd.menu_image->data[ data_addr_2++ ] =
-                            nibble_bitmap[ val ];
+                        lcd.menu_image->data[ data_addr++ ] = nibble_bitmap[ val ];
+                        lcd.menu_image->data[ data_addr_2++ ] = nibble_bitmap[ val ];
                     }
                     data_addr += line_pad;
                     data_addr_2 += line_pad;
@@ -4912,12 +3749,8 @@ void x11_update_LCD( void ) {
         }
     } else {
         if ( shm_flag ) {
-            memset( lcd.disp_image->data, 0,
-                    ( size_t )( lcd.disp_image->bytes_per_line *
-                                lcd.disp_image->height ) );
-            memset( lcd.menu_image->data, 0,
-                    ( size_t )( lcd.menu_image->bytes_per_line *
-                                lcd.menu_image->height ) );
+            memset( lcd.disp_image->data, 0, ( size_t )( lcd.disp_image->bytes_per_line * lcd.disp_image->height ) );
+            memset( lcd.menu_image->data, 0, ( size_t )( lcd.menu_image->bytes_per_line * lcd.menu_image->height ) );
             lcd.display_update = UPDATE_DISP | UPDATE_MENU;
         } else {
             memset( disp_buf, 0xf0, sizeof( disp_buf ) );
@@ -4933,12 +3766,14 @@ void x11_update_LCD( void ) {
         refresh_display();
 }
 
-void x11_refresh_LCD( void ) {
+void x11_refresh_LCD( void )
+{
     if ( lcd.display_update )
         refresh_display();
 }
 
-void x11_disp_draw_nibble( word_20 addr, word_4 val ) {
+void x11_disp_draw_nibble( word_20 addr, word_4 val )
+{
     long offset;
     int shm_addr;
     int x, y;
@@ -4954,8 +3789,7 @@ void x11_disp_draw_nibble( word_20 addr, word_4 val ) {
         if ( shm_flag ) {
             shm_addr = ( 2 * y * lcd.disp_image->bytes_per_line ) + x;
             lcd.disp_image->data[ shm_addr ] = nibble_bitmap[ val ];
-            lcd.disp_image->data[ shm_addr + lcd.disp_image->bytes_per_line ] =
-                nibble_bitmap[ val ];
+            lcd.disp_image->data[ shm_addr + lcd.disp_image->bytes_per_line ] = nibble_bitmap[ val ];
             lcd.display_update |= UPDATE_DISP;
         } else {
             if ( val != disp_buf[ y ][ x ] ) {
@@ -4984,19 +3818,17 @@ void x11_disp_draw_nibble( word_20 addr, word_4 val ) {
     }
 }
 
-void x11_menu_draw_nibble( word_20 addr, word_4 val ) {
+void x11_menu_draw_nibble( word_20 addr, word_4 val )
+{
     long offset;
     int shm_addr;
     int x, y;
 
     offset = ( addr - display.menu_start );
     if ( shm_flag ) {
-        shm_addr =
-            2 * ( offset / NIBBLES_PER_ROW ) * lcd.menu_image->bytes_per_line +
-            ( offset % NIBBLES_PER_ROW );
+        shm_addr = 2 * ( offset / NIBBLES_PER_ROW ) * lcd.menu_image->bytes_per_line + ( offset % NIBBLES_PER_ROW );
         lcd.menu_image->data[ shm_addr ] = nibble_bitmap[ val ];
-        lcd.menu_image->data[ shm_addr + lcd.menu_image->bytes_per_line ] =
-            nibble_bitmap[ val ];
+        lcd.menu_image->data[ shm_addr + lcd.menu_image->bytes_per_line ] = nibble_bitmap[ val ];
         lcd.display_update |= UPDATE_MENU;
     } else {
         x = offset % NIBBLES_PER_ROW;
@@ -5008,7 +3840,8 @@ void x11_menu_draw_nibble( word_20 addr, word_4 val ) {
     }
 }
 
-void x11_draw_annunc( void ) {
+void x11_draw_annunc( void )
+{
     int val;
 
     val = display.annunc;
@@ -5019,17 +3852,16 @@ void x11_draw_annunc( void ) {
 
     for ( int i = 0; ann_tbl[ i ].bit; i++ ) {
         if ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit )
-            XCopyPlane( dpy, ann_tbl[ i ].pixmap, lcd.win, lcd.gc, 0, 0,
-                        ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].x,
+            XCopyPlane( dpy, ann_tbl[ i ].pixmap, lcd.win, lcd.gc, 0, 0, ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].x,
                         ann_tbl[ i ].y, 1 );
         else
-            XClearArea( dpy, lcd.win, ann_tbl[ i ].x, ann_tbl[ i ].y,
-                        ann_tbl[ i ].width, ann_tbl[ i ].height, False );
+            XClearArea( dpy, lcd.win, ann_tbl[ i ].x, ann_tbl[ i ].y, ann_tbl[ i ].width, ann_tbl[ i ].height, False );
     }
     refresh_icon();
 }
 
-void init_x11_ui( int argc, char** argv ) {
+void init_x11_ui( int argc, char** argv )
+{
     /*
      * save command line options
      */

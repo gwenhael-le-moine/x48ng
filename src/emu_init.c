@@ -1,15 +1,15 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <sys/stat.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <sys/types.h>
+#include <unistd.h>
 
-#include "runtime_options.h"
 #include "emulator.h"
 #include "emulator_inner.h"
 #include "romio.h"
+#include "runtime_options.h"
 
 #define X48_MAGIC 0x48503438
 #define NR_CONFIG 8
@@ -26,7 +26,8 @@ long port2_size;
 long port2_mask;
 short port2_is_ram;
 
-int read_rom( const char* fname ) {
+int read_rom( const char* fname )
+{
     int ram_size;
 
     if ( !read_rom_file( fname, &saturn.rom, &rom_size ) )
@@ -62,7 +63,8 @@ int read_rom( const char* fname ) {
     return 1;
 }
 
-void saturn_config_init( void ) {
+void saturn_config_init( void )
+{
     saturn.version[ 0 ] = VERSION_MAJOR;
     saturn.version[ 1 ] = VERSION_MINOR;
     saturn.version[ 2 ] = PATCHLEVEL;
@@ -76,7 +78,8 @@ void saturn_config_init( void ) {
     saturn.lbr = 0x0;
 }
 
-void init_saturn( void ) {
+void init_saturn( void )
+{
     memset( &saturn, 0, sizeof( saturn ) - 4 * sizeof( unsigned char* ) );
     saturn.PC = 0x00000;
     saturn.magic = X48_MAGIC;
@@ -107,7 +110,8 @@ void init_saturn( void ) {
     dev_memory_init();
 }
 
-int init_emulator( void ) {
+int init_emulator( void )
+{
     /* If not forced to initialize and files are readble => let's go */
     if ( !initialize && read_files() ) {
         if ( resetOnStartup )
@@ -126,7 +130,8 @@ int init_emulator( void ) {
     return 0;
 }
 
-int exit_emulator( void ) {
+int exit_emulator( void )
+{
     write_files();
 
     return 1;
@@ -136,7 +141,8 @@ int exit_emulator( void ) {
 /* READING ~/.x48ng/{rom,ram,hp48,port1,port2} */
 /***********************************************/
 
-int read_8( FILE* fp, word_8* var ) {
+int read_8( FILE* fp, word_8* var )
+{
     unsigned char tmp;
 
     if ( fread( &tmp, 1, 1, fp ) != 1 ) {
@@ -148,7 +154,8 @@ int read_8( FILE* fp, word_8* var ) {
     return 1;
 }
 
-int read_char( FILE* fp, char* var ) {
+int read_char( FILE* fp, char* var )
+{
     char tmp;
 
     if ( fread( &tmp, 1, 1, fp ) != 1 ) {
@@ -160,7 +167,8 @@ int read_char( FILE* fp, char* var ) {
     return 1;
 }
 
-int read_16( FILE* fp, word_16* var ) {
+int read_16( FILE* fp, word_16* var )
+{
     unsigned char tmp[ 2 ];
 
     if ( fread( &tmp[ 0 ], 1, 2, fp ) != 2 ) {
@@ -173,7 +181,8 @@ int read_16( FILE* fp, word_16* var ) {
     return 1;
 }
 
-int read_32( FILE* fp, word_32* var ) {
+int read_32( FILE* fp, word_32* var )
+{
     unsigned char tmp[ 4 ];
 
     if ( fread( &tmp[ 0 ], 1, 4, fp ) != 4 ) {
@@ -188,7 +197,8 @@ int read_32( FILE* fp, word_32* var ) {
     return 1;
 }
 
-int read_u_long( FILE* fp, unsigned long* var ) {
+int read_u_long( FILE* fp, unsigned long* var )
+{
     unsigned char tmp[ 4 ];
 
     if ( fread( &tmp[ 0 ], 1, 4, fp ) != 4 ) {
@@ -203,7 +213,8 @@ int read_u_long( FILE* fp, unsigned long* var ) {
     return 1;
 }
 
-int read_state_file( FILE* fp ) {
+int read_state_file( FILE* fp )
+{
     int i;
 
     /*
@@ -368,7 +379,8 @@ int read_state_file( FILE* fp ) {
     return 1;
 }
 
-int read_mem_file( char* name, word_4* mem, int size ) {
+int read_mem_file( char* name, word_4* mem, int size )
+{
     struct stat st;
     FILE* fp;
     word_8* tmp_mem;
@@ -404,8 +416,7 @@ int read_mem_file( char* name, word_4* mem, int size ) {
 
         if ( st.st_size != size / 2 ) {
             if ( verbose )
-                fprintf( stderr, "strange size %s, expected %d, found %ld\n",
-                         name, size / 2, st.st_size );
+                fprintf( stderr, "strange size %s, expected %d, found %ld\n", name, size / 2, st.st_size );
             fclose( fp );
             return 0;
         }
@@ -422,8 +433,7 @@ int read_mem_file( char* name, word_4* mem, int size ) {
                 mem[ j++ ] = ( word_4 )( ( ( int )byte >> 4 ) & 0xf );
             }
         } else {
-            if ( fread( tmp_mem, 1, ( size_t )size / 2, fp ) !=
-                 ( unsigned long )( size / 2 ) ) {
+            if ( fread( tmp_mem, 1, ( size_t )size / 2, fp ) != ( unsigned long )( size / 2 ) ) {
                 if ( verbose )
                     fprintf( stderr, "can\'t read %s\n", name );
                 fclose( fp );
@@ -448,7 +458,8 @@ int read_mem_file( char* name, word_4* mem, int size ) {
     return 1;
 }
 
-int read_files( void ) {
+int read_files( void )
+{
     unsigned long v1, v2;
     int i, read_version;
     int ram_size;
@@ -515,8 +526,7 @@ int read_files( void ) {
              */
             if ( !read_state_file( fp ) ) {
                 if ( verbose )
-                    fprintf( stderr, "can\'t handle %s\n",
-                             normalized_state_path );
+                    fprintf( stderr, "can\'t handle %s\n", normalized_state_path );
                 init_saturn();
             } else if ( verbose )
                 printf( "read %s\n", normalized_state_path );
@@ -567,8 +577,7 @@ int read_files( void ) {
             if ( NULL == ( saturn.port1 = ( word_4* )malloc( port1_size ) ) ) {
                 if ( verbose )
                     fprintf( stderr, "can\'t malloc PORT1[%ld]\n", port1_size );
-            } else if ( !read_mem_file( normalized_port1_path, saturn.port1,
-                                        port1_size ) ) {
+            } else if ( !read_mem_file( normalized_port1_path, saturn.port1, port1_size ) ) {
                 port1_size = 0;
                 port1_is_ram = 0;
             } else {
@@ -597,13 +606,11 @@ int read_files( void ) {
     if ( stat( normalized_port2_path, &st ) >= 0 ) {
         port2_size = 2 * st.st_size;
         if ( ( opt_gx && ( ( port2_size % 0x40000 ) == 0 ) ) ||
-             ( !opt_gx &&
-               ( ( port2_size == 0x10000 ) || ( port2_size == 0x40000 ) ) ) ) {
+             ( !opt_gx && ( ( port2_size == 0x10000 ) || ( port2_size == 0x40000 ) ) ) ) {
             if ( NULL == ( saturn.port2 = ( word_4* )malloc( port2_size ) ) ) {
                 if ( verbose )
                     fprintf( stderr, "can\'t malloc PORT2[%ld]\n", port2_size );
-            } else if ( !read_mem_file( normalized_port2_path, saturn.port2,
-                                        port2_size ) ) {
+            } else if ( !read_mem_file( normalized_port2_path, saturn.port2, port2_size ) ) {
                 port2_size = 0;
                 port2_is_ram = 0;
             } else {
@@ -631,7 +638,8 @@ int read_files( void ) {
 /* WRITING ~/.x48ng/{rom,ram,hp48,port1,port2} */
 /***********************************************/
 
-int write_8( FILE* fp, word_8* var ) {
+int write_8( FILE* fp, word_8* var )
+{
     unsigned char tmp;
 
     tmp = *var;
@@ -643,7 +651,8 @@ int write_8( FILE* fp, word_8* var ) {
     return 1;
 }
 
-int write_char( FILE* fp, char* var ) {
+int write_char( FILE* fp, char* var )
+{
     char tmp;
 
     tmp = *var;
@@ -655,7 +664,8 @@ int write_char( FILE* fp, char* var ) {
     return 1;
 }
 
-int write_16( FILE* fp, word_16* var ) {
+int write_16( FILE* fp, word_16* var )
+{
     unsigned char tmp[ 2 ];
 
     tmp[ 0 ] = ( *var >> 8 ) & 0xff;
@@ -668,7 +678,8 @@ int write_16( FILE* fp, word_16* var ) {
     return 1;
 }
 
-int write_32( FILE* fp, word_32* var ) {
+int write_32( FILE* fp, word_32* var )
+{
     unsigned char tmp[ 4 ];
 
     tmp[ 0 ] = ( *var >> 24 ) & 0xff;
@@ -683,7 +694,8 @@ int write_32( FILE* fp, word_32* var ) {
     return 1;
 }
 
-int write_u_long( FILE* fp, unsigned long* var ) {
+int write_u_long( FILE* fp, unsigned long* var )
+{
     unsigned char tmp[ 4 ];
 
     tmp[ 0 ] = ( *var >> 24 ) & 0xff;
@@ -698,7 +710,8 @@ int write_u_long( FILE* fp, unsigned long* var ) {
     return 1;
 }
 
-int write_mem_file( char* name, word_4* mem, int size ) {
+int write_mem_file( char* name, word_4* mem, int size )
+{
     FILE* fp;
     word_8* tmp_mem;
     word_8 byte;
@@ -727,8 +740,7 @@ int write_mem_file( char* name, word_4* mem, int size ) {
             tmp_mem[ i ] |= ( mem[ j++ ] << 4 ) & 0xf0;
         }
 
-        if ( fwrite( tmp_mem, 1, ( size_t )size / 2, fp ) !=
-             ( unsigned long )size / 2 ) {
+        if ( fwrite( tmp_mem, 1, ( size_t )size / 2, fp ) != ( unsigned long )size / 2 ) {
             if ( verbose )
                 fprintf( stderr, "can\'t write %s\n", name );
             fclose( fp );
@@ -747,7 +759,8 @@ int write_mem_file( char* name, word_4* mem, int size ) {
     return 1;
 }
 
-int write_state_file( char* filename ) {
+int write_state_file( char* filename )
+{
     int i;
     FILE* fp;
 
@@ -856,7 +869,8 @@ int write_state_file( char* filename ) {
     return 1;
 }
 
-int write_files( void ) {
+int write_files( void )
+{
     struct stat st;
     int make_dir = 0;
     int ram_size = opt_gx ? RAM_SIZE_GX : RAM_SIZE_SX;
@@ -866,15 +880,13 @@ int write_files( void ) {
             make_dir = 1;
         } else {
             if ( verbose )
-                fprintf( stderr, "can\'t stat %s, saving to /tmp\n",
-                         normalized_config_path );
+                fprintf( stderr, "can\'t stat %s, saving to /tmp\n", normalized_config_path );
             strcpy( normalized_config_path, "/tmp" );
         }
     } else {
         if ( !S_ISDIR( st.st_mode ) ) {
             if ( verbose )
-                fprintf( stderr, "%s is no directory, saving to /tmp\n",
-                         normalized_config_path );
+                fprintf( stderr, "%s is no directory, saving to /tmp\n", normalized_config_path );
             strcpy( normalized_config_path, "/tmp" );
         }
     }
@@ -882,8 +894,7 @@ int write_files( void ) {
     if ( make_dir ) {
         if ( mkdir( normalized_config_path, 0777 ) == -1 ) {
             if ( verbose )
-                fprintf( stderr, "can\'t mkdir %s, saving to /tmp\n",
-                         normalized_config_path );
+                fprintf( stderr, "can\'t mkdir %s, saving to /tmp\n", normalized_config_path );
             strcpy( normalized_config_path, "/tmp" );
         }
     }
@@ -909,14 +920,12 @@ int write_files( void ) {
         return 0;
 
     if ( ( port1_size > 0 ) && port1_is_ram ) {
-        if ( !write_mem_file( normalized_port1_path, saturn.port1,
-                              port1_size ) )
+        if ( !write_mem_file( normalized_port1_path, saturn.port1, port1_size ) )
             return 0;
     }
 
     if ( ( port2_size > 0 ) && port2_is_ram ) {
-        if ( !write_mem_file( normalized_port2_path, saturn.port2,
-                              port2_size ) )
+        if ( !write_mem_file( normalized_port2_path, saturn.port2, port2_size ) )
             return 0;
     }
 

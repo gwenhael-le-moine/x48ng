@@ -1,20 +1,21 @@
 #include <errno.h>
 #include <fcntl.h>
+#include <langinfo.h>
+#include <locale.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include <langinfo.h>
-#include <locale.h>
 
-#include "runtime_options.h"
-#include "emulator.h"
 #include "debugger.h"
+#include "emulator.h"
+#include "runtime_options.h"
 #include "ui.h" /* init_ui(); */
 
-void signal_handler( int sig ) {
+void signal_handler( int sig )
+{
     switch ( sig ) {
         case SIGINT: /* Ctrl-C */
             enter_debugger |= USER_INTERRUPT;
@@ -30,7 +31,8 @@ void signal_handler( int sig ) {
     }
 }
 
-int main( int argc, char** argv ) {
+int main( int argc, char** argv )
+{
     setlocale( LC_ALL, "C" );
 
     /**********/

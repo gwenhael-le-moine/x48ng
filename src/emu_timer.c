@@ -1,15 +1,15 @@
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
-#include <assert.h>
 
 #include <sys/time.h>
 
-#include "romio.h"
+#include "debugger.h" /* used for in_debugger */
 #include "emulator.h"
 #include "emulator_inner.h"
-#include "debugger.h" /* used for in_debugger */
+#include "romio.h"
 
 #define NR_TIMERS 4
 
@@ -52,8 +52,7 @@ word_64 time_offset = 0x0;
 #define TIMEOUT_GX ( 0x80069 - RAM_BASE_GX )
 #define TIMEOUTCLK_GX ( 0x80076 - RAM_BASE_GX )
 
-#define calc_crc( nib )                                                        \
-    ( crc = ( crc >> 4 ) ^ ( ( ( crc ^ ( nib ) ) & 0xf ) * 0x1081 ) )
+#define calc_crc( nib ) ( crc = ( crc >> 4 ) ^ ( ( ( crc ^ ( nib ) ) & 0xf ) * 0x1081 ) )
 
 /*
  * Set ACCESSTIME: (on startup)
@@ -68,7 +67,8 @@ word_64 time_offset = 0x0;
  * 8. Prevent AutoOff by setting TIMEOUT
  *
  */
-void set_accesstime( void ) {
+void set_accesstime( void )
+{
     struct timeval tv;
     struct timezone tz;
 
@@ -147,7 +147,8 @@ void set_accesstime( void ) {
     saturn.ram[ timeoutclk_loc ] = 0xf;
 }
 
-void start_timer( int timer ) {
+void start_timer( int timer )
+{
     struct timeval tv;
     struct timezone tz;
 
@@ -171,7 +172,8 @@ void start_timer( int timer ) {
     }
 }
 
-void restart_timer( int timer ) {
+void restart_timer( int timer )
+{
     struct timeval tv;
     struct timezone tz;
 
@@ -197,7 +199,8 @@ void restart_timer( int timer ) {
     }
 }
 
-void stop_timer( int timer ) {
+void stop_timer( int timer )
+{
     struct timeval tv;
     struct timezone tz;
 
@@ -226,7 +229,8 @@ void stop_timer( int timer ) {
     //  &timers[timer].value);
 }
 
-void reset_timer( int timer ) {
+void reset_timer( int timer )
+{
     if ( timer > NR_TIMERS )
         return;
     timers[ timer ].run = 0;
@@ -237,7 +241,8 @@ void reset_timer( int timer ) {
 
 static word_64 zero = 0;
 
-word_64 get_timer( int timer ) {
+word_64 get_timer( int timer )
+{
     struct timeval tv;
     struct timezone tz;
 
@@ -277,7 +282,8 @@ word_64 get_timer( int timer ) {
  *
  */
 
-t1_t2_ticks get_t1_t2( void ) {
+t1_t2_ticks get_t1_t2( void )
+{
     struct timeval tv;
     struct timezone tz;
 
@@ -329,8 +335,7 @@ t1_t2_ticks get_t1_t2( void ) {
          * Don't adjust the time, can't come from user, anyhow.
          */
 
-        if ( ( saturn.timer2 >= 0 && access_time < 0 ) ||
-             ( ( unsigned long )saturn.timer2 > access_time ) ) {
+        if ( ( saturn.timer2 >= 0 && access_time < 0 ) || ( ( unsigned long )saturn.timer2 > access_time ) ) {
             /*
              * check OK, return calculated time
              */
@@ -359,8 +364,7 @@ t1_t2_ticks get_t1_t2( void ) {
         access_time -= adj_time;
     }
 
-    if ( ( saturn.timer2 >= 0 && ( access_time < 0 ) ) ||
-         ( ( unsigned long )saturn.timer2 > access_time ) ) {
+    if ( ( saturn.timer2 >= 0 && ( access_time < 0 ) ) || ( ( unsigned long )saturn.timer2 > access_time ) ) {
         /*
          * check OK, return calculated time
          */

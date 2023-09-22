@@ -74,19 +74,15 @@ int get_identification( void );
 void add_p_plus_one( unsigned char* r );
 void add_register_constant( unsigned char* res, int code, int val );
 void sub_register_constant( unsigned char* res, int code, int val );
-void add_register( unsigned char* res, unsigned char* r1, unsigned char* r2,
-                   int code );
-void sub_register( unsigned char* res, unsigned char* r1, unsigned char* r2,
-                   int code );
+void add_register( unsigned char* res, unsigned char* r1, unsigned char* r2, int code );
+void sub_register( unsigned char* res, unsigned char* r1, unsigned char* r2, int code );
 void complement_2_register( unsigned char* r, int code );
 void complement_1_register( unsigned char* r, int code );
 void inc_register( unsigned char* r, int code );
 void dec_register( unsigned char* r, int code );
 void zero_register( unsigned char* r, int code );
-void or_register( unsigned char* res, unsigned char* r1, unsigned char* r2,
-                  int code );
-void and_register( unsigned char* res, unsigned char* r1, unsigned char* r2,
-                   int code );
+void or_register( unsigned char* res, unsigned char* r1, unsigned char* r2, int code );
+void and_register( unsigned char* res, unsigned char* r1, unsigned char* r2, int code );
 void copy_register( unsigned char* to, unsigned char* from, int code );
 void exchange_register( unsigned char* r1, unsigned char* r2, int code );
 void exchange_reg( unsigned char* r, word_20* d, int code );
@@ -102,8 +98,7 @@ int is_not_equal_register( unsigned char* r1, unsigned char* r2, int code );
 int is_less_register( unsigned char* r1, unsigned char* r2, int code );
 int is_less_or_equal_register( unsigned char* r1, unsigned char* r2, int code );
 int is_greater_register( unsigned char* r1, unsigned char* r2, int code );
-int is_greater_or_equal_register( unsigned char* r1, unsigned char* r2,
-                                  int code );
+int is_greater_or_equal_register( unsigned char* r1, unsigned char* r2, int code );
 
 /****************/
 /* emu_serial.c */
