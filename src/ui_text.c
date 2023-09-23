@@ -192,12 +192,11 @@ static tui_button_t buttons_gx[] = {
 /****************************/
 /* functions implementation */
 /****************************/
-
 static int tui_draw_nibble( int nx, int ny, int val )
 {
     int x, y;
     int xoffset = 1;
-    int yoffset = 1;
+    int yoffset = 2;
 
     for ( y = 0; y < 2; y++ ) {
         for ( x = 0; x < 4; x++ ) {
@@ -511,7 +510,7 @@ int text_get_event( void )
     return 1;
 }
 
-void text_adjust_contrast() {}
+void text_adjust_contrast() { text_update_LCD(); }
 
 void text_init_LCD( void )
 {
@@ -637,11 +636,8 @@ void text_draw_annunc( void )
 
     last_annunc_state = val;
 
-    char annuncstate[ 6 ];
     for ( int i = 0; ann_tbl[ i ].bit; i++ )
-        annuncstate[ i ] = ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit ) ? 1 : 0;
-
-    /* TEXTDrawAnnunc( annuncstate ); */
+        mvaddch( 1, 3 + ( i * 4 ), ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit ) ? ann_tbl[ i ].icon : ' ' );
 }
 
 void init_text_ui( int argc, char** argv )
@@ -683,16 +679,20 @@ void init_text_ui( int argc, char** argv )
     }
 
     /* border( 0, 0, 0, 0, 0, 0, 0, 0 ); */
-
+#define LCD_BOTTOM 67
+#define LCD_RIGHT 132
     mvaddch( 0, 0, ACS_ULCORNER );
-    mvaddch( 66, 0, ACS_LLCORNER );
-    mvaddch( 0, 132, ACS_URCORNER );
-    mvaddch( 66, 132, ACS_LRCORNER );
-    mvhline( 0, 1, ACS_HLINE, 131 );
-    mvhline( 66, 1, ACS_HLINE, 131 );
-    mvvline( 1, 0, ACS_VLINE, 65 );
-    mvvline( 1, 132, ACS_VLINE, 65 );
+    mvaddch( LCD_BOTTOM, 0, ACS_LLCORNER );
+    mvaddch( 0, LCD_RIGHT, ACS_URCORNER );
+    mvaddch( LCD_BOTTOM, LCD_RIGHT, ACS_LRCORNER );
+    mvhline( 0, 1, ACS_HLINE, LCD_RIGHT - 1 );
+    mvhline( LCD_BOTTOM, 1, ACS_HLINE, LCD_RIGHT - 1 );
+    mvvline( 1, 0, ACS_VLINE, LCD_BOTTOM - 1 );
+    mvvline( 1, LCD_RIGHT, ACS_VLINE, LCD_BOTTOM - 1 );
 
+    mvprintw( 1, 1, "[   |   |   |   |   |   ]" ); /* annunciators */
+
+    /* DEBUG */
     mvprintw( 0, 1, "screen: %i x %i", COLS, LINES );
 
     /* nodelay( stdscr, FALSE ); */
