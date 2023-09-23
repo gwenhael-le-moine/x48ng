@@ -636,7 +636,7 @@ void text_draw_annunc( void )
 
     last_annunc_state = val;
 
-    for ( int i = 0; ann_tbl[ i ].bit; i++ )
+    for ( int i = 0; i < 6; i++ )
         mvaddch( 0, 3 + ( i * 4 ), ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit ) ? ann_tbl[ i ].icon : ' ' );
 }
 
