@@ -17,6 +17,19 @@
 #include "ui.h"
 #include "ui_inner.h"
 
+#define LCD_WIDTH 131
+#define LCD_HEIGHT 64
+#define LCD_OFFSET_X 1
+#define LCD_OFFSET_Y 2
+#define LCD_BOTTOM LCD_HEIGHT + LCD_OFFSET_Y
+#define LCD_RIGHT LCD_WIDTH + LCD_OFFSET_X
+
+#define LCD_COLOR_BG 48
+#define LCD_COLOR_FG 49
+
+#define LCD_PIXEL_ON 1
+#define LCD_PIXEL_OFF 2
+
 /***********/
 /* typedef */
 /***********/
@@ -192,28 +205,26 @@ static tui_button_t buttons_gx[] = {
 /****************************/
 /* functions implementation */
 /****************************/
-static int tui_draw_nibble( int nx, int ny, int val )
+static inline void tui_draw_nibble( int nx, int ny, int val )
 {
-    int x, y;
-    int xoffset = 1;
-    int yoffset = 2;
+    for ( int x = 0; x < 4; x++ ) {
+        // Check if bit is on
+        // char c = lcd_buffer[y/2][x>>2];		// The 4 lower
+        // bits in a byte are used (1 nibble per byte)
+        if ( nx + x >= LCD_WIDTH ) // Clip at 131 pixels (some nibble writes may
+                                   // go beyond the range, but are not visible)
+            break;
 
-    for ( y = 0; y < 2; y++ ) {
-        for ( x = 0; x < 4; x++ ) {
-            // Check if bit is on
-            // char c = lcd_buffer[y/2][x>>2];		// The 4 lower
-            // bits in a byte are used (1 nibble per byte)
-            if ( nx + x >= 131 ) // Clip at 131 pixels (some nibble writes may
-                                 // go beyond the range, but are not visible)
-                break;
+        short bit = val & ( 1 << ( x & 3 ) );
+        chtype pixel;
 
-            char c = val;
-            char b = c & ( 1 << ( x & 3 ) );
-            mvaddch( ny + y + yoffset, nx + x + xoffset, ( b ) ? ACS_BLOCK : ' ' );
-        }
+        if ( !mono && has_colors() )
+            pixel = ' ' | COLOR_PAIR( bit ? LCD_PIXEL_ON : LCD_PIXEL_OFF );
+        else
+            pixel = bit ? ACS_BLOCK : ' ';
+
+        mvaddch( ny + LCD_OFFSET_Y, nx + x + LCD_OFFSET_X, pixel );
     }
-
-    return 0;
 }
 
 static inline void draw_nibble( int c, int r, int val )
@@ -310,9 +321,10 @@ int text_get_event( void )
     int hpkey = -1;
     uint32_t k;
 
+    /* Start fresh and mark all keys as released */
     tui_release_all_buttons();
 
-    /* check for inputs */
+    /* Iterate over all currently pressed keys and mark it as pressed */
     while ( ( k = getch() ) ) {
         if ( k == ( uint32_t )ERR )
             break;
@@ -652,27 +664,21 @@ void init_text_ui( int argc, char** argv )
     cbreak(); /* take input chars one at a time, no wait for \n */
     noecho();
 
-    if ( has_colors() ) {
+    if ( !mono && has_colors() ) {
         start_color();
 
-        /*
-         * Simple color assignment, often all we need.  Color pair 0 cannot
-         * be redefined.  This example uses the same value for the color
-         * pair as for the foreground color, though of course that is not
-         * necessary:
-         */
-        init_pair( 1, COLOR_RED, COLOR_BLACK );
-        init_pair( 2, COLOR_GREEN, COLOR_BLACK );
-        init_pair( 3, COLOR_YELLOW, COLOR_BLACK );
-        init_pair( 4, COLOR_BLUE, COLOR_BLACK );
-        init_pair( 5, COLOR_CYAN, COLOR_BLACK );
-        init_pair( 6, COLOR_MAGENTA, COLOR_BLACK );
-        init_pair( 7, COLOR_WHITE, COLOR_BLACK );
+        if ( gray ) {
+            init_color( LCD_COLOR_BG, 205, 205, 205 );
+            init_color( LCD_COLOR_FG, 20, 20, 20 );
+        } else {
+            init_color( LCD_COLOR_BG, 202, 221, 92 );
+            init_color( LCD_COLOR_FG, 0, 0, 128 );
+        }
+
+        init_pair( LCD_PIXEL_OFF, LCD_COLOR_BG, LCD_COLOR_BG );
+        init_pair( LCD_PIXEL_ON, LCD_COLOR_FG, LCD_COLOR_FG );
     }
 
-    /* border( 0, 0, 0, 0, 0, 0, 0, 0 ); */
-#define LCD_BOTTOM 67
-#define LCD_RIGHT 132
     mvaddch( 0, 0, ACS_ULCORNER );
     mvaddch( LCD_BOTTOM, 0, ACS_LLCORNER );
     mvaddch( 0, LCD_RIGHT, ACS_URCORNER );
@@ -682,13 +688,5 @@ void init_text_ui( int argc, char** argv )
     mvvline( 1, 0, ACS_VLINE, LCD_BOTTOM - 1 );
     mvvline( 1, LCD_RIGHT, ACS_VLINE, LCD_BOTTOM - 1 );
 
-    mvprintw( 1, 1, "[   |   |   |   |   |   ]" ); /* annunciators */
-
-    /* nodelay( stdscr, FALSE ); */
-    /* echo(); */
-
-    /* endwin(); */
-
-    /* exit_emulator(); */
-    /* exit( 0 ); */
+    mvprintw( 0, 1, "[   |   |   |   |   |   ]" ); /* annunciators */
 }

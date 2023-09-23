@@ -188,6 +188,8 @@ int parse_args( int argc, char* argv[] )
         { "x11-connection-font", required_argument, NULL,                8114         },
 
         { "tui",                 no_argument,       &frontend_type,      FRONTEND_TEXT},
+        { "tui-mono",            no_argument,       &mono,               1            },
+        { "tui-gray",            no_argument,       &gray,               1            },
 
         { 0,                     0,                 0,                   0            }
     };
@@ -246,7 +248,11 @@ int parse_args( int argc, char* argv[] )
                       "\t   --x11-large-font=<X font name>\tuse <X font name> as large "
                       "font (default: %s)\n"
                       "\t   --x11-connection-font=<X font name>\tuse <X font name> as "
-                      "connection font (default: %s)\n";
+                      "connection font (default: %s)\n"
+                      "\t   --tui-mono\t\t\tmake the UI monochrome (default: "
+                      "false)\n"
+                      "\t   --tui-gray\t\t\tmake the UI grayscale (default: "
+                      "false)\n";
     while ( c != EOF ) {
         c = getopt_long( argc, argv, optstring, long_options, &option_index );
 
