@@ -193,22 +193,37 @@ static tui_button_t buttons_gx[] = {
 /* functions implementation */
 /****************************/
 
-static int tui_draw_nibble( int x, int y, int val )
+static int tui_draw_nibble( int nx, int ny, int val )
 {
-    /* TODO */
+    int x, y;
+    int xoffset = 1;
+    int yoffset = 1;
+
+    for ( y = 0; y < 2; y++ ) {
+        for ( x = 0; x < 4; x++ ) {
+            // Check if bit is on
+            // char c = lcd_buffer[y/2][x>>2];		// The 4 lower
+            // bits in a byte are used (1 nibble per byte)
+            if ( nx + x >= 131 ) // Clip at 131 pixels (some nibble writes may
+                                 // go beyond the range, but are not visible)
+                break;
+
+            char c = val;
+            char b = c & ( 1 << ( x & 3 ) );
+            mvaddch( ny + y + yoffset, nx + x + xoffset, ( b ) ? ACS_BLOCK : ' ' );
+        }
+    }
 
     return 0;
 }
 
 static inline void draw_nibble( int c, int r, int val )
 {
-    int x, y;
-
-    x = ( c * 4 ); // x: start in pixels
+    int x = ( c * 4 ), // x: start in pixels,
+        y = r;         // y: start in pixels
 
     if ( r <= display.lines )
         x -= 2 * display.offset;
-    y = r; // y: start in pixels
 
     val &= 0x0f;
     if ( val != lcd_buffer[ r ][ c ] ) {
@@ -220,13 +235,12 @@ static inline void draw_nibble( int c, int r, int val )
 
 static inline void draw_row( long addr, int row )
 {
-    int i, v;
-    int line_length;
+    int v;
+    int line_length = NIBBLES_PER_ROW;
 
-    line_length = NIBBLES_PER_ROW;
     if ( ( display.offset > 3 ) && ( row <= display.lines ) )
         line_length += 2;
-    for ( i = 0; i < line_length; i++ ) {
+    for ( int i = 0; i < line_length; i++ ) {
         v = read_nibble( addr + i );
         if ( v != disp_buf[ row ][ i ] ) {
             disp_buf[ row ][ i ] = v;
@@ -240,6 +254,8 @@ static void tui_button_pressed( int b )
     // Check not already pressed (may be important: avoids a useless do_kbd_int)
     if ( buttons[ b ].pressed == 1 )
         return;
+
+    mvprintw( 70, 0, "pressed key: %i ( %s )", b, buttons[ b ].name );
 
     buttons[ b ].pressed = 1;
 
@@ -429,6 +445,7 @@ int text_get_event( void )
             hpkey = BUTTON_SPC;
             break;
         case KEY_ENTER:
+        case ',':
             hpkey = BUTTON_ENTER;
             break;
         case KEY_BACKSPACE:
@@ -454,25 +471,21 @@ int text_get_event( void )
         case '/':
             hpkey = BUTTON_DIV;
             break;
-        case KEY_HOME: /* Home */
-                       /* case 262: */
-            hpkey = BUTTON_ON;
-            break;
-        /* case KEY_NPAGE: /\* PgUp *\/ */
-        case 339:
+
+        case '[':
             hpkey = BUTTON_SHL;
             break;
-        /* case KEY_PPAGE: /\* PgDn *\/ */
-        case 338:
+        case ']':
             hpkey = BUTTON_SHR;
             break;
-        /* case KEY_IC: /\* Insert *\/ */
-        case 331:
+        case ';':
             hpkey = BUTTON_ALPHA;
             break;
+        case '\\':
+            hpkey = BUTTON_ON;
+            break;
 
-        /* case KEY_END: /\* End *\/ */
-        case 360:
+        case '|': /* Shift+\ */
             nodelay( stdscr, FALSE );
             echo();
 
@@ -487,12 +500,13 @@ int text_get_event( void )
 
     if ( hpkey == -1 )
         return -1;
-    printw( "%i\n", hpkey );
+
     /* tui_button_release_all(); */
 
-    /* if ( !buttons[ hpkey ].pressed ) { */
-    tui_button_pressed( hpkey );
-    tui_button_released( hpkey );
+    if ( !buttons[ hpkey ].pressed ) {
+        tui_button_pressed( hpkey );
+        tui_button_released( hpkey );
+    }
 
     return 1;
 }
@@ -641,12 +655,45 @@ void init_text_ui( int argc, char** argv )
 
     text_init_LCD();
 
-    initscr();
+    initscr();              /* initialize the curses library */
+    keypad( stdscr, TRUE ); /* enable keyboard mapping */
     nodelay( stdscr, TRUE );
-    noecho();
     curs_set( 0 );
+    nonl();   /* tell curses not to do NL->CR/NL on output */
+    cbreak(); /* take input chars one at a time, no wait for \n */
+    /* (void) echo();         /\* echo input - in color *\/ */
+    noecho();
 
-    fprintf( stderr, "Text UI not implemented yet" );
+    if ( has_colors() ) {
+        start_color();
+
+        /*
+         * Simple color assignment, often all we need.  Color pair 0 cannot
+         * be redefined.  This example uses the same value for the color
+         * pair as for the foreground color, though of course that is not
+         * necessary:
+         */
+        init_pair( 1, COLOR_RED, COLOR_BLACK );
+        init_pair( 2, COLOR_GREEN, COLOR_BLACK );
+        init_pair( 3, COLOR_YELLOW, COLOR_BLACK );
+        init_pair( 4, COLOR_BLUE, COLOR_BLACK );
+        init_pair( 5, COLOR_CYAN, COLOR_BLACK );
+        init_pair( 6, COLOR_MAGENTA, COLOR_BLACK );
+        init_pair( 7, COLOR_WHITE, COLOR_BLACK );
+    }
+
+    /* border( 0, 0, 0, 0, 0, 0, 0, 0 ); */
+
+    mvaddch( 0, 0, ACS_ULCORNER );
+    mvaddch( 66, 0, ACS_LLCORNER );
+    mvaddch( 0, 132, ACS_URCORNER );
+    mvaddch( 66, 132, ACS_LRCORNER );
+    mvhline( 0, 1, ACS_HLINE, 131 );
+    mvhline( 66, 1, ACS_HLINE, 131 );
+    mvvline( 1, 0, ACS_VLINE, 65 );
+    mvvline( 1, 132, ACS_VLINE, 65 );
+
+    mvprintw( 0, 1, "screen: %i x %i", COLS, LINES );
 
     /* nodelay( stdscr, FALSE ); */
     /* echo(); */

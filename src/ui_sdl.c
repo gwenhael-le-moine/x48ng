@@ -348,9 +348,7 @@ static SDL_Surface* SDLCreateSurfFromData( unsigned int w, unsigned int h, unsig
 
 static void SDLDrawSmallString( int x, int y, const char* string, unsigned int length, unsigned int coloron, unsigned int coloroff )
 {
-    unsigned int i;
-
-    for ( i = 0; i < length; i++ ) {
+    for ( unsigned int i = 0; i < length; i++ ) {
         if ( small_font[ ( int )string[ i ] ].h != 0 ) {
             int w = small_font[ ( int )string[ i ] ].w;
             int h = small_font[ ( int )string[ i ] ].h;
