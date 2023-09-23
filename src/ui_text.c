@@ -218,7 +218,7 @@ static inline void tui_draw_nibble( int nx, int ny, int val )
         short bit = val & ( 1 << ( x & 3 ) );
         chtype pixel;
 
-        if ( !mono && has_colors() )
+        if ( has_colors() )
             pixel = ' ' | COLOR_PAIR( bit ? LCD_PIXEL_ON : LCD_PIXEL_OFF );
         else
             pixel = bit ? ACS_BLOCK : ' ';
@@ -664,10 +664,13 @@ void init_text_ui( int argc, char** argv )
     cbreak(); /* take input chars one at a time, no wait for \n */
     noecho();
 
-    if ( !mono && has_colors() ) {
+    if ( has_colors() ) {
         start_color();
 
-        if ( gray ) {
+        if ( mono ) {
+            init_color( LCD_COLOR_BG, 255, 255, 255 );
+            init_color( LCD_COLOR_FG, 0, 0, 0 );
+        } else if ( gray ) {
             init_color( LCD_COLOR_BG, 205, 205, 205 );
             init_color( LCD_COLOR_FG, 20, 20, 20 );
         } else {
