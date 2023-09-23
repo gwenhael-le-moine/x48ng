@@ -38,9 +38,7 @@ See https://github.com/gwenhael-le-moine/x48ng/issues
 
 ### short term
 
-- make different gui switchable at runtime
 - port from sdl1.2 to sdl2
-- add an text UI (ncurses & drawille)
 
 ### long(er) term
 
@@ -56,7 +54,7 @@ See https://github.com/gwenhael-le-moine/x48ng/issues
 for SDL version:
 
 - SDL_gfx1
-- SDL 1.2
+- SDL 1.2 or sdl12_compat
 
 for x11 version:
 
