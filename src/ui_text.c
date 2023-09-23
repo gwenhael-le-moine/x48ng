@@ -686,5 +686,7 @@ void init_text_ui( int argc, char** argv )
     mvvline( 1, 0, ACS_VLINE, LCD_BOTTOM - 1 );
     mvvline( 1, LCD_RIGHT, ACS_VLINE, LCD_BOTTOM - 1 );
 
-    mvprintw( 0, 1, "[   |   |   |   |   |   ]" ); /* annunciators */
+    mvprintw( 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
+
+    mvprintw( LCD_BOTTOM, 2, "[ wire: %s ][ IR: %s ]", wire_name, ir_name );
 }
