@@ -45,24 +45,6 @@ typedef struct tui_button_t {
     short pressed;
 
     int code;
-    /* int x; */
-    /* int y; */
-    /* unsigned int w; */
-    /* unsigned int h; */
-
-    /* int lc; */
-    /* const char* label; */
-    /* short font_size; */
-    /* unsigned int lw; */
-    /* unsigned int lh; */
-    /* unsigned char* lb; */
-
-    /* const char* letter; */
-
-    /* const char* left; */
-    /* short is_menu; */
-    /* const char* right; */
-    /* const char* sub; */
 } tui_button_t;
 
 /*************/
@@ -454,6 +436,7 @@ int text_get_event( void )
                 hpkey = BUTTON_SPC;
                 break;
             case KEY_ENTER:
+            case '\n':
             case ',':
                 hpkey = BUTTON_ENTER;
                 break;
@@ -482,19 +465,31 @@ int text_get_event( void )
                 break;
 
             case '[':
+            case 339: /* PgUp */
+            case KEY_F( 5 ):
                 hpkey = BUTTON_SHL;
                 break;
             case ']':
+            case 338: /* PgDn */
+            case KEY_F( 6 ):
                 hpkey = BUTTON_SHR;
                 break;
             case ';':
+            case KEY_IC: /* Ins */
+            case KEY_F( 8 ):
                 hpkey = BUTTON_ALPHA;
                 break;
             case '\\':
+                /* case KEY_ESC: */
+            case 27:  /* Esc */
+            case 262: /* Home */
+            case KEY_F( 4 ):
                 hpkey = BUTTON_ON;
                 break;
 
-            case '|': /* Shift+\ */
+            case '|':      /* Shift+\ */
+            case KEY_SEND: /* Shift+End */
+            case KEY_F( 10 ):
                 nodelay( stdscr, FALSE );
                 echo();
 
@@ -660,9 +655,9 @@ void init_text_ui( int argc, char** argv )
     keypad( stdscr, TRUE ); /* enable keyboard mapping */
     nodelay( stdscr, TRUE );
     curs_set( 0 );
-    nonl();   /* tell curses not to do NL->CR/NL on output */
     cbreak(); /* take input chars one at a time, no wait for \n */
     noecho();
+    nonl(); /* tell curses not to do NL->CR/NL on output */
 
     if ( has_colors() ) {
         start_color();

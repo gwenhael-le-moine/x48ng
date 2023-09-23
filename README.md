@@ -10,6 +10,17 @@ This is my fork of x48-0.6.4 where I deviate from the original code and do my ow
 
 You can use the script `./dist/setup-x48ng-home.sh` or simply run `./dist/x48ng --rom=<romfilename>`
 
+### Ncurses UI (`--tui`)
+
+I had to be a bit 'creative' mapping keys there:
+
+- `On` is either `F4` or `Esc` or `Home` or `\`
+- `Left Shift` is either `F5` or `PgUp` or `[`
+- `Right Shift` is either `F6` or `PgDn` or `]`
+- `Alpha` is either `F8` or `Ins` or `;`
+
+_To quit `x48ng --tui` use `F10` or `Shift+End` or `|`_
+
 ## What have I done:
 
 0. renamed it to x48ng to avoid confusion
