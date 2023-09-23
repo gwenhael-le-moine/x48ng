@@ -239,6 +239,7 @@ static inline void draw_row( long addr, int row )
 
     if ( ( display.offset > 3 ) && ( row <= display.lines ) )
         line_length += 2;
+
     for ( int i = 0; i < line_length; i++ ) {
         v = read_nibble( addr + i );
         if ( v != disp_buf[ row ][ i ] ) {
@@ -248,13 +249,11 @@ static inline void draw_row( long addr, int row )
     }
 }
 
-static void tui_button_pressed( int b )
+static void tui_press_button( int b )
 {
     // Check not already pressed (may be important: avoids a useless do_kbd_int)
     if ( buttons[ b ].pressed == 1 )
         return;
-
-    mvprintw( 70, 0, "pressed key: %i ( %s )", b, buttons[ b ].name );
 
     buttons[ b ].pressed = 1;
 
@@ -277,7 +276,7 @@ static void tui_button_pressed( int b )
     }
 }
 
-static void tui_button_released( int b )
+static void tui_release_button( int b )
 {
     // Check not already released (not critical)
     if ( buttons[ b ].pressed == 0 )
@@ -296,11 +295,11 @@ static void tui_button_released( int b )
     }
 }
 
-static void tui_button_release_all( void )
+static void tui_release_all_buttons( void )
 {
     for ( int b = FIRST_BUTTON; b <= LAST_BUTTON; b++ )
         if ( buttons[ b ].pressed )
-            tui_button_released( b );
+            tui_release_button( b );
 }
 
 /**********/
@@ -309,203 +308,195 @@ static void tui_button_release_all( void )
 int text_get_event( void )
 {
     int hpkey = -1;
+    uint32_t k;
 
-    /* check for input */
-    uint32_t k = getch();
+    tui_release_all_buttons();
 
-    if ( k == ( uint32_t )ERR )
-        return -1;
-
-    /* return key to queue */
-    /* ungetch(ch); */
-
-    switch ( k ) {
-        case '0':
-            hpkey = BUTTON_0;
-            break;
-        case '1':
-            hpkey = BUTTON_1;
-            break;
-        case '2':
-            hpkey = BUTTON_2;
-            break;
-        case '3':
-            hpkey = BUTTON_3;
-            break;
-        case '4':
-            hpkey = BUTTON_4;
-            break;
-        case '5':
-            hpkey = BUTTON_5;
-            break;
-        case '6':
-            hpkey = BUTTON_6;
-            break;
-        case '7':
-            hpkey = BUTTON_7;
-            break;
-        case '8':
-            hpkey = BUTTON_8;
-            break;
-        case '9':
-            hpkey = BUTTON_9;
-            break;
-        case 'a':
-            hpkey = BUTTON_A;
-            break;
-        case 'b':
-            hpkey = BUTTON_B;
-            break;
-        case 'c':
-            hpkey = BUTTON_C;
-            break;
-        case 'd':
-            hpkey = BUTTON_D;
-            break;
-        case 'e':
-            hpkey = BUTTON_E;
-            break;
-        case 'f':
-            hpkey = BUTTON_F;
-            break;
-        case 'g':
-            hpkey = BUTTON_MTH;
-            break;
-        case 'h':
-            hpkey = BUTTON_PRG;
-            break;
-        case 'i':
-            hpkey = BUTTON_CST;
-            break;
-        case 'j':
-            hpkey = BUTTON_VAR;
-            break;
-        case 'k':
-            hpkey = BUTTON_UP;
-            break;
-        case KEY_UP:
-            hpkey = BUTTON_UP;
-            break;
-        case 'l':
-            hpkey = BUTTON_NXT;
-            break;
-        case 'm':
-            hpkey = BUTTON_COLON;
-            break;
-        case 'n':
-            hpkey = BUTTON_STO;
-            break;
-        case 'o':
-            hpkey = BUTTON_EVAL;
-            break;
-        case 'p':
-            hpkey = BUTTON_LEFT;
-            break;
-        case KEY_LEFT:
-            hpkey = BUTTON_LEFT;
-            break;
-        case 'q':
-            hpkey = BUTTON_DOWN;
-            break;
-        case KEY_DOWN:
-            hpkey = BUTTON_DOWN;
-            break;
-        case 'r':
-            hpkey = BUTTON_RIGHT;
-            break;
-        case KEY_RIGHT:
-            hpkey = BUTTON_RIGHT;
-            break;
-        case 's':
-            hpkey = BUTTON_SIN;
-            break;
-        case 't':
-            hpkey = BUTTON_COS;
-            break;
-        case 'u':
-            hpkey = BUTTON_TAN;
-            break;
-        case 'v':
-            hpkey = BUTTON_SQRT;
-            break;
-        case 'w':
-            hpkey = BUTTON_POWER;
-            break;
-        case 'x':
-            hpkey = BUTTON_INV;
-            break;
-        case 'y':
-            hpkey = BUTTON_NEG;
-            break;
-        case 'z':
-            hpkey = BUTTON_EEX;
-            break;
-        case ' ':
-            hpkey = BUTTON_SPC;
-            break;
-        case KEY_ENTER:
-        case ',':
-            hpkey = BUTTON_ENTER;
-            break;
-        case KEY_BACKSPACE:
-        case 127:
-        case '\b':
-            hpkey = BUTTON_BS;
-            break;
-        case KEY_DC:
-            hpkey = BUTTON_DEL;
-            break;
-        case '.':
-            hpkey = BUTTON_PERIOD;
-            break;
-        case '+':
-            hpkey = BUTTON_PLUS;
-            break;
-        case '-':
-            hpkey = BUTTON_MINUS;
-            break;
-        case '*':
-            hpkey = BUTTON_MUL;
-            break;
-        case '/':
-            hpkey = BUTTON_DIV;
+    /* check for inputs */
+    while ( ( k = getch() ) ) {
+        if ( k == ( uint32_t )ERR )
             break;
 
-        case '[':
-            hpkey = BUTTON_SHL;
-            break;
-        case ']':
-            hpkey = BUTTON_SHR;
-            break;
-        case ';':
-            hpkey = BUTTON_ALPHA;
-            break;
-        case '\\':
-            hpkey = BUTTON_ON;
-            break;
+        switch ( k ) {
+            case '0':
+                hpkey = BUTTON_0;
+                break;
+            case '1':
+                hpkey = BUTTON_1;
+                break;
+            case '2':
+                hpkey = BUTTON_2;
+                break;
+            case '3':
+                hpkey = BUTTON_3;
+                break;
+            case '4':
+                hpkey = BUTTON_4;
+                break;
+            case '5':
+                hpkey = BUTTON_5;
+                break;
+            case '6':
+                hpkey = BUTTON_6;
+                break;
+            case '7':
+                hpkey = BUTTON_7;
+                break;
+            case '8':
+                hpkey = BUTTON_8;
+                break;
+            case '9':
+                hpkey = BUTTON_9;
+                break;
+            case 'a':
+                hpkey = BUTTON_A;
+                break;
+            case 'b':
+                hpkey = BUTTON_B;
+                break;
+            case 'c':
+                hpkey = BUTTON_C;
+                break;
+            case 'd':
+                hpkey = BUTTON_D;
+                break;
+            case 'e':
+                hpkey = BUTTON_E;
+                break;
+            case 'f':
+                hpkey = BUTTON_F;
+                break;
+            case 'g':
+                hpkey = BUTTON_MTH;
+                break;
+            case 'h':
+                hpkey = BUTTON_PRG;
+                break;
+            case 'i':
+                hpkey = BUTTON_CST;
+                break;
+            case 'j':
+                hpkey = BUTTON_VAR;
+                break;
+            case 'k':
+                hpkey = BUTTON_UP;
+                break;
+            case KEY_UP:
+                hpkey = BUTTON_UP;
+                break;
+            case 'l':
+                hpkey = BUTTON_NXT;
+                break;
+            case 'm':
+                hpkey = BUTTON_COLON;
+                break;
+            case 'n':
+                hpkey = BUTTON_STO;
+                break;
+            case 'o':
+                hpkey = BUTTON_EVAL;
+                break;
+            case 'p':
+                hpkey = BUTTON_LEFT;
+                break;
+            case KEY_LEFT:
+                hpkey = BUTTON_LEFT;
+                break;
+            case 'q':
+                hpkey = BUTTON_DOWN;
+                break;
+            case KEY_DOWN:
+                hpkey = BUTTON_DOWN;
+                break;
+            case 'r':
+                hpkey = BUTTON_RIGHT;
+                break;
+            case KEY_RIGHT:
+                hpkey = BUTTON_RIGHT;
+                break;
+            case 's':
+                hpkey = BUTTON_SIN;
+                break;
+            case 't':
+                hpkey = BUTTON_COS;
+                break;
+            case 'u':
+                hpkey = BUTTON_TAN;
+                break;
+            case 'v':
+                hpkey = BUTTON_SQRT;
+                break;
+            case 'w':
+                hpkey = BUTTON_POWER;
+                break;
+            case 'x':
+                hpkey = BUTTON_INV;
+                break;
+            case 'y':
+                hpkey = BUTTON_NEG;
+                break;
+            case 'z':
+                hpkey = BUTTON_EEX;
+                break;
+            case ' ':
+                hpkey = BUTTON_SPC;
+                break;
+            case KEY_ENTER:
+            case ',':
+                hpkey = BUTTON_ENTER;
+                break;
+            case KEY_BACKSPACE:
+            case 127:
+            case '\b':
+                hpkey = BUTTON_BS;
+                break;
+            case KEY_DC:
+                hpkey = BUTTON_DEL;
+                break;
+            case '.':
+                hpkey = BUTTON_PERIOD;
+                break;
+            case '+':
+                hpkey = BUTTON_PLUS;
+                break;
+            case '-':
+                hpkey = BUTTON_MINUS;
+                break;
+            case '*':
+                hpkey = BUTTON_MUL;
+                break;
+            case '/':
+                hpkey = BUTTON_DIV;
+                break;
 
-        case '|': /* Shift+\ */
-            nodelay( stdscr, FALSE );
-            echo();
+            case '[':
+                hpkey = BUTTON_SHL;
+                break;
+            case ']':
+                hpkey = BUTTON_SHR;
+                break;
+            case ';':
+                hpkey = BUTTON_ALPHA;
+                break;
+            case '\\':
+                hpkey = BUTTON_ON;
+                break;
 
-            endwin();
-            exit_emulator();
-            exit( 0 );
-            break;
+            case '|': /* Shift+\ */
+                nodelay( stdscr, FALSE );
+                echo();
 
-        default:
-            return -1;
+                endwin();
+                exit_emulator();
+                exit( 0 );
+                break;
+        }
+
+        if ( !buttons[ hpkey ].pressed )
+            tui_press_button( hpkey );
     }
 
-    if ( hpkey == -1 )
-        return -1;
-
-    /* tui_button_release_all(); */
-
-    if ( !buttons[ hpkey ].pressed ) {
-        tui_button_pressed( hpkey );
-        tui_button_released( hpkey );
-    }
+    text_update_LCD();
 
     return 1;
 }
@@ -580,6 +571,8 @@ void text_update_LCD( void )
             }
         }
     }
+
+    refresh();
 }
 
 void text_refresh_LCD( void ) {}
@@ -657,7 +650,6 @@ void init_text_ui( int argc, char** argv )
     curs_set( 0 );
     nonl();   /* tell curses not to do NL->CR/NL on output */
     cbreak(); /* take input chars one at a time, no wait for \n */
-    /* (void) echo();         /\* echo input - in color *\/ */
     noecho();
 
     if ( has_colors() ) {
@@ -691,9 +683,6 @@ void init_text_ui( int argc, char** argv )
     mvvline( 1, LCD_RIGHT, ACS_VLINE, LCD_BOTTOM - 1 );
 
     mvprintw( 1, 1, "[   |   |   |   |   |   ]" ); /* annunciators */
-
-    /* DEBUG */
-    mvprintw( 0, 1, "screen: %i x %i", COLS, LINES );
 
     /* nodelay( stdscr, FALSE ); */
     /* echo(); */
