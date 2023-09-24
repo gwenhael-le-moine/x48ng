@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <sys/utsname.h>
 #include <unistd.h>
+#include <locale.h>
 
 #include <ncurses.h>
 
@@ -37,7 +38,7 @@ typedef struct tui_ann_struct_t {
     int bit;
     int x;
     int y;
-    char icon;
+    wchar_t* icon;
 } tui_ann_struct_t;
 
 typedef struct tui_button_t {
@@ -51,12 +52,12 @@ typedef struct tui_button_t {
 /* variables */
 /*************/
 static tui_ann_struct_t ann_tbl[] = {
-    {ANN_LEFT,     16,  4, '<'}, /* '↰' */
-    { ANN_RIGHT,   61,  4, '>'}, /* '↱ */
-    { ANN_ALPHA,   106, 4, 'a'}, /* 'α' */
-    { ANN_BATTERY, 151, 4, 'B'}, /* '🪫' */
-    { ANN_BUSY,    196, 4, '*'}, /* '⌛' */
-    { ANN_IO,      241, 4, '^'}, /* '☃' */
+    {ANN_LEFT,     16,  4, L"\u21b0" }, /* ↰ */
+    { ANN_RIGHT,   61,  4, L"\u21b1" }, /* ↱ */
+    { ANN_ALPHA,   106, 4, L"\u03b1" }, /* α */
+    { ANN_BATTERY, 151, 4, L"\u1faab"}, /* 🪫 */
+    { ANN_BUSY,    196, 4, L"\u231b" }, /* ⌛ */
+    { ANN_IO,      241, 4, L"\u21c4" }, /* ⇄ */
   /* { 0 } */
 };
 
@@ -635,13 +636,13 @@ void text_draw_annunc( void )
         return;
 
     last_annunc_state = val;
-
     for ( int i = 0; i < 6; i++ )
-        mvaddch( 0, 3 + ( i * 4 ), ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit ) ? ann_tbl[ i ].icon : ' ' );
+        mvaddwstr( 0, 4 + ( i * 4 ), ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit ) ? ann_tbl[ i ].icon : L" " );
 }
 
 void init_text_ui( int argc, char** argv )
 {
+    setlocale( LC_ALL, "" );
     buttons = ( tui_button_t* )malloc( sizeof( buttons_gx ) );
 
     if ( opt_gx )

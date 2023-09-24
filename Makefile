@@ -1,8 +1,8 @@
 # Makefile to build x48ng without autotools
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 27
-PATCHLEVEL = 1
+VERSION_MINOR = 28
+PATCHLEVEL = 0
 
 MAKEFLAGS +=-j$(NUM_CORES) -l$(NUM_CORES)
 
@@ -23,8 +23,8 @@ CFLAGS += $(shell pkg-config --cflags SDL_gfx sdl12_compat)
 LIBS += $(shell pkg-config --libs SDL_gfx sdl12_compat)
 
 ### Text UI
-CFLAGS += $(shell pkg-config --cflags ncurses)
-LIBS += $(shell pkg-config --libs ncurses)
+CFLAGS += $(shell pkg-config --cflags ncursesw -DNCURSES_WIDECHAR=1)
+LIBS += $(shell pkg-config --libs ncursesw)
 
 ### debugger
 CFLAGS += $(shell pkg-config --cflags readline)
