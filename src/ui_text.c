@@ -688,5 +688,5 @@ void init_text_ui( int argc, char** argv )
 
     mvprintw( 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
 
-    mvprintw( LCD_BOTTOM, 2, "[ wire: %s ][ IR: %s ]", wire_name, ir_name );
+    mvprintw( LCD_BOTTOM, 2, "[ wire: %s ]-[ IR: %s ]", wire_name, ir_name );
 }
