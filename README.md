@@ -4,6 +4,20 @@
 
 This is my fork of x48-0.6.4 where I deviate from the original code and do my own thing.
 
+## Screenshots
+
+### `--tui` version (ncurses)
+
+![screenshot of x48ng --tui running in a terminal](./tui-0.28.0-screenshot.png?raw=true "screenshot of x48ng --tui running in a terminal")
+
+### `--x11` version
+
+![screenshot of x48ng --x11](./x11-0.28.0-screenshot.png?raw=true "screenshot of x48ng --x11")
+
+### `--sdl` version
+
+![screenshot of x48ng --sdl](./sdl-0.28.0-screenshot.png?raw=true "screenshot of x48ng --sdl")
+
 ## Usage
 
 `./dist/x48ng --help`
