@@ -6,12 +6,12 @@
 
 extern long nibble_masks[ 16 ];
 
-static int start_fields[] = { -1, 0, 2, 0, 15, 3, 0, 0, -1, 0, 2, 0, 15, 3, 0, 0, 0, 0, 0 };
+int start_fields[] = { -1, 0, 2, 0, 15, 3, 0, 0, -1, 0, 2, 0, 15, 3, 0, 0, 0, 0, 0 };
 
-static int end_fields[] = { -1, -1, 2, 2, 15, 14, 1, 15, -1, -1, 2, 2, 15, 14, 1, 4, 3, 2, 0 };
+int end_fields[] = { -1, -1, 2, 2, 15, 14, 1, 15, -1, -1, 2, 2, 15, 14, 1, 4, 3, 2, 0 };
 
-static inline int get_start( int code )
-{ /* FIXME: Duplicate from hp48emu_actions.c */
+int get_start( int code )
+{
     int s;
 
     if ( ( s = start_fields[ code ] ) == -1 )
@@ -20,8 +20,8 @@ static inline int get_start( int code )
     return s; /* FIXME: potentially return uninitialized s ? */
 }
 
-static inline int get_end( int code )
-{ /* FIXME: Duplicate from hp48emu_actions.c */
+int get_end( int code )
+{
     int e;
 
     if ( ( e = end_fields[ code ] ) == -1 )

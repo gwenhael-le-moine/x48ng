@@ -10,6 +10,9 @@
 
 extern int adj_time_pending;
 
+extern int start_fields[ 19 ];
+extern int end_fields[ 19 ];
+
 /***************/
 /* emu_timer.c */
 /***************/
@@ -71,6 +74,8 @@ int get_identification( void );
 /******************/
 /* emu_register.c */
 /******************/
+int get_start( int code );
+int get_end( int code );
 void add_p_plus_one( unsigned char* r );
 void add_register_constant( unsigned char* res, int code, int val );
 void sub_register_constant( unsigned char* res, int code, int val );
