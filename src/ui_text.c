@@ -477,6 +477,7 @@ int text_get_event( void )
                 break;
             case ';':
             case KEY_IC: /* Ins */
+            case KEY_F( 7 ):
             case KEY_F( 8 ):
                 hpkey = BUTTON_ALPHA;
                 break;
@@ -490,6 +491,7 @@ int text_get_event( void )
 
             case '|':      /* Shift+\ */
             case KEY_SEND: /* Shift+End */
+            case KEY_F( 1 ):
             case KEY_F( 10 ):
                 nodelay( stdscr, FALSE );
                 echo();
