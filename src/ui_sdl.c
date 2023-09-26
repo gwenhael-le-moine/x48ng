@@ -423,7 +423,7 @@ static void SDLInit( void )
     }
 }
 
-static void sdl_button_pressed( int b )
+static void press_button( int b )
 {
     // Check not already pressed (may be important: avoids a useless do_kbd_int)
     if ( buttons[ b ].pressed == 1 )
@@ -450,7 +450,7 @@ static void sdl_button_pressed( int b )
     }
 }
 
-static void sdl_button_released( int b )
+static void release_button( int b )
 {
     // Check not already released (not critical)
     if ( buttons[ b ].pressed == 0 )
@@ -1679,11 +1679,11 @@ static void SDLUIShowKey( int hpkey )
 
 static inline void SDLUIFeedback( void ) {}
 
-static void button_release_all( void )
+static void release_all_buttons( void )
 {
     for ( int b = BUTTON_A; b <= LAST_BUTTON; b++ )
         if ( buttons[ b ].pressed )
-            sdl_button_released( b );
+            release_button( b );
 }
 
 static void SDLDrawSerialDevices()
@@ -1854,7 +1854,7 @@ int sdl_get_event( void )
 
                 /*             if ( lasthpkey != -1 ) { */
                 /*                 if ( !lastislongpress ) { */
-                /*                     button_release_all(); */
+                /*                     release_all_buttons(); */
                 /*                     rv = 1; */
                 /*                     SDLUIFeedback(); */
                 /*                 } */
@@ -1870,7 +1870,7 @@ int sdl_get_event( void )
                  */
                 /*                                      // time */
                 /*                 { */
-                /*                     sdl_button_pressed( hpkey ); */
+                /*                     press_button( hpkey ); */
                 /*                     rv = 1; */
                 /*                     // Start timer */
                 /*                     lastticks = SDL_GetTicks(); */
@@ -1900,7 +1900,7 @@ int sdl_get_event( void )
                     if ( !buttons[ hpkey ].pressed ) // Key can't be pressed
                                                      // when down
                     {
-                        sdl_button_pressed( hpkey );
+                        press_button( hpkey );
                         rv = 1;
                         lasthpkey = hpkey;
                         // Start timer
@@ -1911,7 +1911,7 @@ int sdl_get_event( void )
                     keyispressed = -1;
 
                     if ( !lastislongpress ) {
-                        button_release_all();
+                        release_all_buttons();
                         rv = 1;
                         lasthpkey = -1; // No key is pressed anymore
                         SDLUIFeedback();
@@ -1934,14 +1934,14 @@ int sdl_get_event( void )
 
                     // Avoid pressing if it is already pressed
                     if ( !buttons[ hpkey ].pressed ) {
-                        sdl_button_pressed( hpkey );
+                        press_button( hpkey );
                         rv = 1;
                         SDLUIFeedback();
                     }
                 } else {
                     keyispressed = -1;
 
-                    sdl_button_released( hpkey );
+                    release_button( hpkey );
                     rv = 1;
                     SDLUIFeedback();
                 }
