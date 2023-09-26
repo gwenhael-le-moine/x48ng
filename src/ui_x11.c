@@ -225,8 +225,6 @@ typedef struct x11_button_t {
     Window xwin;
 } x11_button_t;
 
-// This mimicks the structure formerly lcd.c, except with SDL surfaces instead
-// of Pixmaps.
 typedef struct x11_ann_struct_t {
     int bit;
     int x;
@@ -2214,7 +2212,7 @@ int CreateWindows( int argc, char** argv )
     hint.flags = PSize | PMinSize | PMaxSize | PBaseSize | PWinGravity;
 
     sprintf( def_geom, "%ux%u", width, height );
-    user_geom = geometry; // get_string_resource( "geometry", "Geometry" );
+    user_geom = geometry;
 
     info = XWMGeometry( dpy, screen, user_geom, def_geom, 0, &hint, &x, &y, &w, &h, &hint.win_gravity );
 
@@ -2869,27 +2867,22 @@ int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
     return wake;
 }
 
-int x11_button_pressed( int b )
+static void press_button( int b )
 {
-    int code;
-    int i, r, c;
-
-    // Check not already pressed (may be
-    // important: avoids a useless do_kbd_int)
+    // Check not already pressed (may be important: avoids a useless do_kbd_int)
     if ( buttons[ b ].pressed == 1 )
-        return 0;
+        return;
 
     buttons[ b ].pressed = 1;
 
-    code = buttons[ b ].code;
-
+    int code = buttons[ b ].code;
     if ( code == 0x8000 ) {
-        for ( i = 0; i < 9; i++ )
+        for ( int i = 0; i < 9; i++ )
             saturn.keybuf.rows[ i ] |= 0x8000;
         do_kbd_int();
     } else {
-        r = code >> 4;
-        c = 1 << ( code & 0xf );
+        int r = code >> 4;
+        int c = 1 << ( code & 0xf );
         if ( ( saturn.keybuf.rows[ r ] & c ) == 0 ) {
             if ( saturn.kbd_ien )
                 do_kbd_int();
@@ -2899,36 +2892,28 @@ int x11_button_pressed( int b )
             saturn.keybuf.rows[ r ] |= c;
         }
     }
-
-    return 0;
 }
 
-int x11_button_released( int b )
+static void release_button( int b )
 {
-    int code;
-
     // Check not already released (not critical)
     if ( buttons[ b ].pressed == 0 )
-        return 0;
+        return;
 
     buttons[ b ].pressed = 0;
 
-    code = buttons[ b ].code;
+    int code = buttons[ b ].code;
     if ( code == 0x8000 ) {
-        int i;
-        for ( i = 0; i < 9; i++ )
+        for ( int i = 0; i < 9; i++ )
             saturn.keybuf.rows[ i ] &= ~0x8000;
     } else {
-        int r, c;
-        r = code >> 4;
-        c = 1 << ( code & 0xf );
+        int r = code >> 4;
+        int c = 1 << ( code & 0xf );
         saturn.keybuf.rows[ r ] &= ~c;
     }
-
-    return 0;
 }
 
-void button_release_all( void )
+void release_all_buttons( void )
 {
     for ( int b = FIRST_BUTTON; b <= LAST_BUTTON; b++ )
         if ( buttons[ b ].pressed ) {
@@ -3004,11 +2989,11 @@ int x11_get_event( void )
 
     wake = 0;
     if ( paste_last_key ) {
-        x11_button_released( paste[ paste_count - 1 ] );
+        release_button( paste[ paste_count - 1 ] );
         paste_last_key = 0;
         return 1;
     } else if ( paste_count < paste_size ) {
-        x11_button_pressed( paste[ paste_count ] );
+        press_button( paste[ paste_count ] );
         paste_last_key = 1;
         paste_count++;
         return 1;
@@ -3448,12 +3433,12 @@ int x11_get_event( void )
                                 if ( xev.xbutton.subwindow == buttons[ i ].xwin ) {
                                     if ( buttons[ i ].pressed ) {
                                         if ( xev.xbutton.button == Button3 ) {
-                                            x11_button_released( i );
+                                            release_button( i );
                                             DrawButton( i );
                                         }
                                     } else {
                                         last_button = i;
-                                        x11_button_pressed( i );
+                                        press_button( i );
                                         wake = 1;
                                         first_key = 1;
                                         DrawButton( i );
@@ -3469,11 +3454,11 @@ int x11_get_event( void )
 
                     first_key = 0;
                     if ( xev.xbutton.button == Button1 ) {
-                        button_release_all();
+                        release_all_buttons();
                     }
                     if ( xev.xbutton.button == Button2 ) {
                         if ( last_button >= 0 ) {
-                            x11_button_released( last_button );
+                            release_button( last_button );
                             DrawButton( last_button );
                         }
                         last_button = -1;
@@ -3482,7 +3467,7 @@ int x11_get_event( void )
 
                 case FocusOut:
                     first_key = 0;
-                    button_release_all();
+                    release_all_buttons();
                     break;
 
                 case MappingNotify:

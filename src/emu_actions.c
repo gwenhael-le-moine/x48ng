@@ -436,30 +436,6 @@ void add_address( word_20* dat, int add )
     *dat &= 0xfffff;
 }
 
-static int start_fields[] = { -1, 0, 2, 0, 15, 3, 0, 0, -1, 0, 2, 0, 15, 3, 0, 0, 0, 0, 0 };
-
-static int end_fields[] = { -1, -1, 2, 2, 15, 14, 1, 15, -1, -1, 2, 2, 15, 14, 1, 4, 3, 2, 0 };
-
-static inline int get_start( int code )
-{
-    int s;
-
-    if ( ( s = start_fields[ code ] ) == -1 )
-        s = saturn.P;
-
-    return s; /* FIXME: potentially return uninitialized s ? */
-}
-
-static inline int get_end( int code )
-{
-    int e;
-
-    if ( ( e = end_fields[ code ] ) == -1 )
-        e = saturn.P;
-
-    return e; /* FIXME: potentially return uninitialized e ? */
-}
-
 void store( word_20 dat, unsigned char* reg, int code )
 {
     int s = get_start( code );

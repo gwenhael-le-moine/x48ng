@@ -191,8 +191,6 @@ static tui_button_t buttons_gx[] = {
 static inline void tui_draw_nibble( int nx, int ny, int val )
 {
     for ( int x = 0; x < 4; x++ ) {
-        // Check if bit is on
-        // char c = lcd_buffer[y/2][x>>2];		// The 4 lower
         // bits in a byte are used (1 nibble per byte)
         if ( nx + x >= LCD_WIDTH ) // Clip at 131 pixels (some nibble writes may
                                    // go beyond the range, but are not visible)
@@ -201,26 +199,25 @@ static inline void tui_draw_nibble( int nx, int ny, int val )
         short bit = val & ( 1 << ( x & 3 ) );
         chtype pixel;
 
-        if ( has_colors() )
-            pixel = ' ' | COLOR_PAIR( bit ? LCD_PIXEL_ON : LCD_PIXEL_OFF );
-        else
-            pixel = bit ? ACS_BLOCK : ' ';
+        pixel = bit ? ACS_BLOCK : ' ';
+        if ( !mono && has_colors() )
+            pixel |= COLOR_PAIR( bit ? LCD_PIXEL_ON : LCD_PIXEL_OFF );
 
         mvaddch( ny + LCD_OFFSET_Y, nx + x + LCD_OFFSET_X, pixel );
     }
 }
 
-static inline void draw_nibble( int c, int r, int val )
+static inline void draw_nibble( int col, int row, int val )
 {
-    int x = ( c * 4 ), // x: start in pixels,
-        y = r;         // y: start in pixels
+    int x = ( col * 4 ), // x: start in pixels,
+        y = row;         // y: start in pixels
 
-    if ( r <= display.lines )
+    if ( row <= display.lines )
         x -= 2 * display.offset;
 
     val &= 0x0f;
-    if ( val != lcd_buffer[ r ][ c ] ) {
-        lcd_buffer[ r ][ c ] = val;
+    if ( val != lcd_buffer[ row ][ col ] ) {
+        lcd_buffer[ row ][ col ] = val;
 
         tui_draw_nibble( x, y, val );
     }
@@ -243,7 +240,7 @@ static inline void draw_row( long addr, int row )
     }
 }
 
-static void tui_press_button( int b )
+static void press_button( int b )
 {
     // Check not already pressed (may be important: avoids a useless do_kbd_int)
     if ( buttons[ b ].pressed == 1 )
@@ -270,7 +267,7 @@ static void tui_press_button( int b )
     }
 }
 
-static void tui_release_button( int b )
+static void release_button( int b )
 {
     // Check not already released (not critical)
     if ( buttons[ b ].pressed == 0 )
@@ -289,11 +286,11 @@ static void tui_release_button( int b )
     }
 }
 
-static void tui_release_all_buttons( void )
+static void release_all_buttons( void )
 {
     for ( int b = FIRST_BUTTON; b <= LAST_BUTTON; b++ )
         if ( buttons[ b ].pressed )
-            tui_release_button( b );
+            release_button( b );
 }
 
 /**********/
@@ -305,7 +302,7 @@ int text_get_event( void )
     uint32_t k;
 
     /* Start fresh and mark all keys as released */
-    tui_release_all_buttons();
+    release_all_buttons();
 
     /* Iterate over all currently pressed keys and mark it as pressed */
     while ( ( k = getch() ) ) {
@@ -503,7 +500,7 @@ int text_get_event( void )
         }
 
         if ( !buttons[ hpkey ].pressed )
-            tui_press_button( hpkey );
+            press_button( hpkey );
     }
 
     text_update_LCD();
@@ -662,13 +659,10 @@ void init_text_ui( int argc, char** argv )
     noecho();
     nonl(); /* tell curses not to do NL->CR/NL on output */
 
-    if ( has_colors() ) {
+    if ( !mono && has_colors() ) {
         start_color();
 
-        if ( mono ) {
-            init_color( LCD_COLOR_BG, 255, 255, 255 );
-            init_color( LCD_COLOR_FG, 0, 0, 0 );
-        } else if ( gray ) {
+        if ( gray ) {
             init_color( LCD_COLOR_BG, 205, 205, 205 );
             init_color( LCD_COLOR_FG, 20, 20, 20 );
         } else {

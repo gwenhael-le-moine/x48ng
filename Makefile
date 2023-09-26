@@ -6,7 +6,7 @@ PATCHLEVEL = 0
 
 MAKEFLAGS +=-j$(NUM_CORES) -l$(NUM_CORES)
 
-CC = gcc
+CC ?= gcc
 
 GUI ?= sdl
 OPTIM ?= 2

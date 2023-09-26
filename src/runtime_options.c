@@ -179,8 +179,6 @@ int parse_args( int argc, char* argv[] )
 
         { "x11",                 no_argument,       &frontend_type,      FRONTEND_X11 },
         { "x11-netbook",         no_argument,       &netbook,            1            },
-        { "x11-mono",            no_argument,       &mono,               1            },
-        { "x11-gray",            no_argument,       &gray,               1            },
         { "x11-visual",          required_argument, NULL,                8110         },
         { "x11-small-font",      required_argument, NULL,                8111         },
         { "x11-medium-font",     required_argument, NULL,                8112         },
@@ -188,8 +186,9 @@ int parse_args( int argc, char* argv[] )
         { "x11-connection-font", required_argument, NULL,                8114         },
 
         { "tui",                 no_argument,       &frontend_type,      FRONTEND_TEXT},
-        { "tui-mono",            no_argument,       &mono,               1            },
-        { "tui-gray",            no_argument,       &gray,               1            },
+
+        { "mono",            no_argument,       &mono,               1            },
+        { "gray",            no_argument,       &gray,               1            },
 
         { 0,                     0,                 0,                   0            }
     };
@@ -233,10 +232,6 @@ int parse_args( int argc, char* argv[] )
                       "false)\n"
                       "\t   --x11-netbook\t\tmake the UI horizontal (default: "
                       "false)\n"
-                      "\t   --x11-mono\t\t\tmake the UI monochrome (default: "
-                      "false)\n"
-                      "\t   --x11-gray\t\t\tmake the UI grayscale (default: "
-                      "false)\n"
                       "\t   --x11-visual=<X visual>\tuse visual <X visual> (default: "
                       "default), possible values: "
                       "<default | staticgray | staticcolor | truecolor | grayscale | "
@@ -249,9 +244,9 @@ int parse_args( int argc, char* argv[] )
                       "font (default: %s)\n"
                       "\t   --x11-connection-font=<X font name>\tuse <X font name> as "
                       "connection font (default: %s)\n"
-                      "\t   --tui-mono\t\t\tmake the UI monochrome (default: "
+                      "\t   --mono\t\t\tmake the UI monochrome (default: "
                       "false)\n"
-                      "\t   --tui-gray\t\t\tmake the UI grayscale (default: "
+                      "\t   --gray\t\t\tmake the UI grayscale (default: "
                       "false)\n";
     while ( c != EOF ) {
         c = getopt_long( argc, argv, optstring, long_options, &option_index );
