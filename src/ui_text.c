@@ -572,11 +572,9 @@ void text_update_LCD( void )
         }
     } else {
         memset( disp_buf, 0xf0, sizeof( disp_buf ) );
-        for ( i = 0; i < 64; i++ ) {
-            for ( j = 0; j < NIBBLES_PER_ROW; j++ ) {
+        for ( i = 0; i < 64; i++ )
+            for ( j = 0; j < NIBBLES_PER_ROW; j++ )
                 draw_nibble( j, i, 0x00 );
-            }
-        }
     }
 
     refresh();
