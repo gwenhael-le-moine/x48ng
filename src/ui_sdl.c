@@ -61,7 +61,6 @@ typedef struct sdl_keypad_t {
 typedef struct sdl_button_t {
     const char* name;
     short pressed;
-    /* short extra; */
 
     int code;
     int x, y;
@@ -1712,19 +1711,19 @@ static void SDLDrawSerialDevices()
         stringColor( sdlwindow, 10, 240, text, 0xffffffff );
 }
 
-static inline void draw_nibble( int c, int r, int val )
+static inline void draw_nibble( int col, int row, int val )
 {
     int x, y;
 
-    x = ( c * 4 ); // x: start in pixels
+    x = ( col * 4 ); // x: start in pixels
 
-    if ( r <= display.lines )
+    if ( row <= display.lines )
         x -= 2 * display.offset;
-    y = r; // y: start in pixels
+    y = row; // y: start in pixels
 
     val &= 0x0f;
-    if ( val != lcd_buffer[ r ][ c ] ) {
-        lcd_buffer[ r ][ c ] = val;
+    if ( val != lcd_buffer[ row ][ col ] ) {
+        lcd_buffer[ row ][ col ] = val;
 
         SDLDrawNibble( x, y, val );
     }

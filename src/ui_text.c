@@ -210,17 +210,17 @@ static inline void tui_draw_nibble( int nx, int ny, int val )
     }
 }
 
-static inline void draw_nibble( int c, int r, int val )
+static inline void draw_nibble( int col, int row, int val )
 {
-    int x = ( c * 4 ), // x: start in pixels,
-        y = r;         // y: start in pixels
+    int x = ( col * 4 ), // x: start in pixels,
+        y = row;         // y: start in pixels
 
-    if ( r <= display.lines )
+    if ( row <= display.lines )
         x -= 2 * display.offset;
 
     val &= 0x0f;
-    if ( val != lcd_buffer[ r ][ c ] ) {
-        lcd_buffer[ r ][ c ] = val;
+    if ( val != lcd_buffer[ row ][ col ] ) {
+        lcd_buffer[ row ][ col ] = val;
 
         tui_draw_nibble( x, y, val );
     }
