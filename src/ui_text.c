@@ -54,7 +54,7 @@ static inline void ncurses_draw_annunciators( void )
         mvaddwstr( 0, 4 + ( i * 4 ), ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] ) ? annunciators_icons[ i ] : L" " );
 }
 
-static inline void ncurses_draw_lcd_pixels_buffer( void )
+static inline void ncurses_draw_lcd( void )
 {
     chtype pixel;
     short bit;
@@ -405,7 +405,7 @@ void text_update_LCD( void )
         memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
     }
 
-    ncurses_draw_lcd_pixels_buffer();
+    ncurses_draw_lcd();
 }
 
 void text_refresh_LCD( void ) {}
