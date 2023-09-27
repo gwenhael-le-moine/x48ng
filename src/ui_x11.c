@@ -24,6 +24,9 @@
 #include "ui.h"
 #include "ui_inner.h"
 
+#define UPDATE_MENU 1
+#define UPDATE_DISP 2
+
 #define KEYBOARD_HEIGHT ( buttons[ LAST_HPKEY ].y + buttons[ LAST_HPKEY ].h )
 #define KEYBOARD_WIDTH ( buttons[ LAST_HPKEY ].x + buttons[ LAST_HPKEY ].w )
 
@@ -537,6 +540,12 @@ static icon_map_t icon_maps_gx[] = {
 
 static int saved_argc;
 static char** saved_argv;
+
+/************************/
+/* functions prototypes */
+/************************/
+void x11_draw_annunc( void );
+void x11_update_LCD( void );
 
 /*************/
 /* functions */
@@ -3761,6 +3770,16 @@ void x11_draw_annunc( void )
 
 void init_x11_ui( int argc, char** argv )
 {
+    /* Set public API to this UI's functions */
+    ui_disp_draw_nibble = x11_disp_draw_nibble;
+    ui_menu_draw_nibble = x11_menu_draw_nibble;
+    ui_get_event = x11_get_event;
+    ui_update_LCD = x11_update_LCD;
+    ui_refresh_LCD = x11_refresh_LCD;
+    ui_adjust_contrast = x11_adjust_contrast;
+    ui_draw_annunc = x11_draw_annunc;
+    ui_init_LCD = x11_init_LCD;
+
     save_options( argc, argv );
 
     if ( InitDisplay( argc, argv ) < 0 )

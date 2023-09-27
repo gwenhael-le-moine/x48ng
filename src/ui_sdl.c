@@ -292,6 +292,12 @@ static int showkeylastx, showkeylasty, showkeylastkey;
 
 static SDL_Surface* sdlwindow;
 
+/************************/
+/* functions prototypes */
+/************************/
+void sdl_draw_annunc( void );
+void sdl_update_LCD( void );
+
 /****************************/
 /* functions implementation */
 /****************************/
@@ -2041,6 +2047,16 @@ void sdl_draw_annunc( void )
 
 void init_sdl_ui( int argc, char** argv )
 {
+    /* Set public API to this UI's functions */
+    ui_disp_draw_nibble = sdl_disp_draw_nibble;
+    ui_menu_draw_nibble = sdl_menu_draw_nibble;
+    ui_get_event = sdl_get_event;
+    ui_update_LCD = sdl_update_LCD;
+    ui_refresh_LCD = sdl_refresh_LCD;
+    ui_adjust_contrast = sdl_adjust_contrast;
+    ui_draw_annunc = sdl_draw_annunc;
+    ui_init_LCD = sdl_init_LCD;
+
     SDLInit();
     SDLCreateHP();
     sdl_init_LCD();

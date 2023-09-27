@@ -31,6 +31,11 @@
 #define LCD_PIXEL_ON 1
 #define LCD_PIXEL_OFF 2
 
+/************************/
+/* functions prototypes */
+/************************/
+void text_update_LCD( void );
+
 /*************/
 /* variables */
 /*************/
@@ -472,6 +477,16 @@ void text_draw_annunc( void ) { ncurses_draw_annunciators(); }
 
 void init_text_ui( int argc, char** argv )
 {
+    /* Set public API to ui_text functions */
+    ui_disp_draw_nibble = text_disp_draw_nibble;
+    ui_menu_draw_nibble = text_menu_draw_nibble;
+    ui_get_event = text_get_event;
+    ui_update_LCD = text_update_LCD;
+    ui_refresh_LCD = text_refresh_LCD;
+    ui_adjust_contrast = text_adjust_contrast;
+    ui_draw_annunc = text_draw_annunc;
+    ui_init_LCD = text_init_LCD;
+
     text_init_LCD();
 
     ncurses_init_ui();

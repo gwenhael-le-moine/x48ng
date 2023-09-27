@@ -25,9 +25,6 @@
 #define UNDERLAY 18
 #define BLACK 19
 
-#define UPDATE_MENU 1
-#define UPDATE_DISP 2
-
 /***********/
 /* bitmaps */
 /***********/
