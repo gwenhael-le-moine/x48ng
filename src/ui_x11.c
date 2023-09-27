@@ -2885,11 +2885,12 @@ static inline void draw_nibble( int c, int r, int val )
         x -= ( 2 * display.offset );
     y = ( r * 2 ) + 20;
     val &= 0x0f;
+
     if ( val == lcd_nibbles_buffer[ r ][ c ] )
         return;
 
-    XCopyPlane( dpy, nibble_maps[ val ], lcd.win, lcd.gc, 0, 0, 8, 2, x, y, 1 );
     lcd_nibbles_buffer[ r ][ c ] = val;
+    XCopyPlane( dpy, nibble_maps[ val ], lcd.win, lcd.gc, 0, 0, 8, 2, x, y, 1 );
 }
 
 static inline void draw_row( long addr, int row )

@@ -1510,41 +1510,6 @@ static void SDLDrawAnnunc( char* annunc )
                     ann_tbl[ 5 ].x + ann_tbl[ 5 ].width - ann_tbl[ 0 ].x, ann_tbl[ 5 ].y + ann_tbl[ 5 ].height - ann_tbl[ 0 ].y );
 }
 
-static void SDLDrawNibble( int nx, int ny, int val )
-{
-    int x, y;
-    int xoffset = DISPLAY_OFFSET_X + 5;
-    int yoffset = DISPLAY_OFFSET_Y + 20;
-
-    SDL_LockSurface( sdlwindow );
-    unsigned char* buffer = ( unsigned char* )sdlwindow->pixels;
-    unsigned int pitch = sdlwindow->pitch;
-
-    for ( y = 0; y < 2; y++ ) {
-        unsigned int* lineptr;
-        lineptr = ( unsigned int* )( buffer + pitch * ( yoffset + 2 * ny + y ) );
-
-        for ( x = 0; x < 4; x++ ) {
-            // Check if bit is on
-            // bits in a byte are used (1 nibble per byte)
-            if ( nx + x >= 131 ) // Clip at 131 pixels
-                break;
-
-            char c = val;
-            char b = c & ( 1 << ( x & 3 ) );
-
-            lineptr[ xoffset + 2 * ( nx + x ) ] = ARGBColors[ b ? PIXEL : LCD ];
-            lineptr[ xoffset + 2 * ( nx + x ) + 1 ] = ARGBColors[ b ? PIXEL : LCD ];
-        }
-    }
-    SDL_UnlockSurface( sdlwindow );
-
-#ifndef DELAYEDDISPUPDATE
-    // Either update immediately or with a delay the display
-    SDL_UpdateRect( sdlwindow, xoffset + 2 * nx, yoffset + 2 * ny, 8, 2 );
-#endif
-}
-
 static void SDLUIHideKey( void )
 {
     SDL_Rect drect;
@@ -1651,6 +1616,41 @@ static void SDLDrawSerialDevices()
 
     if ( strlen( text ) > 0 )
         stringColor( sdlwindow, 10, 240, text, 0xffffffff );
+}
+
+static void SDLDrawNibble( int nx, int ny, int val )
+{
+    int x, y;
+    int xoffset = DISPLAY_OFFSET_X + 5;
+    int yoffset = DISPLAY_OFFSET_Y + 20;
+
+    SDL_LockSurface( sdlwindow );
+    unsigned char* buffer = ( unsigned char* )sdlwindow->pixels;
+    unsigned int pitch = sdlwindow->pitch;
+
+    for ( y = 0; y < 2; y++ ) {
+        unsigned int* lineptr;
+        lineptr = ( unsigned int* )( buffer + pitch * ( yoffset + 2 * ny + y ) );
+
+        for ( x = 0; x < 4; x++ ) {
+            // Check if bit is on
+            // bits in a byte are used (1 nibble per byte)
+            if ( nx + x >= 131 ) // Clip at 131 pixels
+                break;
+
+            char c = val;
+            char b = c & ( 1 << ( x & 3 ) );
+
+            lineptr[ xoffset + 2 * ( nx + x ) ] = ARGBColors[ b ? PIXEL : LCD ];
+            lineptr[ xoffset + 2 * ( nx + x ) + 1 ] = ARGBColors[ b ? PIXEL : LCD ];
+        }
+    }
+    SDL_UnlockSurface( sdlwindow );
+
+#ifndef DELAYEDDISPUPDATE
+    // Either update immediately or with a delay the display
+    SDL_UpdateRect( sdlwindow, xoffset + 2 * nx, yoffset + 2 * ny, 8, 2 );
+#endif
 }
 
 static inline void draw_nibble( int col, int row, int val )
