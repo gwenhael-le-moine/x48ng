@@ -84,7 +84,6 @@ typedef struct sdl_button_t {
 // This mimicks the structure formerly lcd.c, except with SDL surfaces instead
 // of Pixmaps.
 typedef struct sdl_ann_struct_t {
-    int bit;
     int x;
     int y;
     unsigned int width;
@@ -279,13 +278,12 @@ static sdl_button_t buttons_gx[] = {
 };
 
 static sdl_ann_struct_t ann_tbl[] = {
-    {ANN_LEFT,     16,  4, ann_left_width,    ann_left_height,    ann_left_bitmap,    0, 0},
-    { ANN_RIGHT,   61,  4, ann_right_width,   ann_right_height,   ann_right_bitmap,   0, 0},
-    { ANN_ALPHA,   106, 4, ann_alpha_width,   ann_alpha_height,   ann_alpha_bitmap,   0, 0},
-    { ANN_BATTERY, 151, 4, ann_battery_width, ann_battery_height, ann_battery_bitmap, 0, 0},
-    { ANN_BUSY,    196, 4, ann_busy_width,    ann_busy_height,    ann_busy_bitmap,    0, 0},
-    { ANN_IO,      241, 4, ann_io_width,      ann_io_height,      ann_io_bitmap,      0, 0},
- /* { 0 } */
+    {16,   4, ann_left_width,    ann_left_height,    ann_left_bitmap,    0, 0},
+    { 61,  4, ann_right_width,   ann_right_height,   ann_right_bitmap,   0, 0},
+    { 106, 4, ann_alpha_width,   ann_alpha_height,   ann_alpha_bitmap,   0, 0},
+    { 151, 4, ann_battery_width, ann_battery_height, ann_battery_bitmap, 0, 0},
+    { 196, 4, ann_busy_width,    ann_busy_height,    ann_busy_bitmap,    0, 0},
+    { 241, 4, ann_io_width,      ann_io_height,      ann_io_bitmap,      0, 0},
 };
 
 // State to displayed zoomed last pressed key
@@ -445,7 +443,7 @@ static void SDLCreateColors( void )
 // times is fine, it won't do anything on subsequent calls.
 static void SDLCreateAnnunc( void )
 {
-    for ( int i = 0; i < 6; i++ ) {
+    for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
         // If the SDL surface does not exist yet, we create it on the fly
         if ( ann_tbl[ i ].surfaceon ) {
             SDL_FreeSurface( ann_tbl[ i ].surfaceon );
@@ -2039,8 +2037,8 @@ void sdl_draw_annunc( void )
     last_annunc_state = val;
 
     char sdl_annuncstate[ 6 ];
-    for ( int i = 0; ann_tbl[ i ].bit; i++ )
-        sdl_annuncstate[ i ] = ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit ) ? 1 : 0;
+    for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
+        sdl_annuncstate[ i ] = ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] ) ? 1 : 0;
 
     SDLDrawAnnunc( sdl_annuncstate );
 }

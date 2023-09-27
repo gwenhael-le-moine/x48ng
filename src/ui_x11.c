@@ -223,7 +223,6 @@ typedef struct x11_button_t {
 } x11_button_t;
 
 typedef struct x11_ann_struct_t {
-    int bit;
     int x;
     int y;
     unsigned int width;
@@ -501,12 +500,12 @@ static unsigned char nibbles[ 16 ][ 2 ] = {
 static unsigned char nibble_bitmap[ 16 ];
 
 static x11_ann_struct_t ann_tbl[] = {
-    {ANN_LEFT,     16,  4, ann_left_width,    ann_left_height,    ann_left_bitmap,    0},
-    { ANN_RIGHT,   61,  4, ann_right_width,   ann_right_height,   ann_right_bitmap,   0},
-    { ANN_ALPHA,   106, 4, ann_alpha_width,   ann_alpha_height,   ann_alpha_bitmap,   0},
-    { ANN_BATTERY, 151, 4, ann_battery_width, ann_battery_height, ann_battery_bitmap, 0},
-    { ANN_BUSY,    196, 4, ann_busy_width,    ann_busy_height,    ann_busy_bitmap,    0},
-    { ANN_IO,      241, 4, ann_io_width,      ann_io_height,      ann_io_bitmap,      0},
+    {16,   4, ann_left_width,    ann_left_height,    ann_left_bitmap,    0},
+    { 61,  4, ann_right_width,   ann_right_height,   ann_right_bitmap,   0},
+    { 106, 4, ann_alpha_width,   ann_alpha_height,   ann_alpha_bitmap,   0},
+    { 151, 4, ann_battery_width, ann_battery_height, ann_battery_bitmap, 0},
+    { 196, 4, ann_busy_width,    ann_busy_height,    ann_busy_bitmap,    0},
+    { 241, 4, ann_io_width,      ann_io_height,      ann_io_bitmap,      0},
  /* { 0 } */
 };
 
@@ -2903,7 +2902,7 @@ static inline void draw_row( long addr, int row )
 
 static inline void init_annunc( void )
 {
-    for ( int i = 0; ann_tbl[ i ].bit; i++ )
+    for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
         ann_tbl[ i ].pixmap = XCreateBitmapFromData( dpy, lcd.win, ( char* )ann_tbl[ i ].bits, ann_tbl[ i ].width, ann_tbl[ i ].height );
 }
 
@@ -3742,39 +3741,30 @@ void x11_menu_draw_nibble( word_20 addr, word_4 val )
 
 void x11_draw_annunc( void )
 {
-    int val;
-
-    val = display.annunc;
+    int val = display.annunc;
 
     if ( val == last_annunc_state )
         return;
     last_annunc_state = val;
 
-    for ( int i = 0; ann_tbl[ i ].bit; i++ ) {
-        if ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit )
+    for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
+        if ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] )
             XCopyPlane( dpy, ann_tbl[ i ].pixmap, lcd.win, lcd.gc, 0, 0, ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].x,
                         ann_tbl[ i ].y, 1 );
         else
             XClearArea( dpy, lcd.win, ann_tbl[ i ].x, ann_tbl[ i ].y, ann_tbl[ i ].width, ann_tbl[ i ].height, False );
     }
+
     refresh_icon();
 }
 
 void init_x11_ui( int argc, char** argv )
 {
-    /*
-     * save command line options
-     */
     save_options( argc, argv );
 
-    /*
-     *  Open up the display
-     */
     if ( InitDisplay( argc, argv ) < 0 )
         exit( 1 );
-    /*
-     *  Create the HP-48 window
-     */
+
     if ( CreateWindows( saved_argc, saved_argv ) < 0 ) {
         fprintf( stderr, "can\'t create window\n" );
         exit( 1 );

@@ -3,13 +3,6 @@
 
 #include "emulator.h"
 
-#define ANN_LEFT 0x81
-#define ANN_RIGHT 0x82
-#define ANN_ALPHA 0x84
-#define ANN_BATTERY 0x88
-#define ANN_BUSY 0x90
-#define ANN_IO 0xa0
-
 // Colors
 #define WHITE 0
 #define LEFT 1

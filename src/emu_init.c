@@ -87,6 +87,8 @@ hpkey_t keyboard[ 49 ] = {
     { 0x00,   0},
 };
 
+int annunciators_bits[ NB_ANNUNCIATORS ] = { ANN_LEFT, ANN_RIGHT, ANN_ALPHA, ANN_BATTERY, ANN_BUSY, ANN_IO };
+
 int read_rom( const char* fname )
 {
     int ram_size;

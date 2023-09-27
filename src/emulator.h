@@ -77,6 +77,16 @@
 #define FIRST_HPKEY HPKEY_A
 #define LAST_HPKEY HPKEY_PLUS
 
+// Annunciators
+#define NB_ANNUNCIATORS 6
+
+#define ANN_LEFT 0x81
+#define ANN_RIGHT 0x82
+#define ANN_ALPHA 0x84
+#define ANN_BATTERY 0x88
+#define ANN_BUSY 0x90
+#define ANN_IO 0xa0
+
 typedef unsigned char word_1;
 typedef unsigned char word_4;
 typedef unsigned char word_8;
@@ -304,6 +314,8 @@ extern short port2_is_ram;
 extern long port2_mask;
 
 extern hpkey_t keyboard[ NB_KEYS ];
+
+extern int annunciators_bits[ NB_ANNUNCIATORS ];
 
 /**************/
 /* emu_init.c */

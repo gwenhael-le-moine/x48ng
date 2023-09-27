@@ -54,7 +54,6 @@ static inline void tranlate_nibble_into_lcd_pixels_buffer( int nibble, int initi
 
 static inline void ncurses_draw_annunciators( void )
 {
-    int annunciators_bits[ 6 ] = { ANN_LEFT, ANN_RIGHT, ANN_ALPHA, ANN_BATTERY, ANN_BUSY, ANN_IO };
     wchar_t* annunciators_icons[ 6 ] = { L"\u21b0", L"\u21b1", L"\u03b1", L"\u1faab", L"\u231b", L"\u21c4" };
     int val = display.annunc;
 
