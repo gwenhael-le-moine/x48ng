@@ -43,13 +43,8 @@ static short lcd_pixels_buffer[ LCD_WIDTH ][ LCD_HEIGHT ];
 
 static inline void translate_nibble_into_lcd_pixels_buffer( int nibble, int initial_column, int row )
 {
-    for ( int x = 0; x < 4; x++ ) {
-        // bits in a byte are used (1 nibble per byte)
-        if ( initial_column + x >= LCD_WIDTH ) // Clip at 131 pixels
-            break;
-
+    for ( int x = 0; x < ( ( initial_column + x >= LCD_WIDTH ) ? LCD_WIDTH - initial_column : 4 ); x++ )
         lcd_pixels_buffer[ initial_column + x ][ row ] = nibble & ( 1 << ( x & 3 ) );
-    }
 }
 
 static inline void ncurses_draw_annunciators( void )
@@ -62,7 +57,7 @@ static inline void ncurses_draw_annunciators( void )
 
     last_annunc_state = val;
 
-    for ( int i = 0; i < 6; i++ )
+    for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
         mvaddwstr( 0, 4 + ( i * 4 ), ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] ) ? annunciators_icons[ i ] : L" " );
 }
 
@@ -80,7 +75,7 @@ static inline void ncurses_draw_lcd_pixels_buffer( void )
         }
     }
 
-    refresh();
+    wrefresh( stdscr );
 }
 
 static inline int ncurses_get_event( void )
