@@ -1,7 +1,7 @@
 # Makefile to build x48ng without autotools
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 28
+VERSION_MINOR = 29
 PATCHLEVEL = 0
 
 MAKEFLAGS +=-j$(NUM_CORES) -l$(NUM_CORES)
