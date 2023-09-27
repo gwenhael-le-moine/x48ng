@@ -6,7 +6,7 @@
 #define OUT_FIELD 17
 
 #define T1_TIMER 0
-#define T2_TIMER 1 /* unused? */
+/* #define T2_TIMER 1 /\* unused? *\/ */
 
 extern int adj_time_pending;
 

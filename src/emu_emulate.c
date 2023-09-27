@@ -9,13 +9,13 @@
 #include "runtime_options.h" /* throttle */
 #include "ui.h"              /* ui_get_event(); ui_adjust_contrast(); ui_update_LCD(); ui_draw_annunc(); */
 
-#define P_FIELD 0  /* unused? */
-#define WP_FIELD 1 /* unused? */
-#define XS_FIELD 2 /* unused? */
-#define X_FIELD 3  /* unused? */
-#define S_FIELD 4  /* unused? */
-#define M_FIELD 5  /* unused? */
-#define B_FIELD 6  /* unused? */
+/* #define P_FIELD 0  /\* unused? *\/ */
+/* #define WP_FIELD 1 /\* unused? *\/ */
+/* #define XS_FIELD 2 /\* unused? *\/ */
+/* #define X_FIELD 3  /\* unused? *\/ */
+/* #define S_FIELD 4  /\* unused? *\/ */
+/* #define M_FIELD 5  /\* unused? *\/ */
+/* #define B_FIELD 6  /\* unused? *\/ */
 #define W_FIELD 7
 #define A_FIELD 15
 #define IN_FIELD 16
