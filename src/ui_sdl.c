@@ -18,8 +18,8 @@
 #include "ui.h"
 #include "ui_inner.h"
 
-#define _KEYBOARD_HEIGHT ( buttons_gx[ LAST_BUTTON ].y + buttons_gx[ LAST_BUTTON ].h )
-#define _KEYBOARD_WIDTH ( buttons_gx[ LAST_BUTTON ].x + buttons_gx[ LAST_BUTTON ].w )
+#define _KEYBOARD_HEIGHT ( buttons_gx[ LAST_HPKEY ].y + buttons_gx[ LAST_HPKEY ].h )
+#define _KEYBOARD_WIDTH ( buttons_gx[ LAST_HPKEY ].x + buttons_gx[ LAST_HPKEY ].w )
 
 #define _TOP_SKIP 65
 #define _SIDE_SKIP 20
@@ -60,9 +60,7 @@ typedef struct sdl_keypad_t {
 
 typedef struct sdl_button_t {
     const char* name;
-    short pressed;
 
-    int code;
     int x, y;
     unsigned int w, h;
 
@@ -160,124 +158,123 @@ static unsigned int ARGBColors[ BLACK + 1 ];
 static sdl_button_t* buttons = 0;
 
 static sdl_button_t buttons_sx[] = {
-    {"A",       0, 0x14,   0,   0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "A", 0,          0, 0,        0,      0, 0},
-    { "B",      0, 0x84,   50,  0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "B", 0,          0, 0,        0,      0, 0},
-    { "C",      0, 0x83,   100, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "C", 0,          0, 0,        0,      0, 0},
-    { "D",      0, 0x82,   150, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "D", 0,          0, 0,        0,      0, 0},
-    { "E",      0, 0x81,   200, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "E", 0,          0, 0,        0,      0, 0},
-    { "F",      0, 0x80,   250, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "F", 0,          0, 0,        0,      0, 0},
+    {"A",       0,   0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "A", 0,          0, 0,        0,      0, 0},
+    { "B",      50,  0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "B", 0,          0, 0,        0,      0, 0},
+    { "C",      100, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "C", 0,          0, 0,        0,      0, 0},
+    { "D",      150, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "D", 0,          0, 0,        0,      0, 0},
+    { "E",      200, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "E", 0,          0, 0,        0,      0, 0},
+    { "F",      250, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "F", 0,          0, 0,        0,      0, 0},
 
-    { "MTH",    0, 0x24,   0,   50,  36, 26, WHITE, "MTH",   0, 0,                0,                 0,                 "G", "PRINT",    1, 0,        0,      0, 0},
-    { "PRG",    0, 0x74,   50,  50,  36, 26, WHITE, "PRG",   0, 0,                0,                 0,                 "H", "I/O",      1, 0,        0,      0, 0},
-    { "CST",    0, 0x73,   100, 50,  36, 26, WHITE, "CST",   0, 0,                0,                 0,                 "I", "MODES",    1, 0,        0,      0, 0},
-    { "VAR",    0, 0x72,   150, 50,  36, 26, WHITE, "VAR",   0, 0,                0,                 0,                 "J", "MEMORY",   1, 0,        0,      0, 0},
-    { "UP",     0, 0x71,   200, 50,  36, 26, WHITE, 0,       0, up_width,         up_height,         up_bitmap,         "K", "LIBRARY",  1, 0,        0,      0, 0},
-    { "NXT",    0, 0x70,   250, 50,  36, 26, WHITE, "NXT",   0, 0,                0,                 0,                 "L", "PREV",     0, 0,        0,      0, 0},
+    { "MTH",    0,   50,  36, 26, WHITE, "MTH",   0, 0,                0,                 0,                 "G", "PRINT",    1, 0,        0,      0, 0},
+    { "PRG",    50,  50,  36, 26, WHITE, "PRG",   0, 0,                0,                 0,                 "H", "I/O",      1, 0,        0,      0, 0},
+    { "CST",    100, 50,  36, 26, WHITE, "CST",   0, 0,                0,                 0,                 "I", "MODES",    1, 0,        0,      0, 0},
+    { "VAR",    150, 50,  36, 26, WHITE, "VAR",   0, 0,                0,                 0,                 "J", "MEMORY",   1, 0,        0,      0, 0},
+    { "UP",     200, 50,  36, 26, WHITE, 0,       0, up_width,         up_height,         up_bitmap,         "K", "LIBRARY",  1, 0,        0,      0, 0},
+    { "NXT",    250, 50,  36, 26, WHITE, "NXT",   0, 0,                0,                 0,                 "L", "PREV",     0, 0,        0,      0, 0},
 
-    { "COLON",  0, 0x04,   0,   100, 36, 26, WHITE, 0,       0, colon_width,      colon_height,      colon_bitmap,      "M", "UP",       0, "HOME",   0,      0, 0},
-    { "STO",    0, 0x64,   50,  100, 36, 26, WHITE, "STO",   0, 0,                0,                 0,                 "N", "DEF",      0, "RCL",    0,      0, 0},
-    { "EVAL",   0, 0x63,   100, 100, 36, 26, WHITE, "EVAL",  0, 0,                0,                 0,                 "O", "aQ",       0, "aNUM",   0,      0, 0},
-    { "LEFT",   0, 0x62,   150, 100, 36, 26, WHITE, 0,       0, left_width,       left_height,       left_bitmap,       "P", "GRAPH",    0, 0,        0,      0, 0},
-    { "DOWN",   0, 0x61,   200, 100, 36, 26, WHITE, 0,       0, down_width,       down_height,       down_bitmap,       "Q", "REVIEW",   0, 0,        0,      0, 0},
-    { "RIGHT",  0, 0x60,   250, 100, 36, 26, WHITE, 0,       0, right_width,      right_height,      right_bitmap,      "R", "SWAP",     0, 0,        0,      0, 0},
+    { "COLON",  0,   100, 36, 26, WHITE, 0,       0, colon_width,      colon_height,      colon_bitmap,      "M", "UP",       0, "HOME",   0,      0, 0},
+    { "STO",    50,  100, 36, 26, WHITE, "STO",   0, 0,                0,                 0,                 "N", "DEF",      0, "RCL",    0,      0, 0},
+    { "EVAL",   100, 100, 36, 26, WHITE, "EVAL",  0, 0,                0,                 0,                 "O", "aQ",       0, "aNUM",   0,      0, 0},
+    { "LEFT",   150, 100, 36, 26, WHITE, 0,       0, left_width,       left_height,       left_bitmap,       "P", "GRAPH",    0, 0,        0,      0, 0},
+    { "DOWN",   200, 100, 36, 26, WHITE, 0,       0, down_width,       down_height,       down_bitmap,       "Q", "REVIEW",   0, 0,        0,      0, 0},
+    { "RIGHT",  250, 100, 36, 26, WHITE, 0,       0, right_width,      right_height,      right_bitmap,      "R", "SWAP",     0, 0,        0,      0, 0},
 
-    { "SIN",    0, 0x34,   0,   150, 36, 26, WHITE, "SIN",   0, 0,                0,                 0,                 "S", "ASIN",     0, "b",      0,      0, 0},
-    { "COS",    0, 0x54,   50,  150, 36, 26, WHITE, "COS",   0, 0,                0,                 0,                 "T", "ACOS",     0, "c",      0,      0, 0},
-    { "TAN",    0, 0x53,   100, 150, 36, 26, WHITE, "TAN",   0, 0,                0,                 0,                 "U", "ATAN",     0, "d",      0,      0, 0},
-    { "SQRT",   0, 0x52,   150, 150, 36, 26, WHITE, 0,       0, sqrt_width,       sqrt_height,       sqrt_bitmap,       "V", "e",        0, "f",      0,      0, 0},
-    { "POWER",  0, 0x51,   200, 150, 36, 26, WHITE, 0,       0, power_width,      power_height,      power_bitmap,      "W", "g",        0, "LOG",    0,      0, 0},
-    { "INV",    0, 0x50,   250, 150, 36, 26, WHITE, 0,       0, inv_width,        inv_height,        inv_bitmap,        "X", "h",        0, "LN",     0,      0, 0},
+    { "SIN",    0,   150, 36, 26, WHITE, "SIN",   0, 0,                0,                 0,                 "S", "ASIN",     0, "b",      0,      0, 0},
+    { "COS",    50,  150, 36, 26, WHITE, "COS",   0, 0,                0,                 0,                 "T", "ACOS",     0, "c",      0,      0, 0},
+    { "TAN",    100, 150, 36, 26, WHITE, "TAN",   0, 0,                0,                 0,                 "U", "ATAN",     0, "d",      0,      0, 0},
+    { "SQRT",   150, 150, 36, 26, WHITE, 0,       0, sqrt_width,       sqrt_height,       sqrt_bitmap,       "V", "e",        0, "f",      0,      0, 0},
+    { "POWER",  200, 150, 36, 26, WHITE, 0,       0, power_width,      power_height,      power_bitmap,      "W", "g",        0, "LOG",    0,      0, 0},
+    { "INV",    250, 150, 36, 26, WHITE, 0,       0, inv_width,        inv_height,        inv_bitmap,        "X", "h",        0, "LN",     0,      0, 0},
 
-    { "ENTER",  0, 0x44,   0,   200, 86, 26, WHITE, "ENTER", 2, 0,                0,                 0,                 0,   "EQUATION", 0, "MATRIX", 0,      0, 0},
-    { "NEG",    0, 0x43,   100, 200, 36, 26, WHITE, 0,       0, neg_width,        neg_height,        neg_bitmap,        "Y", "EDIT",     0, "VISIT",  0,      0, 0},
-    { "EEX",    0, 0x42,   150, 200, 36, 26, WHITE, "EEX",   0, 0,                0,                 0,                 "Z", "2D",       0, "3D",     0,      0, 0},
-    { "DEL",    0, 0x41,   200, 200, 36, 26, WHITE, "DEL",   0, 0,                0,                 0,                 0,   "PURGE",    0, 0,        0,      0, 0},
-    { "BS",     0, 0x40,   250, 200, 36, 26, WHITE, 0,       0, bs_width,         bs_height,         bs_bitmap,         0,   "DROP",     0, "CLR",    0,      0, 0},
+    { "ENTER",  0,   200, 86, 26, WHITE, "ENTER", 2, 0,                0,                 0,                 0,   "EQUATION", 0, "MATRIX", 0,      0, 0},
+    { "NEG",    100, 200, 36, 26, WHITE, 0,       0, neg_width,        neg_height,        neg_bitmap,        "Y", "EDIT",     0, "VISIT",  0,      0, 0},
+    { "EEX",    150, 200, 36, 26, WHITE, "EEX",   0, 0,                0,                 0,                 "Z", "2D",       0, "3D",     0,      0, 0},
+    { "DEL",    200, 200, 36, 26, WHITE, "DEL",   0, 0,                0,                 0,                 0,   "PURGE",    0, 0,        0,      0, 0},
+    { "BS",     250, 200, 36, 26, WHITE, 0,       0, bs_width,         bs_height,         bs_bitmap,         0,   "DROP",     0, "CLR",    0,      0, 0},
 
-    { "ALPHA",  0, 0x35,   0,   250, 36, 26, WHITE, 0,       0, alpha_width,      alpha_height,      alpha_bitmap,      0,   "USR",      0, "ENTRY",  0,      0, 0},
-    { "7",      0, 0x33,   60,  250, 46, 26, WHITE, "7",     1, 0,                0,                 0,                 0,   "SOLVE",    1, 0,        0,      0, 0},
-    { "8",      0, 0x32,   120, 250, 46, 26, WHITE, "8",     1, 0,                0,                 0,                 0,   "PLOT",     1, 0,        0,      0, 0},
-    { "9",      0, 0x31,   180, 250, 46, 26, WHITE, "9",     1, 0,                0,                 0,                 0,   "ALGEBRA",  1, 0,        0,      0, 0},
-    { "DIV",    0, 0x30,   240, 250, 46, 26, WHITE, 0,       0, div_width,        div_height,        div_bitmap,        0,   "( )",      0, "#",      0,      0, 0},
+    { "ALPHA",  0,   250, 36, 26, WHITE, 0,       0, alpha_width,      alpha_height,      alpha_bitmap,      0,   "USR",      0, "ENTRY",  0,      0, 0},
+    { "7",      60,  250, 46, 26, WHITE, "7",     1, 0,                0,                 0,                 0,   "SOLVE",    1, 0,        0,      0, 0},
+    { "8",      120, 250, 46, 26, WHITE, "8",     1, 0,                0,                 0,                 0,   "PLOT",     1, 0,        0,      0, 0},
+    { "9",      180, 250, 46, 26, WHITE, "9",     1, 0,                0,                 0,                 0,   "ALGEBRA",  1, 0,        0,      0, 0},
+    { "DIV",    240, 250, 46, 26, WHITE, 0,       0, div_width,        div_height,        div_bitmap,        0,   "( )",      0, "#",      0,      0, 0},
 
-    { "SHL",    0, 0x25,   0,   300, 36, 26, LEFT,  0,       0, shl_width,        shl_height,        shl_bitmap,        0,   0,          0, 0,        0,      0, 0},
-    { "4",      0, 0x23,   60,  300, 46, 26, WHITE, "4",     1, 0,                0,                 0,                 0,   "TIME",     1, 0,        0,      0, 0},
-    { "5",      0, 0x22,   120, 300, 46, 26, WHITE, "5",     1, 0,                0,                 0,                 0,   "STAT",     1, 0,        0,      0, 0},
-    { "6",      0, 0x21,   180, 300, 46, 26, WHITE, "6",     1, 0,                0,                 0,                 0,   "UNITS",    1, 0,        0,      0, 0},
-    { "MUL",    0, 0x20,   240, 300, 46, 26, WHITE, 0,       0, mul_width,        mul_height,        mul_bitmap,        0,   "[ ]",      0, "_",      0,      0, 0},
+    { "SHL",    0,   300, 36, 26, LEFT,  0,       0, shl_width,        shl_height,        shl_bitmap,        0,   0,          0, 0,        0,      0, 0},
+    { "4",      60,  300, 46, 26, WHITE, "4",     1, 0,                0,                 0,                 0,   "TIME",     1, 0,        0,      0, 0},
+    { "5",      120, 300, 46, 26, WHITE, "5",     1, 0,                0,                 0,                 0,   "STAT",     1, 0,        0,      0, 0},
+    { "6",      180, 300, 46, 26, WHITE, "6",     1, 0,                0,                 0,                 0,   "UNITS",    1, 0,        0,      0, 0},
+    { "MUL",    240, 300, 46, 26, WHITE, 0,       0, mul_width,        mul_height,        mul_bitmap,        0,   "[ ]",      0, "_",      0,      0, 0},
 
-    { "SHR",    0, 0x15,   0,   350, 36, 26, RIGHT, 0,       0, shr_width,        shr_height,        shr_bitmap,        0,   0,          0, 0,        0,      0, 0},
-    { "1",      0, 0x13,   60,  350, 46, 26, WHITE, "1",     1, 0,                0,                 0,                 0,   "RAD",      0, "POLAR",  0,      0, 0},
-    { "2",      0, 0x12,   120, 350, 46, 26, WHITE, "2",     1, 0,                0,                 0,                 0,   "STACK",    0, "ARG",    0,      0, 0},
-    { "3",      0, 0x11,   180, 350, 46, 26, WHITE, "3",     1, 0,                0,                 0,                 0,   "CMD",      0, "MENU",   0,      0, 0},
-    { "MINUS",  0, 0x10,   240, 350, 46, 26, WHITE, 0,       0, minus_width,      minus_height,      minus_bitmap,      0,   "i",        0, "j",      0,      0, 0},
+    { "SHR",    0,   350, 36, 26, RIGHT, 0,       0, shr_width,        shr_height,        shr_bitmap,        0,   0,          0, 0,        0,      0, 0},
+    { "1",      60,  350, 46, 26, WHITE, "1",     1, 0,                0,                 0,                 0,   "RAD",      0, "POLAR",  0,      0, 0},
+    { "2",      120, 350, 46, 26, WHITE, "2",     1, 0,                0,                 0,                 0,   "STACK",    0, "ARG",    0,      0, 0},
+    { "3",      180, 350, 46, 26, WHITE, "3",     1, 0,                0,                 0,                 0,   "CMD",      0, "MENU",   0,      0, 0},
+    { "MINUS",  240, 350, 46, 26, WHITE, 0,       0, minus_width,      minus_height,      minus_bitmap,      0,   "i",        0, "j",      0,      0, 0},
 
-    { "ON",     0, 0x8000, 0,   400, 36, 26, WHITE, "ON",    0, 0,                0,                 0,                 0,   "CONT",     0, "OFF",    "ATTN", 0, 0},
-    { "0",      0, 0x03,   60,  400, 46, 26, WHITE, "0",     1, 0,                0,                 0,                 0,   "= ",       0, " a",     0,      0, 0},
-    { "PERIOD", 0, 0x02,   120, 400, 46, 26, WHITE, ".",     1, 0,                0,                 0,                 0,   ", ",       0, " k",     0,      0, 0},
-    { "SPC",    0, 0x01,   180, 400, 46, 26, WHITE, "SPC",   0, 0,                0,                 0,                 0,   "l ",       0, " m",     0,      0, 0},
-    { "PLUS",   0, 0x00,   240, 400, 46, 26, WHITE, 0,       0, plus_width,       plus_height,       plus_bitmap,       0,   "{ }",      0, ": :",    0,      0, 0},
- /* { 0 } */
+    { "ON",     0,   400, 36, 26, WHITE, "ON",    0, 0,                0,                 0,                 0,   "CONT",     0, "OFF",    "ATTN", 0, 0},
+    { "0",      60,  400, 46, 26, WHITE, "0",     1, 0,                0,                 0,                 0,   "= ",       0, " a",     0,      0, 0},
+    { "PERIOD", 120, 400, 46, 26, WHITE, ".",     1, 0,                0,                 0,                 0,   ", ",       0, " k",     0,      0, 0},
+    { "SPC",    180, 400, 46, 26, WHITE, "SPC",   0, 0,                0,                 0,                 0,   "l ",       0, " m",     0,      0, 0},
+    { "PLUS",   240, 400, 46, 26, WHITE, 0,       0, plus_width,       plus_height,       plus_bitmap,       0,   "{ }",      0, ": :",    0,      0, 0},
 };
 
 static sdl_button_t buttons_gx[] = {
-    {"A",       0, 0x14,   0,   0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "A", 0,          0, 0,          0,        0, 0},
-    { "B",      0, 0x84,   50,  0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "B", 0,          0, 0,          0,        0, 0},
-    { "C",      0, 0x83,   100, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "C", 0,          0, 0,          0,        0, 0},
-    { "D",      0, 0x82,   150, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "D", 0,          0, 0,          0,        0, 0},
-    { "E",      0, 0x81,   200, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "E", 0,          0, 0,          0,        0, 0},
-    { "F",      0, 0x80,   250, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "F", 0,          0, 0,          0,        0, 0},
+    {"A",       0,   0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "A", 0,          0, 0,          0,        0, 0},
+    { "B",      50,  0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "B", 0,          0, 0,          0,        0, 0},
+    { "C",      100, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "C", 0,          0, 0,          0,        0, 0},
+    { "D",      150, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "D", 0,          0, 0,          0,        0, 0},
+    { "E",      200, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "E", 0,          0, 0,          0,        0, 0},
+    { "F",      250, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "F", 0,          0, 0,          0,        0, 0},
 
-    { "MTH",    0, 0x24,   0,   50,  36, 26, WHITE, "MTH",   0, 0,                0,                 0,                 "G", "RAD",      0, "POLAR",    0,        0, 0},
-    { "PRG",    0, 0x74,   50,  50,  36, 26, WHITE, "PRG",   0, 0,                0,                 0,                 "H", 0,          0, "CHARS",    0,        0, 0},
-    { "CST",    0, 0x73,   100, 50,  36, 26, WHITE, "CST",   0, 0,                0,                 0,                 "I", 0,          0, "MODES",    0,        0, 0},
-    { "VAR",    0, 0x72,   150, 50,  36, 26, WHITE, "VAR",   0, 0,                0,                 0,                 "J", 0,          0, "MEMORY",   0,        0, 0},
-    { "UP",     0, 0x71,   200, 50,  36, 26, WHITE, 0,       0, up_width,         up_height,         up_bitmap,         "K", 0,          0, "STACK",    0,        0, 0},
-    { "NXT",    0, 0x70,   250, 50,  36, 26, WHITE, "NXT",   0, 0,                0,                 0,                 "L", "PREV",     0, "MENU",     0,        0, 0},
+    { "MTH",    0,   50,  36, 26, WHITE, "MTH",   0, 0,                0,                 0,                 "G", "RAD",      0, "POLAR",    0,        0, 0},
+    { "PRG",    50,  50,  36, 26, WHITE, "PRG",   0, 0,                0,                 0,                 "H", 0,          0, "CHARS",    0,        0, 0},
+    { "CST",    100, 50,  36, 26, WHITE, "CST",   0, 0,                0,                 0,                 "I", 0,          0, "MODES",    0,        0, 0},
+    { "VAR",    150, 50,  36, 26, WHITE, "VAR",   0, 0,                0,                 0,                 "J", 0,          0, "MEMORY",   0,        0, 0},
+    { "UP",     200, 50,  36, 26, WHITE, 0,       0, up_width,         up_height,         up_bitmap,         "K", 0,          0, "STACK",    0,        0, 0},
+    { "NXT",    250, 50,  36, 26, WHITE, "NXT",   0, 0,                0,                 0,                 "L", "PREV",     0, "MENU",     0,        0, 0},
 
-    { "COLON",  0, 0x04,   0,   100, 36, 26, WHITE, 0,       0, colon_width,      colon_height,      colon_bitmap,      "M", "UP",       0, "HOME",     0,        0, 0},
-    { "STO",    0, 0x64,   50,  100, 36, 26, WHITE, "STO",   0, 0,                0,                 0,                 "N", "DEF",      0, "RCL",      0,        0, 0},
-    { "EVAL",   0, 0x63,   100, 100, 36, 26, WHITE, "EVAL",  0, 0,                0,                 0,                 "O", "aNUM",     0, "UNDO",     0,        0, 0},
-    { "LEFT",   0, 0x62,   150, 100, 36, 26, WHITE, 0,       0, left_width,       left_height,       left_bitmap,       "P", "PICTURE",  0, 0,          0,        0, 0},
-    { "DOWN",   0, 0x61,   200, 100, 36, 26, WHITE, 0,       0, down_width,       down_height,       down_bitmap,       "Q", "VIEW",     0, 0,          0,        0, 0},
-    { "RIGHT",  0, 0x60,   250, 100, 36, 26, WHITE, 0,       0, right_width,      right_height,      right_bitmap,      "R", "SWAP",     0, 0,          0,        0, 0},
+    { "COLON",  0,   100, 36, 26, WHITE, 0,       0, colon_width,      colon_height,      colon_bitmap,      "M", "UP",       0, "HOME",     0,        0, 0},
+    { "STO",    50,  100, 36, 26, WHITE, "STO",   0, 0,                0,                 0,                 "N", "DEF",      0, "RCL",      0,        0, 0},
+    { "EVAL",   100, 100, 36, 26, WHITE, "EVAL",  0, 0,                0,                 0,                 "O", "aNUM",     0, "UNDO",     0,        0, 0},
+    { "LEFT",   150, 100, 36, 26, WHITE, 0,       0, left_width,       left_height,       left_bitmap,       "P", "PICTURE",  0, 0,          0,        0, 0},
+    { "DOWN",   200, 100, 36, 26, WHITE, 0,       0, down_width,       down_height,       down_bitmap,       "Q", "VIEW",     0, 0,          0,        0, 0},
+    { "RIGHT",  250, 100, 36, 26, WHITE, 0,       0, right_width,      right_height,      right_bitmap,      "R", "SWAP",     0, 0,          0,        0, 0},
 
-    { "SIN",    0, 0x34,   0,   150, 36, 26, WHITE, "SIN",   0, 0,                0,                 0,                 "S", "ASIN",     0, "b",        0,        0, 0},
-    { "COS",    0, 0x54,   50,  150, 36, 26, WHITE, "COS",   0, 0,                0,                 0,                 "T", "ACOS",     0, "c",        0,        0, 0},
-    { "TAN",    0, 0x53,   100, 150, 36, 26, WHITE, "TAN",   0, 0,                0,                 0,                 "U", "ATAN",     0, "d",        0,        0, 0},
-    { "SQRT",   0, 0x52,   150, 150, 36, 26, WHITE, 0,       0, sqrt_width,       sqrt_height,       sqrt_bitmap,       "V", "n",        0, "o",        0,        0, 0},
-    { "POWER",  0, 0x51,   200, 150, 36, 26, WHITE, 0,       0, power_width,      power_height,      power_bitmap,      "W", "p",        0, "LOG",      0,        0, 0},
-    { "INV",    0, 0x50,   250, 150, 36, 26, WHITE, 0,       0, inv_width,        inv_height,        inv_bitmap,        "X", "q",        0, "LN",       0,        0, 0},
+    { "SIN",    0,   150, 36, 26, WHITE, "SIN",   0, 0,                0,                 0,                 "S", "ASIN",     0, "b",        0,        0, 0},
+    { "COS",    50,  150, 36, 26, WHITE, "COS",   0, 0,                0,                 0,                 "T", "ACOS",     0, "c",        0,        0, 0},
+    { "TAN",    100, 150, 36, 26, WHITE, "TAN",   0, 0,                0,                 0,                 "U", "ATAN",     0, "d",        0,        0, 0},
+    { "SQRT",   150, 150, 36, 26, WHITE, 0,       0, sqrt_width,       sqrt_height,       sqrt_bitmap,       "V", "n",        0, "o",        0,        0, 0},
+    { "POWER",  200, 150, 36, 26, WHITE, 0,       0, power_width,      power_height,      power_bitmap,      "W", "p",        0, "LOG",      0,        0, 0},
+    { "INV",    250, 150, 36, 26, WHITE, 0,       0, inv_width,        inv_height,        inv_bitmap,        "X", "q",        0, "LN",       0,        0, 0},
 
-    { "ENTER",  0, 0x44,   0,   200, 86, 26, WHITE, "ENTER", 2, 0,                0,                 0,                 0,   "EQUATION", 0, "MATRIX",   0,        0, 0},
-    { "NEG",    0, 0x43,   100, 200, 36, 26, WHITE, 0,       0, neg_width,        neg_height,        neg_bitmap,        "Y", "EDIT",     0, "CMD",      0,        0, 0},
-    { "EEX",    0, 0x42,   150, 200, 36, 26, WHITE, "EEX",   0, 0,                0,                 0,                 "Z", "PURG",     0, "ARG",      0,        0, 0},
-    { "DEL",    0, 0x41,   200, 200, 36, 26, WHITE, "DEL",   0, 0,                0,                 0,                 0,   "CLEAR",    0, 0,          0,        0, 0},
-    { "BS",     0, 0x40,   250, 200, 36, 26, WHITE, 0,       0, bs_width,         bs_height,         bs_bitmap,         0,   "DROP",     0, 0,          0,        0, 0},
+    { "ENTER",  0,   200, 86, 26, WHITE, "ENTER", 2, 0,                0,                 0,                 0,   "EQUATION", 0, "MATRIX",   0,        0, 0},
+    { "NEG",    100, 200, 36, 26, WHITE, 0,       0, neg_width,        neg_height,        neg_bitmap,        "Y", "EDIT",     0, "CMD",      0,        0, 0},
+    { "EEX",    150, 200, 36, 26, WHITE, "EEX",   0, 0,                0,                 0,                 "Z", "PURG",     0, "ARG",      0,        0, 0},
+    { "DEL",    200, 200, 36, 26, WHITE, "DEL",   0, 0,                0,                 0,                 0,   "CLEAR",    0, 0,          0,        0, 0},
+    { "BS",     250, 200, 36, 26, WHITE, 0,       0, bs_width,         bs_height,         bs_bitmap,         0,   "DROP",     0, 0,          0,        0, 0},
 
-    { "ALPHA",  0, 0x35,   0,   250, 36, 26, WHITE, 0,       0, alpha_width,      alpha_height,      alpha_bitmap,      0,   "USER",     0, "ENTRY",    0,        0, 0},
-    { "7",      0, 0x33,   60,  250, 46, 26, WHITE, "7",     1, 0,                0,                 0,                 0,   0,          1, "SOLVE",    0,        0, 0},
-    { "8",      0, 0x32,   120, 250, 46, 26, WHITE, "8",     1, 0,                0,                 0,                 0,   0,          1, "PLOT",     0,        0, 0},
-    { "9",      0, 0x31,   180, 250, 46, 26, WHITE, "9",     1, 0,                0,                 0,                 0,   0,          1, "SYMBOLIC", 0,        0, 0},
-    { "DIV",    0, 0x30,   240, 250, 46, 26, WHITE, 0,       0, div_width,        div_height,        div_bitmap,        0,   "r ",       0, "s",        0,        0, 0},
+    { "ALPHA",  0,   250, 36, 26, WHITE, 0,       0, alpha_width,      alpha_height,      alpha_bitmap,      0,   "USER",     0, "ENTRY",    0,        0, 0},
+    { "7",      60,  250, 46, 26, WHITE, "7",     1, 0,                0,                 0,                 0,   0,          1, "SOLVE",    0,        0, 0},
+    { "8",      120, 250, 46, 26, WHITE, "8",     1, 0,                0,                 0,                 0,   0,          1, "PLOT",     0,        0, 0},
+    { "9",      180, 250, 46, 26, WHITE, "9",     1, 0,                0,                 0,                 0,   0,          1, "SYMBOLIC", 0,        0, 0},
+    { "DIV",    240, 250, 46, 26, WHITE, 0,       0, div_width,        div_height,        div_bitmap,        0,   "r ",       0, "s",        0,        0, 0},
 
-    { "SHL",    0, 0x25,   0,   300, 36, 26, LEFT,  0,       0, shl_width,        shl_height,        shl_bitmap,        0,   0,          0, 0,          0,        0, 0},
-    { "4",      0, 0x23,   60,  300, 46, 26, WHITE, "4",     1, 0,                0,                 0,                 0,   0,          1, "TIME",     0,        0, 0},
-    { "5",      0, 0x22,   120, 300, 46, 26, WHITE, "5",     1, 0,                0,                 0,                 0,   0,          1, "STAT",     0,        0, 0},
-    { "6",      0, 0x21,   180, 300, 46, 26, WHITE, "6",     1, 0,                0,                 0,                 0,   0,          1, "UNITS",    0,        0, 0},
-    { "MUL",    0, 0x20,   240, 300, 46, 26, WHITE, 0,       0, mul_width,        mul_height,        mul_bitmap,        0,   "t ",       0, "u",        0,        0, 0},
+    { "SHL",    0,   300, 36, 26, LEFT,  0,       0, shl_width,        shl_height,        shl_bitmap,        0,   0,          0, 0,          0,        0, 0},
+    { "4",      60,  300, 46, 26, WHITE, "4",     1, 0,                0,                 0,                 0,   0,          1, "TIME",     0,        0, 0},
+    { "5",      120, 300, 46, 26, WHITE, "5",     1, 0,                0,                 0,                 0,   0,          1, "STAT",     0,        0, 0},
+    { "6",      180, 300, 46, 26, WHITE, "6",     1, 0,                0,                 0,                 0,   0,          1, "UNITS",    0,        0, 0},
+    { "MUL",    240, 300, 46, 26, WHITE, 0,       0, mul_width,        mul_height,        mul_bitmap,        0,   "t ",       0, "u",        0,        0, 0},
 
-    { "SHR",    0, 0x15,   0,   350, 36, 26, RIGHT, 0,       0, shr_width,        shr_height,        shr_bitmap,        0,   0,          1, " ",        0,        0, 0},
-    { "1",      0, 0x13,   60,  350, 46, 26, WHITE, "1",     1, 0,                0,                 0,                 0,   0,          1, "I/O",      0,        0, 0},
-    { "2",      0, 0x12,   120, 350, 46, 26, WHITE, "2",     1, 0,                0,                 0,                 0,   0,          1, "LIBRARY",  0,        0, 0},
-    { "3",      0, 0x11,   180, 350, 46, 26, WHITE, "3",     1, 0,                0,                 0,                 0,   0,          1, "EQ LIB",   0,        0, 0},
-    { "MINUS",  0, 0x10,   240, 350, 46, 26, WHITE, 0,       0, minus_width,      minus_height,      minus_bitmap,      0,   "v ",       0, "w",        0,        0, 0},
+    { "SHR",    0,   350, 36, 26, RIGHT, 0,       0, shr_width,        shr_height,        shr_bitmap,        0,   0,          1, " ",        0,        0, 0},
+    { "1",      60,  350, 46, 26, WHITE, "1",     1, 0,                0,                 0,                 0,   0,          1, "I/O",      0,        0, 0},
+    { "2",      120, 350, 46, 26, WHITE, "2",     1, 0,                0,                 0,                 0,   0,          1, "LIBRARY",  0,        0, 0},
+    { "3",      180, 350, 46, 26, WHITE, "3",     1, 0,                0,                 0,                 0,   0,          1, "EQ LIB",   0,        0, 0},
+    { "MINUS",  240, 350, 46, 26, WHITE, 0,       0, minus_width,      minus_height,      minus_bitmap,      0,   "v ",       0, "w",        0,        0, 0},
 
-    { "ON",     0, 0x8000, 0,   400, 36, 26, WHITE, "ON",    0, 0,                0,                 0,                 0,   "CONT",     0, "OFF",      "CANCEL", 0, 0},
-    { "0",      0, 0x03,   60,  400, 46, 26, WHITE, "0",     1, 0,                0,                 0,                 0,   "\004 ",    0, "\003",     0,        0, 0},
-    { "PERIOD", 0, 0x02,   120, 400, 46, 26, WHITE, ".",     1, 0,                0,                 0,                 0,   "\002 ",    0, "\001",     0,        0, 0},
-    { "SPC",    0, 0x01,   180, 400, 46, 26, WHITE, "SPC",   0, 0,                0,                 0,                 0,   "\005 ",    0, "z",        0,        0, 0},
-    { "PLUS",   0, 0x00,   240, 400, 46, 26, WHITE, 0,       0, plus_width,       plus_height,       plus_bitmap,       0,   "x ",       0, "y",        0,        0, 0},
+    { "ON",     0,   400, 36, 26, WHITE, "ON",    0, 0,                0,                 0,                 0,   "CONT",     0, "OFF",      "CANCEL", 0, 0},
+    { "0",      60,  400, 46, 26, WHITE, "0",     1, 0,                0,                 0,                 0,   "\004 ",    0, "\003",     0,        0, 0},
+    { "PERIOD", 120, 400, 46, 26, WHITE, ".",     1, 0,                0,                 0,                 0,   "\002 ",    0, "\001",     0,        0, 0},
+    { "SPC",    180, 400, 46, 26, WHITE, "SPC",   0, 0,                0,                 0,                 0,   "\005 ",    0, "z",        0,        0, 0},
+    { "PLUS",   240, 400, 46, 26, WHITE, 0,       0, plus_width,       plus_height,       plus_bitmap,       0,   "x ",       0, "y",        0,        0, 0},
  /* { 0 } */
 };
 
@@ -401,9 +398,8 @@ static void SDLInit( void )
     KBD_UPLINE = _KBD_UPLINE;
 
     if ( show_ui_chrome ) {
-        width = ( buttons_gx[ LAST_BUTTON ].x + buttons_gx[ LAST_BUTTON ].w ) + 2 * SIDE_SKIP;
-        height =
-            DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP + buttons_gx[ LAST_BUTTON ].y + buttons_gx[ LAST_BUTTON ].h + BOTTOM_SKIP;
+        width = ( buttons_gx[ LAST_HPKEY ].x + buttons_gx[ LAST_HPKEY ].w ) + 2 * SIDE_SKIP;
+        height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP + buttons_gx[ LAST_HPKEY ].y + buttons_gx[ LAST_HPKEY ].h + BOTTOM_SKIP;
     } else {
         width = DISPLAY_WIDTH;
         height = DISPLAY_HEIGHT;
@@ -420,52 +416,6 @@ static void SDLInit( void )
     if ( sdlwindow == NULL ) {
         printf( "Couldn't set video mode: %s\n", SDL_GetError() );
         exit( 1 );
-    }
-}
-
-static void press_button( int b )
-{
-    // Check not already pressed (may be important: avoids a useless do_kbd_int)
-    if ( buttons[ b ].pressed == 1 )
-        return;
-
-    buttons[ b ].pressed = 1;
-
-    int code = buttons[ b ].code;
-    if ( code == 0x8000 ) {
-        for ( int i = 0; i < 9; i++ )
-            saturn.keybuf.rows[ i ] |= 0x8000;
-        do_kbd_int();
-    } else {
-        int r = code >> 4;
-        int c = 1 << ( code & 0xf );
-        if ( ( saturn.keybuf.rows[ r ] & c ) == 0 ) {
-            if ( saturn.kbd_ien )
-                do_kbd_int();
-            if ( ( saturn.keybuf.rows[ r ] & c ) )
-                fprintf( stderr, "bug\n" );
-
-            saturn.keybuf.rows[ r ] |= c;
-        }
-    }
-}
-
-static void release_button( int b )
-{
-    // Check not already released (not critical)
-    if ( buttons[ b ].pressed == 0 )
-        return;
-
-    buttons[ b ].pressed = 0;
-
-    int code = buttons[ b ].code;
-    if ( code == 0x8000 ) {
-        for ( int i = 0; i < 9; i++ )
-            saturn.keybuf.rows[ i ] &= ~0x8000;
-    } else {
-        int r = code >> 4;
-        int c = 1 << ( code & 0xf );
-        saturn.keybuf.rows[ r ] &= ~c;
     }
 }
 
@@ -557,220 +507,220 @@ static int SDLKeyToKey( SDLKey k )
 {
     switch ( k ) {
         case SDLK_0:
-            return BUTTON_0;
+            return HPKEY_0;
             break;
         case SDLK_1:
-            return BUTTON_1;
+            return HPKEY_1;
             break;
         case SDLK_2:
-            return BUTTON_2;
+            return HPKEY_2;
             break;
         case SDLK_3:
-            return BUTTON_3;
+            return HPKEY_3;
             break;
         case SDLK_4:
-            return BUTTON_4;
+            return HPKEY_4;
             break;
         case SDLK_5:
-            return BUTTON_5;
+            return HPKEY_5;
             break;
         case SDLK_6:
-            return BUTTON_6;
+            return HPKEY_6;
             break;
         case SDLK_7:
-            return BUTTON_7;
+            return HPKEY_7;
             break;
         case SDLK_8:
-            return BUTTON_8;
+            return HPKEY_8;
             break;
         case SDLK_9:
-            return BUTTON_9;
+            return HPKEY_9;
             break;
         case SDLK_KP0:
-            return BUTTON_0;
+            return HPKEY_0;
             break;
         case SDLK_KP1:
-            return BUTTON_1;
+            return HPKEY_1;
             break;
         case SDLK_KP2:
-            return BUTTON_2;
+            return HPKEY_2;
             break;
         case SDLK_KP3:
-            return BUTTON_3;
+            return HPKEY_3;
             break;
         case SDLK_KP4:
-            return BUTTON_4;
+            return HPKEY_4;
             break;
         case SDLK_KP5:
-            return BUTTON_5;
+            return HPKEY_5;
             break;
         case SDLK_KP6:
-            return BUTTON_6;
+            return HPKEY_6;
             break;
         case SDLK_KP7:
-            return BUTTON_7;
+            return HPKEY_7;
             break;
         case SDLK_KP8:
-            return BUTTON_8;
+            return HPKEY_8;
             break;
         case SDLK_KP9:
-            return BUTTON_9;
+            return HPKEY_9;
             break;
         case SDLK_a:
-            return BUTTON_A;
+            return HPKEY_A;
             break;
         case SDLK_b:
-            return BUTTON_B;
+            return HPKEY_B;
             break;
         case SDLK_c:
-            return BUTTON_C;
+            return HPKEY_C;
             break;
         case SDLK_d:
-            return BUTTON_D;
+            return HPKEY_D;
             break;
         case SDLK_e:
-            return BUTTON_E;
+            return HPKEY_E;
             break;
         case SDLK_f:
-            return BUTTON_F;
+            return HPKEY_F;
             break;
         case SDLK_g:
-            return BUTTON_MTH;
+            return HPKEY_MTH;
             break;
         case SDLK_h:
-            return BUTTON_PRG;
+            return HPKEY_PRG;
             break;
         case SDLK_i:
-            return BUTTON_CST;
+            return HPKEY_CST;
             break;
         case SDLK_j:
-            return BUTTON_VAR;
+            return HPKEY_VAR;
             break;
         case SDLK_k:
-            return BUTTON_UP;
+            return HPKEY_UP;
             break;
         case SDLK_UP:
-            return BUTTON_UP;
+            return HPKEY_UP;
             break;
         case SDLK_l:
-            return BUTTON_NXT;
+            return HPKEY_NXT;
             break;
         case SDLK_m:
-            return BUTTON_COLON;
+            return HPKEY_COLON;
             break;
         case SDLK_n:
-            return BUTTON_STO;
+            return HPKEY_STO;
             break;
         case SDLK_o:
-            return BUTTON_EVAL;
+            return HPKEY_EVAL;
             break;
         case SDLK_p:
-            return BUTTON_LEFT;
+            return HPKEY_LEFT;
             break;
         case SDLK_LEFT:
-            return BUTTON_LEFT;
+            return HPKEY_LEFT;
             break;
         case SDLK_q:
-            return BUTTON_DOWN;
+            return HPKEY_DOWN;
             break;
         case SDLK_DOWN:
-            return BUTTON_DOWN;
+            return HPKEY_DOWN;
             break;
         case SDLK_r:
-            return BUTTON_RIGHT;
+            return HPKEY_RIGHT;
             break;
         case SDLK_RIGHT:
-            return BUTTON_RIGHT;
+            return HPKEY_RIGHT;
             break;
         case SDLK_s:
-            return BUTTON_SIN;
+            return HPKEY_SIN;
             break;
         case SDLK_t:
-            return BUTTON_COS;
+            return HPKEY_COS;
             break;
         case SDLK_u:
-            return BUTTON_TAN;
+            return HPKEY_TAN;
             break;
         case SDLK_v:
-            return BUTTON_SQRT;
+            return HPKEY_SQRT;
             break;
         case SDLK_w:
-            return BUTTON_POWER;
+            return HPKEY_POWER;
             break;
         case SDLK_x:
-            return BUTTON_INV;
+            return HPKEY_INV;
             break;
         case SDLK_y:
-            return BUTTON_NEG;
+            return HPKEY_NEG;
             break;
         case SDLK_z:
-            return BUTTON_EEX;
+            return HPKEY_EEX;
             break;
         case SDLK_SPACE:
-            return BUTTON_SPC;
+            return HPKEY_SPC;
             break;
         case SDLK_RETURN:
-            return BUTTON_ENTER;
+            return HPKEY_ENTER;
             break;
         case SDLK_KP_ENTER:
-            return BUTTON_ENTER;
+            return HPKEY_ENTER;
             break;
         case SDLK_BACKSPACE:
-            return BUTTON_BS;
+            return HPKEY_BS;
             break;
         case SDLK_DELETE:
-            return BUTTON_DEL;
+            return HPKEY_DEL;
             break;
         case SDLK_PERIOD:
-            return BUTTON_PERIOD;
+            return HPKEY_PERIOD;
             break;
         case SDLK_KP_PERIOD:
-            return BUTTON_PERIOD;
+            return HPKEY_PERIOD;
             break;
         case SDLK_PLUS:
-            return BUTTON_PLUS;
+            return HPKEY_PLUS;
             break;
         case SDLK_KP_PLUS:
-            return BUTTON_PLUS;
+            return HPKEY_PLUS;
             break;
         case SDLK_MINUS:
-            return BUTTON_MINUS;
+            return HPKEY_MINUS;
             break;
         case SDLK_KP_MINUS:
-            return BUTTON_MINUS;
+            return HPKEY_MINUS;
             break;
         case SDLK_ASTERISK:
-            return BUTTON_MUL;
+            return HPKEY_MUL;
             break;
         case SDLK_KP_MULTIPLY:
-            return BUTTON_MUL;
+            return HPKEY_MUL;
             break;
         case SDLK_SLASH:
-            return BUTTON_DIV;
+            return HPKEY_DIV;
             break;
         case SDLK_KP_DIVIDE:
-            return BUTTON_DIV;
+            return HPKEY_DIV;
             break;
         case SDLK_ESCAPE:
-            return BUTTON_ON;
+            return HPKEY_ON;
             break;
         case SDLK_LSHIFT:
-            return BUTTON_SHL;
+            return HPKEY_SHL;
             break;
         case SDLK_RSHIFT:
-            return BUTTON_SHL;
+            return HPKEY_SHL;
             break;
         case SDLK_LCTRL:
-            return BUTTON_SHR;
+            return HPKEY_SHR;
             break;
         case SDLK_RCTRL:
-            return BUTTON_SHR;
+            return HPKEY_SHR;
             break;
         case SDLK_LALT:
-            return BUTTON_ALPHA;
+            return HPKEY_ALPHA;
             break;
         case SDLK_RALT:
-            return BUTTON_ALPHA;
+            return HPKEY_ALPHA;
             break;
         default:
             return -1;
@@ -1004,7 +954,7 @@ static void SDLCreateKeys( void )
     unsigned i, x, y;
     unsigned pixel;
 
-    for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
+    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
         // Create surfaces for each button
         if ( !buttons[ i ].surfaceup )
             buttons[ i ].surfaceup =
@@ -1064,7 +1014,7 @@ static void SDLCreateKeys( void )
                    bgra2argb( ARGBColors[ FRAME ] ) );
         lineColor( buttons[ i ].surfaceup, buttons[ i ].w - 1, buttons[ i ].h - 3, buttons[ i ].w - 1, 2,
                    bgra2argb( ARGBColors[ FRAME ] ) );
-        if ( i == BUTTON_ON ) {
+        if ( i == HPKEY_ON ) {
             lineColor( buttons[ i ].surfaceup, 1, 1, buttons[ 1 ].w - 2, 1, bgra2argb( ARGBColors[ FRAME ] ) );
             pixelColor( buttons[ i ].surfaceup, 1, 2, bgra2argb( ARGBColors[ FRAME ] ) );
             pixelColor( buttons[ i ].surfaceup, buttons[ i ].w - 2, 2, bgra2argb( ARGBColors[ FRAME ] ) );
@@ -1102,7 +1052,7 @@ static void SDLCreateKeys( void )
         lineColor( buttons[ i ].surfacedown, buttons[ i ].w - 1, buttons[ i ].h - 3, buttons[ i ].w - 1, 2,
                    bgra2argb( ARGBColors[ FRAME ] ) );
 
-        if ( i == BUTTON_ON ) {
+        if ( i == HPKEY_ON ) {
             lineColor( buttons[ i ].surfacedown, 1, 1, buttons[ i ].w - 2, 1, bgra2argb( ARGBColors[ FRAME ] ) );
             pixelColor( buttons[ i ].surfacedown, 1, 2, bgra2argb( ARGBColors[ FRAME ] ) );
             pixelColor( buttons[ i ].surfacedown, buttons[ i ].w - 2, 2, bgra2argb( ARGBColors[ FRAME ] ) );
@@ -1112,7 +1062,7 @@ static void SDLCreateKeys( void )
         }
         pixelColor( buttons[ i ].surfacedown, 1, buttons[ i ].h - 2, bgra2argb( ARGBColors[ FRAME ] ) );
         pixelColor( buttons[ i ].surfacedown, buttons[ i ].w - 2, buttons[ i ].h - 2, bgra2argb( ARGBColors[ FRAME ] ) );
-        if ( i == BUTTON_ON ) {
+        if ( i == HPKEY_ON ) {
             rectangleColor( buttons[ i ].surfacedown, 1, 2, 1 + buttons[ i ].w - 3, 2 + buttons[ i ].h - 4,
                             bgra2argb( ARGBColors[ FRAME ] ) );
             pixelColor( buttons[ i ].surfacedown, 2, 3, bgra2argb( ARGBColors[ FRAME ] ) );
@@ -1176,7 +1126,7 @@ static void SDLDrawKeysLabelsLeft( void )
     unsigned colorbg, colorfg;
 
     // Draw the left labels
-    for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
+    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
         // No label -> skip
         if ( buttons[ i ].left == ( char* )0 )
             continue;
@@ -1246,7 +1196,7 @@ static void SDLDrawKeysLabelsRight( void )
     unsigned colorbg, colorfg;
 
     // draw the right labels
-    for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
+    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
         if ( buttons[ i ].right == ( char* )0 )
             continue;
 
@@ -1311,9 +1261,9 @@ static void SDLDrawKeysLetters( void )
     int offset_x = KEYBOARD_OFFSET_X;
     unsigned colorbg;
 
-    for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
+    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
 
-        if ( i < BUTTON_MTH )
+        if ( i < HPKEY_MTH )
             colorbg = ARGBColors[ DISP_PAD ];
         else
             colorbg = ARGBColors[ PAD ];
@@ -1342,11 +1292,11 @@ static void SDLDrawKeysLabelsBottom( void )
     unsigned colorbg, colorfg;
 
     // Bottom label: the only one is the cancel button
-    for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
+    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
         if ( buttons[ i ].sub == ( char* )0 )
             continue;
 
-        if ( i < BUTTON_MTH )
+        if ( i < HPKEY_MTH )
             colorbg = ARGBColors[ DISP_PAD ];
         else
             colorbg = ARGBColors[ PAD ];
@@ -1369,7 +1319,7 @@ static void SDLDrawKeyMenu( void )
     unsigned color;
     unsigned pw, ph;
 
-    for ( i = BUTTON_A; i <= LAST_BUTTON; i++ ) {
+    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
         if ( !buttons[ i ].is_menu )
             continue;
 
@@ -1404,7 +1354,7 @@ static void SDLDrawButtons( void )
 {
     SDL_Rect srect, drect;
 
-    for ( int i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
+    for ( int i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
         // Blit the button surface to the screen
         srect.x = 0;
         srect.y = 0;
@@ -1414,7 +1364,7 @@ static void SDLDrawButtons( void )
         drect.y = KEYBOARD_OFFSET_Y + buttons[ i ].y;
         drect.w = buttons[ i ].w;
         drect.h = buttons[ i ].h;
-        if ( buttons[ i ].pressed )
+        if ( keyboard[ i ].pressed )
             SDL_BlitSurface( buttons[ i ].surfacedown, &srect, sdlwindow, &drect );
         else
             SDL_BlitSurface( buttons[ i ].surfaceup, &srect, sdlwindow, &drect );
@@ -1422,8 +1372,8 @@ static void SDLDrawButtons( void )
 
     // Always update immediately buttons
     SDL_UpdateRect( sdlwindow, KEYBOARD_OFFSET_X + buttons[ 0 ].x, KEYBOARD_OFFSET_Y + buttons[ 0 ].y,
-                    buttons[ LAST_BUTTON ].x + buttons[ LAST_BUTTON ].w - buttons[ 0 ].x,
-                    buttons[ LAST_BUTTON ].y + buttons[ LAST_BUTTON ].h - buttons[ 0 ].y );
+                    buttons[ LAST_HPKEY ].x + buttons[ LAST_HPKEY ].w - buttons[ 0 ].x,
+                    buttons[ LAST_HPKEY ].y + buttons[ LAST_HPKEY ].h - buttons[ 0 ].y );
 }
 
 static void SDLDrawKeypad( void )
@@ -1631,7 +1581,7 @@ static void SDLUIShowKey( int hpkey )
         return;
 
     // Which surface to show
-    ssurf = ( buttons[ hpkey ].pressed ) ? buttons[ hpkey ].surfacedown : buttons[ hpkey ].surfaceup;
+    ssurf = ( keyboard[ hpkey ].pressed ) ? buttons[ hpkey ].surfacedown : buttons[ hpkey ].surfaceup;
 
     // Background backup
     showkeylastsurf = SDL_CreateRGBSurface( SDL_SWSURFACE, ssurf->w, ssurf->h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 );
@@ -1673,13 +1623,6 @@ static void SDLUIShowKey( int hpkey )
 }
 
 static inline void SDLUIFeedback( void ) {}
-
-static void release_all_buttons( void )
-{
-    for ( int b = BUTTON_A; b <= LAST_BUTTON; b++ )
-        if ( buttons[ b ].pressed )
-            release_button( b );
-}
 
 static void SDLDrawSerialDevices()
 {
@@ -1775,7 +1718,7 @@ static void SDLCreateHP( void )
     SDLCreateColors();
 
     if ( show_ui_chrome ) {
-        int cut = buttons[ BUTTON_MTH ].y + KEYBOARD_OFFSET_Y - 19;
+        int cut = buttons[ HPKEY_MTH ].y + KEYBOARD_OFFSET_Y - 19;
 
         SDLDrawBackground( width, cut, width, height );
         SDLDrawMore( cut, KEYBOARD_OFFSET_Y, keypad.width, keypad.height );
@@ -1849,7 +1792,7 @@ int sdl_get_event( void )
 
                 /*             if ( lasthpkey != -1 ) { */
                 /*                 if ( !lastislongpress ) { */
-                /*                     release_all_buttons(); */
+                /*                     release_all_keys(); */
                 /*                     rv = 1; */
                 /*                     SDLUIFeedback(); */
                 /*                 } */
@@ -1865,7 +1808,7 @@ int sdl_get_event( void )
                  */
                 /*                                      // time */
                 /*                 { */
-                /*                     press_button( hpkey ); */
+                /*                     press_key( hpkey ); */
                 /*                     rv = 1; */
                 /*                     // Start timer */
                 /*                     lastticks = SDL_GetTicks(); */
@@ -1892,10 +1835,10 @@ int sdl_get_event( void )
                 if ( event.type == SDL_MOUSEBUTTONDOWN ) {
                     keyispressed = hpkey;
 
-                    if ( !buttons[ hpkey ].pressed ) // Key can't be pressed
-                                                     // when down
+                    if ( !keyboard[ hpkey ].pressed ) // Key can't be pressed
+                                                      // when down
                     {
-                        press_button( hpkey );
+                        press_key( hpkey );
                         rv = 1;
                         lasthpkey = hpkey;
                         // Start timer
@@ -1906,7 +1849,7 @@ int sdl_get_event( void )
                     keyispressed = -1;
 
                     if ( !lastislongpress ) {
-                        release_all_buttons();
+                        release_all_keys();
                         rv = 1;
                         lasthpkey = -1; // No key is pressed anymore
                         SDLUIFeedback();
@@ -1928,15 +1871,15 @@ int sdl_get_event( void )
                     keyispressed = hpkey;
 
                     // Avoid pressing if it is already pressed
-                    if ( !buttons[ hpkey ].pressed ) {
-                        press_button( hpkey );
+                    if ( !keyboard[ hpkey ].pressed ) {
+                        press_key( hpkey );
                         rv = 1;
                         SDLUIFeedback();
                     }
                 } else {
                     keyispressed = -1;
 
-                    release_button( hpkey );
+                    release_key( hpkey );
                     rv = 1;
                     SDLUIFeedback();
                 }

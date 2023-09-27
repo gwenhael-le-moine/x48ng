@@ -31,141 +31,15 @@
 #define LCD_PIXEL_ON 1
 #define LCD_PIXEL_OFF 2
 
-/***********/
-/* typedef */
-/***********/
-typedef struct tui_button_t {
-    int code;
-    short pressed;
-} tui_button_t;
-
 /*************/
 /* variables */
 /*************/
-static int annunciators_bits[ 6 ] = { ANN_LEFT, ANN_RIGHT, ANN_ALPHA, ANN_BATTERY, ANN_BUSY, ANN_IO };
-
-static tui_button_t buttons[] = {
-  /* From top left to bottom right */
-    {0x14,    0},
-    { 0x84,   0},
-    { 0x83,   0},
-    { 0x82,   0},
-    { 0x81,   0},
-    { 0x80,   0},
-
-    { 0x24,   0},
-    { 0x74,   0},
-    { 0x73,   0},
-    { 0x72,   0},
-    { 0x71,   0},
-    { 0x70,   0},
-
-    { 0x04,   0},
-    { 0x64,   0},
-    { 0x63,   0},
-    { 0x62,   0},
-    { 0x61,   0},
-    { 0x60,   0},
-
-    { 0x34,   0},
-    { 0x54,   0},
-    { 0x53,   0},
-    { 0x52,   0},
-    { 0x51,   0},
-    { 0x50,   0},
-
-    { 0x44,   0},
-    { 0x43,   0},
-    { 0x42,   0},
-    { 0x41,   0},
-    { 0x40,   0},
-
-    { 0x35,   0},
-    { 0x33,   0},
-    { 0x32,   0},
-    { 0x31,   0},
-    { 0x30,   0},
-
-    { 0x25,   0},
-    { 0x23,   0},
-    { 0x22,   0},
-    { 0x21,   0},
-    { 0x20,   0},
-
-    { 0x15,   0},
-    { 0x13,   0},
-    { 0x12,   0},
-    { 0x11,   0},
-    { 0x10,   0},
-
-    { 0x8000, 0},
-    { 0x03,   0},
-    { 0x02,   0},
-    { 0x01,   0},
-    { 0x00,   0},
-};
-
 /* the actual pixels buffer */
 static short lcd_pixels_buffer[ LCD_WIDTH ][ LCD_HEIGHT ];
 
 /****************************/
 /* functions implementation */
 /****************************/
-/* TODO: not specific to tui  */
-static inline void press_button( int b )
-{
-    // Check not already pressed (may be important: avoids a useless do_kbd_int)
-    if ( buttons[ b ].pressed == 1 )
-        return;
-
-    buttons[ b ].pressed = 1;
-
-    int code = buttons[ b ].code;
-    if ( code == 0x8000 ) {
-        for ( int i = 0; i < 9; i++ )
-            saturn.keybuf.rows[ i ] |= 0x8000;
-        do_kbd_int();
-    } else {
-        int r = code >> 4;
-        int c = 1 << ( code & 0xf );
-        if ( ( saturn.keybuf.rows[ r ] & c ) == 0 ) {
-            if ( saturn.kbd_ien )
-                do_kbd_int();
-            if ( ( saturn.keybuf.rows[ r ] & c ) )
-                fprintf( stderr, "bug\n" );
-
-            saturn.keybuf.rows[ r ] |= c;
-        }
-    }
-}
-
-/* TODO: not specific to tui  */
-static inline void release_button( int b )
-{
-    // Check not already released (not critical)
-    if ( buttons[ b ].pressed == 0 )
-        return;
-
-    buttons[ b ].pressed = 0;
-
-    int code = buttons[ b ].code;
-    if ( code == 0x8000 ) {
-        for ( int i = 0; i < 9; i++ )
-            saturn.keybuf.rows[ i ] &= ~0x8000;
-    } else {
-        int r = code >> 4;
-        int c = 1 << ( code & 0xf );
-        saturn.keybuf.rows[ r ] &= ~c;
-    }
-}
-
-/* TODO: not specific to tui  */
-static inline void release_all_buttons( void )
-{
-    for ( int b = FIRST_BUTTON; b <= LAST_BUTTON; b++ )
-        if ( buttons[ b ].pressed )
-            release_button( b );
-}
 
 static inline void tranlate_nibble_into_lcd_pixels_buffer( int nibble, int initial_column, int row )
 {
@@ -180,6 +54,7 @@ static inline void tranlate_nibble_into_lcd_pixels_buffer( int nibble, int initi
 
 static inline void ncurses_draw_annunciators( void )
 {
+    int annunciators_bits[ 6 ] = { ANN_LEFT, ANN_RIGHT, ANN_ALPHA, ANN_BATTERY, ANN_BUSY, ANN_IO };
     wchar_t* annunciators_icons[ 6 ] = { L"\u21b0", L"\u21b1", L"\u03b1", L"\u1faab", L"\u231b", L"\u21c4" };
     int val = display.annunc;
 
@@ -215,7 +90,7 @@ static inline int ncurses_get_event( void )
     uint32_t k;
 
     /* Start fresh and mark all keys as released */
-    release_all_buttons();
+    release_all_keys();
 
     /* Iterate over all currently pressed keys and mark them as pressed */
     while ( ( k = getch() ) ) {
@@ -224,179 +99,179 @@ static inline int ncurses_get_event( void )
 
         switch ( k ) {
             case '0':
-                hpkey = BUTTON_0;
+                hpkey = HPKEY_0;
                 break;
             case '1':
-                hpkey = BUTTON_1;
+                hpkey = HPKEY_1;
                 break;
             case '2':
-                hpkey = BUTTON_2;
+                hpkey = HPKEY_2;
                 break;
             case '3':
-                hpkey = BUTTON_3;
+                hpkey = HPKEY_3;
                 break;
             case '4':
-                hpkey = BUTTON_4;
+                hpkey = HPKEY_4;
                 break;
             case '5':
-                hpkey = BUTTON_5;
+                hpkey = HPKEY_5;
                 break;
             case '6':
-                hpkey = BUTTON_6;
+                hpkey = HPKEY_6;
                 break;
             case '7':
-                hpkey = BUTTON_7;
+                hpkey = HPKEY_7;
                 break;
             case '8':
-                hpkey = BUTTON_8;
+                hpkey = HPKEY_8;
                 break;
             case '9':
-                hpkey = BUTTON_9;
+                hpkey = HPKEY_9;
                 break;
             case 'a':
-                hpkey = BUTTON_A;
+                hpkey = HPKEY_A;
                 break;
             case 'b':
-                hpkey = BUTTON_B;
+                hpkey = HPKEY_B;
                 break;
             case 'c':
-                hpkey = BUTTON_C;
+                hpkey = HPKEY_C;
                 break;
             case 'd':
-                hpkey = BUTTON_D;
+                hpkey = HPKEY_D;
                 break;
             case 'e':
-                hpkey = BUTTON_E;
+                hpkey = HPKEY_E;
                 break;
             case 'f':
-                hpkey = BUTTON_F;
+                hpkey = HPKEY_F;
                 break;
             case 'g':
-                hpkey = BUTTON_MTH;
+                hpkey = HPKEY_MTH;
                 break;
             case 'h':
-                hpkey = BUTTON_PRG;
+                hpkey = HPKEY_PRG;
                 break;
             case 'i':
-                hpkey = BUTTON_CST;
+                hpkey = HPKEY_CST;
                 break;
             case 'j':
-                hpkey = BUTTON_VAR;
+                hpkey = HPKEY_VAR;
                 break;
             case 'k':
-                hpkey = BUTTON_UP;
+                hpkey = HPKEY_UP;
                 break;
             case KEY_UP:
-                hpkey = BUTTON_UP;
+                hpkey = HPKEY_UP;
                 break;
             case 'l':
-                hpkey = BUTTON_NXT;
+                hpkey = HPKEY_NXT;
                 break;
             case 'm':
-                hpkey = BUTTON_COLON;
+                hpkey = HPKEY_COLON;
                 break;
             case 'n':
-                hpkey = BUTTON_STO;
+                hpkey = HPKEY_STO;
                 break;
             case 'o':
-                hpkey = BUTTON_EVAL;
+                hpkey = HPKEY_EVAL;
                 break;
             case 'p':
-                hpkey = BUTTON_LEFT;
+                hpkey = HPKEY_LEFT;
                 break;
             case KEY_LEFT:
-                hpkey = BUTTON_LEFT;
+                hpkey = HPKEY_LEFT;
                 break;
             case 'q':
-                hpkey = BUTTON_DOWN;
+                hpkey = HPKEY_DOWN;
                 break;
             case KEY_DOWN:
-                hpkey = BUTTON_DOWN;
+                hpkey = HPKEY_DOWN;
                 break;
             case 'r':
-                hpkey = BUTTON_RIGHT;
+                hpkey = HPKEY_RIGHT;
                 break;
             case KEY_RIGHT:
-                hpkey = BUTTON_RIGHT;
+                hpkey = HPKEY_RIGHT;
                 break;
             case 's':
-                hpkey = BUTTON_SIN;
+                hpkey = HPKEY_SIN;
                 break;
             case 't':
-                hpkey = BUTTON_COS;
+                hpkey = HPKEY_COS;
                 break;
             case 'u':
-                hpkey = BUTTON_TAN;
+                hpkey = HPKEY_TAN;
                 break;
             case 'v':
-                hpkey = BUTTON_SQRT;
+                hpkey = HPKEY_SQRT;
                 break;
             case 'w':
-                hpkey = BUTTON_POWER;
+                hpkey = HPKEY_POWER;
                 break;
             case 'x':
-                hpkey = BUTTON_INV;
+                hpkey = HPKEY_INV;
                 break;
             case 'y':
-                hpkey = BUTTON_NEG;
+                hpkey = HPKEY_NEG;
                 break;
             case 'z':
-                hpkey = BUTTON_EEX;
+                hpkey = HPKEY_EEX;
                 break;
             case ' ':
-                hpkey = BUTTON_SPC;
+                hpkey = HPKEY_SPC;
                 break;
             case KEY_ENTER:
             case '\n':
             case ',':
-                hpkey = BUTTON_ENTER;
+                hpkey = HPKEY_ENTER;
                 break;
             case KEY_BACKSPACE:
             case 127:
             case '\b':
-                hpkey = BUTTON_BS;
+                hpkey = HPKEY_BS;
                 break;
             case KEY_DC:
-                hpkey = BUTTON_DEL;
+                hpkey = HPKEY_DEL;
                 break;
             case '.':
-                hpkey = BUTTON_PERIOD;
+                hpkey = HPKEY_PERIOD;
                 break;
             case '+':
-                hpkey = BUTTON_PLUS;
+                hpkey = HPKEY_PLUS;
                 break;
             case '-':
-                hpkey = BUTTON_MINUS;
+                hpkey = HPKEY_MINUS;
                 break;
             case '*':
-                hpkey = BUTTON_MUL;
+                hpkey = HPKEY_MUL;
                 break;
             case '/':
-                hpkey = BUTTON_DIV;
+                hpkey = HPKEY_DIV;
                 break;
 
             case '[':
             case 339: /* PgUp */
             case KEY_F( 5 ):
-                hpkey = BUTTON_SHL;
+                hpkey = HPKEY_SHL;
                 break;
             case ']':
             case 338: /* PgDn */
             case KEY_F( 6 ):
-                hpkey = BUTTON_SHR;
+                hpkey = HPKEY_SHR;
                 break;
             case ';':
             case KEY_IC: /* Ins */
             case KEY_F( 7 ):
             case KEY_F( 8 ):
-                hpkey = BUTTON_ALPHA;
+                hpkey = HPKEY_ALPHA;
                 break;
             case '\\':
                 /* case KEY_ESC: */
             case 27:  /* Esc */
             case 262: /* Home */
             case KEY_F( 4 ):
-                hpkey = BUTTON_ON;
+                hpkey = HPKEY_ON;
                 break;
 
             case '|':      /* Shift+\ */
@@ -412,8 +287,8 @@ static inline int ncurses_get_event( void )
                 break;
         }
 
-        if ( !buttons[ hpkey ].pressed )
-            press_button( hpkey );
+        if ( !keyboard[ hpkey ].pressed )
+            press_key( hpkey );
     }
 
     text_update_LCD();

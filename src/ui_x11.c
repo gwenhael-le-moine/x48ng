@@ -24,8 +24,8 @@
 #include "ui.h"
 #include "ui_inner.h"
 
-#define KEYBOARD_HEIGHT ( buttons[ LAST_BUTTON ].y + buttons[ LAST_BUTTON ].h )
-#define KEYBOARD_WIDTH ( buttons[ LAST_BUTTON ].x + buttons[ LAST_BUTTON ].w )
+#define KEYBOARD_HEIGHT ( buttons[ LAST_HPKEY ].y + buttons[ LAST_HPKEY ].h )
+#define KEYBOARD_WIDTH ( buttons[ LAST_HPKEY ].x + buttons[ LAST_HPKEY ].w )
 
 #define TOP_SKIP 65
 #define SIDE_SKIP 20
@@ -201,9 +201,6 @@ typedef struct x11_keypad_t {
 
 typedef struct x11_button_t {
     const char* name;
-    short pressed;
-
-    int code;
     int x, y;
     unsigned int w, h;
 
@@ -343,125 +340,123 @@ static x11_color_t colors_gx[] = {
 static x11_button_t* buttons = 0;
 
 static x11_button_t buttons_sx[] = {
-    {"A",       0, 0x14,   0,   0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "A", 0,          0, 0,        0,      0, 0, 0},
-    { "B",      0, 0x84,   50,  0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "B", 0,          0, 0,        0,      0, 0, 0},
-    { "C",      0, 0x83,   100, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "C", 0,          0, 0,        0,      0, 0, 0},
-    { "D",      0, 0x82,   150, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "D", 0,          0, 0,        0,      0, 0, 0},
-    { "E",      0, 0x81,   200, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "E", 0,          0, 0,        0,      0, 0, 0},
-    { "F",      0, 0x80,   250, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "F", 0,          0, 0,        0,      0, 0, 0},
+    {"A",       0,   0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "A", 0,          0, 0,        0,      0, 0, 0},
+    { "B",      50,  0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "B", 0,          0, 0,        0,      0, 0, 0},
+    { "C",      100, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "C", 0,          0, 0,        0,      0, 0, 0},
+    { "D",      150, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "D", 0,          0, 0,        0,      0, 0, 0},
+    { "E",      200, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "E", 0,          0, 0,        0,      0, 0, 0},
+    { "F",      250, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "F", 0,          0, 0,        0,      0, 0, 0},
 
-    { "MTH",    0, 0x24,   0,   50,  36, 26, WHITE, "MTH",   0, 0,                0,                 0,                 "G", "PRINT",    1, 0,        0,      0, 0, 0},
-    { "PRG",    0, 0x74,   50,  50,  36, 26, WHITE, "PRG",   0, 0,                0,                 0,                 "H", "I/O",      1, 0,        0,      0, 0, 0},
-    { "CST",    0, 0x73,   100, 50,  36, 26, WHITE, "CST",   0, 0,                0,                 0,                 "I", "MODES",    1, 0,        0,      0, 0, 0},
-    { "VAR",    0, 0x72,   150, 50,  36, 26, WHITE, "VAR",   0, 0,                0,                 0,                 "J", "MEMORY",   1, 0,        0,      0, 0, 0},
-    { "UP",     0, 0x71,   200, 50,  36, 26, WHITE, 0,       0, up_width,         up_height,         up_bitmap,         "K", "LIBRARY",  1, 0,        0,      0, 0, 0},
-    { "NXT",    0, 0x70,   250, 50,  36, 26, WHITE, "NXT",   0, 0,                0,                 0,                 "L", "PREV",     0, 0,        0,      0, 0, 0},
+    { "MTH",    0,   50,  36, 26, WHITE, "MTH",   0, 0,                0,                 0,                 "G", "PRINT",    1, 0,        0,      0, 0, 0},
+    { "PRG",    50,  50,  36, 26, WHITE, "PRG",   0, 0,                0,                 0,                 "H", "I/O",      1, 0,        0,      0, 0, 0},
+    { "CST",    100, 50,  36, 26, WHITE, "CST",   0, 0,                0,                 0,                 "I", "MODES",    1, 0,        0,      0, 0, 0},
+    { "VAR",    150, 50,  36, 26, WHITE, "VAR",   0, 0,                0,                 0,                 "J", "MEMORY",   1, 0,        0,      0, 0, 0},
+    { "UP",     200, 50,  36, 26, WHITE, 0,       0, up_width,         up_height,         up_bitmap,         "K", "LIBRARY",  1, 0,        0,      0, 0, 0},
+    { "NXT",    250, 50,  36, 26, WHITE, "NXT",   0, 0,                0,                 0,                 "L", "PREV",     0, 0,        0,      0, 0, 0},
 
-    { "COLON",  0, 0x04,   0,   100, 36, 26, WHITE, 0,       0, colon_width,      colon_height,      colon_bitmap,      "M", "UP",       0, "HOME",   0,      0, 0, 0},
-    { "STO",    0, 0x64,   50,  100, 36, 26, WHITE, "STO",   0, 0,                0,                 0,                 "N", "DEF",      0, "RCL",    0,      0, 0, 0},
-    { "EVAL",   0, 0x63,   100, 100, 36, 26, WHITE, "EVAL",  0, 0,                0,                 0,                 "O", "aQ",       0, "aNUM",   0,      0, 0, 0},
-    { "LEFT",   0, 0x62,   150, 100, 36, 26, WHITE, 0,       0, left_width,       left_height,       left_bitmap,       "P", "GRAPH",    0, 0,        0,      0, 0, 0},
-    { "DOWN",   0, 0x61,   200, 100, 36, 26, WHITE, 0,       0, down_width,       down_height,       down_bitmap,       "Q", "REVIEW",   0, 0,        0,      0, 0, 0},
-    { "RIGHT",  0, 0x60,   250, 100, 36, 26, WHITE, 0,       0, right_width,      right_height,      right_bitmap,      "R", "SWAP",     0, 0,        0,      0, 0, 0},
+    { "COLON",  0,   100, 36, 26, WHITE, 0,       0, colon_width,      colon_height,      colon_bitmap,      "M", "UP",       0, "HOME",   0,      0, 0, 0},
+    { "STO",    50,  100, 36, 26, WHITE, "STO",   0, 0,                0,                 0,                 "N", "DEF",      0, "RCL",    0,      0, 0, 0},
+    { "EVAL",   100, 100, 36, 26, WHITE, "EVAL",  0, 0,                0,                 0,                 "O", "aQ",       0, "aNUM",   0,      0, 0, 0},
+    { "LEFT",   150, 100, 36, 26, WHITE, 0,       0, left_width,       left_height,       left_bitmap,       "P", "GRAPH",    0, 0,        0,      0, 0, 0},
+    { "DOWN",   200, 100, 36, 26, WHITE, 0,       0, down_width,       down_height,       down_bitmap,       "Q", "REVIEW",   0, 0,        0,      0, 0, 0},
+    { "RIGHT",  250, 100, 36, 26, WHITE, 0,       0, right_width,      right_height,      right_bitmap,      "R", "SWAP",     0, 0,        0,      0, 0, 0},
 
-    { "SIN",    0, 0x34,   0,   150, 36, 26, WHITE, "SIN",   0, 0,                0,                 0,                 "S", "ASIN",     0, "b",      0,      0, 0, 0},
-    { "COS",    0, 0x54,   50,  150, 36, 26, WHITE, "COS",   0, 0,                0,                 0,                 "T", "ACOS",     0, "c",      0,      0, 0, 0},
-    { "TAN",    0, 0x53,   100, 150, 36, 26, WHITE, "TAN",   0, 0,                0,                 0,                 "U", "ATAN",     0, "d",      0,      0, 0, 0},
-    { "SQRT",   0, 0x52,   150, 150, 36, 26, WHITE, 0,       0, sqrt_width,       sqrt_height,       sqrt_bitmap,       "V", "e",        0, "f",      0,      0, 0, 0},
-    { "POWER",  0, 0x51,   200, 150, 36, 26, WHITE, 0,       0, power_width,      power_height,      power_bitmap,      "W", "g",        0, "LOG",    0,      0, 0, 0},
-    { "INV",    0, 0x50,   250, 150, 36, 26, WHITE, 0,       0, inv_width,        inv_height,        inv_bitmap,        "X", "h",        0, "LN",     0,      0, 0, 0},
+    { "SIN",    0,   150, 36, 26, WHITE, "SIN",   0, 0,                0,                 0,                 "S", "ASIN",     0, "b",      0,      0, 0, 0},
+    { "COS",    50,  150, 36, 26, WHITE, "COS",   0, 0,                0,                 0,                 "T", "ACOS",     0, "c",      0,      0, 0, 0},
+    { "TAN",    100, 150, 36, 26, WHITE, "TAN",   0, 0,                0,                 0,                 "U", "ATAN",     0, "d",      0,      0, 0, 0},
+    { "SQRT",   150, 150, 36, 26, WHITE, 0,       0, sqrt_width,       sqrt_height,       sqrt_bitmap,       "V", "e",        0, "f",      0,      0, 0, 0},
+    { "POWER",  200, 150, 36, 26, WHITE, 0,       0, power_width,      power_height,      power_bitmap,      "W", "g",        0, "LOG",    0,      0, 0, 0},
+    { "INV",    250, 150, 36, 26, WHITE, 0,       0, inv_width,        inv_height,        inv_bitmap,        "X", "h",        0, "LN",     0,      0, 0, 0},
 
-    { "ENTER",  0, 0x44,   0,   200, 86, 26, WHITE, "ENTER", 2, 0,                0,                 0,                 0,   "EQUATION", 0, "MATRIX", 0,      0, 0, 0},
-    { "NEG",    0, 0x43,   100, 200, 36, 26, WHITE, 0,       0, neg_width,        neg_height,        neg_bitmap,        "Y", "EDIT",     0, "VISIT",  0,      0, 0, 0},
-    { "EEX",    0, 0x42,   150, 200, 36, 26, WHITE, "EEX",   0, 0,                0,                 0,                 "Z", "2D",       0, "3D",     0,      0, 0, 0},
-    { "DEL",    0, 0x41,   200, 200, 36, 26, WHITE, "DEL",   0, 0,                0,                 0,                 0,   "PURGE",    0, 0,        0,      0, 0, 0},
-    { "BS",     0, 0x40,   250, 200, 36, 26, WHITE, 0,       0, bs_width,         bs_height,         bs_bitmap,         0,   "DROP",     0, "CLR",    0,      0, 0, 0},
+    { "ENTER",  0,   200, 86, 26, WHITE, "ENTER", 2, 0,                0,                 0,                 0,   "EQUATION", 0, "MATRIX", 0,      0, 0, 0},
+    { "NEG",    100, 200, 36, 26, WHITE, 0,       0, neg_width,        neg_height,        neg_bitmap,        "Y", "EDIT",     0, "VISIT",  0,      0, 0, 0},
+    { "EEX",    150, 200, 36, 26, WHITE, "EEX",   0, 0,                0,                 0,                 "Z", "2D",       0, "3D",     0,      0, 0, 0},
+    { "DEL",    200, 200, 36, 26, WHITE, "DEL",   0, 0,                0,                 0,                 0,   "PURGE",    0, 0,        0,      0, 0, 0},
+    { "BS",     250, 200, 36, 26, WHITE, 0,       0, bs_width,         bs_height,         bs_bitmap,         0,   "DROP",     0, "CLR",    0,      0, 0, 0},
 
-    { "ALPHA",  0, 0x35,   0,   250, 36, 26, WHITE, 0,       0, alpha_width,      alpha_height,      alpha_bitmap,      0,   "USR",      0, "ENTRY",  0,      0, 0, 0},
-    { "7",      0, 0x33,   60,  250, 46, 26, WHITE, "7",     1, 0,                0,                 0,                 0,   "SOLVE",    1, 0,        0,      0, 0, 0},
-    { "8",      0, 0x32,   120, 250, 46, 26, WHITE, "8",     1, 0,                0,                 0,                 0,   "PLOT",     1, 0,        0,      0, 0, 0},
-    { "9",      0, 0x31,   180, 250, 46, 26, WHITE, "9",     1, 0,                0,                 0,                 0,   "ALGEBRA",  1, 0,        0,      0, 0, 0},
-    { "DIV",    0, 0x30,   240, 250, 46, 26, WHITE, 0,       0, div_width,        div_height,        div_bitmap,        0,   "( )",      0, "#",      0,      0, 0, 0},
+    { "ALPHA",  0,   250, 36, 26, WHITE, 0,       0, alpha_width,      alpha_height,      alpha_bitmap,      0,   "USR",      0, "ENTRY",  0,      0, 0, 0},
+    { "7",      60,  250, 46, 26, WHITE, "7",     1, 0,                0,                 0,                 0,   "SOLVE",    1, 0,        0,      0, 0, 0},
+    { "8",      120, 250, 46, 26, WHITE, "8",     1, 0,                0,                 0,                 0,   "PLOT",     1, 0,        0,      0, 0, 0},
+    { "9",      180, 250, 46, 26, WHITE, "9",     1, 0,                0,                 0,                 0,   "ALGEBRA",  1, 0,        0,      0, 0, 0},
+    { "DIV",    240, 250, 46, 26, WHITE, 0,       0, div_width,        div_height,        div_bitmap,        0,   "( )",      0, "#",      0,      0, 0, 0},
 
-    { "SHL",    0, 0x25,   0,   300, 36, 26, LEFT,  0,       0, shl_width,        shl_height,        shl_bitmap,        0,   0,          0, 0,        0,      0, 0, 0},
-    { "4",      0, 0x23,   60,  300, 46, 26, WHITE, "4",     1, 0,                0,                 0,                 0,   "TIME",     1, 0,        0,      0, 0, 0},
-    { "5",      0, 0x22,   120, 300, 46, 26, WHITE, "5",     1, 0,                0,                 0,                 0,   "STAT",     1, 0,        0,      0, 0, 0},
-    { "6",      0, 0x21,   180, 300, 46, 26, WHITE, "6",     1, 0,                0,                 0,                 0,   "UNITS",    1, 0,        0,      0, 0, 0},
-    { "MUL",    0, 0x20,   240, 300, 46, 26, WHITE, 0,       0, mul_width,        mul_height,        mul_bitmap,        0,   "[ ]",      0, "_",      0,      0, 0, 0},
+    { "SHL",    0,   300, 36, 26, LEFT,  0,       0, shl_width,        shl_height,        shl_bitmap,        0,   0,          0, 0,        0,      0, 0, 0},
+    { "4",      60,  300, 46, 26, WHITE, "4",     1, 0,                0,                 0,                 0,   "TIME",     1, 0,        0,      0, 0, 0},
+    { "5",      120, 300, 46, 26, WHITE, "5",     1, 0,                0,                 0,                 0,   "STAT",     1, 0,        0,      0, 0, 0},
+    { "6",      180, 300, 46, 26, WHITE, "6",     1, 0,                0,                 0,                 0,   "UNITS",    1, 0,        0,      0, 0, 0},
+    { "MUL",    240, 300, 46, 26, WHITE, 0,       0, mul_width,        mul_height,        mul_bitmap,        0,   "[ ]",      0, "_",      0,      0, 0, 0},
 
-    { "SHR",    0, 0x15,   0,   350, 36, 26, RIGHT, 0,       0, shr_width,        shr_height,        shr_bitmap,        0,   0,          0, 0,        0,      0, 0, 0},
-    { "1",      0, 0x13,   60,  350, 46, 26, WHITE, "1",     1, 0,                0,                 0,                 0,   "RAD",      0, "POLAR",  0,      0, 0, 0},
-    { "2",      0, 0x12,   120, 350, 46, 26, WHITE, "2",     1, 0,                0,                 0,                 0,   "STACK",    0, "ARG",    0,      0, 0, 0},
-    { "3",      0, 0x11,   180, 350, 46, 26, WHITE, "3",     1, 0,                0,                 0,                 0,   "CMD",      0, "MENU",   0,      0, 0, 0},
-    { "MINUS",  0, 0x10,   240, 350, 46, 26, WHITE, 0,       0, minus_width,      minus_height,      minus_bitmap,      0,   "i",        0, "j",      0,      0, 0, 0},
+    { "SHR",    0,   350, 36, 26, RIGHT, 0,       0, shr_width,        shr_height,        shr_bitmap,        0,   0,          0, 0,        0,      0, 0, 0},
+    { "1",      60,  350, 46, 26, WHITE, "1",     1, 0,                0,                 0,                 0,   "RAD",      0, "POLAR",  0,      0, 0, 0},
+    { "2",      120, 350, 46, 26, WHITE, "2",     1, 0,                0,                 0,                 0,   "STACK",    0, "ARG",    0,      0, 0, 0},
+    { "3",      180, 350, 46, 26, WHITE, "3",     1, 0,                0,                 0,                 0,   "CMD",      0, "MENU",   0,      0, 0, 0},
+    { "MINUS",  240, 350, 46, 26, WHITE, 0,       0, minus_width,      minus_height,      minus_bitmap,      0,   "i",        0, "j",      0,      0, 0, 0},
 
-    { "ON",     0, 0x8000, 0,   400, 36, 26, WHITE, "ON",    0, 0,                0,                 0,                 0,   "CONT",     0, "OFF",    "ATTN", 0, 0, 0},
-    { "0",      0, 0x03,   60,  400, 46, 26, WHITE, "0",     1, 0,                0,                 0,                 0,   "= ",       0, " a",     0,      0, 0, 0},
-    { "PERIOD", 0, 0x02,   120, 400, 46, 26, WHITE, ".",     1, 0,                0,                 0,                 0,   ", ",       0, " k",     0,      0, 0, 0},
-    { "SPC",    0, 0x01,   180, 400, 46, 26, WHITE, "SPC",   0, 0,                0,                 0,                 0,   "l ",       0, " m",     0,      0, 0, 0},
-    { "PLUS",   0, 0x00,   240, 400, 46, 26, WHITE, 0,       0, plus_width,       plus_height,       plus_bitmap,       0,   "{ }",      0, ": :",    0,      0, 0, 0},
- /* { 0 } */
+    { "ON",     0,   400, 36, 26, WHITE, "ON",    0, 0,                0,                 0,                 0,   "CONT",     0, "OFF",    "ATTN", 0, 0, 0},
+    { "0",      60,  400, 46, 26, WHITE, "0",     1, 0,                0,                 0,                 0,   "= ",       0, " a",     0,      0, 0, 0},
+    { "PERIOD", 120, 400, 46, 26, WHITE, ".",     1, 0,                0,                 0,                 0,   ", ",       0, " k",     0,      0, 0, 0},
+    { "SPC",    180, 400, 46, 26, WHITE, "SPC",   0, 0,                0,                 0,                 0,   "l ",       0, " m",     0,      0, 0, 0},
+    { "PLUS",   240, 400, 46, 26, WHITE, 0,       0, plus_width,       plus_height,       plus_bitmap,       0,   "{ }",      0, ": :",    0,      0, 0, 0},
 };
 
 static x11_button_t buttons_gx[] = {
-    {"A",       0, 0x14,   0,   0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "A", 0,          0, 0,          0,        0, 0, 0},
-    { "B",      0, 0x84,   50,  0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "B", 0,          0, 0,          0,        0, 0, 0},
-    { "C",      0, 0x83,   100, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "C", 0,          0, 0,          0,        0, 0, 0},
-    { "D",      0, 0x82,   150, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "D", 0,          0, 0,          0,        0, 0, 0},
-    { "E",      0, 0x81,   200, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "E", 0,          0, 0,          0,        0, 0, 0},
-    { "F",      0, 0x80,   250, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "F", 0,          0, 0,          0,        0, 0, 0},
+    {"A",       0,   0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "A", 0,          0, 0,          0,        0, 0, 0},
+    { "B",      50,  0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "B", 0,          0, 0,          0,        0, 0, 0},
+    { "C",      100, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "C", 0,          0, 0,          0,        0, 0, 0},
+    { "D",      150, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "D", 0,          0, 0,          0,        0, 0, 0},
+    { "E",      200, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "E", 0,          0, 0,          0,        0, 0, 0},
+    { "F",      250, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "F", 0,          0, 0,          0,        0, 0, 0},
 
-    { "MTH",    0, 0x24,   0,   50,  36, 26, WHITE, "MTH",   0, 0,                0,                 0,                 "G", "RAD",      0, "POLAR",    0,        0, 0, 0},
-    { "PRG",    0, 0x74,   50,  50,  36, 26, WHITE, "PRG",   0, 0,                0,                 0,                 "H", 0,          0, "CHARS",    0,        0, 0, 0},
-    { "CST",    0, 0x73,   100, 50,  36, 26, WHITE, "CST",   0, 0,                0,                 0,                 "I", 0,          0, "MODES",    0,        0, 0, 0},
-    { "VAR",    0, 0x72,   150, 50,  36, 26, WHITE, "VAR",   0, 0,                0,                 0,                 "J", 0,          0, "MEMORY",   0,        0, 0, 0},
-    { "UP",     0, 0x71,   200, 50,  36, 26, WHITE, 0,       0, up_width,         up_height,         up_bitmap,         "K", 0,          0, "STACK",    0,        0, 0, 0},
-    { "NXT",    0, 0x70,   250, 50,  36, 26, WHITE, "NXT",   0, 0,                0,                 0,                 "L", "PREV",     0, "MENU",     0,        0, 0, 0},
+    { "MTH",    0,   50,  36, 26, WHITE, "MTH",   0, 0,                0,                 0,                 "G", "RAD",      0, "POLAR",    0,        0, 0, 0},
+    { "PRG",    50,  50,  36, 26, WHITE, "PRG",   0, 0,                0,                 0,                 "H", 0,          0, "CHARS",    0,        0, 0, 0},
+    { "CST",    100, 50,  36, 26, WHITE, "CST",   0, 0,                0,                 0,                 "I", 0,          0, "MODES",    0,        0, 0, 0},
+    { "VAR",    150, 50,  36, 26, WHITE, "VAR",   0, 0,                0,                 0,                 "J", 0,          0, "MEMORY",   0,        0, 0, 0},
+    { "UP",     200, 50,  36, 26, WHITE, 0,       0, up_width,         up_height,         up_bitmap,         "K", 0,          0, "STACK",    0,        0, 0, 0},
+    { "NXT",    250, 50,  36, 26, WHITE, "NXT",   0, 0,                0,                 0,                 "L", "PREV",     0, "MENU",     0,        0, 0, 0},
 
-    { "COLON",  0, 0x04,   0,   100, 36, 26, WHITE, 0,       0, colon_width,      colon_height,      colon_bitmap,      "M", "UP",       0, "HOME",     0,        0, 0, 0},
-    { "STO",    0, 0x64,   50,  100, 36, 26, WHITE, "STO",   0, 0,                0,                 0,                 "N", "DEF",      0, "RCL",      0,        0, 0, 0},
-    { "EVAL",   0, 0x63,   100, 100, 36, 26, WHITE, "EVAL",  0, 0,                0,                 0,                 "O", "aNUM",     0, "UNDO",     0,        0, 0, 0},
-    { "LEFT",   0, 0x62,   150, 100, 36, 26, WHITE, 0,       0, left_width,       left_height,       left_bitmap,       "P", "PICTURE",  0, 0,          0,        0, 0, 0},
-    { "DOWN",   0, 0x61,   200, 100, 36, 26, WHITE, 0,       0, down_width,       down_height,       down_bitmap,       "Q", "VIEW",     0, 0,          0,        0, 0, 0},
-    { "RIGHT",  0, 0x60,   250, 100, 36, 26, WHITE, 0,       0, right_width,      right_height,      right_bitmap,      "R", "SWAP",     0, 0,          0,        0, 0, 0},
+    { "COLON",  0,   100, 36, 26, WHITE, 0,       0, colon_width,      colon_height,      colon_bitmap,      "M", "UP",       0, "HOME",     0,        0, 0, 0},
+    { "STO",    50,  100, 36, 26, WHITE, "STO",   0, 0,                0,                 0,                 "N", "DEF",      0, "RCL",      0,        0, 0, 0},
+    { "EVAL",   100, 100, 36, 26, WHITE, "EVAL",  0, 0,                0,                 0,                 "O", "aNUM",     0, "UNDO",     0,        0, 0, 0},
+    { "LEFT",   150, 100, 36, 26, WHITE, 0,       0, left_width,       left_height,       left_bitmap,       "P", "PICTURE",  0, 0,          0,        0, 0, 0},
+    { "DOWN",   200, 100, 36, 26, WHITE, 0,       0, down_width,       down_height,       down_bitmap,       "Q", "VIEW",     0, 0,          0,        0, 0, 0},
+    { "RIGHT",  250, 100, 36, 26, WHITE, 0,       0, right_width,      right_height,      right_bitmap,      "R", "SWAP",     0, 0,          0,        0, 0, 0},
 
-    { "SIN",    0, 0x34,   0,   150, 36, 26, WHITE, "SIN",   0, 0,                0,                 0,                 "S", "ASIN",     0, "b",        0,        0, 0, 0},
-    { "COS",    0, 0x54,   50,  150, 36, 26, WHITE, "COS",   0, 0,                0,                 0,                 "T", "ACOS",     0, "c",        0,        0, 0, 0},
-    { "TAN",    0, 0x53,   100, 150, 36, 26, WHITE, "TAN",   0, 0,                0,                 0,                 "U", "ATAN",     0, "d",        0,        0, 0, 0},
-    { "SQRT",   0, 0x52,   150, 150, 36, 26, WHITE, 0,       0, sqrt_width,       sqrt_height,       sqrt_bitmap,       "V", "n",        0, "o",        0,        0, 0, 0},
-    { "POWER",  0, 0x51,   200, 150, 36, 26, WHITE, 0,       0, power_width,      power_height,      power_bitmap,      "W", "p",        0, "LOG",      0,        0, 0, 0},
-    { "INV",    0, 0x50,   250, 150, 36, 26, WHITE, 0,       0, inv_width,        inv_height,        inv_bitmap,        "X", "q",        0, "LN",       0,        0, 0, 0},
+    { "SIN",    0,   150, 36, 26, WHITE, "SIN",   0, 0,                0,                 0,                 "S", "ASIN",     0, "b",        0,        0, 0, 0},
+    { "COS",    50,  150, 36, 26, WHITE, "COS",   0, 0,                0,                 0,                 "T", "ACOS",     0, "c",        0,        0, 0, 0},
+    { "TAN",    100, 150, 36, 26, WHITE, "TAN",   0, 0,                0,                 0,                 "U", "ATAN",     0, "d",        0,        0, 0, 0},
+    { "SQRT",   150, 150, 36, 26, WHITE, 0,       0, sqrt_width,       sqrt_height,       sqrt_bitmap,       "V", "n",        0, "o",        0,        0, 0, 0},
+    { "POWER",  200, 150, 36, 26, WHITE, 0,       0, power_width,      power_height,      power_bitmap,      "W", "p",        0, "LOG",      0,        0, 0, 0},
+    { "INV",    250, 150, 36, 26, WHITE, 0,       0, inv_width,        inv_height,        inv_bitmap,        "X", "q",        0, "LN",       0,        0, 0, 0},
 
-    { "ENTER",  0, 0x44,   0,   200, 86, 26, WHITE, "ENTER", 2, 0,                0,                 0,                 0,   "EQUATION", 0, "MATRIX",   0,        0, 0, 0},
-    { "NEG",    0, 0x43,   100, 200, 36, 26, WHITE, 0,       0, neg_width,        neg_height,        neg_bitmap,        "Y", "EDIT",     0, "CMD",      0,        0, 0, 0},
-    { "EEX",    0, 0x42,   150, 200, 36, 26, WHITE, "EEX",   0, 0,                0,                 0,                 "Z", "PURG",     0, "ARG",      0,        0, 0, 0},
-    { "DEL",    0, 0x41,   200, 200, 36, 26, WHITE, "DEL",   0, 0,                0,                 0,                 0,   "CLEAR",    0, 0,          0,        0, 0, 0},
-    { "BS",     0, 0x40,   250, 200, 36, 26, WHITE, 0,       0, bs_width,         bs_height,         bs_bitmap,         0,   "DROP",     0, 0,          0,        0, 0, 0},
+    { "ENTER",  0,   200, 86, 26, WHITE, "ENTER", 2, 0,                0,                 0,                 0,   "EQUATION", 0, "MATRIX",   0,        0, 0, 0},
+    { "NEG",    100, 200, 36, 26, WHITE, 0,       0, neg_width,        neg_height,        neg_bitmap,        "Y", "EDIT",     0, "CMD",      0,        0, 0, 0},
+    { "EEX",    150, 200, 36, 26, WHITE, "EEX",   0, 0,                0,                 0,                 "Z", "PURG",     0, "ARG",      0,        0, 0, 0},
+    { "DEL",    200, 200, 36, 26, WHITE, "DEL",   0, 0,                0,                 0,                 0,   "CLEAR",    0, 0,          0,        0, 0, 0},
+    { "BS",     250, 200, 36, 26, WHITE, 0,       0, bs_width,         bs_height,         bs_bitmap,         0,   "DROP",     0, 0,          0,        0, 0, 0},
 
-    { "ALPHA",  0, 0x35,   0,   250, 36, 26, WHITE, 0,       0, alpha_width,      alpha_height,      alpha_bitmap,      0,   "USER",     0, "ENTRY",    0,        0, 0, 0},
-    { "7",      0, 0x33,   60,  250, 46, 26, WHITE, "7",     1, 0,                0,                 0,                 0,   0,          1, "SOLVE",    0,        0, 0, 0},
-    { "8",      0, 0x32,   120, 250, 46, 26, WHITE, "8",     1, 0,                0,                 0,                 0,   0,          1, "PLOT",     0,        0, 0, 0},
-    { "9",      0, 0x31,   180, 250, 46, 26, WHITE, "9",     1, 0,                0,                 0,                 0,   0,          1, "SYMBOLIC", 0,        0, 0, 0},
-    { "DIV",    0, 0x30,   240, 250, 46, 26, WHITE, 0,       0, div_width,        div_height,        div_bitmap,        0,   "r ",       0, "s",        0,        0, 0, 0},
+    { "ALPHA",  0,   250, 36, 26, WHITE, 0,       0, alpha_width,      alpha_height,      alpha_bitmap,      0,   "USER",     0, "ENTRY",    0,        0, 0, 0},
+    { "7",      60,  250, 46, 26, WHITE, "7",     1, 0,                0,                 0,                 0,   0,          1, "SOLVE",    0,        0, 0, 0},
+    { "8",      120, 250, 46, 26, WHITE, "8",     1, 0,                0,                 0,                 0,   0,          1, "PLOT",     0,        0, 0, 0},
+    { "9",      180, 250, 46, 26, WHITE, "9",     1, 0,                0,                 0,                 0,   0,          1, "SYMBOLIC", 0,        0, 0, 0},
+    { "DIV",    240, 250, 46, 26, WHITE, 0,       0, div_width,        div_height,        div_bitmap,        0,   "r ",       0, "s",        0,        0, 0, 0},
 
-    { "SHL",    0, 0x25,   0,   300, 36, 26, LEFT,  0,       0, shl_width,        shl_height,        shl_bitmap,        0,   0,          0, 0,          0,        0, 0, 0},
-    { "4",      0, 0x23,   60,  300, 46, 26, WHITE, "4",     1, 0,                0,                 0,                 0,   0,          1, "TIME",     0,        0, 0, 0},
-    { "5",      0, 0x22,   120, 300, 46, 26, WHITE, "5",     1, 0,                0,                 0,                 0,   0,          1, "STAT",     0,        0, 0, 0},
-    { "6",      0, 0x21,   180, 300, 46, 26, WHITE, "6",     1, 0,                0,                 0,                 0,   0,          1, "UNITS",    0,        0, 0, 0},
-    { "MUL",    0, 0x20,   240, 300, 46, 26, WHITE, 0,       0, mul_width,        mul_height,        mul_bitmap,        0,   "t ",       0, "u",        0,        0, 0, 0},
+    { "SHL",    0,   300, 36, 26, LEFT,  0,       0, shl_width,        shl_height,        shl_bitmap,        0,   0,          0, 0,          0,        0, 0, 0},
+    { "4",      60,  300, 46, 26, WHITE, "4",     1, 0,                0,                 0,                 0,   0,          1, "TIME",     0,        0, 0, 0},
+    { "5",      120, 300, 46, 26, WHITE, "5",     1, 0,                0,                 0,                 0,   0,          1, "STAT",     0,        0, 0, 0},
+    { "6",      180, 300, 46, 26, WHITE, "6",     1, 0,                0,                 0,                 0,   0,          1, "UNITS",    0,        0, 0, 0},
+    { "MUL",    240, 300, 46, 26, WHITE, 0,       0, mul_width,        mul_height,        mul_bitmap,        0,   "t ",       0, "u",        0,        0, 0, 0},
 
-    { "SHR",    0, 0x15,   0,   350, 36, 26, RIGHT, 0,       0, shr_width,        shr_height,        shr_bitmap,        0,   0,          1, " ",        0,        0, 0, 0},
-    { "1",      0, 0x13,   60,  350, 46, 26, WHITE, "1",     1, 0,                0,                 0,                 0,   0,          1, "I/O",      0,        0, 0, 0},
-    { "2",      0, 0x12,   120, 350, 46, 26, WHITE, "2",     1, 0,                0,                 0,                 0,   0,          1, "LIBRARY",  0,        0, 0, 0},
-    { "3",      0, 0x11,   180, 350, 46, 26, WHITE, "3",     1, 0,                0,                 0,                 0,   0,          1, "EQ LIB",   0,        0, 0, 0},
-    { "MINUS",  0, 0x10,   240, 350, 46, 26, WHITE, 0,       0, minus_width,      minus_height,      minus_bitmap,      0,   "v ",       0, "w",        0,        0, 0, 0},
+    { "SHR",    0,   350, 36, 26, RIGHT, 0,       0, shr_width,        shr_height,        shr_bitmap,        0,   0,          1, " ",        0,        0, 0, 0},
+    { "1",      60,  350, 46, 26, WHITE, "1",     1, 0,                0,                 0,                 0,   0,          1, "I/O",      0,        0, 0, 0},
+    { "2",      120, 350, 46, 26, WHITE, "2",     1, 0,                0,                 0,                 0,   0,          1, "LIBRARY",  0,        0, 0, 0},
+    { "3",      180, 350, 46, 26, WHITE, "3",     1, 0,                0,                 0,                 0,   0,          1, "EQ LIB",   0,        0, 0, 0},
+    { "MINUS",  240, 350, 46, 26, WHITE, 0,       0, minus_width,      minus_height,      minus_bitmap,      0,   "v ",       0, "w",        0,        0, 0, 0},
 
-    { "ON",     0, 0x8000, 0,   400, 36, 26, WHITE, "ON",    0, 0,                0,                 0,                 0,   "CONT",     0, "OFF",      "CANCEL", 0, 0, 0},
-    { "0",      0, 0x03,   60,  400, 46, 26, WHITE, "0",     1, 0,                0,                 0,                 0,   "\004 ",    0, "\003",     0,        0, 0, 0},
-    { "PERIOD", 0, 0x02,   120, 400, 46, 26, WHITE, ".",     1, 0,                0,                 0,                 0,   "\002 ",    0, "\001",     0,        0, 0, 0},
-    { "SPC",    0, 0x01,   180, 400, 46, 26, WHITE, "SPC",   0, 0,                0,                 0,                 0,   "\005 ",    0, "z",        0,        0, 0, 0},
-    { "PLUS",   0, 0x00,   240, 400, 46, 26, WHITE, 0,       0, plus_width,       plus_height,       plus_bitmap,       0,   "x ",       0, "y",        0,        0, 0, 0},
- /* { 0 } */
+    { "ON",     0,   400, 36, 26, WHITE, "ON",    0, 0,                0,                 0,                 0,   "CONT",     0, "OFF",      "CANCEL", 0, 0, 0},
+    { "0",      60,  400, 46, 26, WHITE, "0",     1, 0,                0,                 0,                 0,   "\004 ",    0, "\003",     0,        0, 0, 0},
+    { "PERIOD", 120, 400, 46, 26, WHITE, ".",     1, 0,                0,                 0,                 0,   "\002 ",    0, "\001",     0,        0, 0, 0},
+    { "SPC",    180, 400, 46, 26, WHITE, "SPC",   0, 0,                0,                 0,                 0,   "\005 ",    0, "z",        0,        0, 0, 0},
+    { "PLUS",   240, 400, 46, 26, WHITE, 0,       0, plus_width,       plus_height,       plus_bitmap,       0,   "x ",       0, "y",        0,        0, 0, 0},
 };
 
 #define MAX_PASTE 128
@@ -886,7 +881,7 @@ void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small, XFontStruc
     unsigned long pixel;
 
     {
-        if ( i < BUTTON_MTH )
+        if ( i < HPKEY_MTH )
             pixel = COLOR( DISP_PAD );
         else {
             if ( opt_gx && buttons[ i ].is_menu )
@@ -1019,7 +1014,7 @@ void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small, XFontStruc
         XDrawLine( dpy, buttons[ i ].map, gc, ( int )( buttons[ i ].w - 1 ), ( int )( buttons[ i ].h - 3 ), ( int )( buttons[ i ].w - 1 ),
                    2 );
 
-        if ( i == BUTTON_ON ) {
+        if ( i == HPKEY_ON ) {
             XDrawLine( dpy, buttons[ i ].map, gc, 1, 1, ( int )( buttons[ i ].w - 2 ), 1 );
             XDrawPoint( dpy, buttons[ i ].map, gc, 1, 2 );
             XDrawPoint( dpy, buttons[ i ].map, gc, ( int )( buttons[ i ].w - 2 ), 2 );
@@ -1136,7 +1131,7 @@ void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small, XFontStruc
         XDrawLine( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 1 ), ( int )( buttons[ i ].h - 3 ), ( int )( buttons[ i ].w - 1 ),
                    2 );
 
-        if ( i == BUTTON_ON ) {
+        if ( i == HPKEY_ON ) {
             XDrawLine( dpy, buttons[ i ].down, gc, 1, 1, ( int )( buttons[ i ].w - 2 ), 1 );
             XDrawPoint( dpy, buttons[ i ].down, gc, 1, 2 );
             XDrawPoint( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 2 ), 2 );
@@ -1147,7 +1142,7 @@ void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small, XFontStruc
         XDrawPoint( dpy, buttons[ i ].down, gc, 1, ( int )( buttons[ i ].h - 2 ) );
         XDrawPoint( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 2 ), ( int )( buttons[ i ].h - 2 ) );
 
-        if ( i == BUTTON_ON ) {
+        if ( i == HPKEY_ON ) {
             XDrawRectangle( dpy, buttons[ i ].down, gc, 1, 2, buttons[ i ].w - 3, buttons[ i ].h - 4 );
             XDrawPoint( dpy, buttons[ i ].down, gc, 2, 3 );
             XDrawPoint( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 3 ), 3 );
@@ -1165,8 +1160,8 @@ void DrawButtons( void )
 {
     int i;
 
-    for ( i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
-        if ( buttons[ i ].pressed ) {
+    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
+        if ( keyboard[ i ].pressed ) {
             XCopyArea( dpy, buttons[ i ].down, buttons[ i ].xwin, gc, 0, 0, buttons[ i ].w, buttons[ i ].h, 0, 0 );
         } else {
             XCopyArea( dpy, buttons[ i ].map, buttons[ i ].xwin, gc, 0, 0, buttons[ i ].w, buttons[ i ].h, 0, 0 );
@@ -1176,7 +1171,7 @@ void DrawButtons( void )
 
 void DrawButton( int i )
 {
-    if ( buttons[ i ].pressed ) {
+    if ( keyboard[ i ].pressed ) {
         XCopyArea( dpy, buttons[ i ].down, buttons[ i ].xwin, gc, 0, 0, buttons[ i ].w, buttons[ i ].h, 0, 0 );
     } else {
         XCopyArea( dpy, buttons[ i ].map, buttons[ i ].xwin, gc, 0, 0, buttons[ i ].w, buttons[ i ].h, 0, 0 );
@@ -1212,11 +1207,11 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
     /*
      * draw the character labels
      */
-    for ( i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
+    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
 
         CreateButton( i, offset_x, offset_y, f_small, f_med, f_big );
 
-        if ( i < BUTTON_MTH )
+        if ( i < HPKEY_MTH )
             pixel = COLOR( DISP_PAD );
         else
             pixel = COLOR( PAD );
@@ -1245,7 +1240,7 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
     /*
      * draw the bottom labels
      */
-    for ( i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
+    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
 
         if ( buttons[ i ].sub != ( char* )0 ) {
 
@@ -1262,7 +1257,7 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
     /*
      * draw the left labels
      */
-    for ( i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
+    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
 
         if ( buttons[ i ].left != ( char* )0 ) {
 
@@ -1346,9 +1341,9 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
     /*
      * draw the right labels
      */
-    for ( i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
+    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
 
-        if ( i < BUTTON_MTH )
+        if ( i < HPKEY_MTH )
             pixel = COLOR( DISP_PAD );
         else
             pixel = COLOR( PAD );
@@ -1442,9 +1437,9 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
 
         pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )last_bitmap, last_width, last_height );
 
-        x = offset_x + buttons[ BUTTON_1 ].x + buttons[ BUTTON_1 ].w +
-            ( buttons[ BUTTON_2 ].x - buttons[ BUTTON_1 ].x - buttons[ BUTTON_1 ].w ) / 2;
-        y = offset_y + buttons[ BUTTON_5 ].y + buttons[ BUTTON_5 ].h + 2;
+        x = offset_x + buttons[ HPKEY_1 ].x + buttons[ HPKEY_1 ].w +
+            ( buttons[ HPKEY_2 ].x - buttons[ HPKEY_1 ].x - buttons[ HPKEY_1 ].w ) / 2;
+        y = offset_y + buttons[ HPKEY_5 ].y + buttons[ HPKEY_5 ].h + 2;
 
         XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, last_width, last_height, x, y, 1 );
 
@@ -2112,7 +2107,7 @@ int CreateWindows( int argc, char** argv )
             buttons[ i ].x -= 3;
             buttons[ i ].y += 300;
         }
-        for ( ; i <= LAST_BUTTON; i++ ) {
+        for ( ; i <= LAST_HPKEY; i++ ) {
             buttons[ i ].x += 317;
             buttons[ i ].y -= 3;
         }
@@ -2350,13 +2345,13 @@ int CreateWindows( int argc, char** argv )
     keypad.pixmap = XCreatePixmap( dpy, mainW, width, height, depth );
 
     if ( netbook ) {
-        int cut = buttons[ BUTTON_MTH ].y - ( small_ascent + small_descent + 6 + 4 );
+        int cut = buttons[ HPKEY_MTH ].y - ( small_ascent + small_descent + 6 + 4 );
         CreateBackground( width / 2, height, width, height, &keypad );
         DrawMore( KEYBOARD_OFFSET_Y, &keypad );
         CreateBezel( &keypad );
         CreateKeypad( -cut, KEYBOARD_OFFSET_X, &keypad );
     } else {
-        int cut = buttons[ BUTTON_MTH ].y + KEYBOARD_OFFSET_Y - 19;
+        int cut = buttons[ HPKEY_MTH ].y + KEYBOARD_OFFSET_Y - 19;
         CreateBackground( width, cut, width, height, &keypad );
         DrawMore( KEYBOARD_OFFSET_Y, &keypad );
         CreateBezel( &keypad );
@@ -2388,9 +2383,9 @@ int key_event( int b, XEvent* xev )
     int code;
     int i, r, c;
 
-    code = buttons[ b ].code;
+    code = keyboard[ b ].code;
     if ( xev->type == KeyPress ) {
-        buttons[ b ].pressed = 1;
+        keyboard[ b ].pressed = 1;
         DrawButton( b );
         if ( code == 0x8000 ) {
             for ( i = 0; i < 9; i++ )
@@ -2416,7 +2411,7 @@ int key_event( int b, XEvent* xev )
             c = 1 << ( code & 0xf );
             saturn.keybuf.rows[ r ] &= ~c;
         }
-        buttons[ b ].pressed = 0;
+        keyboard[ b ].pressed = 0;
         DrawButton( b );
     }
 
@@ -2600,63 +2595,63 @@ int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
     switch ( ( int )sym ) {
         case XK_KP_0:
         case XK_0:
-            key_event( BUTTON_0, xev );
+            key_event( HPKEY_0, xev );
             wake = 1;
             break;
         case XK_KP_1:
         case XK_1:
-            key_event( BUTTON_1, xev );
+            key_event( HPKEY_1, xev );
             wake = 1;
             break;
         case XK_KP_2:
         case XK_2:
-            key_event( BUTTON_2, xev );
+            key_event( HPKEY_2, xev );
             wake = 1;
             break;
         case XK_KP_3:
         case XK_3:
-            key_event( BUTTON_3, xev );
+            key_event( HPKEY_3, xev );
             wake = 1;
             break;
         case XK_KP_4:
         case XK_4:
-            key_event( BUTTON_4, xev );
+            key_event( HPKEY_4, xev );
             wake = 1;
             break;
         case XK_KP_5:
         case XK_5:
-            key_event( BUTTON_5, xev );
+            key_event( HPKEY_5, xev );
             wake = 1;
             break;
         case XK_KP_6:
         case XK_6:
-            key_event( BUTTON_6, xev );
+            key_event( HPKEY_6, xev );
             wake = 1;
             break;
         case XK_KP_7:
         case XK_7:
-            key_event( BUTTON_7, xev );
+            key_event( HPKEY_7, xev );
             wake = 1;
             break;
         case XK_KP_8:
         case XK_8:
-            key_event( BUTTON_8, xev );
+            key_event( HPKEY_8, xev );
             wake = 1;
             break;
         case XK_KP_9:
         case XK_9:
-            key_event( BUTTON_9, xev );
+            key_event( HPKEY_9, xev );
             wake = 1;
             break;
         case XK_KP_Add:
         case XK_plus:
         case XK_equal:
-            key_event( BUTTON_PLUS, xev );
+            key_event( HPKEY_PLUS, xev );
             wake = 1;
             break;
         case XK_KP_Subtract:
         case XK_minus:
-            key_event( BUTTON_MINUS, xev );
+            key_event( HPKEY_MINUS, xev );
             wake = 1;
             break;
 #ifdef XK_F25
@@ -2664,7 +2659,7 @@ int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
 #endif
         case XK_KP_Divide:
         case XK_slash:
-            key_event( BUTTON_DIV, xev );
+            key_event( HPKEY_DIV, xev );
             wake = 1;
             break;
 #ifdef XK_F26
@@ -2673,191 +2668,191 @@ int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
         case XK_KP_Multiply:
         case XK_asterisk:
         case XK_comma:
-            key_event( BUTTON_MUL, xev );
+            key_event( HPKEY_MUL, xev );
             wake = 1;
             break;
         case XK_KP_Enter:
         case XK_Return:
-            key_event( BUTTON_ENTER, xev );
+            key_event( HPKEY_ENTER, xev );
             wake = 1;
             break;
         case XK_KP_Decimal:
         case XK_KP_Separator:
         case XK_period:
-            key_event( BUTTON_PERIOD, xev );
+            key_event( HPKEY_PERIOD, xev );
             wake = 1;
             break;
         case XK_space:
-            key_event( BUTTON_SPC, xev );
+            key_event( HPKEY_SPC, xev );
             wake = 1;
             break;
         case XK_Delete:
-            key_event( BUTTON_DEL, xev );
+            key_event( HPKEY_DEL, xev );
             wake = 1;
             break;
         case XK_BackSpace:
-            key_event( BUTTON_BS, xev );
+            key_event( HPKEY_BS, xev );
             wake = 1;
             break;
         case XK_Escape:
-            key_event( BUTTON_ON, xev );
+            key_event( HPKEY_ON, xev );
             wake = 1;
             break;
         case XK_Shift_L:
         case XK_Control_R:
-            key_event( BUTTON_SHL, xev );
+            key_event( HPKEY_SHL, xev );
             wake = 1;
             break;
         case XK_Shift_R:
         case XK_Control_L:
-            key_event( BUTTON_SHR, xev );
+            key_event( HPKEY_SHR, xev );
             wake = 1;
             break;
         case XK_Alt_L:
         case XK_Alt_R:
         case XK_Meta_L:
         case XK_Meta_R:
-            key_event( BUTTON_ALPHA, xev );
+            key_event( HPKEY_ALPHA, xev );
             wake = 1;
             break;
         case XK_a:
         case XK_A:
         case XK_F1:
-            key_event( BUTTON_A, xev );
+            key_event( HPKEY_A, xev );
             wake = 1;
             break;
         case XK_b:
         case XK_B:
         case XK_F2:
-            key_event( BUTTON_B, xev );
+            key_event( HPKEY_B, xev );
             wake = 1;
             break;
         case XK_c:
         case XK_C:
         case XK_F3:
-            key_event( BUTTON_C, xev );
+            key_event( HPKEY_C, xev );
             wake = 1;
             break;
         case XK_d:
         case XK_D:
         case XK_F4:
-            key_event( BUTTON_D, xev );
+            key_event( HPKEY_D, xev );
             wake = 1;
             break;
         case XK_e:
         case XK_E:
         case XK_F5:
-            key_event( BUTTON_E, xev );
+            key_event( HPKEY_E, xev );
             wake = 1;
             break;
         case XK_f:
         case XK_F:
         case XK_F6:
-            key_event( BUTTON_F, xev );
+            key_event( HPKEY_F, xev );
             wake = 1;
             break;
         case XK_g:
         case XK_G:
-            key_event( BUTTON_MTH, xev );
+            key_event( HPKEY_MTH, xev );
             wake = 1;
             break;
         case XK_h:
         case XK_H:
-            key_event( BUTTON_PRG, xev );
+            key_event( HPKEY_PRG, xev );
             wake = 1;
             break;
         case XK_i:
         case XK_I:
-            key_event( BUTTON_CST, xev );
+            key_event( HPKEY_CST, xev );
             wake = 1;
             break;
         case XK_j:
         case XK_J:
-            key_event( BUTTON_VAR, xev );
+            key_event( HPKEY_VAR, xev );
             wake = 1;
             break;
         case XK_k:
         case XK_K:
         case XK_Up:
-            key_event( BUTTON_UP, xev );
+            key_event( HPKEY_UP, xev );
             wake = 1;
             break;
         case XK_l:
         case XK_L:
-            key_event( BUTTON_NXT, xev );
+            key_event( HPKEY_NXT, xev );
             wake = 1;
             break;
         case XK_m:
         case XK_M:
-            key_event( BUTTON_COLON, xev );
+            key_event( HPKEY_COLON, xev );
             wake = 1;
             break;
         case XK_n:
         case XK_N:
-            key_event( BUTTON_STO, xev );
+            key_event( HPKEY_STO, xev );
             wake = 1;
             break;
         case XK_o:
         case XK_O:
-            key_event( BUTTON_EVAL, xev );
+            key_event( HPKEY_EVAL, xev );
             wake = 1;
             break;
         case XK_p:
         case XK_P:
         case XK_Left:
-            key_event( BUTTON_LEFT, xev );
+            key_event( HPKEY_LEFT, xev );
             wake = 1;
             break;
         case XK_q:
         case XK_Q:
         case XK_Down:
-            key_event( BUTTON_DOWN, xev );
+            key_event( HPKEY_DOWN, xev );
             wake = 1;
             break;
         case XK_r:
         case XK_R:
         case XK_Right:
-            key_event( BUTTON_RIGHT, xev );
+            key_event( HPKEY_RIGHT, xev );
             wake = 1;
             break;
         case XK_s:
         case XK_S:
-            key_event( BUTTON_SIN, xev );
+            key_event( HPKEY_SIN, xev );
             wake = 1;
             break;
         case XK_t:
         case XK_T:
-            key_event( BUTTON_COS, xev );
+            key_event( HPKEY_COS, xev );
             wake = 1;
             break;
         case XK_u:
         case XK_U:
-            key_event( BUTTON_TAN, xev );
+            key_event( HPKEY_TAN, xev );
             wake = 1;
             break;
         case XK_v:
         case XK_V:
-            key_event( BUTTON_SQRT, xev );
+            key_event( HPKEY_SQRT, xev );
             wake = 1;
             break;
         case XK_w:
         case XK_W:
-            key_event( BUTTON_POWER, xev );
+            key_event( HPKEY_POWER, xev );
             wake = 1;
             break;
         case XK_x:
         case XK_X:
-            key_event( BUTTON_INV, xev );
+            key_event( HPKEY_INV, xev );
             wake = 1;
             break;
         case XK_y:
         case XK_Y:
-            key_event( BUTTON_NEG, xev );
+            key_event( HPKEY_NEG, xev );
             wake = 1;
             break;
         case XK_z:
         case XK_Z:
-            key_event( BUTTON_EEX, xev );
+            key_event( HPKEY_EEX, xev );
             wake = 1;
             break;
         default:
@@ -2867,69 +2862,11 @@ int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
     return wake;
 }
 
-static void press_button( int b )
+void x11_release_all_keys( void )
 {
-    // Check not already pressed (may be important: avoids a useless do_kbd_int)
-    if ( buttons[ b ].pressed == 1 )
-        return;
-
-    buttons[ b ].pressed = 1;
-
-    int code = buttons[ b ].code;
-    if ( code == 0x8000 ) {
-        for ( int i = 0; i < 9; i++ )
-            saturn.keybuf.rows[ i ] |= 0x8000;
-        do_kbd_int();
-    } else {
-        int r = code >> 4;
-        int c = 1 << ( code & 0xf );
-        if ( ( saturn.keybuf.rows[ r ] & c ) == 0 ) {
-            if ( saturn.kbd_ien )
-                do_kbd_int();
-            if ( ( saturn.keybuf.rows[ r ] & c ) )
-                fprintf( stderr, "bug\n" );
-
-            saturn.keybuf.rows[ r ] |= c;
-        }
-    }
-}
-
-static void release_button( int b )
-{
-    // Check not already released (not critical)
-    if ( buttons[ b ].pressed == 0 )
-        return;
-
-    buttons[ b ].pressed = 0;
-
-    int code = buttons[ b ].code;
-    if ( code == 0x8000 ) {
-        for ( int i = 0; i < 9; i++ )
-            saturn.keybuf.rows[ i ] &= ~0x8000;
-    } else {
-        int r = code >> 4;
-        int c = 1 << ( code & 0xf );
-        saturn.keybuf.rows[ r ] &= ~c;
-    }
-}
-
-void release_all_buttons( void )
-{
-    for ( int b = FIRST_BUTTON; b <= LAST_BUTTON; b++ )
-        if ( buttons[ b ].pressed ) {
-            int code = buttons[ b ].code;
-            if ( code == 0x8000 ) {
-                for ( int i = 0; i < 9; i++ )
-                    saturn.keybuf.rows[ i ] &= ~0x8000;
-            } else {
-                int r, c;
-                r = code >> 4;
-                c = 1 << ( code & 0xf );
-                saturn.keybuf.rows[ r ] &= ~c;
-            }
-            buttons[ b ].pressed = 0;
-            DrawButton( b );
-        }
+    release_all_keys();
+    for ( int b = FIRST_HPKEY; b <= LAST_HPKEY; b++ )
+        DrawButton( b );
 }
 
 static inline void draw_nibble( int c, int r, int val )
@@ -2989,11 +2926,11 @@ int x11_get_event( void )
 
     wake = 0;
     if ( paste_last_key ) {
-        release_button( paste[ paste_count - 1 ] );
+        release_key( paste[ paste_count - 1 ] );
         paste_last_key = 0;
         return 1;
     } else if ( paste_count < paste_size ) {
-        press_button( paste[ paste_count ] );
+        press_key( paste[ paste_count ] );
         paste_last_key = 1;
         paste_count++;
         return 1;
@@ -3049,7 +2986,7 @@ int x11_get_event( void )
                         } else if ( xev.xexpose.window == mainW ) {
                             DrawKeypad( &keypad );
                         } else
-                            for ( i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
+                            for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
                                 if ( xev.xexpose.window == buttons[ i ].xwin ) {
                                     DrawButton( i );
                                     break;
@@ -3093,327 +3030,327 @@ int x11_get_event( void )
                                     char c = *p++;
                                     switch ( c ) {
                                         case '.':
-                                            paste[ paste_size++ ] = BUTTON_PERIOD;
+                                            paste[ paste_size++ ] = HPKEY_PERIOD;
                                             break;
                                         case '0':
-                                            paste[ paste_size++ ] = BUTTON_0;
+                                            paste[ paste_size++ ] = HPKEY_0;
                                             break;
                                         case '1':
-                                            paste[ paste_size++ ] = BUTTON_1;
+                                            paste[ paste_size++ ] = HPKEY_1;
                                             break;
                                         case '2':
-                                            paste[ paste_size++ ] = BUTTON_2;
+                                            paste[ paste_size++ ] = HPKEY_2;
                                             break;
                                         case '3':
-                                            paste[ paste_size++ ] = BUTTON_3;
+                                            paste[ paste_size++ ] = HPKEY_3;
                                             break;
                                         case '4':
-                                            paste[ paste_size++ ] = BUTTON_4;
+                                            paste[ paste_size++ ] = HPKEY_4;
                                             break;
                                         case '5':
-                                            paste[ paste_size++ ] = BUTTON_5;
+                                            paste[ paste_size++ ] = HPKEY_5;
                                             break;
                                         case '6':
-                                            paste[ paste_size++ ] = BUTTON_6;
+                                            paste[ paste_size++ ] = HPKEY_6;
                                             break;
                                         case '7':
-                                            paste[ paste_size++ ] = BUTTON_7;
+                                            paste[ paste_size++ ] = HPKEY_7;
                                             break;
                                         case '8':
-                                            paste[ paste_size++ ] = BUTTON_8;
+                                            paste[ paste_size++ ] = HPKEY_8;
                                             break;
                                         case '9':
-                                            paste[ paste_size++ ] = BUTTON_9;
+                                            paste[ paste_size++ ] = HPKEY_9;
                                             break;
                                         case '\n':
-                                            paste[ paste_size++ ] = BUTTON_SHR;
-                                            paste[ paste_size++ ] = BUTTON_PERIOD;
+                                            paste[ paste_size++ ] = HPKEY_SHR;
+                                            paste[ paste_size++ ] = HPKEY_PERIOD;
                                             break;
                                         case '!':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
-                                            paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_DEL;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_DEL;
                                             break;
                                         case '+':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
-                                            paste[ paste_size++ ] = BUTTON_PLUS;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_PLUS;
                                             break;
                                         case '-':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
-                                            paste[ paste_size++ ] = BUTTON_MINUS;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_MINUS;
                                             break;
                                         case '*':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
-                                            paste[ paste_size++ ] = BUTTON_MUL;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_MUL;
                                             break;
                                         case '/':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
-                                            paste[ paste_size++ ] = BUTTON_DIV;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_DIV;
                                             break;
                                         case ' ':
                                             paste[ paste_size++ ] = 47;
                                             break;
                                         case '(':
-                                            paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_DIV;
+                                            paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_DIV;
                                             break;
                                         case '[':
-                                            paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_MUL;
+                                            paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_MUL;
                                             break;
                                         case '<':
                                             if ( x > 1 && *p == '<' ) {
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                                paste[ paste_size++ ] = BUTTON_MINUS;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                                paste[ paste_size++ ] = HPKEY_MINUS;
                                                 x--;
                                                 p++;
                                             } else {
-                                                paste[ paste_size++ ] = BUTTON_ALPHA;
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                                paste[ paste_size++ ] = BUTTON_2;
+                                                paste[ paste_size++ ] = HPKEY_ALPHA;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                                paste[ paste_size++ ] = HPKEY_2;
                                             }
                                             break;
                                         case '{':
-                                            paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_PLUS;
+                                            paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_PLUS;
                                             break;
                                         case ')':
                                         case ']':
                                         case '}':
-                                            paste[ paste_size++ ] = BUTTON_RIGHT;
+                                            paste[ paste_size++ ] = HPKEY_RIGHT;
                                             break;
                                         case '>':
                                             if ( x > 1 && *p == '>' ) {
-                                                paste[ paste_size++ ] = BUTTON_RIGHT;
-                                                paste[ paste_size++ ] = BUTTON_RIGHT;
-                                                paste[ paste_size++ ] = BUTTON_RIGHT;
+                                                paste[ paste_size++ ] = HPKEY_RIGHT;
+                                                paste[ paste_size++ ] = HPKEY_RIGHT;
+                                                paste[ paste_size++ ] = HPKEY_RIGHT;
                                                 x--;
                                                 p++;
                                             } else {
-                                                paste[ paste_size++ ] = BUTTON_ALPHA;
-                                                paste[ paste_size++ ] = BUTTON_SHR;
-                                                paste[ paste_size++ ] = BUTTON_2;
+                                                paste[ paste_size++ ] = HPKEY_ALPHA;
+                                                paste[ paste_size++ ] = HPKEY_SHR;
+                                                paste[ paste_size++ ] = HPKEY_2;
                                             }
                                             break;
                                         case '#':
-                                            paste[ paste_size++ ] = BUTTON_SHR;
-                                            paste[ paste_size++ ] = BUTTON_DIV;
+                                            paste[ paste_size++ ] = HPKEY_SHR;
+                                            paste[ paste_size++ ] = HPKEY_DIV;
                                             break;
                                         case '_':
-                                            paste[ paste_size++ ] = BUTTON_SHR;
-                                            paste[ paste_size++ ] = BUTTON_MUL;
+                                            paste[ paste_size++ ] = HPKEY_SHR;
+                                            paste[ paste_size++ ] = HPKEY_MUL;
                                             break;
                                         case '"':
                                             if ( flag & 1 ) {
                                                 flag &= ~1;
-                                                paste[ paste_size++ ] = BUTTON_RIGHT;
+                                                paste[ paste_size++ ] = HPKEY_RIGHT;
                                             } else {
                                                 flag |= 1;
-                                                paste[ paste_size++ ] = BUTTON_SHR;
-                                                paste[ paste_size++ ] = BUTTON_MINUS;
+                                                paste[ paste_size++ ] = HPKEY_SHR;
+                                                paste[ paste_size++ ] = HPKEY_MINUS;
                                             }
                                             break;
                                         case ':':
                                             if ( flag & 2 ) {
                                                 flag &= ~2;
-                                                paste[ paste_size++ ] = BUTTON_RIGHT;
+                                                paste[ paste_size++ ] = HPKEY_RIGHT;
                                             } else {
                                                 flag |= 2;
-                                                paste[ paste_size++ ] = BUTTON_SHR;
-                                                paste[ paste_size++ ] = BUTTON_PLUS;
+                                                paste[ paste_size++ ] = HPKEY_SHR;
+                                                paste[ paste_size++ ] = HPKEY_PLUS;
                                             }
                                             break;
                                         case '\'':
                                             if ( flag & 4 ) {
                                                 flag &= ~4;
-                                                paste[ paste_size++ ] = BUTTON_RIGHT;
+                                                paste[ paste_size++ ] = HPKEY_RIGHT;
                                             } else {
                                                 flag |= 4;
-                                                paste[ paste_size++ ] = BUTTON_COLON;
+                                                paste[ paste_size++ ] = HPKEY_COLON;
                                             }
                                             break;
                                         case 'a':
                                         case 'A':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_A;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_A;
                                             break;
                                         case 'b':
                                         case 'B':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_B;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_B;
                                             break;
                                         case 'c':
                                         case 'C':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_C;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_C;
                                             break;
                                         case 'd':
                                         case 'D':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_D;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_D;
                                             break;
                                         case 'e':
                                         case 'E':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_E;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_E;
                                             break;
                                         case 'f':
                                         case 'F':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_F;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_F;
                                             break;
                                         case 'g':
                                         case 'G':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_MTH;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_MTH;
                                             break;
                                         case 'h':
                                         case 'H':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_PRG;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_PRG;
                                             break;
                                         case 'i':
                                         case 'I':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_CST;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_CST;
                                             break;
                                         case 'j':
                                         case 'J':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_VAR;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_VAR;
                                             break;
                                         case 'k':
                                         case 'K':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_UP;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_UP;
                                             break;
                                         case 'l':
                                         case 'L':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_NXT;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_NXT;
                                             break;
 
                                         case 'm':
                                         case 'M':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_COLON;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_COLON;
                                             break;
                                         case 'n':
                                         case 'N':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_STO;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_STO;
                                             break;
                                         case 'o':
                                         case 'O':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_EVAL;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_EVAL;
                                             break;
                                         case 'p':
                                         case 'P':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_LEFT;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_LEFT;
                                             break;
                                         case 'q':
                                         case 'Q':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_DOWN;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_DOWN;
                                             break;
                                         case 'r':
                                         case 'R':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_RIGHT;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_RIGHT;
                                             break;
                                         case 's':
                                         case 'S':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_SIN;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_SIN;
                                             break;
                                         case 't':
                                         case 'T':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_COS;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_COS;
                                             break;
                                         case 'u':
                                         case 'U':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_TAN;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_TAN;
                                             break;
                                         case 'v':
                                         case 'V':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_SQRT;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_SQRT;
                                             break;
                                         case 'w':
                                         case 'W':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_POWER;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_POWER;
                                             break;
                                         case 'x':
                                         case 'X':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_INV;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_INV;
                                             break;
                                         case 'y':
                                         case 'Y':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_NEG;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_NEG;
                                             break;
                                         case 'z':
                                         case 'Z':
-                                            paste[ paste_size++ ] = BUTTON_ALPHA;
+                                            paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
-                                                paste[ paste_size++ ] = BUTTON_SHL;
-                                            paste[ paste_size++ ] = BUTTON_EEX;
+                                                paste[ paste_size++ ] = HPKEY_SHL;
+                                            paste[ paste_size++ ] = HPKEY_EEX;
                                             break;
                                         default:
                                             printf( "unknown %c %d\n", c, *p );
@@ -3429,16 +3366,16 @@ int x11_get_event( void )
                         }
                     } else {
                         if ( xev.xbutton.button == Button1 || xev.xbutton.button == Button2 || xev.xbutton.button == Button3 ) {
-                            for ( i = FIRST_BUTTON; i <= LAST_BUTTON; i++ ) {
+                            for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
                                 if ( xev.xbutton.subwindow == buttons[ i ].xwin ) {
-                                    if ( buttons[ i ].pressed ) {
+                                    if ( keyboard[ i ].pressed ) {
                                         if ( xev.xbutton.button == Button3 ) {
-                                            release_button( i );
+                                            release_key( i );
                                             DrawButton( i );
                                         }
                                     } else {
                                         last_button = i;
-                                        press_button( i );
+                                        press_key( i );
                                         wake = 1;
                                         first_key = 1;
                                         DrawButton( i );
@@ -3454,11 +3391,11 @@ int x11_get_event( void )
 
                     first_key = 0;
                     if ( xev.xbutton.button == Button1 ) {
-                        release_all_buttons();
+                        x11_release_all_keys();
                     }
                     if ( xev.xbutton.button == Button2 ) {
                         if ( last_button >= 0 ) {
-                            release_button( last_button );
+                            release_key( last_button );
                             DrawButton( last_button );
                         }
                         last_button = -1;
@@ -3467,7 +3404,7 @@ int x11_get_event( void )
 
                 case FocusOut:
                     first_key = 0;
-                    release_all_buttons();
+                    x11_release_all_keys();
                     break;
 
                 case MappingNotify:
