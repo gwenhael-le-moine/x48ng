@@ -292,8 +292,6 @@ static int showkeylastx, showkeylasty, showkeylastkey;
 
 static SDL_Surface* sdlwindow;
 
-unsigned char disp_buf[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
-
 /****************************/
 /* functions implementation */
 /****************************/
@@ -1659,30 +1657,25 @@ static inline void draw_nibble( int col, int row, int val )
         x -= 2 * display.offset;
     y = row; // y: start in pixels
 
-    val &= 0x0f;
-    if ( val != lcd_nibbles_buffer[ row ][ col ] ) {
-        lcd_nibbles_buffer[ row ][ col ] = val;
+    /* if ( val == lcd_nibbles_buffer[ row ][ col ] ) */
+    /*     return; */
 
-        SDLDrawNibble( x, y, val );
-    }
+    val &= 0x0f;
+
+    lcd_nibbles_buffer[ row ][ col ] = val;
+
+    SDLDrawNibble( x, y, val );
 }
 
 static inline void draw_row( long addr, int row )
 {
-    int i, v;
-    int line_length;
+    int line_length = NIBBLES_PER_ROW;
 
-    line_length = NIBBLES_PER_ROW;
     if ( ( display.offset > 3 ) && ( row <= display.lines ) )
         line_length += 2;
-    for ( i = 0; i < line_length; i++ ) {
-        v = read_nibble( addr + i );
-        if ( v == disp_buf[ row ][ i ] )
-            continue;
 
-        disp_buf[ row ][ i ] = v;
-        draw_nibble( i, row, v );
-    }
+    for ( int i = 0; i < line_length; i++ )
+        draw_nibble( i, row, read_nibble( addr + i ) );
 }
 
 static void SDLCreateHP( void )
@@ -1926,7 +1919,6 @@ void sdl_adjust_contrast()
     SDLCreateAnnunc();
 
     // redraw LCD
-    memset( disp_buf, 0, sizeof( disp_buf ) );
     memset( lcd_nibbles_buffer, 0, sizeof( lcd_nibbles_buffer ) );
 
     sdl_update_LCD();
@@ -1941,13 +1933,12 @@ void sdl_init_LCD( void )
 {
     init_display();
 
-    memset( disp_buf, 0xf0, sizeof( disp_buf ) );
     memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
 }
 
 void sdl_update_LCD( void )
 {
-    int i, j;
+    int i;
     long addr;
     static int old_offset = -1;
     static int old_lines = -1;
@@ -1955,12 +1946,10 @@ void sdl_update_LCD( void )
     if ( display.on ) {
         addr = display.disp_start;
         if ( display.offset != old_offset ) {
-            memset( disp_buf, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
             memset( lcd_nibbles_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
             old_offset = display.offset;
         }
         if ( display.lines != old_lines ) {
-            memset( &disp_buf[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
             memset( &lcd_nibbles_buffer[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
             old_lines = display.lines;
         }
@@ -1975,10 +1964,8 @@ void sdl_update_LCD( void )
                 addr += NIBBLES_PER_ROW;
             }
         }
-    } else {
-        memset( disp_buf, 0xf0, sizeof( disp_buf ) );
+    } else
         memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
-    }
 }
 
 void sdl_refresh_LCD( void ) {}
@@ -1996,16 +1983,16 @@ void sdl_disp_draw_nibble( word_20 addr, word_4 val )
         y = offset / display.nibs_per_line;
         if ( y < 0 || y > 63 )
             return;
-        if ( val == disp_buf[ y ][ x ] )
+        if ( val == lcd_nibbles_buffer[ y ][ x ] )
             return;
-        disp_buf[ y ][ x ] = val;
+        lcd_nibbles_buffer[ y ][ x ] = val;
         draw_nibble( x, y, val );
     } else {
         for ( y = 0; y < display.lines; y++ ) {
-            if ( val == disp_buf[ y ][ x ] )
+            if ( val == lcd_nibbles_buffer[ y ][ x ] )
                 break;
 
-            disp_buf[ y ][ x ] = val;
+            lcd_nibbles_buffer[ y ][ x ] = val;
             draw_nibble( x, y, val );
         }
     }
@@ -2020,10 +2007,10 @@ void sdl_menu_draw_nibble( word_20 addr, word_4 val )
     x = offset % NIBBLES_PER_ROW;
     y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
 
-    if ( val == disp_buf[ y ][ x ] )
+    if ( val == lcd_nibbles_buffer[ y ][ x ] )
         return;
 
-    disp_buf[ y ][ x ] = val;
+    lcd_nibbles_buffer[ y ][ x ] = val;
     draw_nibble( x, y, val );
 }
 
