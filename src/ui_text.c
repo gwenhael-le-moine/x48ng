@@ -10,7 +10,7 @@
 #include <unistd.h>
 #include <locale.h>
 
-#include <ncurses.h>
+#include <ncursesw/curses.h>
 
 #include "emulator.h"
 #include "romio.h"
@@ -42,7 +42,7 @@ void text_update_LCD( void );
 
 static inline void ncurses_draw_annunciators( void )
 {
-    wchar_t* annunciators_icons[ 6 ] = { L"\u21b0", L"\u21b1", L"\u03b1", L"\u1faab", L"\u231b", L"\u21c4" };
+    wchar_t* annunciators_icons[ 6 ] = { L"↰", L"↱", L"α", L"🪫", L"⌛", L"⇄" };
     int val = display.annunc;
 
     if ( val == last_annunc_state )
