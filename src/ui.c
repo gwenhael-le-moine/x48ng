@@ -152,14 +152,18 @@ void ( *init_ui )( int argc, char** argv );
 void setup_frontend( void )
 {
     switch ( frontend_type ) {
+#ifdef HAS_X11
         case FRONTEND_X11:
         default:
             init_ui = init_x11_ui;
             break;
+#endif
 
+#ifdef HAS_SDL
         case FRONTEND_SDL:
             init_ui = init_sdl_ui;
             break;
+#endif
 
         case FRONTEND_TEXT:
             init_ui = init_text_ui;

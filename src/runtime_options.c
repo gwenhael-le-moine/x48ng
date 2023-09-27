@@ -29,7 +29,13 @@ char* stateFileName = "hp48";
 char* port1FileName = "port1";
 char* port2FileName = "port2";
 
+#ifdef HAS_X11
 int frontend_type = FRONTEND_X11;
+#elif HAS_SDL
+int frontend_type = FRONTEND_SDL;
+#else
+int frontend_type = FRONTEND_TEXT;
+#endif
 
 /* sdl */
 int show_ui_chrome = 1;
@@ -158,8 +164,6 @@ int parse_args( int argc, char* argv[] )
 
         { "serial-line",         required_argument, NULL,                1015         },
 
-        { "front-end",           required_argument, NULL,                'u'          },
-
         { "help",                no_argument,       NULL,                'h'          },
         { "version",             no_argument,       NULL,                'v'          },
 
@@ -173,10 +177,13 @@ int parse_args( int argc, char* argv[] )
 
         { "no-debug",            no_argument,       &useDebugger,        0            },
 
+#ifdef HAS_SDL
         { "sdl",                 no_argument,       &frontend_type,      FRONTEND_SDL },
         { "sdl-no-chrome",       no_argument,       &show_ui_chrome,     0            },
         { "sdl-fullscreen",      no_argument,       &show_ui_fullscreen, 1            },
+#endif
 
+#ifdef HAS_X11
         { "x11",                 no_argument,       &frontend_type,      FRONTEND_X11 },
         { "x11-netbook",         no_argument,       &netbook,            1            },
         { "x11-visual",          required_argument, NULL,                8110         },
@@ -184,6 +191,7 @@ int parse_args( int argc, char* argv[] )
         { "x11-medium-font",     required_argument, NULL,                8112         },
         { "x11-large-font",      required_argument, NULL,                8113         },
         { "x11-connection-font", required_argument, NULL,                8114         },
+#endif
 
         { "tui",                 no_argument,       &frontend_type,      FRONTEND_TEXT},
 
@@ -212,11 +220,12 @@ int parse_args( int argc, char* argv[] )
                       "\t   --serial-line=<path>\t\tuse <path> as serial device default: "
                       "%s)\n"
                       "\t-V --verbose\t\t\tbe verbose (default: false)\n"
-                      "\t-u --front-end\t\t\tspecify a front-end (available: x11, sdl, "
-                      "text; "
-                      "default: x11)\n"
+#ifdef HAS_X11
                       "\t   --x11\t\tuse X11 front-end (default: true)\n"
+#endif
+#ifdef HAS_SDL
                       "\t   --sdl\t\tuse SDL front-end (default: false)\n"
+#endif
                       "\t   --tui\t\tuse terminal front-end (default: false)\n"
                       "\t-t --use-terminal\t\tactivate pseudo terminal interface (default: "
                       "true)\n"
@@ -225,11 +234,14 @@ int parse_args( int argc, char* argv[] )
                       "\t-i --initialize\t\t\tinitialize the content of <config-dir>\n"
                       "\t-r --reset\t\t\tperform a reset on startup\n"
                       "\t-T --throttle\t\t\ttry to emulate real speed (default: false)\n"
+#ifdef HAS_SDL
                       "\t   --sdl-no-chrome\t\tonly display the LCD (default: "
                       "false)\n"
                       "\t   --sdl-fullscreen\t\tmake the UI fullscreen "
                       "(default: "
                       "false)\n"
+#endif
+#ifdef HAS_X11
                       "\t   --x11-netbook\t\tmake the UI horizontal (default: "
                       "false)\n"
                       "\t   --x11-visual=<X visual>\tuse visual <X visual> (default: "
@@ -244,6 +256,7 @@ int parse_args( int argc, char* argv[] )
                       "font (default: %s)\n"
                       "\t   --x11-connection-font=<X font name>\tuse <X font name> as "
                       "connection font (default: %s)\n"
+#endif
                       "\t   --mono\t\t\tmake the UI monochrome (default: "
                       "false)\n"
                       "\t   --gray\t\t\tmake the UI grayscale (default: "
@@ -281,6 +294,7 @@ int parse_args( int argc, char* argv[] )
             case 1015:
                 serialLine = optarg;
                 break;
+#ifdef HAS_X11
             case 8110:
                 x11_visual = optarg;
                 break;
@@ -296,18 +310,7 @@ int parse_args( int argc, char* argv[] )
             case 8114:
                 connFont = optarg;
                 break;
-            case 'u':
-                if ( strcmp( optarg, "sdl" ) == 0 )
-                    frontend_type = FRONTEND_SDL;
-                else if ( strcmp( optarg, "text" ) == 0 )
-                    frontend_type = FRONTEND_TEXT;
-                else if ( strcmp( optarg, "x11" ) == 0 )
-                    frontend_type = FRONTEND_X11;
-                else {
-                    fprintf( stderr, "Error: unknown frontend '%s'\n", optarg );
-                    exit( 1 );
-                }
-                break;
+#endif
             case 'V':
                 verbose = 1;
                 break;
@@ -355,12 +358,16 @@ int parse_args( int argc, char* argv[] )
         fprintf( stderr, "resetOnStartup = %i\n", resetOnStartup );
         fprintf( stderr, "frontend_type = " );
         switch ( frontend_type ) {
+#ifdef HAS_X11
             case FRONTEND_X11:
                 fprintf( stderr, "x11\n" );
                 break;
+#endif
+#ifdef HAS_SDL
             case FRONTEND_SDL:
                 fprintf( stderr, "sdl\n" );
                 break;
+#endif
             case FRONTEND_TEXT:
                 fprintf( stderr, "text\n" );
                 break;

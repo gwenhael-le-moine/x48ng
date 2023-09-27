@@ -8,23 +8,13 @@ MAKEFLAGS +=-j$(NUM_CORES) -l$(NUM_CORES)
 
 CC ?= gcc
 
-GUI ?= sdl
+WITH_X11 ?= yes
+WITH_SDL ?= yes
+
 OPTIM ?= 2
 
 CFLAGS = -g -O$(OPTIM) -I./src/ -D_GNU_SOURCE=1 -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DPATCHLEVEL=$(PATCHLEVEL)
 LIBS = -lm
-
-### X11 UI
-CFLAGS += $(shell pkg-config --cflags x11 xext) -D_GNU_SOURCE=1
-LIBS += $(shell pkg-config --libs x11 xext)
-
-### SDL UI
-CFLAGS += $(shell pkg-config --cflags SDL_gfx sdl12_compat)
-LIBS += $(shell pkg-config --libs SDL_gfx sdl12_compat)
-
-### Text UI
-CFLAGS += $(shell pkg-config --cflags ncursesw -DNCURSES_WIDECHAR=1)
-LIBS += $(shell pkg-config --libs ncursesw)
 
 ### debugger
 CFLAGS += $(shell pkg-config --cflags readline)
@@ -45,11 +35,35 @@ DOTOS = src/emu_serial.o \
 	src/debugger.o \
 	src/runtime_options.o \
 	src/romio.o \
-	src/ui_x11.o \
-	src/ui_sdl.o \
 	src/ui_text.o \
 	src/ui.o \
 	src/main.o
+
+### X11 UI
+ifeq ($(WITH_X11), yes)
+	X11CFLAGS = $(shell pkg-config --cflags x11 xext) -D_GNU_SOURCE=1
+	X11LIBS = $(shell pkg-config --libs x11 xext)
+	ifneq ($(X11CFLAGS), "")
+		CFLAGS += $(X11CFLAGS) -DHAS_X11=1
+		LIBS += $(X11LIBS)
+		DOTOS += src/ui_x11.o
+	endif
+endif
+
+### SDL UI
+ifeq ($(WITH_SDL), yes)
+SDLCFLAGS = $(shell pkg-config --cflags SDL_gfx sdl12_compat)
+SDLLIBS = $(shell pkg-config --libs SDL_gfx sdl12_compat)
+ifneq ($(SDLCFLAGS), "")
+	CFLAGS += $(SDLCFLAGS) -DHAS_SDL=1
+	LIBS += $(SDLLIBS)
+	DOTOS += src/ui_sdl.o
+endif
+endif
+
+### Text UI
+CFLAGS += $(shell pkg-config --cflags ncursesw) -DNCURSES_WIDECHAR=1
+LIBS += $(shell pkg-config --libs ncursesw)
 
 .PHONY: all clean clean-all pretty-code install
 

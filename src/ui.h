@@ -26,9 +26,13 @@ extern letter_t small_font[ 128 ];
 /*************/
 /* functions */
 /*************/
+#ifdef HAS_X11
 extern void init_x11_ui( int argc, char** argv );
+#endif
 
+#ifdef HAS_SDL
 extern void init_sdl_ui( int argc, char** argv );
+#endif
 
 extern void init_text_ui( int argc, char** argv );
 

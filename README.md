@@ -61,6 +61,14 @@ See https://github.com/gwenhael-le-moine/x48ng/issues
 
 ## Compilation
 
+The `Makefile` will try to autodetect if necessary dependencies for x11 and sdl front-ends are met and enable/disable x11 and sdl front-ends accordingly.
+
+You can force disable x11 front-end by compiling with `make WITH_X11=no`.
+
+You can force disable sdl front-end by compiling with `make WITH_SDL=no`.
+
+Ncurses front-end is always built-in.
+
 ### Dependencies (see .github/workflows/c-cpp.yml for debian packages names)
 
 - readline
@@ -73,6 +81,10 @@ for SDL version:
 for x11 version:
 
 - x11
+
+for Ncurses:
+
+- ncursesw
 
 ## Installation
 

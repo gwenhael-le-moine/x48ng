@@ -1,8 +1,14 @@
 #ifndef _OPTIONS_H
 #define _OPTIONS_H 1
 
-#define FRONTEND_SDL 0
-#define FRONTEND_X11 1
+#ifdef HAS_SDL
+#  define FRONTEND_SDL 0
+#endif
+
+#ifdef HAS_X11
+#  define FRONTEND_X11 1
+#endif
+
 #define FRONTEND_TEXT 2
 
 extern char* progname;
