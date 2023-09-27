@@ -340,18 +340,18 @@ static inline void ncurses_init_ui( void )
 /* TODO: not specific to tui  */
 static inline void draw_row( long addr, int row )
 {
-    int v;
+    int nibble;
     int line_length = NIBBLES_PER_ROW;
 
     if ( ( display.offset > 3 ) && ( row <= display.lines ) )
         line_length += 2;
 
     for ( int i = 0; i < line_length; i++ ) {
-        v = read_nibble( addr + i );
-        if ( v == lcd_nibbles_buffer[ row ][ i ] )
+        nibble = read_nibble( addr + i );
+        if ( nibble == lcd_nibbles_buffer[ row ][ i ] )
             continue;
 
-        lcd_nibbles_buffer[ row ][ i ] = v;
+        lcd_nibbles_buffer[ row ][ i ] = nibble;
     }
 }
 
@@ -401,9 +401,8 @@ void text_update_LCD( void )
                 addr += NIBBLES_PER_ROW;
             }
         }
-    } else {
+    } else
         memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
-    }
 
     ncurses_draw_lcd();
 }

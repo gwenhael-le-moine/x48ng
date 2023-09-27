@@ -1951,12 +1951,12 @@ void sdl_init_LCD( void )
 
 void sdl_update_LCD( void )
 {
-    int i;
-    long addr;
-    static int old_offset = -1;
-    static int old_lines = -1;
-
     if ( display.on ) {
+        int i;
+        long addr;
+        static int old_offset = -1;
+        static int old_lines = -1;
+
         addr = display.disp_start;
         if ( display.offset != old_offset ) {
             memset( lcd_nibbles_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
