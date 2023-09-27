@@ -291,6 +291,7 @@ typedef struct saturn_t {
 } saturn_t;
 
 #define NIBBLES_PER_ROW 0x22
+#define NIBBLES_NB_BITS 4
 
 extern int got_alarm;
 

@@ -36,21 +36,9 @@
 /************************/
 void text_update_LCD( void );
 
-/*************/
-/* variables */
-/*************/
-/* the actual pixels buffer */
-static short lcd_pixels_buffer[ LCD_WIDTH ][ LCD_HEIGHT ];
-
 /****************************/
 /* functions implementation */
 /****************************/
-
-static inline void translate_nibble_into_lcd_pixels_buffer( int nibble, int initial_column, int row )
-{
-    for ( int x = 0; x < ( ( initial_column + x >= LCD_WIDTH ) ? LCD_WIDTH - initial_column : 4 ); x++ )
-        lcd_pixels_buffer[ initial_column + x ][ row ] = nibble & ( 1 << ( x & 3 ) );
-}
 
 static inline void ncurses_draw_annunciators( void )
 {
@@ -68,15 +56,29 @@ static inline void ncurses_draw_annunciators( void )
 
 static inline void ncurses_draw_lcd_pixels_buffer( void )
 {
-    for ( int x = 0; x < LCD_WIDTH; ++x ) {
+    chtype pixel;
+    short bit;
+    int nibble;
+    int bit_stop;
+    int init_x;
+
+    for ( int nibble_x = 0; nibble_x < NIBBLES_PER_ROW; ++nibble_x ) {
         for ( int y = 0; y < LCD_HEIGHT; ++y ) {
-            chtype pixel;
+            nibble = lcd_nibbles_buffer[ y ][ nibble_x ];
+            nibble &= 0x0f;
 
-            pixel = lcd_pixels_buffer[ x ][ y ] ? ACS_BLOCK : ' ';
-            if ( !mono && has_colors() )
-                pixel |= COLOR_PAIR( lcd_pixels_buffer[ x ][ y ] ? LCD_PIXEL_ON : LCD_PIXEL_OFF );
+            init_x = nibble_x * NIBBLES_NB_BITS;
+            bit_stop = ( ( init_x + NIBBLES_NB_BITS >= LCD_WIDTH ) ? LCD_WIDTH - init_x : 4 );
 
-            mvaddch( y + LCD_OFFSET_Y, x + LCD_OFFSET_X, pixel );
+            for ( int bit_x = 0; bit_x < bit_stop; bit_x++ ) {
+                bit = nibble & ( 1 << ( bit_x & 3 ) );
+
+                pixel = bit ? ACS_BLOCK : ' ';
+                if ( !mono && has_colors() )
+                    pixel |= COLOR_PAIR( bit ? LCD_PIXEL_ON : LCD_PIXEL_OFF );
+
+                mvaddch( y + LCD_OFFSET_Y, ( nibble_x * NIBBLES_NB_BITS ) + bit_x + LCD_OFFSET_X, pixel );
+            }
         }
     }
 
@@ -336,20 +338,6 @@ static inline void ncurses_init_ui( void )
 }
 
 /* TODO: not specific to tui  */
-static inline void draw_nibble( int col, int row, int val )
-{
-    int c = ( col * 4 ), // c: start in pixels,
-        r = row;         // r: start in pixels
-
-    if ( row <= display.lines )
-        c -= 2 * display.offset;
-
-    val &= 0x0f;
-
-    translate_nibble_into_lcd_pixels_buffer( val, c, r );
-}
-
-/* TODO: not specific to tui  */
 static inline void draw_row( long addr, int row )
 {
     int v;
@@ -364,7 +352,6 @@ static inline void draw_row( long addr, int row )
             continue;
 
         lcd_nibbles_buffer[ row ][ i ] = v;
-        draw_nibble( i, row, v );
     }
 }
 
@@ -381,7 +368,6 @@ void text_init_LCD( void )
     init_display();
 
     memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
-    memset( lcd_pixels_buffer, 0xf0, sizeof( lcd_pixels_buffer ) );
 }
 
 /* TODO: not specific to tui  */
@@ -417,7 +403,6 @@ void text_update_LCD( void )
         }
     } else {
         memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
-        memset( lcd_pixels_buffer, 0xf0, sizeof( lcd_pixels_buffer ) );
     }
 
     ncurses_draw_lcd_pixels_buffer();
@@ -444,14 +429,12 @@ void text_disp_draw_nibble( word_20 addr, word_4 val )
             return;
 
         lcd_nibbles_buffer[ y ][ x ] = val;
-        draw_nibble( x, y, val );
     } else {
         for ( y = 0; y < display.lines; y++ ) {
             if ( val == lcd_nibbles_buffer[ y ][ x ] )
                 break;
 
             lcd_nibbles_buffer[ y ][ x ] = val;
-            draw_nibble( x, y, val );
         }
     }
 }
@@ -470,7 +453,6 @@ void text_menu_draw_nibble( word_20 addr, word_4 val )
         return;
 
     lcd_nibbles_buffer[ y ][ x ] = val;
-    draw_nibble( x, y, val );
 }
 
 void text_draw_annunc( void ) { ncurses_draw_annunciators(); }
