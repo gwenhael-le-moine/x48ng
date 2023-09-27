@@ -292,6 +292,8 @@ static int showkeylastx, showkeylasty, showkeylastkey;
 
 static SDL_Surface* sdlwindow;
 
+unsigned char disp_buf[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
+
 /****************************/
 /* functions implementation */
 /****************************/
@@ -1675,10 +1677,11 @@ static inline void draw_row( long addr, int row )
         line_length += 2;
     for ( i = 0; i < line_length; i++ ) {
         v = read_nibble( addr + i );
-        if ( v != disp_buf[ row ][ i ] ) {
-            disp_buf[ row ][ i ] = v;
-            draw_nibble( i, row, v );
-        }
+        if ( v == disp_buf[ row ][ i ] )
+            continue;
+
+        disp_buf[ row ][ i ] = v;
+        draw_nibble( i, row, v );
     }
 }
 
@@ -1974,11 +1977,7 @@ void sdl_update_LCD( void )
         }
     } else {
         memset( disp_buf, 0xf0, sizeof( disp_buf ) );
-        for ( i = 0; i < 64; i++ ) {
-            for ( j = 0; j < NIBBLES_PER_ROW; j++ ) {
-                draw_nibble( j, i, 0x00 );
-            }
-        }
+        memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
     }
 }
 
@@ -1997,16 +1996,17 @@ void sdl_disp_draw_nibble( word_20 addr, word_4 val )
         y = offset / display.nibs_per_line;
         if ( y < 0 || y > 63 )
             return;
-        if ( val != disp_buf[ y ][ x ] ) {
-            disp_buf[ y ][ x ] = val;
-            draw_nibble( x, y, val );
-        }
+        if ( val == disp_buf[ y ][ x ] )
+            return;
+        disp_buf[ y ][ x ] = val;
+        draw_nibble( x, y, val );
     } else {
         for ( y = 0; y < display.lines; y++ ) {
-            if ( val != disp_buf[ y ][ x ] ) {
-                disp_buf[ y ][ x ] = val;
-                draw_nibble( x, y, val );
-            }
+            if ( val == disp_buf[ y ][ x ] )
+                break;
+
+            disp_buf[ y ][ x ] = val;
+            draw_nibble( x, y, val );
         }
     }
 }
@@ -2019,10 +2019,12 @@ void sdl_menu_draw_nibble( word_20 addr, word_4 val )
     offset = ( addr - display.menu_start );
     x = offset % NIBBLES_PER_ROW;
     y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
-    if ( val != disp_buf[ y ][ x ] ) {
-        disp_buf[ y ][ x ] = val;
-        draw_nibble( x, y, val );
-    }
+
+    if ( val == disp_buf[ y ][ x ] )
+        return;
+
+    disp_buf[ y ][ x ] = val;
+    draw_nibble( x, y, val );
 }
 
 void sdl_draw_annunc( void )

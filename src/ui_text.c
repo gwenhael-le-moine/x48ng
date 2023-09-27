@@ -361,7 +361,7 @@ static inline void draw_row( long addr, int row )
     for ( int i = 0; i < line_length; i++ ) {
         v = read_nibble( addr + i );
         if ( v == lcd_nibbles_buffer[ row ][ i ] )
-            break;
+            continue;
 
         lcd_nibbles_buffer[ row ][ i ] = v;
         draw_nibble( i, row, v );

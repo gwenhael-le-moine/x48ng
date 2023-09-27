@@ -2436,7 +2436,6 @@ void refresh_display( void )
 void redraw_display( void )
 {
     XClearWindow( dpy, lcd.win );
-    memset( disp_buf, 0, sizeof( disp_buf ) );
     memset( lcd_nibbles_buffer, 0, sizeof( lcd_nibbles_buffer ) );
     x11_update_LCD();
 }
@@ -2877,10 +2876,11 @@ static inline void draw_nibble( int c, int r, int val )
         x -= ( 2 * display.offset );
     y = ( r * 2 ) + 20;
     val &= 0x0f;
-    if ( val != lcd_nibbles_buffer[ r ][ c ] ) {
-        XCopyPlane( dpy, nibble_maps[ val ], lcd.win, lcd.gc, 0, 0, 8, 2, x, y, 1 );
-        lcd_nibbles_buffer[ r ][ c ] = val;
-    }
+    if ( val == lcd_nibbles_buffer[ r ][ c ] )
+        return;
+
+    XCopyPlane( dpy, nibble_maps[ val ], lcd.win, lcd.gc, 0, 0, 8, 2, x, y, 1 );
+    lcd_nibbles_buffer[ r ][ c ] = val;
 }
 
 static inline void draw_row( long addr, int row )
@@ -2893,14 +2893,15 @@ static inline void draw_row( long addr, int row )
         line_length += 2;
     for ( i = 0; i < line_length; i++ ) {
         v = read_nibble( addr + i );
-        if ( v != disp_buf[ row ][ i ] ) {
-            disp_buf[ row ][ i ] = v;
-            draw_nibble( i, row, v );
-        }
+        if ( v == lcd_nibbles_buffer[ row ][ i ] )
+            continue;
+
+        lcd_nibbles_buffer[ row ][ i ] = v;
+        draw_nibble( i, row, v );
     }
 }
 
-static inline void init_annunc( void )
+static inline void init_annunc_pixmaps( void )
 {
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
         ann_tbl[ i ].pixmap = XCreateBitmapFromData( dpy, lcd.win, ( char* )ann_tbl[ i ].bits, ann_tbl[ i ].width, ann_tbl[ i ].height );
@@ -3525,7 +3526,6 @@ void x11_init_LCD( void )
 {
     init_display();
 
-    memset( disp_buf, 0xf0, sizeof( disp_buf ) );
     memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
 
     /* init nibble_maps */
@@ -3609,12 +3609,10 @@ void x11_update_LCD( void )
             lcd.display_update |= UPDATE_DISP;
         } else {
             if ( display.offset != old_offset ) {
-                memset( disp_buf, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
                 memset( lcd_nibbles_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
                 old_offset = display.offset;
             }
             if ( display.lines != old_lines ) {
-                memset( &disp_buf[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
                 memset( &lcd_nibbles_buffer[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
                 old_lines = display.lines;
             }
@@ -3652,7 +3650,7 @@ void x11_update_LCD( void )
             memset( lcd.menu_image->data, 0, ( size_t )( lcd.menu_image->bytes_per_line * lcd.menu_image->height ) );
             lcd.display_update = UPDATE_DISP | UPDATE_MENU;
         } else {
-            memset( disp_buf, 0xf0, sizeof( disp_buf ) );
+            memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
             for ( i = 0; i < 64; i++ ) {
                 for ( j = 0; j < NIBBLES_PER_ROW; j++ ) {
                     draw_nibble( j, i, 0x00 );
@@ -3691,10 +3689,11 @@ void x11_disp_draw_nibble( word_20 addr, word_4 val )
             lcd.disp_image->data[ shm_addr + lcd.disp_image->bytes_per_line ] = nibble_bitmap[ val ];
             lcd.display_update |= UPDATE_DISP;
         } else {
-            if ( val != disp_buf[ y ][ x ] ) {
-                disp_buf[ y ][ x ] = val;
-                draw_nibble( x, y, val );
-            }
+            if ( val == lcd_nibbles_buffer[ y ][ x ] )
+                return;
+
+            lcd_nibbles_buffer[ y ][ x ] = val;
+            draw_nibble( x, y, val );
         }
     } else {
         if ( shm_flag ) {
@@ -3708,10 +3707,10 @@ void x11_disp_draw_nibble( word_20 addr, word_4 val )
             lcd.display_update |= UPDATE_DISP;
         } else {
             for ( y = 0; y < display.lines; y++ ) {
-                if ( val != disp_buf[ y ][ x ] ) {
-                    disp_buf[ y ][ x ] = val;
-                    draw_nibble( x, y, val );
-                }
+                if ( val == lcd_nibbles_buffer[ y ][ x ] )
+                    continue;
+                lcd_nibbles_buffer[ y ][ x ] = val;
+                draw_nibble( x, y, val );
             }
         }
     }
@@ -3732,10 +3731,12 @@ void x11_menu_draw_nibble( word_20 addr, word_4 val )
     } else {
         x = offset % NIBBLES_PER_ROW;
         y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
-        if ( val != disp_buf[ y ][ x ] ) {
-            disp_buf[ y ][ x ] = val;
-            draw_nibble( x, y, val );
-        }
+
+        if ( val == lcd_nibbles_buffer[ y ][ x ] )
+            return;
+
+        lcd_nibbles_buffer[ y ][ x ] = val;
+        draw_nibble( x, y, val );
     }
 }
 
@@ -3770,7 +3771,7 @@ void init_x11_ui( int argc, char** argv )
         exit( 1 );
     }
 
-    init_annunc();
+    init_annunc_pixmaps();
 
     x11_init_LCD();
 }
