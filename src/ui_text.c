@@ -41,7 +41,7 @@ static short lcd_pixels_buffer[ LCD_WIDTH ][ LCD_HEIGHT ];
 /* functions implementation */
 /****************************/
 
-static inline void tranlate_nibble_into_lcd_pixels_buffer( int nibble, int initial_column, int row )
+static inline void translate_nibble_into_lcd_pixels_buffer( int nibble, int initial_column, int row )
 {
     for ( int x = 0; x < 4; x++ ) {
         // bits in a byte are used (1 nibble per byte)
@@ -346,7 +346,7 @@ static inline void draw_nibble( int col, int row, int val )
 
     val &= 0x0f;
 
-    tranlate_nibble_into_lcd_pixels_buffer( val, c, r );
+    translate_nibble_into_lcd_pixels_buffer( val, c, r );
 }
 
 /* TODO: not specific to tui  */
