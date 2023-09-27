@@ -237,8 +237,9 @@ extern long port2_mask;
 /**************/
 /* emu_init.c */
 /**************/
+extern void init_display( void ); /* used in ui_*.c */
 extern int init_emulator( void ); /* used in main.c */
-extern int exit_emulator( void ); /* debugger.c; main.c; ui_sdl.c */
+extern int exit_emulator( void ); /* debugger.c; main.c; ui_*.c */
 extern int read_files( void );    /* debugger.c */
 extern int write_files( void );   /* used in debugger.c */
 

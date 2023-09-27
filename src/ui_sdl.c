@@ -1572,20 +1572,15 @@ static void SDLDrawNibble( int nx, int ny, int val )
 
         for ( x = 0; x < 4; x++ ) {
             // Check if bit is on
-            // char c = lcd_buffer[y/2][x>>2];		// The 4 lower
             // bits in a byte are used (1 nibble per byte)
-            if ( nx + x >= 131 ) // Clip at 131 pixels (some nibble writes may
-                                 // go beyond the range, but are not visible)
+            if ( nx + x >= 131 ) // Clip at 131 pixels
                 break;
+
             char c = val;
             char b = c & ( 1 << ( x & 3 ) );
-            if ( b ) {
-                lineptr[ xoffset + 2 * ( nx + x ) ] = ARGBColors[ PIXEL ];
-                lineptr[ xoffset + 2 * ( nx + x ) + 1 ] = ARGBColors[ PIXEL ];
-            } else {
-                lineptr[ xoffset + 2 * ( nx + x ) ] = ARGBColors[ LCD ];
-                lineptr[ xoffset + 2 * ( nx + x ) + 1 ] = ARGBColors[ LCD ];
-            }
+
+            lineptr[ xoffset + 2 * ( nx + x ) ] = ARGBColors[ b ? PIXEL : LCD ];
+            lineptr[ xoffset + 2 * ( nx + x ) + 1 ] = ARGBColors[ b ? PIXEL : LCD ];
         }
     }
     SDL_UnlockSurface( sdlwindow );
@@ -1722,8 +1717,8 @@ static inline void draw_nibble( int col, int row, int val )
     y = row; // y: start in pixels
 
     val &= 0x0f;
-    if ( val != lcd_buffer[ row ][ col ] ) {
-        lcd_buffer[ row ][ col ] = val;
+    if ( val != lcd_nibbles_buffer[ row ][ col ] ) {
+        lcd_nibbles_buffer[ row ][ col ] = val;
 
         SDLDrawNibble( x, y, val );
     }
@@ -1988,7 +1983,7 @@ void sdl_adjust_contrast()
 
     // redraw LCD
     memset( disp_buf, 0, sizeof( disp_buf ) );
-    memset( lcd_buffer, 0, sizeof( lcd_buffer ) );
+    memset( lcd_nibbles_buffer, 0, sizeof( lcd_nibbles_buffer ) );
 
     sdl_update_LCD();
 
@@ -2000,32 +1995,10 @@ void sdl_adjust_contrast()
 
 void sdl_init_LCD( void )
 {
-    display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
-
-    display.disp_start = ( saturn.disp_addr & 0xffffe );
-    display.offset = ( saturn.disp_io & 0x7 );
-
-    display.lines = ( saturn.line_count & 0x3f );
-    if ( display.lines == 0 )
-        display.lines = 63;
-
-    if ( display.offset > 3 )
-        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset + 2 ) & 0xfff;
-    else
-        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset ) & 0xfff;
-
-    display.disp_end = display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
-
-    display.menu_start = saturn.menu_addr;
-    display.menu_end = saturn.menu_addr + 0x110;
-
-    display.contrast = saturn.contrast_ctrl;
-    display.contrast |= ( ( saturn.disp_test & 0x1 ) << 4 );
-
-    display.annunc = saturn.annunc;
+    init_display();
 
     memset( disp_buf, 0xf0, sizeof( disp_buf ) );
-    memset( lcd_buffer, 0xf0, sizeof( lcd_buffer ) );
+    memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
 }
 
 void sdl_update_LCD( void )
@@ -2039,12 +2012,12 @@ void sdl_update_LCD( void )
         addr = display.disp_start;
         if ( display.offset != old_offset ) {
             memset( disp_buf, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
-            memset( lcd_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
+            memset( lcd_nibbles_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
             old_offset = display.offset;
         }
         if ( display.lines != old_lines ) {
             memset( &disp_buf[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
-            memset( &lcd_buffer[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
+            memset( &lcd_nibbles_buffer[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
             old_lines = display.lines;
         }
         for ( i = 0; i <= display.lines; i++ ) {

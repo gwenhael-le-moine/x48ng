@@ -34,193 +34,176 @@
 /***********/
 /* typedef */
 /***********/
-typedef struct tui_ann_struct_t {
-    int bit;
-    int x;
-    int y;
-    wchar_t* icon;
-} tui_ann_struct_t;
-
 typedef struct tui_button_t {
-    const char* name;
-    short pressed;
-
     int code;
+    short pressed;
 } tui_button_t;
 
 /*************/
 /* variables */
 /*************/
-static tui_ann_struct_t ann_tbl[] = {
-    {ANN_LEFT,     16,  4, L"\u21b0" }, /* ↰ */
-    { ANN_RIGHT,   61,  4, L"\u21b1" }, /* ↱ */
-    { ANN_ALPHA,   106, 4, L"\u03b1" }, /* α */
-    { ANN_BATTERY, 151, 4, L"\u1faab"}, /* 🪫 */
-    { ANN_BUSY,    196, 4, L"\u231b" }, /* ⌛ */
-    { ANN_IO,      241, 4, L"\u21c4" }, /* ⇄ */
-  /* { 0 } */
+static int annunciators_bits[ 6 ] = { ANN_LEFT, ANN_RIGHT, ANN_ALPHA, ANN_BATTERY, ANN_BUSY, ANN_IO };
+
+static tui_button_t buttons[] = {
+  /* From top left to bottom right */
+    {0x14,    0},
+    { 0x84,   0},
+    { 0x83,   0},
+    { 0x82,   0},
+    { 0x81,   0},
+    { 0x80,   0},
+
+    { 0x24,   0},
+    { 0x74,   0},
+    { 0x73,   0},
+    { 0x72,   0},
+    { 0x71,   0},
+    { 0x70,   0},
+
+    { 0x04,   0},
+    { 0x64,   0},
+    { 0x63,   0},
+    { 0x62,   0},
+    { 0x61,   0},
+    { 0x60,   0},
+
+    { 0x34,   0},
+    { 0x54,   0},
+    { 0x53,   0},
+    { 0x52,   0},
+    { 0x51,   0},
+    { 0x50,   0},
+
+    { 0x44,   0},
+    { 0x43,   0},
+    { 0x42,   0},
+    { 0x41,   0},
+    { 0x40,   0},
+
+    { 0x35,   0},
+    { 0x33,   0},
+    { 0x32,   0},
+    { 0x31,   0},
+    { 0x30,   0},
+
+    { 0x25,   0},
+    { 0x23,   0},
+    { 0x22,   0},
+    { 0x21,   0},
+    { 0x20,   0},
+
+    { 0x15,   0},
+    { 0x13,   0},
+    { 0x12,   0},
+    { 0x11,   0},
+    { 0x10,   0},
+
+    { 0x8000, 0},
+    { 0x03,   0},
+    { 0x02,   0},
+    { 0x01,   0},
+    { 0x00,   0},
 };
 
-static tui_button_t* buttons = 0;
-
-static tui_button_t buttons_sx[] = {
-    {"A",       0, 0x14  },
-    { "B",      0, 0x84  },
-    { "C",      0, 0x83  },
-    { "D",      0, 0x82  },
-    { "E",      0, 0x81  },
-    { "F",      0, 0x80  },
-
-    { "MTH",    0, 0x24  },
-    { "PRG",    0, 0x74  },
-    { "CST",    0, 0x73  },
-    { "VAR",    0, 0x72  },
-    { "UP",     0, 0x71  },
-    { "NXT",    0, 0x70  },
-
-    { "COLON",  0, 0x04  },
-    { "STO",    0, 0x64  },
-    { "EVAL",   0, 0x63  },
-    { "LEFT",   0, 0x62  },
-    { "DOWN",   0, 0x61  },
-    { "RIGHT",  0, 0x60  },
-
-    { "SIN",    0, 0x34  },
-    { "COS",    0, 0x54  },
-    { "TAN",    0, 0x53  },
-    { "SQRT",   0, 0x52  },
-    { "POWER",  0, 0x51  },
-    { "INV",    0, 0x50  },
-
-    { "ENTER",  0, 0x44  },
-    { "NEG",    0, 0x43  },
-    { "EEX",    0, 0x42  },
-    { "DEL",    0, 0x41  },
-    { "BS",     0, 0x40  },
-
-    { "ALPHA",  0, 0x35  },
-    { "7",      0, 0x33  },
-    { "8",      0, 0x32  },
-    { "9",      0, 0x31  },
-    { "DIV",    0, 0x30  },
-
-    { "SHL",    0, 0x25  },
-    { "4",      0, 0x23  },
-    { "5",      0, 0x22  },
-    { "6",      0, 0x21  },
-    { "MUL",    0, 0x20  },
-
-    { "SHR",    0, 0x15  },
-    { "1",      0, 0x13  },
-    { "2",      0, 0x12  },
-    { "3",      0, 0x11  },
-    { "MINUS",  0, 0x10  },
-
-    { "ON",     0, 0x8000},
-    { "0",      0, 0x03  },
-    { "PERIOD", 0, 0x02  },
-    { "SPC",    0, 0x01  },
-    { "PLUS",   0, 0x00  },
- /* { 0 } */
-};
-
-static tui_button_t buttons_gx[] = {
-    {"A",       0, 0x14  },
-    { "B",      0, 0x84  },
-    { "C",      0, 0x83  },
-    { "D",      0, 0x82  },
-    { "E",      0, 0x81  },
-    { "F",      0, 0x80  },
-
-    { "MTH",    0, 0x24  },
-    { "PRG",    0, 0x74  },
-    { "CST",    0, 0x73  },
-    { "VAR",    0, 0x72  },
-    { "UP",     0, 0x71  },
-    { "NXT",    0, 0x70  },
-
-    { "COLON",  0, 0x04  },
-    { "STO",    0, 0x64  },
-    { "EVAL",   0, 0x63  },
-    { "LEFT",   0, 0x62  },
-    { "DOWN",   0, 0x61  },
-    { "RIGHT",  0, 0x60  },
-
-    { "SIN",    0, 0x34  },
-    { "COS",    0, 0x54  },
-    { "TAN",    0, 0x53  },
-    { "SQRT",   0, 0x52  },
-    { "POWER",  0, 0x51  },
-    { "INV",    0, 0x50  },
-
-    { "ENTER",  0, 0x44  },
-    { "NEG",    0, 0x43  },
-    { "EEX",    0, 0x42  },
-    { "DEL",    0, 0x41  },
-    { "BS",     0, 0x40  },
-
-    { "ALPHA",  0, 0x35  },
-    { "7",      0, 0x33  },
-    { "8",      0, 0x32  },
-    { "9",      0, 0x31  },
-    { "DIV",    0, 0x30  },
-
-    { "SHL",    0, 0x25  },
-    { "4",      0, 0x23  },
-    { "5",      0, 0x22  },
-    { "6",      0, 0x21  },
-    { "MUL",    0, 0x20  },
-
-    { "SHR",    0, 0x15  },
-    { "1",      0, 0x13  },
-    { "2",      0, 0x12  },
-    { "3",      0, 0x11  },
-    { "MINUS",  0, 0x10  },
-
-    { "ON",     0, 0x8000},
-    { "0",      0, 0x03  },
-    { "PERIOD", 0, 0x02  },
-    { "SPC",    0, 0x01  },
-    { "PLUS",   0, 0x00  },
- /* { 0 } */
-};
+/* the actual pixels buffer */
+static short lcd_pixels_buffer[ LCD_WIDTH ][ LCD_HEIGHT ];
 
 /****************************/
 /* functions implementation */
 /****************************/
-static inline void tui_draw_nibble( int nx, int ny, int val )
+static inline void tranlate_nibble_into_lcd_pixels_buffer( int nibble, int initial_column, int row )
 {
     for ( int x = 0; x < 4; x++ ) {
         // bits in a byte are used (1 nibble per byte)
-        if ( nx + x >= LCD_WIDTH ) // Clip at 131 pixels (some nibble writes may
-                                   // go beyond the range, but are not visible)
+        if ( initial_column + x >= LCD_WIDTH ) // Clip at 131 pixels
             break;
 
-        short bit = val & ( 1 << ( x & 3 ) );
-        chtype pixel;
-
-        pixel = bit ? ACS_BLOCK : ' ';
-        if ( !mono && has_colors() )
-            pixel |= COLOR_PAIR( bit ? LCD_PIXEL_ON : LCD_PIXEL_OFF );
-
-        mvaddch( ny + LCD_OFFSET_Y, nx + x + LCD_OFFSET_X, pixel );
+        lcd_pixels_buffer[ initial_column + x ][ row ] = nibble & ( 1 << ( x & 3 ) );
     }
+}
+
+static inline void ncurses_draw_annunciators( void )
+{
+    wchar_t* annunciators_icons[ 6 ] = { L"\u21b0", L"\u21b1", L"\u03b1", L"\u1faab", L"\u231b", L"\u21c4" };
+    int val = display.annunc;
+
+    if ( val == last_annunc_state )
+        return;
+
+    last_annunc_state = val;
+
+    for ( int i = 0; i < 6; i++ )
+        mvaddwstr( 0, 4 + ( i * 4 ), ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] ) ? annunciators_icons[ i ] : L" " );
+}
+
+static inline void ncurses_draw_lcd_pixels_buffer( void )
+{
+    for ( int x = 0; x < LCD_WIDTH; ++x ) {
+        for ( int y = 0; y < LCD_HEIGHT; ++y ) {
+            chtype pixel;
+
+            pixel = lcd_pixels_buffer[ x ][ y ] ? ACS_BLOCK : ' ';
+            if ( !mono && has_colors() )
+                pixel |= COLOR_PAIR( lcd_pixels_buffer[ x ][ y ] ? LCD_PIXEL_ON : LCD_PIXEL_OFF );
+
+            mvaddch( y + LCD_OFFSET_Y, x + LCD_OFFSET_X, pixel );
+        }
+    }
+
+    refresh();
+}
+
+static inline void ncurses_init_ui( void )
+{
+    setlocale( LC_ALL, "" );
+    initscr();              /* initialize the curses library */
+    keypad( stdscr, TRUE ); /* enable keyboard mapping */
+    nodelay( stdscr, TRUE );
+    curs_set( 0 );
+    cbreak(); /* take input chars one at a time, no wait for \n */
+    noecho();
+    nonl(); /* tell curses not to do NL->CR/NL on output */
+
+    if ( !mono && has_colors() ) {
+        start_color();
+
+        if ( gray ) {
+            init_color( LCD_COLOR_BG, 205, 205, 205 );
+            init_color( LCD_COLOR_FG, 20, 20, 20 );
+        } else {
+            init_color( LCD_COLOR_BG, 202, 221, 92 );
+            init_color( LCD_COLOR_FG, 0, 0, 128 );
+        }
+
+        init_pair( LCD_PIXEL_OFF, LCD_COLOR_BG, LCD_COLOR_BG );
+        init_pair( LCD_PIXEL_ON, LCD_COLOR_FG, LCD_COLOR_FG );
+    }
+
+    mvaddch( 0, 0, ACS_ULCORNER );
+    mvaddch( LCD_BOTTOM, 0, ACS_LLCORNER );
+    mvaddch( 0, LCD_RIGHT, ACS_URCORNER );
+    mvaddch( LCD_BOTTOM, LCD_RIGHT, ACS_LRCORNER );
+    mvhline( 0, 1, ACS_HLINE, LCD_RIGHT - 1 );
+    mvhline( LCD_BOTTOM, 1, ACS_HLINE, LCD_RIGHT - 1 );
+    mvvline( 1, 0, ACS_VLINE, LCD_BOTTOM - 1 );
+    mvvline( 1, LCD_RIGHT, ACS_VLINE, LCD_BOTTOM - 1 );
+
+    mvprintw( 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
+
+    mvprintw( LCD_BOTTOM, 2, "[ wire: %s ]-[ IR: %s ]", wire_name, ir_name );
 }
 
 static inline void draw_nibble( int col, int row, int val )
 {
-    int x = ( col * 4 ), // x: start in pixels,
-        y = row;         // y: start in pixels
+    int c = ( col * 4 ), // c: start in pixels,
+        r = row;         // r: start in pixels
 
     if ( row <= display.lines )
-        x -= 2 * display.offset;
+        c -= 2 * display.offset;
 
     val &= 0x0f;
-    if ( val != lcd_buffer[ row ][ col ] ) {
-        lcd_buffer[ row ][ col ] = val;
 
-        tui_draw_nibble( x, y, val );
-    }
+    tranlate_nibble_into_lcd_pixels_buffer( val, c, r );
 }
 
 static inline void draw_row( long addr, int row )
@@ -233,10 +216,11 @@ static inline void draw_row( long addr, int row )
 
     for ( int i = 0; i < line_length; i++ ) {
         v = read_nibble( addr + i );
-        if ( v != disp_buf[ row ][ i ] ) {
-            disp_buf[ row ][ i ] = v;
-            draw_nibble( i, row, v );
-        }
+        if ( v == lcd_nibbles_buffer[ row ][ i ] )
+            break;
+
+        lcd_nibbles_buffer[ row ][ i ] = v;
+        draw_nibble( i, row, v );
     }
 }
 
@@ -512,51 +496,29 @@ void text_adjust_contrast() { text_update_LCD(); }
 
 void text_init_LCD( void )
 {
-    display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
+    init_display();
 
-    display.disp_start = ( saturn.disp_addr & 0xffffe );
-    display.offset = ( saturn.disp_io & 0x7 );
-
-    display.lines = ( saturn.line_count & 0x3f );
-    if ( display.lines == 0 )
-        display.lines = 63;
-
-    if ( display.offset > 3 )
-        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset + 2 ) & 0xfff;
-    else
-        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset ) & 0xfff;
-
-    display.disp_end = display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
-
-    display.menu_start = saturn.menu_addr;
-    display.menu_end = saturn.menu_addr + 0x110;
-
-    display.contrast = saturn.contrast_ctrl;
-    display.contrast |= ( ( saturn.disp_test & 0x1 ) << 4 );
-
-    display.annunc = saturn.annunc;
-
-    memset( disp_buf, 0xf0, sizeof( disp_buf ) );
-    memset( lcd_buffer, 0xf0, sizeof( lcd_buffer ) );
+    memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
+    memset( lcd_pixels_buffer, 0xf0, sizeof( lcd_pixels_buffer ) );
 }
 
 void text_update_LCD( void )
 {
-    int i, j;
-    long addr;
-    static int old_offset = -1;
-    static int old_lines = -1;
-
     if ( display.on ) {
+        int i;
+        long addr;
+        static int old_offset = -1;
+        static int old_lines = -1;
+
         addr = display.disp_start;
         if ( display.offset != old_offset ) {
-            memset( disp_buf, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
-            memset( lcd_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
+            memset( lcd_nibbles_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
+
             old_offset = display.offset;
         }
         if ( display.lines != old_lines ) {
-            memset( &disp_buf[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
-            memset( &lcd_buffer[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
+            memset( &lcd_nibbles_buffer[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
+
             old_lines = display.lines;
         }
         for ( i = 0; i <= display.lines; i++ ) {
@@ -571,13 +533,11 @@ void text_update_LCD( void )
             }
         }
     } else {
-        memset( disp_buf, 0xf0, sizeof( disp_buf ) );
-        for ( i = 0; i < 64; i++ )
-            for ( j = 0; j < NIBBLES_PER_ROW; j++ )
-                draw_nibble( j, i, 0x00 );
+        memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
+        memset( lcd_pixels_buffer, 0xf0, sizeof( lcd_pixels_buffer ) );
     }
 
-    refresh();
+    ncurses_draw_lcd_pixels_buffer();
 }
 
 void text_refresh_LCD( void ) {}
@@ -595,16 +555,19 @@ void text_disp_draw_nibble( word_20 addr, word_4 val )
         y = offset / display.nibs_per_line;
         if ( y < 0 || y > 63 )
             return;
-        if ( val != disp_buf[ y ][ x ] ) {
-            disp_buf[ y ][ x ] = val;
-            draw_nibble( x, y, val );
-        }
+
+        if ( val == lcd_nibbles_buffer[ y ][ x ] )
+            return;
+
+        lcd_nibbles_buffer[ y ][ x ] = val;
+        draw_nibble( x, y, val );
     } else {
         for ( y = 0; y < display.lines; y++ ) {
-            if ( val != disp_buf[ y ][ x ] ) {
-                disp_buf[ y ][ x ] = val;
-                draw_nibble( x, y, val );
-            }
+            if ( val == lcd_nibbles_buffer[ y ][ x ] )
+                break;
+
+            lcd_nibbles_buffer[ y ][ x ] = val;
+            draw_nibble( x, y, val );
         }
     }
 }
@@ -617,71 +580,19 @@ void text_menu_draw_nibble( word_20 addr, word_4 val )
     offset = ( addr - display.menu_start );
     x = offset % NIBBLES_PER_ROW;
     y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
-    if ( val != disp_buf[ y ][ x ] ) {
-        disp_buf[ y ][ x ] = val;
-        draw_nibble( x, y, val );
-    }
-}
 
-void text_draw_annunc( void )
-{
-    int val;
-
-    val = display.annunc;
-
-    if ( val == last_annunc_state )
+    if ( val == lcd_nibbles_buffer[ y ][ x ] )
         return;
 
-    last_annunc_state = val;
-    for ( int i = 0; i < 6; i++ )
-        mvaddwstr( 0, 4 + ( i * 4 ), ( ( ann_tbl[ i ].bit & val ) == ann_tbl[ i ].bit ) ? ann_tbl[ i ].icon : L" " );
+    lcd_nibbles_buffer[ y ][ x ] = val;
+    draw_nibble( x, y, val );
 }
+
+void text_draw_annunc( void ) { ncurses_draw_annunciators(); }
 
 void init_text_ui( int argc, char** argv )
 {
-    setlocale( LC_ALL, "" );
-    buttons = ( tui_button_t* )malloc( sizeof( buttons_gx ) );
-
-    if ( opt_gx )
-        memcpy( buttons, buttons_gx, sizeof( buttons_gx ) );
-    else
-        memcpy( buttons, buttons_sx, sizeof( buttons_sx ) );
-
     text_init_LCD();
 
-    initscr();              /* initialize the curses library */
-    keypad( stdscr, TRUE ); /* enable keyboard mapping */
-    nodelay( stdscr, TRUE );
-    curs_set( 0 );
-    cbreak(); /* take input chars one at a time, no wait for \n */
-    noecho();
-    nonl(); /* tell curses not to do NL->CR/NL on output */
-
-    if ( !mono && has_colors() ) {
-        start_color();
-
-        if ( gray ) {
-            init_color( LCD_COLOR_BG, 205, 205, 205 );
-            init_color( LCD_COLOR_FG, 20, 20, 20 );
-        } else {
-            init_color( LCD_COLOR_BG, 202, 221, 92 );
-            init_color( LCD_COLOR_FG, 0, 0, 128 );
-        }
-
-        init_pair( LCD_PIXEL_OFF, LCD_COLOR_BG, LCD_COLOR_BG );
-        init_pair( LCD_PIXEL_ON, LCD_COLOR_FG, LCD_COLOR_FG );
-    }
-
-    mvaddch( 0, 0, ACS_ULCORNER );
-    mvaddch( LCD_BOTTOM, 0, ACS_LLCORNER );
-    mvaddch( 0, LCD_RIGHT, ACS_URCORNER );
-    mvaddch( LCD_BOTTOM, LCD_RIGHT, ACS_LRCORNER );
-    mvhline( 0, 1, ACS_HLINE, LCD_RIGHT - 1 );
-    mvhline( LCD_BOTTOM, 1, ACS_HLINE, LCD_RIGHT - 1 );
-    mvvline( 1, 0, ACS_VLINE, LCD_BOTTOM - 1 );
-    mvvline( 1, LCD_RIGHT, ACS_VLINE, LCD_BOTTOM - 1 );
-
-    mvprintw( 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
-
-    mvprintw( LCD_BOTTOM, 2, "[ wire: %s ]-[ IR: %s ]", wire_name, ir_name );
+    ncurses_init_ui();
 }

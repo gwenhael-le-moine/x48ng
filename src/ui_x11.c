@@ -2443,7 +2443,7 @@ void redraw_display( void )
 {
     XClearWindow( dpy, lcd.win );
     memset( disp_buf, 0, sizeof( disp_buf ) );
-    memset( lcd_buffer, 0, sizeof( lcd_buffer ) );
+    memset( lcd_nibbles_buffer, 0, sizeof( lcd_nibbles_buffer ) );
     x11_update_LCD();
 }
 
@@ -2941,9 +2941,9 @@ static inline void draw_nibble( int c, int r, int val )
         x -= ( 2 * display.offset );
     y = ( r * 2 ) + 20;
     val &= 0x0f;
-    if ( val != lcd_buffer[ r ][ c ] ) {
+    if ( val != lcd_nibbles_buffer[ r ][ c ] ) {
         XCopyPlane( dpy, nibble_maps[ val ], lcd.win, lcd.gc, 0, 0, 8, 2, x, y, 1 );
-        lcd_buffer[ r ][ c ] = val;
+        lcd_nibbles_buffer[ r ][ c ] = val;
     }
 }
 
@@ -3587,32 +3587,10 @@ void x11_adjust_contrast( void )
 
 void x11_init_LCD( void )
 {
-    display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
-
-    display.disp_start = ( saturn.disp_addr & 0xffffe );
-    display.offset = ( saturn.disp_io & 0x7 );
-
-    display.lines = ( saturn.line_count & 0x3f );
-    if ( display.lines == 0 )
-        display.lines = 63;
-
-    if ( display.offset > 3 )
-        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset + 2 ) & 0xfff;
-    else
-        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset ) & 0xfff;
-
-    display.disp_end = display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
-
-    display.menu_start = saturn.menu_addr;
-    display.menu_end = saturn.menu_addr + 0x110;
-
-    display.contrast = saturn.contrast_ctrl;
-    display.contrast |= ( ( saturn.disp_test & 0x1 ) << 4 );
-
-    display.annunc = saturn.annunc;
+    init_display();
 
     memset( disp_buf, 0xf0, sizeof( disp_buf ) );
-    memset( lcd_buffer, 0xf0, sizeof( lcd_buffer ) );
+    memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
 
     /* init nibble_maps */
     for ( int i = 0; i < 16; i++ )
@@ -3696,12 +3674,12 @@ void x11_update_LCD( void )
         } else {
             if ( display.offset != old_offset ) {
                 memset( disp_buf, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
-                memset( lcd_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
+                memset( lcd_nibbles_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
                 old_offset = display.offset;
             }
             if ( display.lines != old_lines ) {
                 memset( &disp_buf[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
-                memset( &lcd_buffer[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
+                memset( &lcd_nibbles_buffer[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
                 old_lines = display.lines;
             }
             for ( i = 0; i <= display.lines; i++ ) {

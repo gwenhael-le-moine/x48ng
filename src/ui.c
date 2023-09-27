@@ -7,7 +7,7 @@
 int last_annunc_state = -1;
 
 unsigned char disp_buf[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
-unsigned char lcd_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
+unsigned char lcd_nibbles_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
 
 letter_t small_font[ 128 ] = {
     {0,                  0,                  0                 },

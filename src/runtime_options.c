@@ -187,8 +187,8 @@ int parse_args( int argc, char* argv[] )
 
         { "tui",                 no_argument,       &frontend_type,      FRONTEND_TEXT},
 
-        { "mono",            no_argument,       &mono,               1            },
-        { "gray",            no_argument,       &gray,               1            },
+        { "mono",                no_argument,       &mono,               1            },
+        { "gray",                no_argument,       &gray,               1            },
 
         { 0,                     0,                 0,                   0            }
     };

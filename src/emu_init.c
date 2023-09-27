@@ -110,6 +110,33 @@ void init_saturn( void )
     dev_memory_init();
 }
 
+void init_display( void )
+{
+    display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
+
+    display.disp_start = ( saturn.disp_addr & 0xffffe );
+    display.offset = ( saturn.disp_io & 0x7 );
+
+    display.lines = ( saturn.line_count & 0x3f );
+    if ( display.lines == 0 )
+        display.lines = 63;
+
+    if ( display.offset > 3 )
+        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset + 2 ) & 0xfff;
+    else
+        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset ) & 0xfff;
+
+    display.disp_end = display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
+
+    display.menu_start = saturn.menu_addr;
+    display.menu_end = saturn.menu_addr + 0x110;
+
+    display.contrast = saturn.contrast_ctrl;
+    display.contrast |= ( ( saturn.disp_test & 0x1 ) << 4 );
+
+    display.annunc = saturn.annunc;
+}
+
 int init_emulator( void )
 {
     /* If not forced to initialize and files are readble => let's go */
