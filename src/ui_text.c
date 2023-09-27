@@ -477,7 +477,7 @@ void text_draw_annunc( void ) { ncurses_draw_annunciators(); }
 
 void init_text_ui( int argc, char** argv )
 {
-    /* Set public API to ui_text functions */
+    /* Set public API to this UIs functions */
     ui_disp_draw_nibble = text_disp_draw_nibble;
     ui_menu_draw_nibble = text_menu_draw_nibble;
     ui_get_event = text_get_event;
