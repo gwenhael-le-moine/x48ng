@@ -41,24 +41,22 @@ DOTOS = src/emu_serial.o \
 
 ### X11 UI
 ifeq ($(WITH_X11), yes)
-	X11CFLAGS = $(shell pkg-config --cflags x11 xext) -D_GNU_SOURCE=1
-	X11LIBS = $(shell pkg-config --libs x11 xext)
-	ifneq ($(X11LIBS), "")
-		CFLAGS += $(X11CFLAGS) -DHAS_X11=1
-		LIBS += $(X11LIBS)
-		DOTOS += src/ui_x11.o
-	endif
+X11CFLAGS = $(shell pkg-config --cflags x11 xext) -D_GNU_SOURCE=1
+X11LIBS = $(shell pkg-config --libs x11 xext)
+
+CFLAGS += $(X11CFLAGS) -DHAS_X11=1
+LIBS += $(X11LIBS)
+DOTOS += src/ui_x11.o
 endif
 
 ### SDL UI
 ifeq ($(WITH_SDL), yes)
 SDLCFLAGS = $(shell pkg-config --cflags SDL_gfx sdl12_compat)
 SDLLIBS = $(shell pkg-config --libs SDL_gfx sdl12_compat)
-ifneq (,$(findstring "lSDL", $(SDLLIBS)))
-	CFLAGS += $(SDLCFLAGS) -DHAS_SDL=1
-	LIBS += $(SDLLIBS)
-	DOTOS += src/ui_sdl.o
-endif
+
+CFLAGS += $(SDLCFLAGS) -DHAS_SDL=1
+LIBS += $(SDLLIBS)
+DOTOS += src/ui_sdl.o
 endif
 
 ### Text UI
