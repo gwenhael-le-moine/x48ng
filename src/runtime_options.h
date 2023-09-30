@@ -25,6 +25,7 @@ extern int frontend_type;
 extern char* serialLine;
 
 extern char* configDir;
+extern char* config_file;
 extern char* romFileName;
 extern char* ramFileName;
 extern char* stateFileName;
@@ -55,6 +56,7 @@ extern char* connFont;
 
 #define MAX_LENGTH_FILENAME 2048
 extern char normalized_config_path[ MAX_LENGTH_FILENAME ];
+extern char normalized_config_file[ MAX_LENGTH_FILENAME ];
 extern char normalized_rom_path[ MAX_LENGTH_FILENAME ];
 extern char normalized_ram_path[ MAX_LENGTH_FILENAME ];
 extern char normalized_state_path[ MAX_LENGTH_FILENAME ];

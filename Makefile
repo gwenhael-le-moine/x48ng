@@ -16,6 +16,10 @@ OPTIM ?= 2
 CFLAGS = -g -O$(OPTIM) -I./src/ -D_GNU_SOURCE=1 -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DPATCHLEVEL=$(PATCHLEVEL)
 LIBS = -lm
 
+### lua
+CFLAGS += $(shell pkg-config --cflags lua)
+LIBS += $(shell pkg-config --libs lua)
+
 ### debugger
 CFLAGS += $(shell pkg-config --cflags readline)
 LIBS += $(shell pkg-config --libs readline)

@@ -5,8 +5,13 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdbool.h>
+#include <assert.h>
 
 #include <getopt.h>
+
+#include <lua.h>
+#include <lauxlib.h>
 
 #include "runtime_options.h"
 
@@ -23,6 +28,7 @@ int resetOnStartup = 0;
 char* serialLine = "/dev/ttyS0";
 
 char* configDir = ".x48ng";
+char* config_file = "config.lua";
 char* romFileName = "rom";
 char* ramFileName = "ram";
 char* stateFileName = "hp48";
@@ -63,11 +69,126 @@ char* largeFont = "-*-fixed-medium-r-normal-*-20-*-*-*-*-*-iso8859-1";
 char* connFont = "-*-fixed-medium-r-normal-*-12-*-*-*-*-*-iso8859-1";
 
 char normalized_config_path[ MAX_LENGTH_FILENAME ];
+char normalized_config_file[ MAX_LENGTH_FILENAME ];
 char normalized_rom_path[ MAX_LENGTH_FILENAME ];
 char normalized_ram_path[ MAX_LENGTH_FILENAME ];
 char normalized_state_path[ MAX_LENGTH_FILENAME ];
 char normalized_port1_path[ MAX_LENGTH_FILENAME ];
 char normalized_port2_path[ MAX_LENGTH_FILENAME ];
+
+/* https://boston.conman.org/2023/09/29.1 */
+lua_State* gL;
+
+bool config_read( const char* conf )
+{
+    int rc;
+
+    assert( conf != NULL );
+
+    /*---------------------------------------------------
+    ; Create the Lua state, which includes NO predefined
+    ; functions or values.  This is literally an empty
+    ; slate.
+    ;----------------------------------------------------*/
+
+    gL = luaL_newstate();
+    if ( gL == NULL ) {
+        fprintf( stderr, "cannot create Lua state" );
+        return false;
+    }
+
+    /*-----------------------------------------------------
+    ; For the truly paranoid about sandboxing, enable the
+    ; following code, which removes the string library,
+    ; which some people find problematic to leave un-sand-
+    ; boxed. But in my opinion, if you are worried about
+    ; such attacks in a configuration file, you have bigger
+    ; security issues to worry about than this.
+    ;------------------------------------------------------*/
+
+#ifdef PARANOID
+    lua_pushliteral( gL, "x" );
+    lua_pushnil( gL );
+    lua_setmetatable( gL, -2 );
+    lua_pop( gL, 1 );
+#endif
+
+    /*-----------------------------------------------------
+    ; Lua 5.2+ can restrict scripts to being text only,
+    ; to avoid a potential problem with loading pre-compiled
+    ; Lua scripts that may have malformed Lua VM code that
+    ; could possibly lead to an exploit, but again, if you
+    ; have to worry about that, you have bigger security
+    ; issues to worry about.  But in any case, here I'm
+    ; restricting the file to "text" only.
+    ;------------------------------------------------------*/
+
+    rc = luaL_loadfilex( gL, conf, "t" );
+    if ( rc != LUA_OK ) {
+        fprintf( stderr, "Lua error: (%d) %s", rc, lua_tostring( gL, -1 ) );
+        return false;
+    }
+
+    rc = lua_pcall( gL, 0, 0, 0 );
+    if ( rc != LUA_OK ) {
+        fprintf( stderr, "Lua error: (%d) %s", rc, lua_tostring( gL, -1 ) );
+        return false;
+    }
+
+    /*--------------------------------------------
+    ; the Lua state gL contains our configuration,
+    ; we can now query it for values
+    ;---------------------------------------------*/
+    lua_getglobal( gL, "rom" );
+    romFileName = lua_tostring( gL, -1 );
+    fprintf( stderr, "config.rom = %s\n", romFileName );
+
+    lua_getglobal( gL, "ram" );
+    ramFileName = lua_tostring( gL, -1 );
+    fprintf( stderr, "config.ram = %s\n", ramFileName );
+
+    lua_getglobal( gL, "state" );
+    stateFileName = lua_tostring( gL, -1 );
+    fprintf( stderr, "config.state = %s\n", stateFileName );
+
+    lua_getglobal( gL, "port1" );
+    port1FileName = lua_tostring( gL, -1 );
+    fprintf( stderr, "config.port1 = %s\n", port1FileName );
+
+    lua_getglobal( gL, "port2" );
+    port2FileName = lua_tostring( gL, -1 );
+    fprintf( stderr, "config.port2 = %s\n", port2FileName );
+
+    lua_getglobal( gL, "serial_line" );
+    serialLine = lua_tostring( gL, -1 );
+    fprintf( stderr, "config.serial_line = %s\n", serialLine );
+
+    lua_getglobal( gL, "debugger" );
+    useDebugger = lua_toboolean( gL, -1 );
+    fprintf( stderr, "config.debugger = %i\n", useDebugger );
+
+    lua_getglobal( gL, "throttle" );
+    throttle = lua_toboolean( gL, -1 );
+    fprintf( stderr, "config.throttle = %i\n", throttle );
+
+    lua_getglobal( gL, "frontend" );
+    const char* config_lua__frontend = lua_tostring( gL, -1 );
+    fprintf( stderr, "config.frontend = %s\n", config_lua__frontend );
+#ifdef HAS_X11
+    if ( strcmp( config_lua__frontend, "x11" ) == 0 )
+        frontend_type = FRONTEND_X11;
+    else
+#endif
+#ifdef HAS_SDL
+        if ( strcmp( config_lua__frontend, "sdl" ) == 0 )
+        frontend_type = FRONTEND_SDL;
+    else
+#endif
+        if ( strcmp( config_lua__frontend, "text" ) == 0 )
+        frontend_type = FRONTEND_TEXT;
+
+    return true;
+}
 
 void get_absolute_config_dir( char* source, char* dest )
 {
@@ -97,10 +218,19 @@ void get_absolute_config_dir( char* source, char* dest )
         strcat( dest, "/" );
 }
 
-static inline void normalize_filenames( void )
+static inline void normalize_filename( const char* orig, char* dest )
+{
+    if ( orig[ 0 ] == '/' )
+        strcpy( dest, "" );
+    else
+        strcpy( dest, normalized_config_path );
+    strcat( dest, orig );
+}
+
+int normalized_config_path_exist = 1;
+static inline void normalize_config_dir( void )
 {
     struct stat st;
-    int normalized_config_path_exist = 1;
 
     get_absolute_config_dir( configDir, normalized_config_path );
     if ( verbose )
@@ -109,6 +239,16 @@ static inline void normalize_filenames( void )
     if ( stat( normalized_config_path, &st ) == -1 )
         if ( errno == ENOENT )
             normalized_config_path_exist = 0;
+}
+
+static inline void normalize_filenames( void )
+{
+    normalize_filename( config_file, normalized_config_file );
+
+    normalize_filename( ramFileName, normalized_ram_path );
+    normalize_filename( stateFileName, normalized_state_path );
+    normalize_filename( port1FileName, normalized_port1_path );
+    normalize_filename( port2FileName, normalized_port2_path );
 
     if ( romFileName[ 0 ] == '/' )
         strcpy( normalized_rom_path, "" );
@@ -122,30 +262,6 @@ static inline void normalize_filenames( void )
         strcpy( normalized_rom_path, normalized_config_path );
     }
     strcat( normalized_rom_path, romFileName );
-
-    if ( ramFileName[ 0 ] == '/' )
-        strcpy( normalized_ram_path, "" );
-    else
-        strcpy( normalized_ram_path, normalized_config_path );
-    strcat( normalized_ram_path, ramFileName );
-
-    if ( stateFileName[ 0 ] == '/' )
-        strcpy( normalized_state_path, "" );
-    else
-        strcpy( normalized_state_path, normalized_config_path );
-    strcat( normalized_state_path, stateFileName );
-
-    if ( port1FileName[ 0 ] == '/' )
-        strcpy( normalized_port1_path, "" );
-    else
-        strcpy( normalized_port1_path, normalized_config_path );
-    strcat( normalized_port1_path, port1FileName );
-
-    if ( port2FileName[ 0 ] == '/' )
-        strcpy( normalized_port2_path, "" );
-    else
-        strcpy( normalized_port2_path, normalized_config_path );
-    strcat( normalized_port2_path, port2FileName );
 }
 
 int parse_args( int argc, char* argv[] )
@@ -153,9 +269,10 @@ int parse_args( int argc, char* argv[] )
     int option_index;
     int c = '?';
 
-    char* optstring = "c:S:u:hvVtsirT";
+    char* optstring = "c:hvVtsirT";
     static struct option long_options[] = {
-        {"config-dir",           required_argument, NULL,                1000         },
+        {"config",               required_argument, NULL,                'c'          },
+        { "config-dir",          required_argument, NULL,                1000         },
         { "rom",                 required_argument, NULL,                1010         },
         { "ram",                 required_argument, NULL,                1011         },
         { "state",               required_argument, NULL,                1012         },
@@ -273,6 +390,9 @@ int parse_args( int argc, char* argv[] )
                 fprintf( stdout, "%s %d.%d.%d\n", progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
                 exit( 0 );
                 break;
+            case 'c':
+                config_file = optarg;
+                break;
             case 1000:
                 configDir = optarg;
                 break;
@@ -345,6 +465,16 @@ int parse_args( int argc, char* argv[] )
             fprintf( stderr, "%s\n", argv[ optind++ ] );
         fprintf( stderr, "\n" );
     }
+
+    normalize_config_dir();
+
+    /* read config.lua */
+    /* TODO: handle having no config_file */
+    /* TODO: command-line options should have priority over config file's values */
+    /* TODO: handle config_file being absolute or relative */
+    normalize_filename( config_file, normalized_config_file );
+    if ( !config_read( normalized_config_file ) )
+        exit( 1 );
 
     normalize_filenames();
 
