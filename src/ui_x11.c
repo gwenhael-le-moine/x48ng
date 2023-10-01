@@ -2215,7 +2215,6 @@ int CreateWindows( int argc, char** argv )
     hint.flags = PSize | PMinSize | PMaxSize | PBaseSize | PWinGravity;
 
     sprintf( def_geom, "%ux%u", width, height );
-    user_geom = geometry;
 
     info = XWMGeometry( dpy, screen, user_geom, def_geom, 0, &hint, &x, &y, &w, &h, &hint.win_gravity );
 

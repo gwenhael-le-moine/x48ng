@@ -202,14 +202,14 @@ void init_display( void )
 
 int init_emulator( void )
 {
-    /* If not forced to initialize and files are readble => let's go */
-    if ( !initialize && read_files() ) {
+    /* If files are readble => let's go */
+    if ( read_files() ) {
         if ( resetOnStartup )
             saturn.PC = 0x00000;
         return 0;
     }
 
-    /* if forced initialize or files were not readble => initialize */
+    /* if files were not readble => initialize */
     if ( verbose )
         fprintf( stderr, "initialization of %s\n", normalized_config_path );
 

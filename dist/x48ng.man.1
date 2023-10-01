@@ -55,7 +55,11 @@ where options include (depending on compiled front-ends):
 .br
         \-v \-\-version                 show version
 .br
-           \-\-config\-dir=<path>       use <path> as x48ng's home (default: ~/.x48ng/)
+            \-\-print\-config           print configuration as config file
+.br
+        \-c <path> \-\-config=<path>    use <path> as x48ng's config file (default: ~/.config/x48ng/config.lua)
+.br
+           \-\-config\-dir=<path>       use <path> as x48ng's home (default: ~/.config/x48ng/)
 .br
            \-\-rom=<filename>           use <filename> (absolute or relative to <config\-dir>) as ROM (default: rom)
 .br
@@ -77,33 +81,31 @@ where options include (depending on compiled front-ends):
 .br
            \-\-tui                     use terminal front-end (default: false)
 .br
-        \-t \-\-use\-terminal            activate pseudo terminal interface (default: true)
+        \-t \-\-terminal            activate pseudo terminal interface (default: false)
 .br
-        \-s \-\-use\-serial              activate serial interface (default: false)
+        \-s \-\-serial              activate serial interface (default: false)
 .br
-           \-\-no\-debug                disable the debugger
-.br
-        \-i \-\-initialize              initialize the content of <config\-dir>
+           \-\-debug                enable the debugger
 .br
         \-r \-\-reset                   perform a reset on startup
 .br
         \-T \-\-throttle                try to emulate real speed (default: false)
 .br
-           \-\-sdl\-no\-chrome           only display the LCD (default: false)
+           \-\-no\-chrome           only display the LCD (default: false)
 .br
-           \-\-sdl\-fullscreen          make the UI fullscreen (default: false)
+           \-\-fullscreen          make the UI fullscreen (default: false)
 .br
-           \-\-x11\-netbook             make the UI horizontal (default: false)
+           \-\-netbook             make the UI horizontal (default: false)
 .br
-           \-\-x11\-visual=<X visual>   use visual <X visual> (default: default), possible values: <default | staticgray | staticcolor | truecolor | grayscale | pseudocolor | directcolor | 0xnn | nn>
+           \-\-visual=<X visual>   use visual <X visual> (default: default), possible values: <default | staticgray | staticcolor | truecolor | grayscale | pseudocolor | directcolor | 0xnn | nn>
 .br
-           \-\-x11\-small\-font=<fontname>  use <fontname> as small font
+           \-\-small\-font=<fontname>  use <fontname> as small font
 .br
-           \-\-x11\-medium\-font=<fontname> use <fontname> as medium font
+           \-\-medium\-font=<fontname> use <fontname> as medium font
 .br
-           \-\-x11\-large\-font=<fontname>  use <fontname> as large font
+           \-\-large\-font=<fontname>  use <fontname> as large font
 .br
-           \-\-x11\-connection\-font=<fontname> use <fontname> as connection font
+           \-\-connection\-font=<fontname> use <fontname> as connection font
 .br
            \-\-mono                make the UI monochrome (default: false)
 .br

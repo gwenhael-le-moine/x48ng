@@ -401,14 +401,14 @@ static void SDLInit( void )
     KEYBOARD_OFFSET_Y = _KEYBOARD_OFFSET_Y;
     KBD_UPLINE = _KBD_UPLINE;
 
-    if ( show_ui_chrome ) {
-        width = ( buttons_gx[ LAST_HPKEY ].x + buttons_gx[ LAST_HPKEY ].w ) + 2 * SIDE_SKIP;
-        height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP + buttons_gx[ LAST_HPKEY ].y + buttons_gx[ LAST_HPKEY ].h + BOTTOM_SKIP;
-    } else {
+    if ( hide_chrome ) {
         width = DISPLAY_WIDTH;
         height = DISPLAY_HEIGHT;
         DISPLAY_OFFSET_X = 0;
         DISPLAY_OFFSET_Y = 0;
+    } else {
+        width = ( buttons_gx[ LAST_HPKEY ].x + buttons_gx[ LAST_HPKEY ].w ) + 2 * SIDE_SKIP;
+        height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP + buttons_gx[ LAST_HPKEY ].y + buttons_gx[ LAST_HPKEY ].h + BOTTOM_SKIP;
     }
 
     uint32_t sdl_window_flags = SDL_SWSURFACE | SDL_RESIZABLE;
@@ -1695,12 +1695,12 @@ static void SDLCreateHP( void )
 {
     unsigned int width, height;
 
-    if ( show_ui_chrome ) {
-        width = KEYBOARD_WIDTH + 2 * SIDE_SKIP;
-        height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP + KEYBOARD_HEIGHT + BOTTOM_SKIP;
-    } else {
+    if ( hide_chrome ) {
         width = KEYBOARD_WIDTH;
         height = DISPLAY_HEIGHT;
+    } else {
+        width = KEYBOARD_WIDTH + 2 * SIDE_SKIP;
+        height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP + KEYBOARD_HEIGHT + BOTTOM_SKIP;
     }
 
     keypad.width = width;
@@ -1724,7 +1724,7 @@ static void SDLCreateHP( void )
 
     SDLCreateColors();
 
-    if ( show_ui_chrome ) {
+    if ( !hide_chrome ) {
         int cut = buttons[ HPKEY_MTH ].y + KEYBOARD_OFFSET_Y - 19;
 
         SDLDrawBackground( width, cut, width, height );
@@ -1895,7 +1895,7 @@ int sdl_get_event( void )
     }
 
     // Display button being pressed, if any
-    if ( show_ui_chrome )
+    if ( !hide_chrome )
         SDLUIShowKey( keyispressed );
 
     // If we press long, then the button releases makes SDLUIShowKey restore

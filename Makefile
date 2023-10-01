@@ -121,6 +121,8 @@ install: all
 
 	install -m 755 -d -- $(DESTDIR)$(DOCDIR)
 	cp -R AUTHORS LICENSE README* doc* romdump/ $(DESTDIR)$(DOCDIR)
+	./dist/x48ng --print-config > ./dist/config.lua
+	install -c -m 644 dist/config.lua $(DESTDIR)$(DOCDIR)/config.lua
 
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/share/applications
 	sed "s|@PREFIX@|$(PREFIX)|g" dist/x48ng.desktop > $(DESTDIR)$(PREFIX)/share/applications/x48ng.desktop

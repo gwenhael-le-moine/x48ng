@@ -152,18 +152,22 @@ void ( *init_ui )( int argc, char** argv );
 void setup_frontend( void )
 {
     switch ( frontend_type ) {
-#ifdef HAS_X11
         case FRONTEND_X11:
         default:
+#ifdef HAS_X11
             init_ui = init_x11_ui;
-            break;
+#else
+            fprintf( stderr, "ERROR: x11 frontend disabled at compilation\n" );
 #endif
+            break;
 
-#ifdef HAS_SDL
         case FRONTEND_SDL:
+#ifdef HAS_SDL
             init_ui = init_sdl_ui;
-            break;
+#else
+            fprintf( stderr, "ERROR: sdl frontend disabled at compilation\n" );
 #endif
+            break;
 
         case FRONTEND_TEXT:
             init_ui = init_text_ui;

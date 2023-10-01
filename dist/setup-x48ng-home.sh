@@ -1,13 +1,15 @@
 #!/usr/bin/env sh
 
-DOTX48NG=${DOTX48NG:-.x48ng}
+DOTX48NG=${DOTX48NG:-.config/x48ng}
 
-ROM=${ROM:-@PREFIX@/share/x48ng/ROMs/gxrom-r}
+ROM=${ROM:-gxrom-r}
 
 [ -d ~/${DOTX48NG} ] && rm -fr ~/${DOTX48NG}
 mkdir -p ~/${DOTX48NG}
 
-cp $ROM ~/${DOTX48NG}/rom
+x48ng --print-config > ~/${DOTX48NG}/config.lua
+
+cp @PREFIX@/share/x48ng/ROMs/$ROM ~/${DOTX48NG}/rom
 cd ~/${DOTX48NG}
 
 PORT1_SIZE=128K
@@ -19,6 +21,3 @@ fi
 
 @PREFIX@/share/x48ng/mkcard $PORT1_SIZE port1
 @PREFIX@/share/x48ng/mkcard $PORT2_SIZE port2
-
-cd ~/${DOTX48NG}/
-@PREFIX@/bin/x48ng --config-dir=${DOTX48NG} --verbose --initialize

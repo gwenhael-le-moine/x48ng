@@ -24,6 +24,13 @@ This is my fork of x48-0.6.4 where I deviate from the original code and do my ow
 
 You can use the script `./dist/setup-x48ng-home.sh` or simply run `./dist/x48ng --rom=<romfilename>`
 
+### manual setup
+
+1. Create `~/.config/x48ng/`
+2. Copy `/usr/share/x48ng/ROMs/gxrom-r` (or any other rom) to `~/.config/x48ng/rom`
+3. Run `x48ng --print-config > ~/.config/x48ng/config.lua`
+4. Run `x48ng`
+
 ### Ncurses UI (`--tui`)
 
 I had to be a bit 'creative' mapping keys there:
