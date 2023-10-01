@@ -2384,6 +2384,7 @@ void emulate( void )
             if ( saturn.keybuf.rows[ i ] || throttle ) {
                 /* Throttling speed if needed */
                 gettimeofday( &tv, &tz );
+                gettimeofday( &tv2, &tz );
                 while ( ( tv.tv_sec == tv2.tv_sec ) && ( ( tv.tv_usec - tv2.tv_usec ) < 2 ) )
                     gettimeofday( &tv, &tz );
 

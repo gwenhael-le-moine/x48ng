@@ -3302,7 +3302,7 @@ static int decode_20( word_20* addr, char* arg )
     }
 
     *addr = 0;
-    for ( int i = 0; i < strlen( arg ); i++ ) {
+    for ( size_t i = 0; i < strlen( arg ); i++ ) {
         *addr <<= 4;
         if ( '0' <= arg[ i ] && arg[ i ] <= '9' ) {
             *addr |= ( ( int )arg[ i ] - ( int )'0' );
@@ -3326,7 +3326,7 @@ static int decode_32( word_32* addr, char* arg )
     }
 
     *addr = 0;
-    for ( int i = 0; i < strlen( arg ); i++ ) {
+    for ( size_t i = 0; i < strlen( arg ); i++ ) {
         *addr <<= 4;
         if ( '0' <= arg[ i ] && arg[ i ] <= '9' ) {
             *addr |= ( ( int )arg[ i ] - ( int )'0' );

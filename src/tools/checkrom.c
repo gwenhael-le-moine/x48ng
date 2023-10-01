@@ -16,7 +16,7 @@ int main( int argc, char** argv )
 {
     unsigned char version[ 7 ];
     long ver_addr;
-    int i, a, c, d, d0, d1, D0, D1;
+    int i, a, c, d0, d1, D0, D1;
     int fail;
 
     if ( argc < 2 ) {
@@ -44,7 +44,7 @@ int main( int argc, char** argv )
     fail = a = 0;
     D0 = 0x00000;
     D1 = 0x40000;
-    for ( d = 1; d <= rom_size / 0x80000; d++ ) {
+    for ( unsigned int d = 1; d <= rom_size / 0x80000; d++ ) {
         crc = 0x0000;
         rom_crc = 0;
         for ( i = 0; i < 4; i++ ) {

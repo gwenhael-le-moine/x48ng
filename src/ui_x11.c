@@ -565,7 +565,7 @@ static void fatal_exit( char* error, char* advice )
     exit( 1 );
 }
 
-inline Visual* pick_visual_of_class( Display* dpy, int visual_class, unsigned int* depth )
+static inline Visual* pick_visual_of_class( Display* dpy, int visual_class, unsigned int* depth )
 {
     XVisualInfo vi_in, *vi_out;
     int out_count;
@@ -628,7 +628,7 @@ Visual* get_visual_resource( Display* dpy, unsigned int* depth )
         vclass = DirectColor;
     else if ( 1 == sscanf( x11_visual, " %d %c", &id, &c ) )
         vclass = -2;
-    else if ( 1 == sscanf( x11_visual, " 0x%x %c", &id, &c ) )
+    else if ( 1 == sscanf( x11_visual, " 0x%d %c", &id, &c ) )
         vclass = -2;
     else {
         fprintf( stderr, "unrecognized visual \"%s\".\n", x11_visual );
@@ -730,7 +730,7 @@ int AllocColors( void )
                         error = c;
                         break;
                     }
-                } else if ( colors[ c ].xcolor.pixel >= visual->map_entries ) {
+                } else if ( colors[ c ].xcolor.pixel >= ( unsigned long )( visual->map_entries ) ) {
                     dyn = 0;
                     if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 ) {
                         if ( verbose )
@@ -806,7 +806,7 @@ int AllocColors( void )
                     if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 )
                         fatal_exit( "can\'t alloc Color.\n", "" );
 
-                } else if ( colors[ c ].xcolor.pixel >= visual->map_entries ) {
+                } else if ( colors[ c ].xcolor.pixel >= ( unsigned long )( visual->map_entries ) ) {
                     dyn = 0;
                     if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 )
                         fatal_exit( "can\'t alloc Color.\n", "" );
@@ -2095,7 +2095,7 @@ int CreateWindows( int argc, char** argv )
     XSetWindowAttributes xswa;
     XTextProperty wname, iname;
     Atom protocols[ 2 ];
-    char *name, *user_geom, def_geom[ 40 ];
+    char *name, *user_geom = NULL, def_geom[ 40 ];
     int info, x, y, w, h;
     unsigned int width, height;
 
@@ -2135,6 +2135,7 @@ int CreateWindows( int argc, char** argv )
     switch ( visual->class ) {
         case DirectColor:
             direct_color = 1;
+            break;
         case GrayScale:
         case PseudoColor:
             dynamic_color = 1;
@@ -2268,24 +2269,19 @@ int CreateWindows( int argc, char** argv )
     /*
      * set icon position if requested
      */
-    /* ih.x = ih.y = 0; */
-    /* ih.min_width = ih.max_width = ih.base_width = ih.width = hp48_icon_width;
-     */
-    /* ih.min_height = ih.max_height = ih.base_height = ih.height = */
-    /*     hp48_icon_height; */
-    /* ih.win_gravity = NorthWestGravity; */
-    /* ih.flags = PSize | PMinSize | PMaxSize | PBaseSize | PWinGravity; */
+    ih.x = ih.y = 0;
+    ih.min_width = ih.max_width = ih.base_width = ih.width = hp48_icon_width;
+    ih.min_height = ih.max_height = ih.base_height = ih.height = hp48_icon_height;
+    ih.win_gravity = NorthWestGravity;
+    ih.flags = PSize | PMinSize | PMaxSize | PBaseSize | PWinGravity;
 
-    /* user_geom = get_string_resource( "iconGeom", "IconGeom" ); */
-    /* info = XWMGeometry( dpy, screen, user_geom, ( char* )0, 0, &ih, &x, &y,
-     * &w, */
-    /*                     &h, &ih.win_gravity ); */
+    info = XWMGeometry( dpy, screen, user_geom, ( char* )0, 0, &ih, &x, &y, &w, &h, &ih.win_gravity );
 
-    /* if ( ( info & XValue ) && ( info & YValue ) ) { */
-    /*     wmh.icon_x = x; */
-    /*     wmh.icon_y = y; */
-    /*     wmh.flags |= IconPositionHint; */
-    /* } */
+    if ( ( info & XValue ) && ( info & YValue ) ) {
+        wmh.icon_x = x;
+        wmh.icon_y = y;
+        wmh.flags |= IconPositionHint;
+    }
 
     /*
      * set some more attributes of icon window

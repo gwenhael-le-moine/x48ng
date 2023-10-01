@@ -18,7 +18,7 @@ int read_rom_file( const char* name, unsigned char** mem, unsigned int* size )
     unsigned char* tmp_mem;
     unsigned char byte;
     unsigned char four[ 4 ];
-    int i, j;
+    unsigned int i, j;
 
     *mem = NULL;
     *size = 0;

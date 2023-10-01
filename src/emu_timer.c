@@ -335,7 +335,7 @@ t1_t2_ticks get_t1_t2( void )
          * Don't adjust the time, can't come from user, anyhow.
          */
 
-        if ( ( saturn.timer2 >= 0 && access_time < 0 ) || ( ( unsigned long )saturn.timer2 > access_time ) ) {
+        if ( ( saturn.timer2 >= 0 && access_time < 0 ) || ( saturn.timer2 > access_time ) ) {
             /*
              * check OK, return calculated time
              */
@@ -364,7 +364,7 @@ t1_t2_ticks get_t1_t2( void )
         access_time -= adj_time;
     }
 
-    if ( ( saturn.timer2 >= 0 && ( access_time < 0 ) ) || ( ( unsigned long )saturn.timer2 > access_time ) ) {
+    if ( ( saturn.timer2 >= 0 && ( access_time < 0 ) ) || ( saturn.timer2 > access_time ) ) {
         /*
          * check OK, return calculated time
          */
