@@ -603,7 +603,7 @@ int parse_args( int argc, char* argv[] )
         fprintf( stdout, "font_large = \"%s\"\n", largeFont );
         fprintf( stdout, "font_devices = \"%s\"\n", connFont );
 
-        exit( 1 );
+        exit( 0 );
     }
     if ( verbose ) {
         fprintf( stderr, "normalized_config_path = %s\n", normalized_config_path );

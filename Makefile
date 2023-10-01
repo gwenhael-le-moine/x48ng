@@ -120,7 +120,9 @@ install: all
 	gzip -9  $(DESTDIR)$(MANDIR)/man1/x48ng.1
 
 	install -m 755 -d -- $(DESTDIR)$(DOCDIR)
-	cp -R dist/config.lua AUTHORS LICENSE README* doc* romdump/ $(DESTDIR)$(DOCDIR)
+	cp -R AUTHORS LICENSE README* doc* romdump/ $(DESTDIR)$(DOCDIR)
+	./dist/x48ng --print-config > ./dist/config.lua
+	install -c -m 644 dist/config.lua $(DESTDIR)$(DOCDIR)/config.lua
 
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/share/applications
 	sed "s|@PREFIX@|$(PREFIX)|g" dist/x48ng.desktop > $(DESTDIR)$(PREFIX)/share/applications/x48ng.desktop
