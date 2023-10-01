@@ -20,15 +20,15 @@ This is my fork of x48-0.6.4 where I deviate from the original code and do my ow
 
 ## Usage
 
-`./dist/x48ng --help`
+`x48ng --help`
 
-You can use the script `./dist/setup-x48ng-home.sh` or simply run `./dist/x48ng --rom=<romfilename>`
+You can use the script `setup-x48ng-home.sh` or simply run `x48ng --rom=<romfilename>`
 
 ### manual setup
 
-1. Create `~/.config/x48ng/`
-2. Copy `/usr/share/x48ng/ROMs/gxrom-r` (or any other rom) to `~/.config/x48ng/rom`
-3. Run `x48ng --print-config > ~/.config/x48ng/config.lua`
+1. Create `$XDG_CONFIG_HOME/x48ng` (usually `~/.config/x48ng/`)
+2. Copy `/usr/share/x48ng/ROMs/gxrom-r` (or any other rom) to `$XDG_CONFIG_HOME/x48ng/rom`
+3. Run `x48ng --print-config > $XDG_CONFIG_HOME/x48ng/config.lua`
 4. Run `x48ng`
 
 ### Ncurses UI (`--tui`)
@@ -50,10 +50,12 @@ _To quit `x48ng --tui` use `F10` or `Shift+End` or `|`_
 3. removed the autotools-based build system and wrote a simple Makefile instead
 4. added a x48ng.desktop file and an icon
 5. refactoring as a way to explore/understand the codebase
+6. drop Xresources
+7. link to lua to use it as a config file reader
 
 ## Bugs to fix
 
-See https://github.com/gwenhael-le-moine/x48ng/issues
+See and report at https://github.com/gwenhael-le-moine/x48ng/issues
 
 ## What more I would like to do:
 

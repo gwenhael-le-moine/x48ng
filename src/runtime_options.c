@@ -27,7 +27,7 @@ bool resetOnStartup = false;
 
 char* serialLine;
 
-char* configDir = ".config/x48ng";
+char* configDir = "x48ng";
 char* config_file = "config.lua";
 char* romFileName = NULL;
 char* ramFileName = NULL;
@@ -127,28 +127,46 @@ static inline bool config_read( const char* filename )
 
 static inline void get_absolute_config_dir( char* source, char* dest )
 {
-    char* home;
-    struct passwd* pwd;
-
     if ( source[ 0 ] != '/' ) {
-        home = getenv( "HOME" );
-        if ( home ) {
-            strcpy( dest, home );
+        char* xdg_config_home = getenv( "XDG_CONFIG_HOME" );
+
+        if ( xdg_config_home ) {
+            if ( verbose )
+                fprintf( stderr, "XDG_CONFIG_HOME is %s\n", xdg_config_home );
+
+            strcpy( dest, xdg_config_home );
             strcat( dest, "/" );
         } else {
-            pwd = getpwuid( getuid() );
-            if ( pwd ) {
-                strcpy( dest, pwd->pw_dir );
-                strcat( dest, "/" );
-            } else {
+            char* home = getenv( "HOME" );
+
+            if ( home ) {
                 if ( verbose )
-                    fprintf( stderr, "can\'t figure out your home directory, "
-                                     "trying /tmp\n" );
-                strcpy( dest, "/tmp" );
+                    fprintf( stderr, "HOME is %s\n", home );
+
+                strcpy( dest, home );
+                strcat( dest, "/.config/" );
+            } else {
+                struct passwd* pwd = getpwuid( getuid() );
+
+                if ( pwd ) {
+                    if ( verbose )
+                        fprintf( stderr, "pwd->pw_dir is %s\n", pwd->pw_dir );
+
+                    strcpy( dest, pwd->pw_dir );
+                    strcat( dest, "/" );
+                } else {
+                    if ( verbose )
+                        fprintf( stderr, "can\'t figure out your home directory, "
+                                         "trying /tmp\n" );
+
+                    strcpy( dest, "/tmp" );
+                }
             }
         }
     }
+
     strcat( dest, source );
+
     if ( dest[ strlen( dest ) ] != '/' )
         strcat( dest, "/" );
 }
@@ -549,9 +567,10 @@ int parse_args( int argc, char* argv[] )
 
     print_config |= verbose;
     if ( print_config ) {
+        fprintf( stdout, "--------------------------------------------------------------------------------\n" );
         fprintf( stdout, "-- Configuration file for x48ng\n" );
-        fprintf( stdout, "\n" );
-        fprintf( stdout, "-- `config_dir` is relative to $HOME or absolute\n" );
+        fprintf( stdout, "-- This is a comment\n" );
+        fprintf( stdout, "-- `config_dir` is relative to $XDG_CONFIG_HOME/, or $HOME/.config/ or absolute\n" );
         fprintf( stdout, "config_dir = \"%s\"\n", configDir );
         fprintf( stdout, "\n" );
         fprintf( stdout, "-- Pathes are either relative to `config_dir` or absolute\n" );
@@ -561,18 +580,17 @@ int parse_args( int argc, char* argv[] )
         fprintf( stdout, "port1 = \"%s\"\n", port1FileName );
         fprintf( stdout, "port2 = \"%s\"\n", port2FileName );
         fprintf( stdout, "\n" );
-        fprintf( stdout, "pseudo_terminal = %s\n", useTerminal ? "true" : "false\n" );
-        fprintf( stdout, "serial = %s\n", useSerial ? "true" : "false\n" );
+        fprintf( stdout, "pseudo_terminal = %s\n", useTerminal ? "true" : "false" );
+        fprintf( stdout, "serial = %s\n", useSerial ? "true" : "false" );
         fprintf( stdout, "serial_line = \"%s\"\n", serialLine );
         fprintf( stdout, "\n" );
-        fprintf( stdout, "verbose = %s\n", verbose ? "true" : "false\n" );
-        fprintf( stdout, "debugger = %s\n", useDebugger ? "true" : "false\n" );
-        fprintf( stdout, "throttle = %s\n", throttle ? "true" : "false\n" );
+        fprintf( stdout, "verbose = %s\n", verbose ? "true" : "false" );
+        fprintf( stdout, "debugger = %s\n", useDebugger ? "true" : "false" );
+        fprintf( stdout, "throttle = %s\n", throttle ? "true" : "false" );
         fprintf( stdout, "\n" );
         fprintf( stdout, "--------------------\n" );
         fprintf( stdout, "-- User Interface --\n" );
         fprintf( stdout, "--------------------\n" );
-        fprintf( stdout, "\n" );
         fprintf( stdout, "frontend = \"" );
         switch ( frontend_type ) {
             case FRONTEND_X11:
@@ -585,25 +603,22 @@ int parse_args( int argc, char* argv[] )
                 fprintf( stdout, "tui" );
                 break;
         }
-        fprintf( stdout, "\" -- possible values: \"x11\", \"sdl\", \"tui\"" );
-
-        fprintf( stdout, "\n" );
-        fprintf( stdout, "hide_chrome = %s\n", hide_chrome ? "true" : "false\n" );
-        fprintf( stdout, "fullscreen = %s\n", show_ui_fullscreen ? "true" : "false\n" );
-        fprintf( stdout, "\n" );
-        fprintf( stdout, "netbook = %s\n", netbook ? "true" : "false\n" );
-        fprintf( stdout, "\n" );
-        fprintf( stdout, "mono = %s\n", mono ? "true" : "false\n" );
-        fprintf( stdout, "gray = %s\n", gray ? "true" : "false\n" );
+        fprintf( stdout, "\" -- possible values: \"x11\", \"sdl\", \"tui\"\n" );
+        fprintf( stdout, "hide_chrome = %s\n", hide_chrome ? "true" : "false" );
+        fprintf( stdout, "fullscreen = %s\n", show_ui_fullscreen ? "true" : "false" );
+        fprintf( stdout, "mono = %s\n", mono ? "true" : "false" );
+        fprintf( stdout, "gray = %s\n", gray ? "true" : "false" );
         fprintf( stdout, "\n" );
         fprintf( stdout, "x11_visual = \"%s\"\n", x11_visual );
-        fprintf( stdout, "\n" );
+        fprintf( stdout, "netbook = %s\n", netbook ? "true" : "false" );
         fprintf( stdout, "font_small = \"%s\"\n", smallFont );
         fprintf( stdout, "font_medium = \"%s\"\n", mediumFont );
         fprintf( stdout, "font_large = \"%s\"\n", largeFont );
         fprintf( stdout, "font_devices = \"%s\"\n", connFont );
+        fprintf( stdout, "--------------------------------------------------------------------------------\n" );
 
-        exit( 0 );
+        if ( !verbose )
+            exit( 0 );
     }
     if ( verbose ) {
         fprintf( stderr, "normalized_config_path = %s\n", normalized_config_path );
