@@ -2029,9 +2029,7 @@ void sdl_menu_draw_nibble( word_20 addr, word_4 val )
 
 void sdl_draw_annunc( void )
 {
-    int val;
-
-    val = display.annunc;
+    int val = display.annunc;
 
     if ( val == last_annunc_state )
         return;

@@ -67,7 +67,7 @@ endif
 CFLAGS += $(shell pkg-config --cflags ncursesw) -DNCURSES_WIDECHAR=1
 LIBS += $(shell pkg-config --libs ncursesw)
 
-.PHONY: all clean clean-all pretty-code install
+.PHONY: all clean clean-all pretty-code install mrproper
 
 all: dist/mkcard dist/checkrom dist/dump2rom dist/x48ng
 
