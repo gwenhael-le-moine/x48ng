@@ -53,14 +53,16 @@ LIBS += $(X11LIBS)
 DOTOS += src/ui_x11.o
 endif
 
-### SDL UI
+### SDL2 UI
 ifeq ($(WITH_SDL), yes)
 SDLCFLAGS = $(shell pkg-config --cflags SDL_gfx sdl12_compat)
 SDLLIBS = $(shell pkg-config --libs SDL_gfx sdl12_compat)
+# SDLCFLAGS = $(shell pkg-config --cflags SDL2_gfx sdl2)
+# SDLLIBS = $(shell pkg-config --libs SDL2_gfx sdl2)
 
 CFLAGS += $(SDLCFLAGS) -DHAS_SDL=1
 LIBS += $(SDLLIBS)
-DOTOS += src/ui_sdl.o
+DOTOS += src/ui_sdl2.o
 endif
 
 ### Text UI
