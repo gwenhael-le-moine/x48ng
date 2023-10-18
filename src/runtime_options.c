@@ -291,9 +291,9 @@ int parse_args( int argc, char* argv[] )
                       "  -v --version            show version\n"
                       "     --print-config       print configuration as config file\n"
                       "  -c --config=<path>      use <path> as x48ng's config file (default: "
-                      "~/.config/x48ng/config.lua)\n"
+                      "$XDG_CONFIG_HOME/x48ng/config.lua)\n"
                       "     --config-dir=<path>  use <path> as x48ng's home (default: "
-                      "~/.config/x48ng/)\n"
+                      "$XDG_CONFIG_HOME/x48ng/)\n"
                       "     --rom=<filename>     use <filename> (absolute or relative to "
                       "<config-dir>) as ROM (default: rom)\n"
                       "     --ram=<filename>     use <filename> (absolute or relative to "
@@ -437,7 +437,7 @@ int parse_args( int argc, char* argv[] )
     }
 
     lua_getglobal( config_lua_values, "config_dir" );
-    configDir = ( char* )luaL_optstring( config_lua_values, -1, ".config/x48ng" );
+    configDir = ( char* )luaL_optstring( config_lua_values, -1, "x48ng" );
 
     lua_getglobal( config_lua_values, "rom" );
     romFileName = ( char* )luaL_optstring( config_lua_values, -1, "rom" );
