@@ -4,25 +4,29 @@
 
 This is my fork of x48-0.6.4 where I deviate from the original code and do my own thing.
 
-## Screenshots
-
-### `--tui` version (ncurses)
-
-![screenshot of x48ng --tui running in a terminal](./tui-0.28.0-screenshot.png?raw=true "screenshot of x48ng --tui running in a terminal")
-
-### `--x11` version
-
-![screenshot of x48ng --x11](./x11-0.28.0-screenshot.png?raw=true "screenshot of x48ng --x11")
-
-### `--sdl` version
-
-![screenshot of x48ng --sdl](./sdl-0.28.0-screenshot.png?raw=true "screenshot of x48ng --sdl")
-
 ## Usage
 
 `x48ng --help`
 
 You can use the script `setup-x48ng-home.sh` or simply run `x48ng --rom=<romfilename>`
+
+## Screenshots
+
+### `--tui --small` version (ncurses)
+
+![screenshot of x48ng --tui --small running in a terminal](./tui-small-screenshot.png?raw=true "screenshot of x48ng --tui running in a terminal")
+
+### `--tui` version (ncurses)
+
+![screenshot of x48ng --tui running in a terminal](./tui-screenshot.png?raw=true "screenshot of x48ng --tui running in a terminal")
+
+### `--x11` version
+
+![screenshot of x48ng --x11](./x11-screenshot.png?raw=true "screenshot of x48ng --x11")
+
+### `--sdl` version
+
+![screenshot of x48ng --sdl](./sdl-screenshot.png?raw=true "screenshot of x48ng --sdl")
 
 ### manual setup
 
