@@ -27,6 +27,7 @@ hide_chrome = false
 fullscreen = false
 mono = false
 gray = false
+small = false
 
 x11_visual = "default"
 netbook = false

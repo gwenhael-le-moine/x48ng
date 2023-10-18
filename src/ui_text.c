@@ -9,6 +9,7 @@
 #include <sys/utsname.h>
 #include <unistd.h>
 #include <locale.h>
+#include <wchar.h>
 
 #include <ncursesw/curses.h>
 
@@ -22,14 +23,15 @@
 #define LCD_HEIGHT 64
 #define LCD_OFFSET_X 1
 #define LCD_OFFSET_Y 2
-#define LCD_BOTTOM LCD_HEIGHT + LCD_OFFSET_Y
-#define LCD_RIGHT LCD_WIDTH + LCD_OFFSET_X
+#define LCD_BOTTOM LCD_OFFSET_Y + ( small ? ( LCD_HEIGHT / 2 ) + 1 : LCD_HEIGHT )
+#define LCD_RIGHT LCD_OFFSET_X + ( small ? ( LCD_WIDTH / 2 ) + 1 : LCD_WIDTH )
 
 #define LCD_COLOR_BG 48
 #define LCD_COLOR_FG 49
 
 #define LCD_PIXEL_ON 1
 #define LCD_PIXEL_OFF 2
+#define LCD_COLORS_PAIR 3
 
 /************************/
 /* functions prototypes */
@@ -54,15 +56,103 @@ static inline void ncurses_draw_annunciators( void )
         mvaddwstr( 0, 4 + ( i * 4 ), ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] ) ? annunciators_icons[ i ] : L" " );
 }
 
+static inline wchar_t bitsquare_to_small_char( bool top_left, bool top_right, bool bottom_left, bool bottom_right )
+{
+    if ( top_left ) {
+        if ( top_right && bottom_left && bottom_right )
+            return L'█';
+        if ( top_right && bottom_left && !bottom_right )
+            return L'▛';
+        if ( top_right && !bottom_left && bottom_right )
+            return L'▜';
+        if ( top_right && !bottom_left && !bottom_right )
+            return L'▀';
+
+        if ( !top_right && bottom_left && bottom_right )
+            return L'▙';
+        if ( !top_right && bottom_left && !bottom_right )
+            return L'▌';
+        if ( !top_right && !bottom_left && bottom_right )
+            return L'▚';
+        if ( !top_right && !bottom_left && !bottom_right )
+            return L'▘';
+    } else {
+        if ( top_right && bottom_left && bottom_right )
+            return L'▟';
+        if ( top_right && bottom_left && !bottom_right )
+            return L'▞';
+        if ( top_right && !bottom_left && bottom_right )
+            return L'▐';
+        if ( top_right && !bottom_left && !bottom_right )
+            return L'▝';
+
+        if ( !top_right && bottom_left && bottom_right )
+            return L'▄';
+        if ( !top_right && bottom_left && !bottom_right )
+            return L'▖';
+        if ( !top_right && !bottom_left && bottom_right )
+            return L'▗';
+        if ( !top_right && !bottom_left && !bottom_right )
+            return L' ';
+    }
+}
+
+static inline void ncurses_draw_lcd_small( void )
+{
+    bool top_left, top_right, bottom_left, bottom_right;
+    int nibble_top, nibble_bottom;
+    int step_x = 2;
+    int step_y = 2;
+
+    wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
+
+    if ( !mono && has_colors() )
+        attron( COLOR_PAIR( LCD_COLORS_PAIR ) );
+
+    for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
+        wcscpy( line, L"" );
+
+        for ( int nibble_x = 0; nibble_x < NIBBLES_PER_ROW - 1; ++nibble_x ) {
+            nibble_top = lcd_nibbles_buffer[ y ][ nibble_x ];
+            nibble_top &= 0x0f;
+            nibble_bottom = lcd_nibbles_buffer[ y + 1 ][ nibble_x ];
+            nibble_bottom &= 0x0f;
+
+            for ( int bit_x = 0; bit_x < NIBBLES_NB_BITS; bit_x += step_x ) {
+                top_left = 0 != ( nibble_top & ( 1 << ( bit_x & 3 ) ) );
+                top_right = 0 != ( nibble_top & ( 1 << ( ( bit_x + 1 ) & 3 ) ) );
+
+                bottom_left = 0 != ( nibble_bottom & ( 1 << ( bit_x & 3 ) ) );
+                bottom_right = 0 != ( nibble_bottom & ( 1 << ( ( bit_x + 1 ) & 3 ) ) );
+
+                wchar_t pixels = bitsquare_to_small_char( top_left, top_right, bottom_left, bottom_right );
+                wcsncat( line, &pixels, 1 );
+            }
+        }
+        mvaddwstr( LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
+    }
+
+    if ( !mono && has_colors() )
+        attroff( COLOR_PAIR( LCD_COLORS_PAIR ) );
+
+    wrefresh( stdscr );
+}
+
 static inline void ncurses_draw_lcd( void )
 {
-    chtype pixel;
-    short bit;
+    bool bit;
     int nibble;
     int bit_stop;
     int init_x;
 
+    wchar_t line[ LCD_WIDTH ];
+
+    if ( !mono && has_colors() )
+        attron( COLOR_PAIR( LCD_COLORS_PAIR ) );
+
     for ( int y = 0; y < LCD_HEIGHT; ++y ) {
+        wcscpy( line, L"" );
+
         for ( int nibble_x = 0; nibble_x < NIBBLES_PER_ROW; ++nibble_x ) {
             nibble = lcd_nibbles_buffer[ y ][ nibble_x ];
             nibble &= 0x0f;
@@ -71,16 +161,17 @@ static inline void ncurses_draw_lcd( void )
             bit_stop = ( ( init_x + NIBBLES_NB_BITS >= LCD_WIDTH ) ? LCD_WIDTH - init_x : 4 );
 
             for ( int bit_x = 0; bit_x < bit_stop; bit_x++ ) {
-                bit = nibble & ( 1 << ( bit_x & 3 ) );
+                bit = 0 != ( nibble & ( 1 << ( bit_x & 3 ) ) );
 
-                pixel = bit ? ACS_BLOCK : ' ';
-                if ( !mono && has_colors() )
-                    pixel |= COLOR_PAIR( bit ? LCD_PIXEL_ON : LCD_PIXEL_OFF );
-
-                mvaddch( y + LCD_OFFSET_Y, ( nibble_x * NIBBLES_NB_BITS ) + bit_x + LCD_OFFSET_X, pixel );
+                wchar_t pixel = bit ? L'█' : L' ';
+                wcsncat( line, &pixel, 1 );
             }
         }
+        mvaddwstr( LCD_OFFSET_Y + y, LCD_OFFSET_X, line );
     }
+
+    if ( !mono && has_colors() )
+        attroff( COLOR_PAIR( LCD_COLORS_PAIR ) );
 
     wrefresh( stdscr );
 }
@@ -321,6 +412,7 @@ static inline void ncurses_init_ui( void )
 
         init_pair( LCD_PIXEL_OFF, LCD_COLOR_BG, LCD_COLOR_BG );
         init_pair( LCD_PIXEL_ON, LCD_COLOR_FG, LCD_COLOR_FG );
+        init_pair( LCD_COLORS_PAIR, LCD_COLOR_FG, LCD_COLOR_BG );
     }
 
     mvaddch( 0, 0, ACS_ULCORNER );
@@ -404,7 +496,10 @@ void text_update_LCD( void )
     } else
         memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
 
-    ncurses_draw_lcd();
+    if ( small )
+        ncurses_draw_lcd_small();
+    else
+        ncurses_draw_lcd();
 }
 
 void text_refresh_LCD( void ) {}

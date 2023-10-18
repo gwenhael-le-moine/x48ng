@@ -19,6 +19,12 @@ extern int frontend_type;
 
 extern char* serialLine;
 
+extern bool mono;
+extern bool gray;
+
+/* tui */
+extern bool small;
+
 /* sdl */
 extern bool hide_chrome;
 extern bool show_ui_fullscreen;
@@ -28,8 +34,6 @@ extern bool netbook;
 extern char* name;
 extern char* title;
 extern char* x11_visual;
-extern bool mono;
-extern bool gray;
 extern bool monoIcon;
 extern bool iconic;
 extern bool xrm;

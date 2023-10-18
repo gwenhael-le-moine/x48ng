@@ -37,6 +37,12 @@ char* port2FileName = NULL;
 
 int frontend_type = FRONTEND_TEXT;
 
+bool mono = false;
+bool gray = false;
+
+/* tui */
+bool small = false;
+
 /* sdl */
 bool hide_chrome = false;
 bool show_ui_fullscreen = false;
@@ -49,8 +55,6 @@ char* x11_visual = NULL;
 /* default | staticgray | staticcolor | truecolor | grayscale |
  * pseudocolor | directcolor | 0xnn | nn
  */
-bool mono = false;
-bool gray = false;
 bool monoIcon = false;
 bool iconic = false;
 bool xrm = true;
@@ -233,6 +237,7 @@ int parse_args( int argc, char* argv[] )
     int clopt_netbook = -1;
     int clopt_mono = -1;
     int clopt_gray = -1;
+    int clopt_small = -1;
 
     char* optstring = "c:hvVtsirT";
     struct option long_options[] = {
@@ -275,6 +280,7 @@ int parse_args( int argc, char* argv[] )
 
         { "mono",            no_argument,       &clopt_mono,               true         },
         { "gray",            no_argument,       &clopt_gray,               true         },
+        { "small",           no_argument,       &clopt_small,              true         },
 
         { 0,                 0,                 0,                         0            }
     };
@@ -331,6 +337,8 @@ int parse_args( int argc, char* argv[] )
                       "     --mono               make the UI monochrome (default: "
                       "false)\n"
                       "     --gray               make the UI grayscale (default: "
+                      "false)\n"
+                      "     --small            make the text UI small (2×2 pixels per character) (default: "
                       "false)\n";
     while ( c != EOF ) {
         c = getopt_long( argc, argv, optstring, long_options, &option_index );
@@ -494,6 +502,9 @@ int parse_args( int argc, char* argv[] )
     lua_getglobal( config_lua_values, "gray" );
     gray = lua_toboolean( config_lua_values, -1 );
 
+    lua_getglobal( config_lua_values, "small" );
+    small = lua_toboolean( config_lua_values, -1 );
+
     lua_getglobal( config_lua_values, "x11_visual" );
     x11_visual = ( char* )luaL_optstring( config_lua_values, -1, "default" );
 
@@ -559,6 +570,8 @@ int parse_args( int argc, char* argv[] )
         mono = clopt_mono;
     if ( clopt_gray != -1 )
         gray = clopt_gray;
+    if ( clopt_small != -1 )
+        small = clopt_small;
 
     /* After getting configs and params */
     /* normalize config_dir again in case it's been modified */
@@ -608,6 +621,7 @@ int parse_args( int argc, char* argv[] )
         fprintf( stdout, "fullscreen = %s\n", show_ui_fullscreen ? "true" : "false" );
         fprintf( stdout, "mono = %s\n", mono ? "true" : "false" );
         fprintf( stdout, "gray = %s\n", gray ? "true" : "false" );
+        fprintf( stdout, "small = %s\n", small ? "true" : "false" );
         fprintf( stdout, "\n" );
         fprintf( stdout, "x11_visual = \"%s\"\n", x11_visual );
         fprintf( stdout, "netbook = %s\n", netbook ? "true" : "false" );
