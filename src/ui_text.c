@@ -59,41 +59,29 @@ static inline void ncurses_draw_annunciators( void )
 static inline wchar_t bitsquare_to_small_char( bool top_left, bool top_right, bool bottom_left, bool bottom_right )
 {
     if ( top_left ) {
-        if ( top_right && bottom_left && bottom_right )
-            return L'█';
-        if ( top_right && bottom_left && !bottom_right )
-            return L'▛';
-        if ( top_right && !bottom_left && bottom_right )
-            return L'▜';
-        if ( top_right && !bottom_left && !bottom_right )
-            return L'▀';
-
-        if ( !top_right && bottom_left && bottom_right )
-            return L'▙';
-        if ( !top_right && bottom_left && !bottom_right )
-            return L'▌';
-        if ( !top_right && !bottom_left && bottom_right )
-            return L'▚';
-        if ( !top_right && !bottom_left && !bottom_right )
-            return L'▘';
+        if ( top_right ) {
+            if ( bottom_left )
+                return bottom_right ? L'█' : L'▛';
+            else
+                return bottom_right ? L'▜' : L'▀';
+        } else {
+            if ( bottom_left )
+                return bottom_right ? L'▙' : L'▌';
+            else
+                return bottom_right ? L'▚' : L'▘';
+        }
     } else {
-        if ( top_right && bottom_left && bottom_right )
-            return L'▟';
-        if ( top_right && bottom_left && !bottom_right )
-            return L'▞';
-        if ( top_right && !bottom_left && bottom_right )
-            return L'▐';
-        if ( top_right && !bottom_left && !bottom_right )
-            return L'▝';
-
-        if ( !top_right && bottom_left && bottom_right )
-            return L'▄';
-        if ( !top_right && bottom_left && !bottom_right )
-            return L'▖';
-        if ( !top_right && !bottom_left && bottom_right )
-            return L'▗';
-        if ( !top_right && !bottom_left && !bottom_right )
-            return L' ';
+        if ( top_right ) {
+            if ( bottom_left )
+                return bottom_right ? L'▟' : L'▞';
+            else
+                return bottom_right ? L'▐' : L'▝';
+        } else {
+            if ( bottom_left )
+                return bottom_right ? L'▄' : L'▖';
+            else
+                return bottom_right ? L'▗' : L' ';
+        }
     }
 }
 
