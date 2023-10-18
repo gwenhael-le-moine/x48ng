@@ -62,8 +62,8 @@ static inline void ncurses_draw_lcd( void )
     int bit_stop;
     int init_x;
 
-    for ( int nibble_x = 0; nibble_x < NIBBLES_PER_ROW; ++nibble_x ) {
-        for ( int y = 0; y < LCD_HEIGHT; ++y ) {
+    for ( int y = 0; y < LCD_HEIGHT; ++y ) {
+        for ( int nibble_x = 0; nibble_x < NIBBLES_PER_ROW; ++nibble_x ) {
             nibble = lcd_nibbles_buffer[ y ][ nibble_x ];
             nibble &= 0x0f;
 
