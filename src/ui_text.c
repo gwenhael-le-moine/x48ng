@@ -140,7 +140,7 @@ static inline void ncurses_draw_lcd_tiny( void )
     wrefresh( stdscr );
 }
 
-static inline wchar_t bitsquare_to_small_char( bool top_left, bool top_right, bool bottom_left, bool bottom_right )
+static inline wchar_t four_bits_to_quadrant_char( bool top_left, bool top_right, bool bottom_left, bool bottom_right )
 {
     if ( top_left ) {
         if ( top_right ) {
@@ -197,7 +197,7 @@ static inline void ncurses_draw_lcd_small( void )
                 bottom_left = 0 != ( nibble_bottom & ( 1 << ( bit_x & 3 ) ) );
                 bottom_right = 0 != ( nibble_bottom & ( 1 << ( ( bit_x + 1 ) & 3 ) ) );
 
-                wchar_t pixels = bitsquare_to_small_char( top_left, top_right, bottom_left, bottom_right );
+                wchar_t pixels = four_bits_to_quadrant_char( top_left, top_right, bottom_left, bottom_right );
                 wcsncat( line, &pixels, 1 );
             }
         }
