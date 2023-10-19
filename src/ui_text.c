@@ -64,7 +64,7 @@ static inline wchar_t eight_bits_to_braille_char( bool b1, bool b2, bool b3, boo
     /* b3 b6 */
     /* b7 b8 */
     /*********/
-    uint16_t chr = 0x2800;
+    wchar_t chr = 0x2800;
 
     if ( b1 )
         chr |= 0b0000000000000001;
@@ -83,7 +83,7 @@ static inline wchar_t eight_bits_to_braille_char( bool b1, bool b2, bool b3, boo
     if ( b8 )
         chr |= 0b0000000010000000;
 
-    return ( wchar_t )chr;
+    return chr;
 }
 
 static inline void ncurses_draw_lcd_tiny( void )
