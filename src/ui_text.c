@@ -23,8 +23,8 @@
 #define LCD_HEIGHT 64
 #define LCD_OFFSET_X 1
 #define LCD_OFFSET_Y 1
-#define LCD_BOTTOM LCD_OFFSET_Y + ( small ? ( LCD_HEIGHT / 2 ) : LCD_HEIGHT )
-#define LCD_RIGHT LCD_OFFSET_X + ( small ? ( LCD_WIDTH / 2 ) + 1 : LCD_WIDTH )
+#define LCD_BOTTOM LCD_OFFSET_Y + ( small ? ( LCD_HEIGHT / 2 ) : tiny ? ( LCD_HEIGHT / 4 ) : LCD_HEIGHT )
+#define LCD_RIGHT LCD_OFFSET_X + ( ( small || tiny ) ? ( LCD_WIDTH / 2 ) + 1 : LCD_WIDTH )
 
 #define LCD_COLOR_BG 48
 #define LCD_COLOR_FG 49
@@ -56,14 +56,98 @@ static inline void ncurses_draw_annunciators( void )
         mvaddwstr( 0, 4 + ( i * 4 ), ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] ) ? annunciators_icons[ i ] : L" " );
 }
 
+static inline wchar_t eight_bits_to_braille_char( bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7, bool b8 )
+{
+    /*********/
+    /* b1 b4 */
+    /* b2 b5 */
+    /* b3 b6 */
+    /* b7 b8 */
+    /*********/
+    uint16_t chr = 0x2800;
+
+    if ( b1 )
+        chr |= 0b0000000000000001;
+    if ( b2 )
+        chr |= 0b0000000000000010;
+    if ( b3 )
+        chr |= 0b0000000000000100;
+    if ( b4 )
+        chr |= 0b0000000000001000;
+    if ( b5 )
+        chr |= 0b0000000000010000;
+    if ( b6 )
+        chr |= 0b0000000000100000;
+    if ( b7 )
+        chr |= 0b0000000001000000;
+    if ( b8 )
+        chr |= 0b0000000010000000;
+
+    return ( wchar_t )chr;
+}
+
+static inline void ncurses_draw_lcd_tiny( void )
+{
+    bool b1, b2, b3, b4, b5, b6, b7, b8;
+    int nibble_top, nibble_middle_top, nibble_middle_bottom, nibble_bottom;
+    int step_x = 2;
+    int step_y = 4;
+
+    wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
+
+    if ( !mono && has_colors() )
+        attron( COLOR_PAIR( LCD_COLORS_PAIR ) );
+
+    for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
+        wcscpy( line, L"" );
+
+        for ( int nibble_x = 0; nibble_x < NIBBLES_PER_ROW - 1; ++nibble_x ) {
+            nibble_top = lcd_nibbles_buffer[ y ][ nibble_x ];
+            nibble_top &= 0x0f;
+
+            nibble_middle_top = lcd_nibbles_buffer[ y + 1 ][ nibble_x ];
+            nibble_middle_top &= 0x0f;
+
+            nibble_middle_bottom = lcd_nibbles_buffer[ y + 2 ][ nibble_x ];
+            nibble_middle_bottom &= 0x0f;
+
+            nibble_bottom = lcd_nibbles_buffer[ y + 3 ][ nibble_x ];
+            nibble_bottom &= 0x0f;
+
+            for ( int bit_x = 0; bit_x < NIBBLES_NB_BITS; bit_x += step_x ) {
+                b1 = 0 != ( nibble_top & ( 1 << ( bit_x & 3 ) ) );
+                b4 = 0 != ( nibble_top & ( 1 << ( ( bit_x + 1 ) & 3 ) ) );
+
+                b2 = 0 != ( nibble_middle_top & ( 1 << ( bit_x & 3 ) ) );
+                b5 = 0 != ( nibble_middle_top & ( 1 << ( ( bit_x + 1 ) & 3 ) ) );
+
+                b3 = 0 != ( nibble_middle_bottom & ( 1 << ( bit_x & 3 ) ) );
+                b6 = 0 != ( nibble_middle_bottom & ( 1 << ( ( bit_x + 1 ) & 3 ) ) );
+
+                b7 = 0 != ( nibble_bottom & ( 1 << ( bit_x & 3 ) ) );
+                b8 = 0 != ( nibble_bottom & ( 1 << ( ( bit_x + 1 ) & 3 ) ) );
+
+                wchar_t pixels = eight_bits_to_braille_char( b1, b2, b3, b4, b5, b6, b7, b8 );
+                wcsncat( line, &pixels, 1 );
+            }
+        }
+        mvaddwstr( LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
+    }
+
+    if ( !mono && has_colors() )
+        attroff( COLOR_PAIR( LCD_COLORS_PAIR ) );
+
+    wrefresh( stdscr );
+}
+
 static inline wchar_t bitsquare_to_small_char( bool top_left, bool top_right, bool bottom_left, bool bottom_right )
 {
     if ( top_left ) {
         if ( top_right ) {
             if ( bottom_left )
-                return bottom_right ? L'█' : L'▛';
+                return bottom_right ? L'█' : L'▛'; /* 0x2588 0x2598 */
             else
-                return bottom_right ? L'▜' : L'▀';
+                return bottom_right ? L'▜' : L'▀'; /* 0x259C 0x2580 */
         } else {
             if ( bottom_left )
                 return bottom_right ? L'▙' : L'▌';
@@ -486,6 +570,8 @@ void text_update_LCD( void )
 
     if ( small )
         ncurses_draw_lcd_small();
+    else if ( tiny )
+        ncurses_draw_lcd_tiny();
     else
         ncurses_draw_lcd();
 }

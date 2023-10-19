@@ -24,6 +24,7 @@ extern bool gray;
 
 /* tui */
 extern bool small;
+extern bool tiny;
 
 /* sdl */
 extern bool hide_chrome;
