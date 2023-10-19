@@ -22,8 +22,8 @@
 #define LCD_WIDTH 131
 #define LCD_HEIGHT 64
 #define LCD_OFFSET_X 1
-#define LCD_OFFSET_Y 2
-#define LCD_BOTTOM LCD_OFFSET_Y + ( small ? ( LCD_HEIGHT / 2 ) + 1 : LCD_HEIGHT )
+#define LCD_OFFSET_Y 1
+#define LCD_BOTTOM LCD_OFFSET_Y + ( small ? ( LCD_HEIGHT / 2 ) : LCD_HEIGHT )
 #define LCD_RIGHT LCD_OFFSET_X + ( small ? ( LCD_WIDTH / 2 ) + 1 : LCD_WIDTH )
 
 #define LCD_COLOR_BG 48
