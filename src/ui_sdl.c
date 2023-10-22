@@ -708,17 +708,19 @@ static int SDLKeyToKey( SDLKey k )
         case SDLK_ESCAPE:
             return HPKEY_ON;
             break;
+#ifndef DONT_SHADOW_SHIFTS
         case SDLK_LSHIFT:
             return HPKEY_SHL;
             break;
         case SDLK_RSHIFT:
-            return HPKEY_SHL;
+            return HPKEY_SHR;
             break;
+#endif
         case SDLK_LCTRL:
             return HPKEY_SHR;
             break;
         case SDLK_RCTRL:
-            return HPKEY_SHR;
+            return HPKEY_SHL;
             break;
         case SDLK_LALT:
             return HPKEY_ALPHA;

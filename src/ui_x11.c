@@ -2700,12 +2700,16 @@ int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
             key_event( HPKEY_ON, xev );
             wake = 1;
             break;
+#ifndef DONT_SHADOW_SHIFTS
         case XK_Shift_L:
+#endif
         case XK_Control_R:
             key_event( HPKEY_SHL, xev );
             wake = 1;
             break;
+#ifndef DONT_SHADOW_SHIFTS
         case XK_Shift_R:
+#endif
         case XK_Control_L:
             key_event( HPKEY_SHR, xev );
             wake = 1;

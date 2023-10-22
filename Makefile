@@ -29,6 +29,11 @@ ifeq ($(FULL_WARNINGS), yes)
 	CFLAGS += -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-function -Wconversion -Wdouble-promotion -Wno-sign-conversion -fsanitize=undefined -fsanitize-trap
 endif
 
+DONT_SHADOW_SHIFTS = no
+ifeq ($(DONT_SHADOW_SHIFTS), yes)
+	CFLAGS += -DDONT_SHADOW_SHIFTS=1
+endif
+
 DOTOS = src/emu_serial.o \
 	src/emu_emulate.o \
 	src/emu_init.o \
