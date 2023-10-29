@@ -74,6 +74,10 @@ char normalized_port2_path[ MAX_LENGTH_FILENAME ];
 
 lua_State* config_lua_values;
 
+#ifndef LUA_OK
+#define LUA_OK 0
+#endif
+
 static inline bool config_read( const char* filename )
 {
     int rc;
@@ -115,7 +119,7 @@ static inline bool config_read( const char* filename )
     ; issues to worry about.  But in any case, here I'm
     ; restricting the file to "text" only.
     ;------------------------------------------------------*/
-    rc = luaL_loadfilex( config_lua_values, filename, "t" );
+    rc = luaL_loadfile( config_lua_values, filename );
     if ( rc != LUA_OK ) {
         fprintf( stderr, "Lua error: (%d) %s\n", rc, lua_tostring( config_lua_values, -1 ) );
         return false;
