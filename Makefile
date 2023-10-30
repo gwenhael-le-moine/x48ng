@@ -1,5 +1,9 @@
 # Makefile to build x48ng without autotools
 
+PREFIX = /usr
+DOCDIR = $(PREFIX)/doc/x48ng
+MANDIR = $(PREFIX)/man
+
 VERSION_MAJOR = 0
 VERSION_MINOR = 33
 PATCHLEVEL = 0
@@ -103,10 +107,30 @@ pretty-code:
 	clang-format -i src/*.c src/*.h src/tools/*.c
 
 # Installing
-PREFIX = /usr
-DOCDIR = $(PREFIX)/doc/x48ng
-MANDIR = $(PREFIX)/man
-install: all
+dist/ROMs/sxrom-a:
+	curl "https://www.hpcalc.org/hp48/pc/emulators/sxrom-a.zip" --output - | funzip > "dist/ROMs/sxrom-a"
+dist/ROMs/sxrom-b:
+	curl "https://www.hpcalc.org/hp48/pc/emulators/sxrom-b.zip" --output - | funzip > "dist/ROMs/sxrom-b"
+dist/ROMs/sxrom-c:
+	curl "https://www.hpcalc.org/hp48/pc/emulators/sxrom-c.zip" --output - | funzip > "dist/ROMs/sxrom-c"
+dist/ROMs/sxrom-d:
+	curl "https://www.hpcalc.org/hp48/pc/emulators/sxrom-d.zip" --output - | funzip > "dist/ROMs/sxrom-d"
+dist/ROMs/sxrom-e:
+	curl "https://www.hpcalc.org/hp48/pc/emulators/sxrom-e.zip" --output - | funzip > "dist/ROMs/sxrom-e"
+dist/ROMs/sxrom-j:
+	curl "https://www.hpcalc.org/hp48/pc/emulators/sxrom-j.zip" --output - | funzip > "dist/ROMs/sxrom-j"
+dist/ROMs/gxrom-l:
+	curl "https://www.hpcalc.org/hp48/pc/emulators/gxrom-l.zip" --output - | funzip > "dist/ROMs/gxrom-l"
+dist/ROMs/gxrom-m:
+	curl "https://www.hpcalc.org/hp48/pc/emulators/gxrom-m.zip" --output - | funzip > "dist/ROMs/gxrom-m"
+dist/ROMs/gxrom-p:
+	curl "https://www.hpcalc.org/hp48/pc/emulators/gxrom-p.zip" --output - | funzip > "dist/ROMs/gxrom-p"
+dist/ROMs/gxrom-r:
+	curl "https://www.hpcalc.org/hp48/pc/emulators/gxrom-r.zip" --output - | funzip > "dist/ROMs/gxrom-r"
+
+get-roms: dist/ROMs/sxrom-a dist/ROMs/sxrom-b dist/ROMs/sxrom-c dist/ROMs/sxrom-d dist/ROMs/sxrom-e dist/ROMs/sxrom-j dist/ROMs/gxrom-l dist/ROMs/gxrom-m dist/ROMs/gxrom-p dist/ROMs/gxrom-r
+
+install: all get-roms
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/bin
 	install -c -m 755 dist/x48ng $(DESTDIR)$(PREFIX)/bin/x48ng
 
@@ -116,7 +140,6 @@ install: all
 	install -c -m 755 dist/checkrom $(DESTDIR)$(PREFIX)/share/x48ng/checkrom
 	install -c -m 644 dist/hplogo.png $(DESTDIR)$(PREFIX)/share/x48ng/hplogo.png
 	cp -R dist/ROMs/ $(DESTDIR)$(PREFIX)/share/x48ng/
-	find $(DESTDIR)$(PREFIX)/share/x48ng/ROMs/ -name "*.bz2" -exec bunzip2 {} \;
 	sed "s|@PREFIX@|$(PREFIX)|g" dist/setup-x48ng-home.sh > $(DESTDIR)$(PREFIX)/share/x48ng/setup-x48ng-home.sh
 	chmod 755 $(DESTDIR)$(PREFIX)/share/x48ng/setup-x48ng-home.sh
 
@@ -126,7 +149,7 @@ install: all
 
 	install -m 755 -d -- $(DESTDIR)$(DOCDIR)
 	cp -R AUTHORS LICENSE README* doc* romdump/ $(DESTDIR)$(DOCDIR)
-	./dist/x48ng --print-config > ./dist/config.lua
+	dist/x48ng --print-config > dist/config.lua
 	install -c -m 644 dist/config.lua $(DESTDIR)$(DOCDIR)/config.lua
 
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/share/applications
