@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "runtime_options.h"
 #include "ui.h"
@@ -158,6 +159,7 @@ void setup_frontend( void )
             init_ui = init_x11_ui;
 #else
             fprintf( stderr, "ERROR: x11 frontend disabled at compilation\n" );
+            exit( -1 );
 #endif
             break;
 
@@ -166,6 +168,7 @@ void setup_frontend( void )
             init_ui = init_sdl_ui;
 #else
             fprintf( stderr, "ERROR: sdl frontend disabled at compilation\n" );
+            exit( -1 );
 #endif
             break;
 
