@@ -37,6 +37,8 @@ char* port2FileName = NULL;
 
 int frontend_type = FRONTEND_TEXT;
 
+bool leave_shift_keys = false;
+
 bool mono = false;
 bool gray = false;
 
@@ -244,50 +246,52 @@ int parse_args( int argc, char* argv[] )
     int clopt_gray = -1;
     int clopt_small = -1;
     int clopt_tiny = -1;
+    int clopt_leave_shift_keys = -1;
 
     char* optstring = "c:hvVtsirT";
     struct option long_options[] = {
-        {"config",           required_argument, NULL,                      'c'          },
-        { "config-dir",      required_argument, NULL,                      1000         },
-        { "rom",             required_argument, NULL,                      1010         },
-        { "ram",             required_argument, NULL,                      1011         },
-        { "state",           required_argument, NULL,                      1012         },
-        { "port1",           required_argument, NULL,                      1013         },
-        { "port2",           required_argument, NULL,                      1014         },
+        {"config",            required_argument, NULL,                      'c'          },
+        { "config-dir",       required_argument, NULL,                      1000         },
+        { "rom",              required_argument, NULL,                      1010         },
+        { "ram",              required_argument, NULL,                      1011         },
+        { "state",            required_argument, NULL,                      1012         },
+        { "port1",            required_argument, NULL,                      1013         },
+        { "port2",            required_argument, NULL,                      1014         },
 
-        { "serial-line",     required_argument, NULL,                      1015         },
+        { "serial-line",      required_argument, NULL,                      1015         },
 
-        { "help",            no_argument,       NULL,                      'h'          },
-        { "version",         no_argument,       NULL,                      'v'          },
+        { "help",             no_argument,       NULL,                      'h'          },
+        { "version",          no_argument,       NULL,                      'v'          },
 
-        { "print-config",    no_argument,       ( int* )&print_config,     true         },
-        { "verbose",         no_argument,       &clopt_verbose,            true         },
-        { "terminal",        no_argument,       &clopt_useTerminal,        true         },
-        { "serial",          no_argument,       &clopt_useSerial,          true         },
+        { "print-config",     no_argument,       ( int* )&print_config,     true         },
+        { "verbose",          no_argument,       &clopt_verbose,            true         },
+        { "terminal",         no_argument,       &clopt_useTerminal,        true         },
+        { "serial",           no_argument,       &clopt_useSerial,          true         },
 
-        { "reset",           no_argument,       ( int* )&resetOnStartup,   true         },
-        { "throttle",        no_argument,       &clopt_throttle,           true         },
+        { "reset",            no_argument,       ( int* )&resetOnStartup,   true         },
+        { "throttle",         no_argument,       &clopt_throttle,           true         },
 
-        { "debug",           no_argument,       &clopt_useDebugger,        true         },
+        { "debug",            no_argument,       &clopt_useDebugger,        true         },
 
-        { "sdl",             no_argument,       &clopt_frontend_type,      FRONTEND_SDL },
-        { "no-chrome",       no_argument,       &clopt_hide_chrome,        true         },
-        { "fullscreen",      no_argument,       &clopt_show_ui_fullscreen, true         },
+        { "sdl",              no_argument,       &clopt_frontend_type,      FRONTEND_SDL },
+        { "no-chrome",        no_argument,       &clopt_hide_chrome,        true         },
+        { "fullscreen",       no_argument,       &clopt_show_ui_fullscreen, true         },
 
-        { "x11",             no_argument,       &clopt_frontend_type,      FRONTEND_X11 },
-        { "netbook",         no_argument,       &clopt_netbook,            true         },
-        { "visual",          required_argument, NULL,                      8110         },
-        { "small-font",      required_argument, NULL,                      8111         },
-        { "medium-font",     required_argument, NULL,                      8112         },
-        { "large-font",      required_argument, NULL,                      8113         },
-        { "connection-font", required_argument, NULL,                      8114         },
+        { "x11",              no_argument,       &clopt_frontend_type,      FRONTEND_X11 },
+        { "netbook",          no_argument,       &clopt_netbook,            true         },
+        { "visual",           required_argument, NULL,                      8110         },
+        { "small-font",       required_argument, NULL,                      8111         },
+        { "medium-font",      required_argument, NULL,                      8112         },
+        { "large-font",       required_argument, NULL,                      8113         },
+        { "connection-font",  required_argument, NULL,                      8114         },
 
-        { "tui",             no_argument,       &clopt_frontend_type,      FRONTEND_TEXT},
+        { "tui",              no_argument,       &clopt_frontend_type,      FRONTEND_TEXT},
 
-        { "mono",            no_argument,       &clopt_mono,               true         },
-        { "gray",            no_argument,       &clopt_gray,               true         },
-        { "small",           no_argument,       &clopt_small,              true         },
-        { "tiny",            no_argument,       &clopt_tiny,               true         },
+        { "mono",             no_argument,       &clopt_mono,               true         },
+        { "gray",             no_argument,       &clopt_gray,               true         },
+        { "small",            no_argument,       &clopt_small,              true         },
+        { "tiny",             no_argument,       &clopt_tiny,               true         },
+        { "leave-shift-keys", no_argument,       &clopt_leave_shift_keys,   true         },
 
         { 0,                 0,                 0,                         0            }
     };
@@ -348,6 +352,8 @@ int parse_args( int argc, char* argv[] )
                       "     --small            make the text UI small (2×2 pixels per character) (default: "
                       "false)\n"
                       "     --tiny             make the text UI tiny (2×4 pixels per character) (default: "
+                      "false)\n"
+                      "     --leave-shift-keys _not_ mapping the shift keys to let them free for numbers (default: "
                       "false)\n";
     while ( c != EOF ) {
         c = getopt_long( argc, argv, optstring, long_options, &option_index );
@@ -517,6 +523,9 @@ int parse_args( int argc, char* argv[] )
     lua_getglobal( config_lua_values, "tiny" );
     tiny = lua_toboolean( config_lua_values, -1 );
 
+    lua_getglobal( config_lua_values, "leave_shift_keys" );
+    leave_shift_keys = lua_toboolean( config_lua_values, -1 );
+
     lua_getglobal( config_lua_values, "x11_visual" );
     x11_visual = ( char* )luaL_optstring( config_lua_values, -1, "default" );
 
@@ -586,6 +595,8 @@ int parse_args( int argc, char* argv[] )
         small = clopt_small;
     if ( clopt_tiny != -1 )
         tiny = clopt_tiny;
+    if ( clopt_leave_shift_keys != -1 )
+        leave_shift_keys = clopt_leave_shift_keys;
 
     /* After getting configs and params */
     /* normalize config_dir again in case it's been modified */
@@ -637,6 +648,7 @@ int parse_args( int argc, char* argv[] )
         fprintf( stdout, "gray = %s\n", gray ? "true" : "false" );
         fprintf( stdout, "small = %s\n", small ? "true" : "false" );
         fprintf( stdout, "tiny = %s\n", tiny ? "true" : "false" );
+        fprintf( stdout, "leave_shift_keys = %s\n", leave_shift_keys ? "true" : "false" );
         fprintf( stdout, "\n" );
         fprintf( stdout, "x11_visual = \"%s\"\n", x11_visual );
         fprintf( stdout, "netbook = %s\n", netbook ? "true" : "false" );

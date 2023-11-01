@@ -19,6 +19,8 @@ extern int frontend_type;
 
 extern char* serialLine;
 
+extern bool leave_shift_keys;
+
 extern bool mono;
 extern bool gray;
 

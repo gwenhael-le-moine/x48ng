@@ -29,6 +29,7 @@ mono = false
 gray = false
 small = false
 tiny = false
+leave_shift_keys = false
 
 x11_visual = "default"
 netbook = false
