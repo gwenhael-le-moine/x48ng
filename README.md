@@ -50,7 +50,7 @@ I had to be a bit 'creative' mapping keys there:
 - _On_ is either `Esc` or `Home` or `\` or `F5`
 - finally `|` or `Shift+End` or `F10` or `F7` **quits** x48ng
 
-These keybindings have been standardized across all 3 UIs (x11, sdl and tui)
+The keybindings of the `Fx` have been standardized across all 3 UIs (x11, sdl and tui)
 
 ## What have I done:
 
