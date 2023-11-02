@@ -498,6 +498,8 @@ static inline void ncurses_init_ui( void )
     mvprintw( 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
 
     mvprintw( LCD_BOTTOM, 2, "[ wire: %s ]-[ IR: %s ]", wire_name, ir_name );
+
+    mvprintw( LCD_BOTTOM + 1, 0, "F1: Enter, F2: Left-shift, F3: Right-shift, F4: Alpha, F5: On, F7: Quit" );
 }
 
 /* TODO: not specific to tui  */
