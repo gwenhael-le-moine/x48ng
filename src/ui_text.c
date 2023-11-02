@@ -385,16 +385,6 @@ static inline int ncurses_get_event( void )
             case ' ':
                 hpkey = HPKEY_SPC;
                 break;
-            case KEY_ENTER:
-            case '\n':
-            case ',':
-                hpkey = HPKEY_ENTER;
-                break;
-            case KEY_BACKSPACE:
-            case 127:
-            case '\b':
-                hpkey = HPKEY_BS;
-                break;
             case KEY_DC:
                 hpkey = HPKEY_DEL;
                 break;
@@ -414,33 +404,42 @@ static inline int ncurses_get_event( void )
                 hpkey = HPKEY_DIV;
                 break;
 
+            case KEY_F( 1 ):
+            case KEY_ENTER:
+            case '\n':
+            case ',':
+                hpkey = HPKEY_ENTER;
+                break;
+            case KEY_BACKSPACE:
+            case 127:
+            case '\b':
+                hpkey = HPKEY_BS;
+                break;
+            case KEY_F( 2 ):
             case '[':
             case 339: /* PgUp */
-            case KEY_F( 5 ):
                 hpkey = HPKEY_SHL;
                 break;
+            case KEY_F( 3 ):
             case ']':
             case 338: /* PgDn */
-            case KEY_F( 6 ):
                 hpkey = HPKEY_SHR;
                 break;
+            case KEY_F( 4 ):
             case ';':
             case KEY_IC: /* Ins */
-            case KEY_F( 7 ):
-            case KEY_F( 8 ):
                 hpkey = HPKEY_ALPHA;
                 break;
+            case KEY_F( 5 ):
             case '\\':
-                /* case KEY_ESC: */
             case 27:  /* Esc */
             case 262: /* Home */
-            case KEY_F( 4 ):
                 hpkey = HPKEY_ON;
                 break;
 
+            case KEY_F( 7 ):
             case '|':      /* Shift+\ */
             case KEY_SEND: /* Shift+End */
-            case KEY_F( 1 ):
             case KEY_F( 10 ):
                 nodelay( stdscr, FALSE );
                 echo();

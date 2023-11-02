@@ -43,12 +43,14 @@ You can use the script `setup-x48ng-home.sh` or simply run `x48ng --rom=<romfile
 
 I had to be a bit 'creative' mapping keys there:
 
-- `On` is either `F4` or `Esc` or `Home` or `\`
-- `Left Shift` is either `F5` or `PgUp` or `[`
-- `Right Shift` is either `F6` or `PgDn` or `]`
-- `Alpha` is either `F8` or `Ins` or `;`
+- _Enter_ is either `Return` or `Ctrl-J` or `F1`
+- _Left Shift_ is either `PgUp` or `[` or `F2`
+- _Right Shift_ is either `PgDn` or `]` or `F3`
+- _Alpha_ is either `Ins` or `;` or `F4`
+- _On_ is either `Esc` or `Home` or `\` or `F5`
+- finally `|` or `Shift+End` or `F10` or `F7` **quits** x48ng
 
-_To quit `x48ng --tui` use `F10` or `Shift+End` or `|`_
+These keybindings have been standardized across all 3 UIs (x11, sdl and tui)
 
 ## What have I done:
 

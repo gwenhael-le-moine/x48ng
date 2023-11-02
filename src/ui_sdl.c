@@ -663,9 +663,8 @@ static int SDLKeyToKey( SDLKey k )
         case SDLK_SPACE:
             return HPKEY_SPC;
             break;
+        case SDLK_F1:
         case SDLK_RETURN:
-            return HPKEY_ENTER;
-            break;
         case SDLK_KP_ENTER:
             return HPKEY_ENTER;
             break;
@@ -705,6 +704,7 @@ static int SDLKeyToKey( SDLKey k )
         case SDLK_KP_DIVIDE:
             return HPKEY_DIV;
             break;
+        case SDLK_F5:
         case SDLK_ESCAPE:
             return HPKEY_ON;
             break;
@@ -716,17 +716,23 @@ static int SDLKeyToKey( SDLKey k )
             if ( !leave_shift_keys )
                 return HPKEY_SHR;
             break;
-        case SDLK_LCTRL:
-            return HPKEY_SHR;
-            break;
+        case SDLK_F2:
         case SDLK_RCTRL:
             return HPKEY_SHL;
             break;
-        case SDLK_LALT:
-            return HPKEY_ALPHA;
+        case SDLK_F3:
+        case SDLK_LCTRL:
+            return HPKEY_SHR;
             break;
+        case SDLK_F4:
+        case SDLK_LALT:
         case SDLK_RALT:
             return HPKEY_ALPHA;
+            break;
+        case SDLK_F7:
+        case SDLK_F10:
+            exit_emulator();
+            exit( 0 );
             break;
         default:
             return -1;
