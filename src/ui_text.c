@@ -496,6 +496,7 @@ static inline void ncurses_init_ui( void )
     mvvline( 1, LCD_RIGHT, ACS_VLINE, LCD_BOTTOM - 1 );
 
     mvprintw( 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
+    mvprintw( 0, LCD_RIGHT - 18, "< %s v%i.%i.%i >", progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
 
     mvprintw( LCD_BOTTOM, 2, "[ wire: %s ]-[ IR: %s ]", wire_name, ir_name );
 
