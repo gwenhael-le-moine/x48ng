@@ -77,7 +77,7 @@ char normalized_port2_path[ MAX_LENGTH_FILENAME ];
 lua_State* config_lua_values;
 
 #ifndef LUA_OK
-#define LUA_OK 0
+#  define LUA_OK 0
 #endif
 
 static inline bool config_read( const char* filename )
@@ -250,50 +250,52 @@ int parse_args( int argc, char* argv[] )
 
     char* optstring = "c:hvVtsirT";
     struct option long_options[] = {
-        {"config",            required_argument, NULL,                      'c'          },
-        { "config-dir",       required_argument, NULL,                      1000         },
-        { "rom",              required_argument, NULL,                      1010         },
-        { "ram",              required_argument, NULL,                      1011         },
-        { "state",            required_argument, NULL,                      1012         },
-        { "port1",            required_argument, NULL,                      1013         },
-        { "port2",            required_argument, NULL,                      1014         },
+        {"config",            required_argument, NULL,                      'c'         },
+        { "config-dir",       required_argument, NULL,                      1000        },
+        { "rom",              required_argument, NULL,                      1010        },
+        { "ram",              required_argument, NULL,                      1011        },
+        { "state",            required_argument, NULL,                      1012        },
+        { "port1",            required_argument, NULL,                      1013        },
+        { "port2",            required_argument, NULL,                      1014        },
 
-        { "serial-line",      required_argument, NULL,                      1015         },
+        { "serial-line",      required_argument, NULL,                      1015        },
 
-        { "help",             no_argument,       NULL,                      'h'          },
-        { "version",          no_argument,       NULL,                      'v'          },
+        { "help",             no_argument,       NULL,                      'h'         },
+        { "version",          no_argument,       NULL,                      'v'         },
 
-        { "print-config",     no_argument,       ( int* )&print_config,     true         },
-        { "verbose",          no_argument,       &clopt_verbose,            true         },
-        { "terminal",         no_argument,       &clopt_useTerminal,        true         },
-        { "serial",           no_argument,       &clopt_useSerial,          true         },
+        { "print-config",     no_argument,       ( int* )&print_config,     true        },
+        { "verbose",          no_argument,       &clopt_verbose,            true        },
+        { "terminal",         no_argument,       &clopt_useTerminal,        true        },
+        { "serial",           no_argument,       &clopt_useSerial,          true        },
 
-        { "reset",            no_argument,       ( int* )&resetOnStartup,   true         },
-        { "throttle",         no_argument,       &clopt_throttle,           true         },
+        { "reset",            no_argument,       ( int* )&resetOnStartup,   true        },
+        { "throttle",         no_argument,       &clopt_throttle,           true        },
 
-        { "debug",            no_argument,       &clopt_useDebugger,        true         },
+        { "debug",            no_argument,       &clopt_useDebugger,        true        },
 
-        { "sdl",              no_argument,       &clopt_frontend_type,      FRONTEND_SDL },
-        { "no-chrome",        no_argument,       &clopt_hide_chrome,        true         },
-        { "fullscreen",       no_argument,       &clopt_show_ui_fullscreen, true         },
+        { "sdl",              no_argument,       &clopt_frontend_type,      FRONTEND_SDL},
+        { "no-chrome",        no_argument,       &clopt_hide_chrome,        true        },
+        { "fullscreen",       no_argument,       &clopt_show_ui_fullscreen, true        },
 
-        { "x11",              no_argument,       &clopt_frontend_type,      FRONTEND_X11 },
-        { "netbook",          no_argument,       &clopt_netbook,            true         },
-        { "visual",           required_argument, NULL,                      8110         },
-        { "small-font",       required_argument, NULL,                      8111         },
-        { "medium-font",      required_argument, NULL,                      8112         },
-        { "large-font",       required_argument, NULL,                      8113         },
-        { "connection-font",  required_argument, NULL,                      8114         },
+        { "x11",              no_argument,       &clopt_frontend_type,      FRONTEND_X11},
+        { "netbook",          no_argument,       &clopt_netbook,            true        },
+        { "visual",           required_argument, NULL,                      8110        },
+        { "small-font",       required_argument, NULL,                      8111        },
+        { "medium-font",      required_argument, NULL,                      8112        },
+        { "large-font",       required_argument, NULL,                      8113        },
+        { "connection-font",  required_argument, NULL,                      8114        },
 
-        { "tui",              no_argument,       &clopt_frontend_type,      FRONTEND_TEXT},
+        { "tui",              no_argument,       NULL,                      9100        },
+        { "small",            no_argument,       NULL,                      9109        }, /* DEPRECATED */
+        { "tui-small",        no_argument,       NULL,                      9110        },
+        { "tiny",             no_argument,       NULL,                      9119        }, /* DEPRECATED */
+        { "tui-tiny",         no_argument,       NULL,                      9120        },
 
-        { "mono",             no_argument,       &clopt_mono,               true         },
-        { "gray",             no_argument,       &clopt_gray,               true         },
-        { "small",            no_argument,       &clopt_small,              true         },
-        { "tiny",             no_argument,       &clopt_tiny,               true         },
-        { "leave-shift-keys", no_argument,       &clopt_leave_shift_keys,   true         },
+        { "mono",             no_argument,       &clopt_mono,               true        },
+        { "gray",             no_argument,       &clopt_gray,               true        },
+        { "leave-shift-keys", no_argument,       &clopt_leave_shift_keys,   true        },
 
-        { 0,                 0,                 0,                         0            }
+        { 0,                  0,                 0,                         0           }
     };
 
     char* help_text = "usage: %s [options]\n"
@@ -320,7 +322,11 @@ int parse_args( int argc, char* argv[] )
                       "  -V --verbose            be verbose (default: false)\n"
                       "     --x11                use X11 front-end (default: true)\n"
                       "     --sdl                use SDL front-end (default: false)\n"
-                      "     --tui                use terminal front-end (default: false)\n"
+                      "     --tui                use text front-end (default: false)\n"
+                      "     --tui-small          use text small front-end (2×2 pixels per character) (default: "
+                      "false)\n"
+                      "     --tui-tiny           use text tiny front-end (2×4 pixels per character) (default: "
+                      "false)\n"
                       "  -t --use-terminal       activate pseudo terminal interface (default: "
                       "true)\n"
                       "  -s --use-serial         activate serial interface (default: false)\n"
@@ -348,10 +354,6 @@ int parse_args( int argc, char* argv[] )
                       "     --mono               make the UI monochrome (default: "
                       "false)\n"
                       "     --gray               make the UI grayscale (default: "
-                      "false)\n"
-                      "     --small            make the text UI small (2×2 pixels per character) (default: "
-                      "false)\n"
-                      "     --tiny             make the text UI tiny (2×4 pixels per character) (default: "
                       "false)\n"
                       "     --leave-shift-keys _not_ mapping the shift keys to let them free for numbers (default: "
                       "false)\n";
@@ -405,6 +407,25 @@ int parse_args( int argc, char* argv[] )
                 break;
             case 8114:
                 clopt_connFont = optarg;
+                break;
+            case 9100:
+                clopt_frontend_type = FRONTEND_TEXT;
+                clopt_small = false;
+                clopt_tiny = false;
+                break;
+            case 9109:
+                fprintf( stdout, "`--small` is deprecated, please use `--tui-small` instead of `--tui --small`" );
+            case 9110:
+                clopt_frontend_type = FRONTEND_TEXT;
+                clopt_small = true;
+                clopt_tiny = false;
+                break;
+            case 9119:
+                fprintf( stdout, "`--tiny` is deprecated, please use `--tui-tiny` instead of `--tui --tiny`" );
+            case 9120:
+                clopt_frontend_type = FRONTEND_TEXT;
+                clopt_small = false;
+                clopt_tiny = true;
                 break;
             case 'V':
                 clopt_verbose = true;
@@ -498,8 +519,21 @@ int parse_args( int argc, char* argv[] )
             frontend_type = FRONTEND_X11;
         if ( strcmp( svalue, "sdl" ) == 0 )
             frontend_type = FRONTEND_SDL;
-        if ( strcmp( svalue, "tui" ) == 0 )
+        if ( strcmp( svalue, "tui" ) == 0 ) {
             frontend_type = FRONTEND_TEXT;
+            small = false;
+            tiny = false;
+        }
+        if ( strcmp( svalue, "tui-small" ) == 0 ) {
+            frontend_type = FRONTEND_TEXT;
+            small = true;
+            tiny = false;
+        }
+        if ( strcmp( svalue, "tui-tiny" ) == 0 ) {
+            frontend_type = FRONTEND_TEXT;
+            small = false;
+            tiny = true;
+        }
     }
 
     lua_getglobal( config_lua_values, "hide_chrome" );
@@ -517,9 +551,11 @@ int parse_args( int argc, char* argv[] )
     lua_getglobal( config_lua_values, "gray" );
     gray = lua_toboolean( config_lua_values, -1 );
 
+    /* DEPRECATED */
     lua_getglobal( config_lua_values, "small" );
     small = lua_toboolean( config_lua_values, -1 );
 
+    /* DEPRECATED */
     lua_getglobal( config_lua_values, "tiny" );
     tiny = lua_toboolean( config_lua_values, -1 );
 
@@ -638,16 +674,19 @@ int parse_args( int argc, char* argv[] )
                 fprintf( stdout, "sdl" );
                 break;
             case FRONTEND_TEXT:
-                fprintf( stdout, "tui" );
+                if ( small )
+                    fprintf( stdout, "tui-small" );
+                else if ( tiny )
+                    fprintf( stdout, "tui-tiny" );
+                else
+                    fprintf( stdout, "tui" );
                 break;
         }
-        fprintf( stdout, "\" -- possible values: \"x11\", \"sdl\", \"tui\"\n" );
+        fprintf( stdout, "\" -- possible values: \"x11\", \"sdl\", \"tui\", \"tui-small\", \"tui-tiny\"\n" );
         fprintf( stdout, "hide_chrome = %s\n", hide_chrome ? "true" : "false" );
         fprintf( stdout, "fullscreen = %s\n", show_ui_fullscreen ? "true" : "false" );
         fprintf( stdout, "mono = %s\n", mono ? "true" : "false" );
         fprintf( stdout, "gray = %s\n", gray ? "true" : "false" );
-        fprintf( stdout, "small = %s\n", small ? "true" : "false" );
-        fprintf( stdout, "tiny = %s\n", tiny ? "true" : "false" );
         fprintf( stdout, "leave_shift_keys = %s\n", leave_shift_keys ? "true" : "false" );
         fprintf( stdout, "\n" );
         fprintf( stdout, "x11_visual = \"%s\"\n", x11_visual );

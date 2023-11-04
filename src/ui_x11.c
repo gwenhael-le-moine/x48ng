@@ -2734,37 +2734,37 @@ int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
             break;
         case XK_a:
         case XK_A:
-        /* case XK_F1: */
+            /* case XK_F1: */
             key_event( HPKEY_A, xev );
             wake = 1;
             break;
         case XK_b:
         case XK_B:
-        /* case XK_F2: */
+            /* case XK_F2: */
             key_event( HPKEY_B, xev );
             wake = 1;
             break;
         case XK_c:
         case XK_C:
-        /* case XK_F3: */
+            /* case XK_F3: */
             key_event( HPKEY_C, xev );
             wake = 1;
             break;
         case XK_d:
         case XK_D:
-        /* case XK_F4: */
+            /* case XK_F4: */
             key_event( HPKEY_D, xev );
             wake = 1;
             break;
         case XK_e:
         case XK_E:
-        /* case XK_F5: */
+            /* case XK_F5: */
             key_event( HPKEY_E, xev );
             wake = 1;
             break;
         case XK_f:
         case XK_F:
-        /* case XK_F6: */
+            /* case XK_F6: */
             key_event( HPKEY_F, xev );
             wake = 1;
             break;

@@ -153,24 +153,24 @@ void ( *init_ui )( int argc, char** argv );
 void setup_frontend( void )
 {
     switch ( frontend_type ) {
-#if (defined(HAS_X11))
+#if ( defined( HAS_X11 ) )
         case FRONTEND_X11:
         default:
             init_ui = init_x11_ui;
             break;
 #endif
 
-#if (defined(HAS_SDL))
+#if ( defined( HAS_SDL ) )
         case FRONTEND_SDL:
-#if (!defined(HAS_X11))
+#  if ( !defined( HAS_X11 ) )
         default:
-#endif
+#  endif
             init_ui = init_sdl_ui;
             break;
 #endif
 
         case FRONTEND_TEXT:
-#if (!defined(HAS_X11) && !defined(HAS_SDL))
+#if ( !defined( HAS_X11 ) && !defined( HAS_SDL ) )
         default:
 #endif
             init_ui = init_text_ui;
