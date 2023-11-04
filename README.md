@@ -1,4 +1,4 @@
-# x48ng -- HP48 CPU emulator
+# x48ng -- HP 48 emulator
 
 (I'm not very good at writing, see ./README_0.6.4 for the original README)
 
@@ -12,13 +12,13 @@ You can use the script `setup-x48ng-home.sh` or simply run `x48ng --rom=<romfile
 
 ## Screenshots
 
-### `--tui --small` version (ncurses)
+### `--tui-small` version (ncurses)
 
-![screenshot of x48ng --tui --small running in a terminal](./tui-small-screenshot.png?raw=true "screenshot of x48ng --tui running in a terminal")
+![screenshot of x48ng --tui-small running in a terminal](./tui-small-screenshot.png?raw=true "screenshot of x48ng --tui-small running in a terminal")
 
-### `--tui --tiny` version (ncurses)
+### `--tui-tiny` version (ncurses)
 
-![screenshot of x48ng --tui --tiny running in a terminal](./tui-tiny-screenshot.png?raw=true "screenshot of x48ng --tui running in a terminal")
+![screenshot of x48ng --tui-tiny running in a terminal](./tui-tiny-screenshot.png?raw=true "screenshot of x48ng --tui-tiny running in a terminal")
 
 ### `--tui` version (ncurses)
 
