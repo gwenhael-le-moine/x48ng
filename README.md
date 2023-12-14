@@ -12,13 +12,13 @@ You can use the script `setup-x48ng-home.sh` or simply run `x48ng --rom=<romfile
 
 ## Screenshots
 
-### `--tui-small` version (ncurses)
+### `--tui-small` version (ncurses, 4 pixels per character)
 
 ![screenshot of x48ng --tui-small running in a terminal](./tui-small-screenshot.png?raw=true "screenshot of x48ng --tui-small running in a terminal")
 
-### `--tui-tiny` version (ncurses)
+### `--tui-tiny --mono` version (ncurses, 8 pixels per character)
 
-![screenshot of x48ng --tui-tiny running in a terminal](./tui-tiny-screenshot.png?raw=true "screenshot of x48ng --tui-tiny running in a terminal")
+![screenshot of x48ng --tui-tiny --mono running in a terminal](./tui-tiny-screenshot.png?raw=true "screenshot of x48ng --tui-tiny --mono running in a terminal")
 
 ### `--tui` version (ncurses)
 
@@ -42,15 +42,13 @@ You can use the script `setup-x48ng-home.sh` or simply run `x48ng --rom=<romfile
 ### Ncurses UI (`--tui`)
 
 I had to be a bit 'creative' mapping keys there:
+- `Enter`: `F1`
+- `Left Shift`: `F2` or `PgUp` or `[`
+- `Right Shift`: `F3` or `PgDn` or `]`
+- `Alpha`: `F4` or `Ins` or `;`
+- `On`: `F5` or `Esc` or `Home` or `\`
 
-- _Enter_ is either `Return` or `Ctrl-J` or `F1`
-- _Left Shift_ is either `PgUp` or `[` or `F2`
-- _Right Shift_ is either `PgDn` or `]` or `F3`
-- _Alpha_ is either `Ins` or `;` or `F4`
-- _On_ is either `Esc` or `Home` or `\` or `F5`
-- finally `|` or `Shift+End` or `F10` or `F7` **quits** x48ng
-
-The keybindings of the `Fx` have been standardized across all 3 UIs (x11, sdl and tui)
+_To quit `x48ng` use `F7`
 
 ## What have I done:
 
