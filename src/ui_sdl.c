@@ -12,8 +12,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_gfxPrimitives.h> /* lineColor(); pixelColor(); rectangleColor();stringColor(); */
 
-#include "emulator.h"
-#include "romio.h"
+#include "romio.h" /* opt_gx */
 #include "runtime_options.h"
 #include "ui.h"
 #include "ui_inner.h"
@@ -291,12 +290,6 @@ static SDL_Surface* showkeylastsurf = 0;
 static int showkeylastx, showkeylasty, showkeylastkey;
 
 static SDL_Surface* sdlwindow;
-
-/************************/
-/* functions prototypes */
-/************************/
-void sdl_draw_annunc( void );
-void sdl_update_LCD( void );
 
 /****************************/
 /* functions implementation */
@@ -1934,22 +1927,6 @@ int sdl_get_event( void )
     return 1;
 }
 
-void sdl_adjust_contrast()
-{
-    SDLCreateColors();
-    SDLCreateAnnunc();
-
-    // redraw LCD
-    memset( lcd_nibbles_buffer, 0, sizeof( lcd_nibbles_buffer ) );
-
-    sdl_update_LCD();
-
-    // redraw annunc
-    last_annunc_state = -1;
-
-    sdl_draw_annunc();
-}
-
 void sdl_update_LCD( void )
 {
     if ( display.on ) {
@@ -1997,8 +1974,10 @@ void sdl_disp_draw_nibble( word_20 addr, word_4 val )
         y = offset / display.nibs_per_line;
         if ( y < 0 || y > 63 )
             return;
+
         if ( val == lcd_nibbles_buffer[ y ][ x ] )
             return;
+
         lcd_nibbles_buffer[ y ][ x ] = val;
         draw_nibble( x, y, val );
     } else {
@@ -2042,6 +2021,22 @@ void sdl_draw_annunc( void )
         sdl_annuncstate[ i ] = ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] ) ? 1 : 0;
 
     SDLDrawAnnunc( sdl_annuncstate );
+}
+
+void sdl_adjust_contrast()
+{
+    SDLCreateColors();
+    SDLCreateAnnunc();
+
+    // redraw LCD
+    memset( lcd_nibbles_buffer, 0, sizeof( lcd_nibbles_buffer ) );
+
+    sdl_update_LCD();
+
+    // redraw annunc
+    last_annunc_state = -1;
+
+    sdl_draw_annunc();
 }
 
 void init_sdl_ui( int argc, char** argv )

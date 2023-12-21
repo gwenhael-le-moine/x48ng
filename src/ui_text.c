@@ -13,11 +13,8 @@
 
 #include <ncursesw/curses.h>
 
-#include "emulator.h"
-#include "romio.h"
-#include "runtime_options.h"
-#include "ui.h"
-#include "ui_inner.h"
+#include "runtime_options.h" /* mono, gray, small, tiny, progname */
+#include "ui.h"              /* last_annunc_state, lcd_nibbles_buffer, DISP_ROWS */
 
 #define LCD_WIDTH 131
 #define LCD_HEIGHT 64
@@ -33,28 +30,9 @@
 #define LCD_PIXEL_OFF 2
 #define LCD_COLORS_PAIR 3
 
-/************************/
-/* functions prototypes */
-/************************/
-void text_update_LCD( void );
-
 /****************************/
 /* functions implementation */
 /****************************/
-
-static inline void ncurses_draw_annunciators( void )
-{
-    wchar_t* annunciators_icons[ 6 ] = { L"↰", L"↱", L"α", L"🪫", L"⌛", L"⇄" };
-    int val = display.annunc;
-
-    if ( val == last_annunc_state )
-        return;
-
-    last_annunc_state = val;
-
-    for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
-        mvaddwstr( 0, 4 + ( i * 4 ), ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] ) ? annunciators_icons[ i ] : L" " );
-}
 
 static inline wchar_t eight_bits_to_braille_char( bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7, bool b8 )
 {
@@ -210,7 +188,7 @@ static inline void ncurses_draw_lcd_small( void )
     wrefresh( stdscr );
 }
 
-static inline void ncurses_draw_lcd( void )
+static inline void ncurses_draw_lcd_fullsize( void )
 {
     bool bit;
     int nibble;
@@ -248,7 +226,152 @@ static inline void ncurses_draw_lcd( void )
     wrefresh( stdscr );
 }
 
-static inline int ncurses_get_event( void )
+static inline void ncurses_draw_lcd( void )
+{
+    if ( small )
+        ncurses_draw_lcd_small();
+    else if ( tiny )
+        ncurses_draw_lcd_tiny();
+    else
+        ncurses_draw_lcd_fullsize();
+}
+
+/* TODO: not specific to tui  */
+static inline void draw_nibble( int col, int row, int val )
+{
+    /* Dummy, NCurses version draws the whole LCD at once at the end of update_LCD() */
+}
+
+/* TODO: duplicate of ui_sdl.c:draw_row()  */
+static inline void draw_row( long addr, int row )
+{
+    int nibble;
+    int line_length = NIBBLES_PER_ROW;
+
+    if ( ( display.offset > 3 ) && ( row <= display.lines ) )
+        line_length += 2;
+
+    for ( int i = 0; i < line_length; i++ ) {
+        nibble = read_nibble( addr + i );
+        if ( nibble == lcd_nibbles_buffer[ row ][ i ] )
+            continue;
+
+        lcd_nibbles_buffer[ row ][ i ] = nibble;
+        draw_nibble( i, row, nibble );
+    }
+}
+
+/**********/
+/* public */
+/**********/
+/* TODO: quasi-duplicate of ui_sdl.c:sdl_update_LCD()  */
+void text_update_LCD( void )
+{
+    if ( display.on ) {
+        int i;
+        long addr;
+        static int old_offset = -1;
+        static int old_lines = -1;
+
+        addr = display.disp_start;
+        if ( display.offset != old_offset ) {
+            memset( lcd_nibbles_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
+
+            old_offset = display.offset;
+        }
+        if ( display.lines != old_lines ) {
+            memset( &lcd_nibbles_buffer[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
+
+            old_lines = display.lines;
+        }
+        for ( i = 0; i <= display.lines; i++ ) {
+            draw_row( addr, i );
+            addr += display.nibs_per_line;
+        }
+        if ( i < DISP_ROWS ) {
+            addr = display.menu_start;
+            for ( ; i < DISP_ROWS; i++ ) {
+                draw_row( addr, i );
+                addr += NIBBLES_PER_ROW;
+            }
+        }
+    } else
+        memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
+
+    /* text UI specific from here */
+    ncurses_draw_lcd();
+}
+
+/* TODO: duplicate of ui_sdl.c:sdl_refresh_LCD()  */
+void text_refresh_LCD( void ) {}
+
+/* TODO: duplicate of ui_sdl.c:sdl_disp_draw_nibble()  */
+void text_disp_draw_nibble( word_20 addr, word_4 val )
+{
+    long offset;
+    int x, y;
+
+    offset = ( addr - display.disp_start );
+    x = offset % display.nibs_per_line;
+    if ( x < 0 || x > 35 )
+        return;
+    if ( display.nibs_per_line != 0 ) {
+        y = offset / display.nibs_per_line;
+        if ( y < 0 || y > 63 )
+            return;
+
+        if ( val == lcd_nibbles_buffer[ y ][ x ] )
+            return;
+
+        lcd_nibbles_buffer[ y ][ x ] = val;
+        draw_nibble( x, y, val );
+    } else {
+        for ( y = 0; y < display.lines; y++ ) {
+            if ( val == lcd_nibbles_buffer[ y ][ x ] )
+                break;
+
+            lcd_nibbles_buffer[ y ][ x ] = val;
+            draw_nibble( x, y, val );
+        }
+    }
+}
+
+/* TODO: duplicate of ui_sdl.c:sdl_menu_draw_nibble()  */
+void text_menu_draw_nibble( word_20 addr, word_4 val )
+{
+    long offset;
+    int x, y;
+
+    offset = ( addr - display.menu_start );
+    x = offset % NIBBLES_PER_ROW;
+    y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
+
+    if ( val == lcd_nibbles_buffer[ y ][ x ] )
+        return;
+
+    lcd_nibbles_buffer[ y ][ x ] = val;
+    draw_nibble( x, y, val );
+}
+
+void text_draw_annunc( void )
+{
+    wchar_t* annunciators_icons[ 6 ] = { L"↰", L"↱", L"α", L"🪫", L"⌛", L"⇄" };
+    int val = display.annunc;
+
+    if ( val == last_annunc_state )
+        return;
+
+    last_annunc_state = val;
+
+    for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
+        mvaddwstr( 0, 4 + ( i * 4 ), ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] ) ? annunciators_icons[ i ] : L" " );
+}
+
+void text_adjust_contrast( void )
+{ /* Dummy, NCurses version doesn't hand contrast (yet?) */
+}
+
+int text_get_event( void )
 {
     int hpkey = -1;
     uint32_t k;
@@ -459,8 +582,17 @@ static inline int ncurses_get_event( void )
     return 1;
 }
 
-static inline void ncurses_init_ui( void )
+void init_text_ui( int argc, char** argv )
 {
+    /* Set public API to this UIs functions */
+    ui_disp_draw_nibble = text_disp_draw_nibble;
+    ui_menu_draw_nibble = text_menu_draw_nibble;
+    ui_get_event = text_get_event;
+    ui_update_LCD = text_update_LCD;
+    ui_refresh_LCD = text_refresh_LCD;
+    ui_adjust_contrast = text_adjust_contrast;
+    ui_draw_annunc = text_draw_annunc;
+
     setlocale( LC_ALL, "" );
     initscr();              /* initialize the curses library */
     keypad( stdscr, TRUE ); /* enable keyboard mapping */
@@ -501,134 +633,4 @@ static inline void ncurses_init_ui( void )
     mvprintw( LCD_BOTTOM, 2, "[ wire: %s ]-[ IR: %s ]", wire_name, ir_name );
 
     mvprintw( LCD_BOTTOM + 1, 0, "F1: Enter, F2: Left-Shift, F3: Right-Shift, F4: Alpha, F5: On, F7: Quit" );
-}
-
-/* TODO: not specific to tui  */
-static inline void draw_row( long addr, int row )
-{
-    int nibble;
-    int line_length = NIBBLES_PER_ROW;
-
-    if ( ( display.offset > 3 ) && ( row <= display.lines ) )
-        line_length += 2;
-
-    for ( int i = 0; i < line_length; i++ ) {
-        nibble = read_nibble( addr + i );
-        if ( nibble == lcd_nibbles_buffer[ row ][ i ] )
-            continue;
-
-        lcd_nibbles_buffer[ row ][ i ] = nibble;
-    }
-}
-
-/**********/
-/* public */
-/**********/
-int text_get_event( void ) { return ncurses_get_event(); }
-
-void text_adjust_contrast() { text_update_LCD(); }
-
-void text_update_LCD( void )
-{
-    if ( display.on ) {
-        int i;
-        long addr;
-        static int old_offset = -1;
-        static int old_lines = -1;
-
-        addr = display.disp_start;
-        if ( display.offset != old_offset ) {
-            memset( lcd_nibbles_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
-
-            old_offset = display.offset;
-        }
-        if ( display.lines != old_lines ) {
-            memset( &lcd_nibbles_buffer[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
-
-            old_lines = display.lines;
-        }
-        for ( i = 0; i <= display.lines; i++ ) {
-            draw_row( addr, i );
-            addr += display.nibs_per_line;
-        }
-        if ( i < DISP_ROWS ) {
-            addr = display.menu_start;
-            for ( ; i < DISP_ROWS; i++ ) {
-                draw_row( addr, i );
-                addr += NIBBLES_PER_ROW;
-            }
-        }
-    } else
-        memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
-
-    /* text UI specific from here */
-    if ( small )
-        ncurses_draw_lcd_small();
-    else if ( tiny )
-        ncurses_draw_lcd_tiny();
-    else
-        ncurses_draw_lcd();
-}
-
-void text_refresh_LCD( void ) {}
-
-/* TODO: not specific to tui  */
-void text_disp_draw_nibble( word_20 addr, word_4 val )
-{
-    long offset;
-    int x, y;
-
-    offset = ( addr - display.disp_start );
-    x = offset % display.nibs_per_line;
-    if ( x < 0 || x > 35 )
-        return;
-    if ( display.nibs_per_line != 0 ) {
-        y = offset / display.nibs_per_line;
-        if ( y < 0 || y > 63 )
-            return;
-
-        if ( val == lcd_nibbles_buffer[ y ][ x ] )
-            return;
-
-        lcd_nibbles_buffer[ y ][ x ] = val;
-    } else {
-        for ( y = 0; y < display.lines; y++ ) {
-            if ( val == lcd_nibbles_buffer[ y ][ x ] )
-                break;
-
-            lcd_nibbles_buffer[ y ][ x ] = val;
-        }
-    }
-}
-
-/* TODO: not specific to tui  */
-void text_menu_draw_nibble( word_20 addr, word_4 val )
-{
-    long offset;
-    int x, y;
-
-    offset = ( addr - display.menu_start );
-    x = offset % NIBBLES_PER_ROW;
-    y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
-
-    if ( val == lcd_nibbles_buffer[ y ][ x ] )
-        return;
-
-    lcd_nibbles_buffer[ y ][ x ] = val;
-}
-
-void text_draw_annunc( void ) { ncurses_draw_annunciators(); }
-
-void init_text_ui( int argc, char** argv )
-{
-    /* Set public API to this UIs functions */
-    ui_disp_draw_nibble = text_disp_draw_nibble;
-    ui_menu_draw_nibble = text_menu_draw_nibble;
-    ui_get_event = text_get_event;
-    ui_update_LCD = text_update_LCD;
-    ui_refresh_LCD = text_refresh_LCD;
-    ui_adjust_contrast = text_adjust_contrast;
-    ui_draw_annunc = text_draw_annunc;
-
-    ncurses_init_ui();
 }

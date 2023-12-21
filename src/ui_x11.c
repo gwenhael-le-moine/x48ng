@@ -18,8 +18,7 @@
 #include <X11/extensions/XShm.h>
 #include <X11/keysym.h>
 
-#include "emulator.h"
-#include "romio.h"
+#include "romio.h" /* opt_gx */
 #include "runtime_options.h"
 #include "ui.h"
 #include "ui_inner.h"
