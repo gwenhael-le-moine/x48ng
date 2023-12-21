@@ -528,7 +528,6 @@ int text_get_event( void ) { return ncurses_get_event(); }
 
 void text_adjust_contrast() { text_update_LCD(); }
 
-/* TODO: not specific to tui  */
 void text_update_LCD( void )
 {
     if ( display.on ) {
@@ -562,6 +561,7 @@ void text_update_LCD( void )
     } else
         memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
 
+    /* text UI specific from here */
     if ( small )
         ncurses_draw_lcd_small();
     else if ( tiny )

@@ -2911,19 +2911,19 @@ static inline void draw_nibble( int c, int r, int val )
 
 static inline void draw_row( long addr, int row )
 {
-    int i, v;
-    int line_length;
+    int nibble;
+    int line_length = NIBBLES_PER_ROW;
 
-    line_length = NIBBLES_PER_ROW;
     if ( ( display.offset > 3 ) && ( row <= display.lines ) )
         line_length += 2;
-    for ( i = 0; i < line_length; i++ ) {
-        v = read_nibble( addr + i );
-        if ( v == lcd_nibbles_buffer[ row ][ i ] )
+
+    for ( int i = 0; i < line_length; i++ ) {
+        nibble = read_nibble( addr + i );
+        if ( nibble == lcd_nibbles_buffer[ row ][ i ] )
             continue;
 
-        lcd_nibbles_buffer[ row ][ i ] = v;
-        draw_nibble( i, row, v );
+        lcd_nibbles_buffer[ row ][ i ] = nibble;
+        draw_nibble( i, row, nibble );
     }
 }
 
