@@ -99,6 +99,8 @@ int main( int argc, char** argv )
     /********************/
     init_emulator();
     init_serial();
+    init_display();
+    ui_init_LCD();
     init_ui( argc, argv );
 
     /************************/

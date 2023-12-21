@@ -529,14 +529,6 @@ int text_get_event( void ) { return ncurses_get_event(); }
 void text_adjust_contrast() { text_update_LCD(); }
 
 /* TODO: not specific to tui  */
-void text_init_LCD( void )
-{
-    init_display();
-
-    memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
-}
-
-/* TODO: not specific to tui  */
 void text_update_LCD( void )
 {
     if ( display.on ) {
@@ -637,9 +629,6 @@ void init_text_ui( int argc, char** argv )
     ui_refresh_LCD = text_refresh_LCD;
     ui_adjust_contrast = text_adjust_contrast;
     ui_draw_annunc = text_draw_annunc;
-    ui_init_LCD = text_init_LCD;
-
-    text_init_LCD();
 
     ncurses_init_ui();
 }

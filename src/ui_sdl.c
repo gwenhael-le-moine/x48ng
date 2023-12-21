@@ -1950,13 +1950,6 @@ void sdl_adjust_contrast()
     sdl_draw_annunc();
 }
 
-void sdl_init_LCD( void )
-{
-    init_display();
-
-    memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
-}
-
 void sdl_update_LCD( void )
 {
     if ( display.on ) {
@@ -2061,9 +2054,7 @@ void init_sdl_ui( int argc, char** argv )
     ui_refresh_LCD = sdl_refresh_LCD;
     ui_adjust_contrast = sdl_adjust_contrast;
     ui_draw_annunc = sdl_draw_annunc;
-    ui_init_LCD = sdl_init_LCD;
 
     SDLInit();
     SDLCreateHP();
-    sdl_init_LCD();
 }

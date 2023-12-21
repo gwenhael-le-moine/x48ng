@@ -62,15 +62,15 @@ extern void ( *ui_refresh_LCD )( void );
 extern void ( *ui_adjust_contrast )( void );
 extern void ( *ui_draw_annunc )( void );
 
-/*********************************/
-/* used in: debugger.c, ui_sdl.c */
-/*********************************/
-extern void ( *ui_init_LCD )( void );
-
 /*******************/
 /* used in: main.c */
 /*******************/
 extern void ( *init_ui )( int argc, char** argv );
+
+/*********************************/
+/* used in: debugger.c, ui_sdl.c */
+/*********************************/
+extern void ui_init_LCD( void );
 
 extern void setup_frontend( void );
 #endif /* !_X48_GUI_H */
