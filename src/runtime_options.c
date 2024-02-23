@@ -466,7 +466,9 @@ int parse_args( int argc, char* argv[] )
     /**********************/
     normalize_filename( config_file, normalized_config_file );
     if ( !config_read( normalized_config_file ) ) {
-        fprintf( stderr, "There was an error reading %s !\n", normalized_config_file );
+        fprintf( stderr, "\nConfiguration file %s doesn't seem to exist or is invalid!\n", normalized_config_file );
+        fprintf( stderr, "Continuing using default configuration as printed below.\n\n" );
+
         fprintf( stderr, "You can solve this by running `mkdir -p %s && %s --print-config >> %s`\n\n", normalized_config_path, progname,
                  normalized_config_file );
         print_config = true;
