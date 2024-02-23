@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "runtime_options.h"
 #include "ui.h"
@@ -147,9 +148,9 @@ void ( *ui_update_LCD )( void );
 void ( *ui_refresh_LCD )( void );
 void ( *ui_adjust_contrast )( void );
 void ( *ui_draw_annunc )( void );
-void ( *ui_init_LCD )( void );
 void ( *init_ui )( int argc, char** argv );
 
+void ui_init_LCD( void ) { memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) ); }
 void setup_frontend( void )
 {
     switch ( frontend_type ) {
