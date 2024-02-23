@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -202,7 +203,7 @@ void init_display( void )
 
 int init_emulator( void )
 {
-    /* If files are readble => let's go */
+    /* If files are successfully read => return and let's go */
     if ( read_files() ) {
         if ( resetOnStartup )
             saturn.PC = 0x00000;
@@ -215,17 +216,12 @@ int init_emulator( void )
 
     init_saturn();
     if ( !read_rom( normalized_rom_path ) )
-        exit( 1 );
+        exit( 1 ); /* can't read ROM */
 
     return 0;
 }
 
-int exit_emulator( void )
-{
-    write_files();
-
-    return 1;
-}
+void exit_emulator( void ) { write_files(); }
 
 /***********************************************/
 /* READING ~/.config/x48ng/{rom,ram,state,port1,port2} */
@@ -952,7 +948,9 @@ int write_state_file( char* filename )
         write_32( fp, &saturn.mem_cntl[ i ].config[ 0 ] );
         write_32( fp, &saturn.mem_cntl[ i ].config[ 1 ] );
     }
+
     fclose( fp );
+
     if ( verbose )
         printf( "wrote %s\n", filename );
 
