@@ -228,7 +228,7 @@ int exit_emulator( void )
 }
 
 /***********************************************/
-/* READING ~/.x48ng/{rom,ram,hp48,port1,port2} */
+/* READING ~/.config/x48ng/{rom,ram,state,port1,port2} */
 /***********************************************/
 
 int read_8( FILE* fp, word_8* var )
