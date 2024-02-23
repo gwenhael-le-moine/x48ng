@@ -286,10 +286,10 @@ int parse_args( int argc, char* argv[] )
         { "connection-font",  required_argument, NULL,                      8114        },
 
         { "tui",              no_argument,       NULL,                      9100        },
-        { "small",            no_argument,       NULL,                      9109        }, /* DEPRECATED */
         { "tui-small",        no_argument,       NULL,                      9110        },
-        { "tiny",             no_argument,       NULL,                      9119        }, /* DEPRECATED */
         { "tui-tiny",         no_argument,       NULL,                      9120        },
+        { "small",            no_argument,       NULL,                      9109        }, /* DEPRECATED */
+        { "tiny",             no_argument,       NULL,                      9119        }, /* DEPRECATED */
 
         { "mono",             no_argument,       &clopt_mono,               true        },
         { "gray",             no_argument,       &clopt_gray,               true        },
