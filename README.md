@@ -105,7 +105,7 @@ for Ncurses:
 
 ## Installation
 
-1. Run `sudo make install PREFIX=/usr DOCDIR=/usr/doc/x48ng MANDIR=/usr/man DESTDIR=/tmp/package` filling in your own values for PREFIX, DOCDIR, MANDIR and DESTDIR.
+1. Run `sudo make install PREFIX=/usr` (see the Makefile to see what variables your can override.)
 2. once installed run `/usr/share/x48ng/setup-x48ng-home.sh` to setup your ~/.x48ng/. It sets up a HP 48GX with a 128KB card in port 1 and a 4MB card in port 2
 3. run `x48ng` and enjoy
 
