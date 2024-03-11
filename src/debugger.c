@@ -3929,7 +3929,7 @@ static void cmd_stack( int argc, char** argv )
         sp += 5;
         se = ( struct se* )malloc( sizeof( struct se ) );
         if ( se == 0 ) {
-            fprintf( stderr, "Out off memory.\n" );
+            fprintf( stderr, "Out of memory.\n" );
             break;
         }
         se->se_n = n;
