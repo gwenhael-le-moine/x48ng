@@ -565,7 +565,7 @@ int read_files( void )
     rom_is_new = 0;
 
     /**************************************************/
-    /* 2. read saved state from ~/.x48ng/hp48 into fp */
+    /* 2. read saved state from ~/.x48ng/state into fp */
     /**************************************************/
     if ( NULL == ( fp = fopen( normalized_state_path, "r" ) ) ) {
         if ( verbose )
@@ -721,7 +721,7 @@ int read_files( void )
 }
 
 /***********************************************/
-/* WRITING ~/.x48ng/{rom,ram,hp48,port1,port2} */
+/* WRITING ~/.x48ng/{rom,ram,state,port1,port2} */
 /***********************************************/
 
 int write_8( FILE* fp, word_8* var )
@@ -857,7 +857,7 @@ int write_state_file( char* filename )
     }
 
     /*
-     * write the hp48 config file
+     * write the state config file
      */
     write_32( fp, ( word_32* )&saturn.magic );
     for ( i = 0; i < 4; i++ )
