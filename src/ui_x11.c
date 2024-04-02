@@ -291,173 +291,173 @@ static char* res_name;
 static char* res_class;
 
 static x11_color_t colors_sx[] = {
-    {"white",         255, 255, 255, 255, 255, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "left",         255, 166, 0,   255, 230, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "right",        0,   210, 255, 255, 169, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "but_top",      109, 93,  93,  0,   91,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "button",       90,  77,  77,  0,   81,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "but_bot",      76,  65,  65,  0,   69,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "lcd_col",      202, 221, 92,  255, 205, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "pix_col",      0,   0,   128, 0,   20,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "pad_top",      109, 78,  78,  0,   88,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "pad",          90,  64,  64,  0,   73,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "pad_bot",      76,  54,  54,  0,   60,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "disp_pad_top", 155, 118, 84,  0,   124, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "disp_pad",     124, 94,  67,  0,   99,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "disp_pad_bot", 100, 75,  53,  0,   79,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "logo",         204, 169, 107, 255, 172, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "logo_back",    64,  64,  64,  0,   65,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "label",        202, 184, 144, 255, 185, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "frame",        0,   0,   0,   255, 0,   { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "underlay",     60,  42,  42,  0,   48,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "black",        0,   0,   0,   0,   0,   { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
- /* { 0 } */
+    {"white",        255, 255, 255, 255, 255, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"left",         255, 166, 0,   255, 230, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"right",        0,   210, 255, 255, 169, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"but_top",      109, 93,  93,  0,   91,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"button",       90,  77,  77,  0,   81,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"but_bot",      76,  65,  65,  0,   69,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"lcd_col",      202, 221, 92,  255, 205, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"pix_col",      0,   0,   128, 0,   20,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"pad_top",      109, 78,  78,  0,   88,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"pad",          90,  64,  64,  0,   73,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"pad_bot",      76,  54,  54,  0,   60,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"disp_pad_top", 155, 118, 84,  0,   124, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"disp_pad",     124, 94,  67,  0,   99,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"disp_pad_bot", 100, 75,  53,  0,   79,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"logo",         204, 169, 107, 255, 172, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"logo_back",    64,  64,  64,  0,   65,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"label",        202, 184, 144, 255, 185, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"frame",        0,   0,   0,   255, 0,   { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"underlay",     60,  42,  42,  0,   48,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"black",        0,   0,   0,   0,   0,   { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    /* { 0 } */
 };
 
 static x11_color_t colors_gx[] = {
-    {"white",         255, 255, 255, 255, 255, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "left",         255, 186, 255, 255, 220, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "right",        0,   255, 204, 255, 169, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "but_top",      104, 104, 104, 0,   104, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "button",       88,  88,  88,  0,   88,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "but_bot",      74,  74,  74,  0,   74,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "lcd_col",      202, 221, 92,  255, 205, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "pix_col",      0,   0,   128, 0,   20,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "pad_top",      88,  88,  88,  0,   88,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "pad",          74,  74,  74,  0,   74,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "pad_bot",      64,  64,  64,  0,   64,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "disp_pad_top", 128, 128, 138, 0,   128, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "disp_pad",     104, 104, 110, 0,   104, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "disp_pad_bot", 84,  84,  90,  0,   84,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "logo",         176, 176, 184, 255, 176, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "logo_back",    104, 104, 110, 0,   104, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "label",        240, 240, 240, 255, 240, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "frame",        0,   0,   0,   255, 0,   { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "underlay",     104, 104, 110, 0,   104, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    { "black",        0,   0,   0,   0,   0,   { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
- /* { 0 } */
+    {"white",        255, 255, 255, 255, 255, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"left",         255, 186, 255, 255, 220, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"right",        0,   255, 204, 255, 169, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"but_top",      104, 104, 104, 0,   104, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"button",       88,  88,  88,  0,   88,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"but_bot",      74,  74,  74,  0,   74,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"lcd_col",      202, 221, 92,  255, 205, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"pix_col",      0,   0,   128, 0,   20,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"pad_top",      88,  88,  88,  0,   88,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"pad",          74,  74,  74,  0,   74,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"pad_bot",      64,  64,  64,  0,   64,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"disp_pad_top", 128, 128, 138, 0,   128, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"disp_pad",     104, 104, 110, 0,   104, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"disp_pad_bot", 84,  84,  90,  0,   84,  { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"logo",         176, 176, 184, 255, 176, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"logo_back",    104, 104, 110, 0,   104, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"label",        240, 240, 240, 255, 240, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"frame",        0,   0,   0,   255, 0,   { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"underlay",     104, 104, 110, 0,   104, { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    {"black",        0,   0,   0,   0,   0,   { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
+    /* { 0 } */
 };
 
 static x11_button_t* buttons = 0;
 
 static x11_button_t buttons_sx[] = {
-    {"A",       0,   0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "A", 0,          0, 0,        0,      0, 0, 0},
-    { "B",      50,  0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "B", 0,          0, 0,        0,      0, 0, 0},
-    { "C",      100, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "C", 0,          0, 0,        0,      0, 0, 0},
-    { "D",      150, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "D", 0,          0, 0,        0,      0, 0, 0},
-    { "E",      200, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "E", 0,          0, 0,        0,      0, 0, 0},
-    { "F",      250, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "F", 0,          0, 0,        0,      0, 0, 0},
+    {"A",      0,   0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "A", 0,          0, 0,        0,      0, 0, 0},
+    {"B",      50,  0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "B", 0,          0, 0,        0,      0, 0, 0},
+    {"C",      100, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "C", 0,          0, 0,        0,      0, 0, 0},
+    {"D",      150, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "D", 0,          0, 0,        0,      0, 0, 0},
+    {"E",      200, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "E", 0,          0, 0,        0,      0, 0, 0},
+    {"F",      250, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "F", 0,          0, 0,        0,      0, 0, 0},
 
-    { "MTH",    0,   50,  36, 26, WHITE, "MTH",   0, 0,                0,                 0,                 "G", "PRINT",    1, 0,        0,      0, 0, 0},
-    { "PRG",    50,  50,  36, 26, WHITE, "PRG",   0, 0,                0,                 0,                 "H", "I/O",      1, 0,        0,      0, 0, 0},
-    { "CST",    100, 50,  36, 26, WHITE, "CST",   0, 0,                0,                 0,                 "I", "MODES",    1, 0,        0,      0, 0, 0},
-    { "VAR",    150, 50,  36, 26, WHITE, "VAR",   0, 0,                0,                 0,                 "J", "MEMORY",   1, 0,        0,      0, 0, 0},
-    { "UP",     200, 50,  36, 26, WHITE, 0,       0, up_width,         up_height,         up_bitmap,         "K", "LIBRARY",  1, 0,        0,      0, 0, 0},
-    { "NXT",    250, 50,  36, 26, WHITE, "NXT",   0, 0,                0,                 0,                 "L", "PREV",     0, 0,        0,      0, 0, 0},
+    {"MTH",    0,   50,  36, 26, WHITE, "MTH",   0, 0,                0,                 0,                 "G", "PRINT",    1, 0,        0,      0, 0, 0},
+    {"PRG",    50,  50,  36, 26, WHITE, "PRG",   0, 0,                0,                 0,                 "H", "I/O",      1, 0,        0,      0, 0, 0},
+    {"CST",    100, 50,  36, 26, WHITE, "CST",   0, 0,                0,                 0,                 "I", "MODES",    1, 0,        0,      0, 0, 0},
+    {"VAR",    150, 50,  36, 26, WHITE, "VAR",   0, 0,                0,                 0,                 "J", "MEMORY",   1, 0,        0,      0, 0, 0},
+    {"UP",     200, 50,  36, 26, WHITE, 0,       0, up_width,         up_height,         up_bitmap,         "K", "LIBRARY",  1, 0,        0,      0, 0, 0},
+    {"NXT",    250, 50,  36, 26, WHITE, "NXT",   0, 0,                0,                 0,                 "L", "PREV",     0, 0,        0,      0, 0, 0},
 
-    { "COLON",  0,   100, 36, 26, WHITE, 0,       0, colon_width,      colon_height,      colon_bitmap,      "M", "UP",       0, "HOME",   0,      0, 0, 0},
-    { "STO",    50,  100, 36, 26, WHITE, "STO",   0, 0,                0,                 0,                 "N", "DEF",      0, "RCL",    0,      0, 0, 0},
-    { "EVAL",   100, 100, 36, 26, WHITE, "EVAL",  0, 0,                0,                 0,                 "O", "aQ",       0, "aNUM",   0,      0, 0, 0},
-    { "LEFT",   150, 100, 36, 26, WHITE, 0,       0, left_width,       left_height,       left_bitmap,       "P", "GRAPH",    0, 0,        0,      0, 0, 0},
-    { "DOWN",   200, 100, 36, 26, WHITE, 0,       0, down_width,       down_height,       down_bitmap,       "Q", "REVIEW",   0, 0,        0,      0, 0, 0},
-    { "RIGHT",  250, 100, 36, 26, WHITE, 0,       0, right_width,      right_height,      right_bitmap,      "R", "SWAP",     0, 0,        0,      0, 0, 0},
+    {"COLON",  0,   100, 36, 26, WHITE, 0,       0, colon_width,      colon_height,      colon_bitmap,      "M", "UP",       0, "HOME",   0,      0, 0, 0},
+    {"STO",    50,  100, 36, 26, WHITE, "STO",   0, 0,                0,                 0,                 "N", "DEF",      0, "RCL",    0,      0, 0, 0},
+    {"EVAL",   100, 100, 36, 26, WHITE, "EVAL",  0, 0,                0,                 0,                 "O", "aQ",       0, "aNUM",   0,      0, 0, 0},
+    {"LEFT",   150, 100, 36, 26, WHITE, 0,       0, left_width,       left_height,       left_bitmap,       "P", "GRAPH",    0, 0,        0,      0, 0, 0},
+    {"DOWN",   200, 100, 36, 26, WHITE, 0,       0, down_width,       down_height,       down_bitmap,       "Q", "REVIEW",   0, 0,        0,      0, 0, 0},
+    {"RIGHT",  250, 100, 36, 26, WHITE, 0,       0, right_width,      right_height,      right_bitmap,      "R", "SWAP",     0, 0,        0,      0, 0, 0},
 
-    { "SIN",    0,   150, 36, 26, WHITE, "SIN",   0, 0,                0,                 0,                 "S", "ASIN",     0, "b",      0,      0, 0, 0},
-    { "COS",    50,  150, 36, 26, WHITE, "COS",   0, 0,                0,                 0,                 "T", "ACOS",     0, "c",      0,      0, 0, 0},
-    { "TAN",    100, 150, 36, 26, WHITE, "TAN",   0, 0,                0,                 0,                 "U", "ATAN",     0, "d",      0,      0, 0, 0},
-    { "SQRT",   150, 150, 36, 26, WHITE, 0,       0, sqrt_width,       sqrt_height,       sqrt_bitmap,       "V", "e",        0, "f",      0,      0, 0, 0},
-    { "POWER",  200, 150, 36, 26, WHITE, 0,       0, power_width,      power_height,      power_bitmap,      "W", "g",        0, "LOG",    0,      0, 0, 0},
-    { "INV",    250, 150, 36, 26, WHITE, 0,       0, inv_width,        inv_height,        inv_bitmap,        "X", "h",        0, "LN",     0,      0, 0, 0},
+    {"SIN",    0,   150, 36, 26, WHITE, "SIN",   0, 0,                0,                 0,                 "S", "ASIN",     0, "b",      0,      0, 0, 0},
+    {"COS",    50,  150, 36, 26, WHITE, "COS",   0, 0,                0,                 0,                 "T", "ACOS",     0, "c",      0,      0, 0, 0},
+    {"TAN",    100, 150, 36, 26, WHITE, "TAN",   0, 0,                0,                 0,                 "U", "ATAN",     0, "d",      0,      0, 0, 0},
+    {"SQRT",   150, 150, 36, 26, WHITE, 0,       0, sqrt_width,       sqrt_height,       sqrt_bitmap,       "V", "e",        0, "f",      0,      0, 0, 0},
+    {"POWER",  200, 150, 36, 26, WHITE, 0,       0, power_width,      power_height,      power_bitmap,      "W", "g",        0, "LOG",    0,      0, 0, 0},
+    {"INV",    250, 150, 36, 26, WHITE, 0,       0, inv_width,        inv_height,        inv_bitmap,        "X", "h",        0, "LN",     0,      0, 0, 0},
 
-    { "ENTER",  0,   200, 86, 26, WHITE, "ENTER", 2, 0,                0,                 0,                 0,   "EQUATION", 0, "MATRIX", 0,      0, 0, 0},
-    { "NEG",    100, 200, 36, 26, WHITE, 0,       0, neg_width,        neg_height,        neg_bitmap,        "Y", "EDIT",     0, "VISIT",  0,      0, 0, 0},
-    { "EEX",    150, 200, 36, 26, WHITE, "EEX",   0, 0,                0,                 0,                 "Z", "2D",       0, "3D",     0,      0, 0, 0},
-    { "DEL",    200, 200, 36, 26, WHITE, "DEL",   0, 0,                0,                 0,                 0,   "PURGE",    0, 0,        0,      0, 0, 0},
-    { "BS",     250, 200, 36, 26, WHITE, 0,       0, bs_width,         bs_height,         bs_bitmap,         0,   "DROP",     0, "CLR",    0,      0, 0, 0},
+    {"ENTER",  0,   200, 86, 26, WHITE, "ENTER", 2, 0,                0,                 0,                 0,   "EQUATION", 0, "MATRIX", 0,      0, 0, 0},
+    {"NEG",    100, 200, 36, 26, WHITE, 0,       0, neg_width,        neg_height,        neg_bitmap,        "Y", "EDIT",     0, "VISIT",  0,      0, 0, 0},
+    {"EEX",    150, 200, 36, 26, WHITE, "EEX",   0, 0,                0,                 0,                 "Z", "2D",       0, "3D",     0,      0, 0, 0},
+    {"DEL",    200, 200, 36, 26, WHITE, "DEL",   0, 0,                0,                 0,                 0,   "PURGE",    0, 0,        0,      0, 0, 0},
+    {"BS",     250, 200, 36, 26, WHITE, 0,       0, bs_width,         bs_height,         bs_bitmap,         0,   "DROP",     0, "CLR",    0,      0, 0, 0},
 
-    { "ALPHA",  0,   250, 36, 26, WHITE, 0,       0, alpha_width,      alpha_height,      alpha_bitmap,      0,   "USR",      0, "ENTRY",  0,      0, 0, 0},
-    { "7",      60,  250, 46, 26, WHITE, "7",     1, 0,                0,                 0,                 0,   "SOLVE",    1, 0,        0,      0, 0, 0},
-    { "8",      120, 250, 46, 26, WHITE, "8",     1, 0,                0,                 0,                 0,   "PLOT",     1, 0,        0,      0, 0, 0},
-    { "9",      180, 250, 46, 26, WHITE, "9",     1, 0,                0,                 0,                 0,   "ALGEBRA",  1, 0,        0,      0, 0, 0},
-    { "DIV",    240, 250, 46, 26, WHITE, 0,       0, div_width,        div_height,        div_bitmap,        0,   "( )",      0, "#",      0,      0, 0, 0},
+    {"ALPHA",  0,   250, 36, 26, WHITE, 0,       0, alpha_width,      alpha_height,      alpha_bitmap,      0,   "USR",      0, "ENTRY",  0,      0, 0, 0},
+    {"7",      60,  250, 46, 26, WHITE, "7",     1, 0,                0,                 0,                 0,   "SOLVE",    1, 0,        0,      0, 0, 0},
+    {"8",      120, 250, 46, 26, WHITE, "8",     1, 0,                0,                 0,                 0,   "PLOT",     1, 0,        0,      0, 0, 0},
+    {"9",      180, 250, 46, 26, WHITE, "9",     1, 0,                0,                 0,                 0,   "ALGEBRA",  1, 0,        0,      0, 0, 0},
+    {"DIV",    240, 250, 46, 26, WHITE, 0,       0, div_width,        div_height,        div_bitmap,        0,   "( )",      0, "#",      0,      0, 0, 0},
 
-    { "SHL",    0,   300, 36, 26, LEFT,  0,       0, shl_width,        shl_height,        shl_bitmap,        0,   0,          0, 0,        0,      0, 0, 0},
-    { "4",      60,  300, 46, 26, WHITE, "4",     1, 0,                0,                 0,                 0,   "TIME",     1, 0,        0,      0, 0, 0},
-    { "5",      120, 300, 46, 26, WHITE, "5",     1, 0,                0,                 0,                 0,   "STAT",     1, 0,        0,      0, 0, 0},
-    { "6",      180, 300, 46, 26, WHITE, "6",     1, 0,                0,                 0,                 0,   "UNITS",    1, 0,        0,      0, 0, 0},
-    { "MUL",    240, 300, 46, 26, WHITE, 0,       0, mul_width,        mul_height,        mul_bitmap,        0,   "[ ]",      0, "_",      0,      0, 0, 0},
+    {"SHL",    0,   300, 36, 26, LEFT,  0,       0, shl_width,        shl_height,        shl_bitmap,        0,   0,          0, 0,        0,      0, 0, 0},
+    {"4",      60,  300, 46, 26, WHITE, "4",     1, 0,                0,                 0,                 0,   "TIME",     1, 0,        0,      0, 0, 0},
+    {"5",      120, 300, 46, 26, WHITE, "5",     1, 0,                0,                 0,                 0,   "STAT",     1, 0,        0,      0, 0, 0},
+    {"6",      180, 300, 46, 26, WHITE, "6",     1, 0,                0,                 0,                 0,   "UNITS",    1, 0,        0,      0, 0, 0},
+    {"MUL",    240, 300, 46, 26, WHITE, 0,       0, mul_width,        mul_height,        mul_bitmap,        0,   "[ ]",      0, "_",      0,      0, 0, 0},
 
-    { "SHR",    0,   350, 36, 26, RIGHT, 0,       0, shr_width,        shr_height,        shr_bitmap,        0,   0,          0, 0,        0,      0, 0, 0},
-    { "1",      60,  350, 46, 26, WHITE, "1",     1, 0,                0,                 0,                 0,   "RAD",      0, "POLAR",  0,      0, 0, 0},
-    { "2",      120, 350, 46, 26, WHITE, "2",     1, 0,                0,                 0,                 0,   "STACK",    0, "ARG",    0,      0, 0, 0},
-    { "3",      180, 350, 46, 26, WHITE, "3",     1, 0,                0,                 0,                 0,   "CMD",      0, "MENU",   0,      0, 0, 0},
-    { "MINUS",  240, 350, 46, 26, WHITE, 0,       0, minus_width,      minus_height,      minus_bitmap,      0,   "i",        0, "j",      0,      0, 0, 0},
+    {"SHR",    0,   350, 36, 26, RIGHT, 0,       0, shr_width,        shr_height,        shr_bitmap,        0,   0,          0, 0,        0,      0, 0, 0},
+    {"1",      60,  350, 46, 26, WHITE, "1",     1, 0,                0,                 0,                 0,   "RAD",      0, "POLAR",  0,      0, 0, 0},
+    {"2",      120, 350, 46, 26, WHITE, "2",     1, 0,                0,                 0,                 0,   "STACK",    0, "ARG",    0,      0, 0, 0},
+    {"3",      180, 350, 46, 26, WHITE, "3",     1, 0,                0,                 0,                 0,   "CMD",      0, "MENU",   0,      0, 0, 0},
+    {"MINUS",  240, 350, 46, 26, WHITE, 0,       0, minus_width,      minus_height,      minus_bitmap,      0,   "i",        0, "j",      0,      0, 0, 0},
 
-    { "ON",     0,   400, 36, 26, WHITE, "ON",    0, 0,                0,                 0,                 0,   "CONT",     0, "OFF",    "ATTN", 0, 0, 0},
-    { "0",      60,  400, 46, 26, WHITE, "0",     1, 0,                0,                 0,                 0,   "= ",       0, " a",     0,      0, 0, 0},
-    { "PERIOD", 120, 400, 46, 26, WHITE, ".",     1, 0,                0,                 0,                 0,   ", ",       0, " k",     0,      0, 0, 0},
-    { "SPC",    180, 400, 46, 26, WHITE, "SPC",   0, 0,                0,                 0,                 0,   "l ",       0, " m",     0,      0, 0, 0},
-    { "PLUS",   240, 400, 46, 26, WHITE, 0,       0, plus_width,       plus_height,       plus_bitmap,       0,   "{ }",      0, ": :",    0,      0, 0, 0},
+    {"ON",     0,   400, 36, 26, WHITE, "ON",    0, 0,                0,                 0,                 0,   "CONT",     0, "OFF",    "ATTN", 0, 0, 0},
+    {"0",      60,  400, 46, 26, WHITE, "0",     1, 0,                0,                 0,                 0,   "= ",       0, " a",     0,      0, 0, 0},
+    {"PERIOD", 120, 400, 46, 26, WHITE, ".",     1, 0,                0,                 0,                 0,   ", ",       0, " k",     0,      0, 0, 0},
+    {"SPC",    180, 400, 46, 26, WHITE, "SPC",   0, 0,                0,                 0,                 0,   "l ",       0, " m",     0,      0, 0, 0},
+    {"PLUS",   240, 400, 46, 26, WHITE, 0,       0, plus_width,       plus_height,       plus_bitmap,       0,   "{ }",      0, ": :",    0,      0, 0, 0},
 };
 
 static x11_button_t buttons_gx[] = {
-    {"A",       0,   0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "A", 0,          0, 0,          0,        0, 0, 0},
-    { "B",      50,  0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "B", 0,          0, 0,          0,        0, 0, 0},
-    { "C",      100, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "C", 0,          0, 0,          0,        0, 0, 0},
-    { "D",      150, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "D", 0,          0, 0,          0,        0, 0, 0},
-    { "E",      200, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "E", 0,          0, 0,          0,        0, 0, 0},
-    { "F",      250, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "F", 0,          0, 0,          0,        0, 0, 0},
+    {"A",      0,   0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "A", 0,          0, 0,          0,        0, 0, 0},
+    {"B",      50,  0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "B", 0,          0, 0,          0,        0, 0, 0},
+    {"C",      100, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "C", 0,          0, 0,          0,        0, 0, 0},
+    {"D",      150, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "D", 0,          0, 0,          0,        0, 0, 0},
+    {"E",      200, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "E", 0,          0, 0,          0,        0, 0, 0},
+    {"F",      250, 0,   36, 23, WHITE, 0,       0, menu_label_width, menu_label_height, menu_label_bitmap, "F", 0,          0, 0,          0,        0, 0, 0},
 
-    { "MTH",    0,   50,  36, 26, WHITE, "MTH",   0, 0,                0,                 0,                 "G", "RAD",      0, "POLAR",    0,        0, 0, 0},
-    { "PRG",    50,  50,  36, 26, WHITE, "PRG",   0, 0,                0,                 0,                 "H", 0,          0, "CHARS",    0,        0, 0, 0},
-    { "CST",    100, 50,  36, 26, WHITE, "CST",   0, 0,                0,                 0,                 "I", 0,          0, "MODES",    0,        0, 0, 0},
-    { "VAR",    150, 50,  36, 26, WHITE, "VAR",   0, 0,                0,                 0,                 "J", 0,          0, "MEMORY",   0,        0, 0, 0},
-    { "UP",     200, 50,  36, 26, WHITE, 0,       0, up_width,         up_height,         up_bitmap,         "K", 0,          0, "STACK",    0,        0, 0, 0},
-    { "NXT",    250, 50,  36, 26, WHITE, "NXT",   0, 0,                0,                 0,                 "L", "PREV",     0, "MENU",     0,        0, 0, 0},
+    {"MTH",    0,   50,  36, 26, WHITE, "MTH",   0, 0,                0,                 0,                 "G", "RAD",      0, "POLAR",    0,        0, 0, 0},
+    {"PRG",    50,  50,  36, 26, WHITE, "PRG",   0, 0,                0,                 0,                 "H", 0,          0, "CHARS",    0,        0, 0, 0},
+    {"CST",    100, 50,  36, 26, WHITE, "CST",   0, 0,                0,                 0,                 "I", 0,          0, "MODES",    0,        0, 0, 0},
+    {"VAR",    150, 50,  36, 26, WHITE, "VAR",   0, 0,                0,                 0,                 "J", 0,          0, "MEMORY",   0,        0, 0, 0},
+    {"UP",     200, 50,  36, 26, WHITE, 0,       0, up_width,         up_height,         up_bitmap,         "K", 0,          0, "STACK",    0,        0, 0, 0},
+    {"NXT",    250, 50,  36, 26, WHITE, "NXT",   0, 0,                0,                 0,                 "L", "PREV",     0, "MENU",     0,        0, 0, 0},
 
-    { "COLON",  0,   100, 36, 26, WHITE, 0,       0, colon_width,      colon_height,      colon_bitmap,      "M", "UP",       0, "HOME",     0,        0, 0, 0},
-    { "STO",    50,  100, 36, 26, WHITE, "STO",   0, 0,                0,                 0,                 "N", "DEF",      0, "RCL",      0,        0, 0, 0},
-    { "EVAL",   100, 100, 36, 26, WHITE, "EVAL",  0, 0,                0,                 0,                 "O", "aNUM",     0, "UNDO",     0,        0, 0, 0},
-    { "LEFT",   150, 100, 36, 26, WHITE, 0,       0, left_width,       left_height,       left_bitmap,       "P", "PICTURE",  0, 0,          0,        0, 0, 0},
-    { "DOWN",   200, 100, 36, 26, WHITE, 0,       0, down_width,       down_height,       down_bitmap,       "Q", "VIEW",     0, 0,          0,        0, 0, 0},
-    { "RIGHT",  250, 100, 36, 26, WHITE, 0,       0, right_width,      right_height,      right_bitmap,      "R", "SWAP",     0, 0,          0,        0, 0, 0},
+    {"COLON",  0,   100, 36, 26, WHITE, 0,       0, colon_width,      colon_height,      colon_bitmap,      "M", "UP",       0, "HOME",     0,        0, 0, 0},
+    {"STO",    50,  100, 36, 26, WHITE, "STO",   0, 0,                0,                 0,                 "N", "DEF",      0, "RCL",      0,        0, 0, 0},
+    {"EVAL",   100, 100, 36, 26, WHITE, "EVAL",  0, 0,                0,                 0,                 "O", "aNUM",     0, "UNDO",     0,        0, 0, 0},
+    {"LEFT",   150, 100, 36, 26, WHITE, 0,       0, left_width,       left_height,       left_bitmap,       "P", "PICTURE",  0, 0,          0,        0, 0, 0},
+    {"DOWN",   200, 100, 36, 26, WHITE, 0,       0, down_width,       down_height,       down_bitmap,       "Q", "VIEW",     0, 0,          0,        0, 0, 0},
+    {"RIGHT",  250, 100, 36, 26, WHITE, 0,       0, right_width,      right_height,      right_bitmap,      "R", "SWAP",     0, 0,          0,        0, 0, 0},
 
-    { "SIN",    0,   150, 36, 26, WHITE, "SIN",   0, 0,                0,                 0,                 "S", "ASIN",     0, "b",        0,        0, 0, 0},
-    { "COS",    50,  150, 36, 26, WHITE, "COS",   0, 0,                0,                 0,                 "T", "ACOS",     0, "c",        0,        0, 0, 0},
-    { "TAN",    100, 150, 36, 26, WHITE, "TAN",   0, 0,                0,                 0,                 "U", "ATAN",     0, "d",        0,        0, 0, 0},
-    { "SQRT",   150, 150, 36, 26, WHITE, 0,       0, sqrt_width,       sqrt_height,       sqrt_bitmap,       "V", "n",        0, "o",        0,        0, 0, 0},
-    { "POWER",  200, 150, 36, 26, WHITE, 0,       0, power_width,      power_height,      power_bitmap,      "W", "p",        0, "LOG",      0,        0, 0, 0},
-    { "INV",    250, 150, 36, 26, WHITE, 0,       0, inv_width,        inv_height,        inv_bitmap,        "X", "q",        0, "LN",       0,        0, 0, 0},
+    {"SIN",    0,   150, 36, 26, WHITE, "SIN",   0, 0,                0,                 0,                 "S", "ASIN",     0, "b",        0,        0, 0, 0},
+    {"COS",    50,  150, 36, 26, WHITE, "COS",   0, 0,                0,                 0,                 "T", "ACOS",     0, "c",        0,        0, 0, 0},
+    {"TAN",    100, 150, 36, 26, WHITE, "TAN",   0, 0,                0,                 0,                 "U", "ATAN",     0, "d",        0,        0, 0, 0},
+    {"SQRT",   150, 150, 36, 26, WHITE, 0,       0, sqrt_width,       sqrt_height,       sqrt_bitmap,       "V", "n",        0, "o",        0,        0, 0, 0},
+    {"POWER",  200, 150, 36, 26, WHITE, 0,       0, power_width,      power_height,      power_bitmap,      "W", "p",        0, "LOG",      0,        0, 0, 0},
+    {"INV",    250, 150, 36, 26, WHITE, 0,       0, inv_width,        inv_height,        inv_bitmap,        "X", "q",        0, "LN",       0,        0, 0, 0},
 
-    { "ENTER",  0,   200, 86, 26, WHITE, "ENTER", 2, 0,                0,                 0,                 0,   "EQUATION", 0, "MATRIX",   0,        0, 0, 0},
-    { "NEG",    100, 200, 36, 26, WHITE, 0,       0, neg_width,        neg_height,        neg_bitmap,        "Y", "EDIT",     0, "CMD",      0,        0, 0, 0},
-    { "EEX",    150, 200, 36, 26, WHITE, "EEX",   0, 0,                0,                 0,                 "Z", "PURG",     0, "ARG",      0,        0, 0, 0},
-    { "DEL",    200, 200, 36, 26, WHITE, "DEL",   0, 0,                0,                 0,                 0,   "CLEAR",    0, 0,          0,        0, 0, 0},
-    { "BS",     250, 200, 36, 26, WHITE, 0,       0, bs_width,         bs_height,         bs_bitmap,         0,   "DROP",     0, 0,          0,        0, 0, 0},
+    {"ENTER",  0,   200, 86, 26, WHITE, "ENTER", 2, 0,                0,                 0,                 0,   "EQUATION", 0, "MATRIX",   0,        0, 0, 0},
+    {"NEG",    100, 200, 36, 26, WHITE, 0,       0, neg_width,        neg_height,        neg_bitmap,        "Y", "EDIT",     0, "CMD",      0,        0, 0, 0},
+    {"EEX",    150, 200, 36, 26, WHITE, "EEX",   0, 0,                0,                 0,                 "Z", "PURG",     0, "ARG",      0,        0, 0, 0},
+    {"DEL",    200, 200, 36, 26, WHITE, "DEL",   0, 0,                0,                 0,                 0,   "CLEAR",    0, 0,          0,        0, 0, 0},
+    {"BS",     250, 200, 36, 26, WHITE, 0,       0, bs_width,         bs_height,         bs_bitmap,         0,   "DROP",     0, 0,          0,        0, 0, 0},
 
-    { "ALPHA",  0,   250, 36, 26, WHITE, 0,       0, alpha_width,      alpha_height,      alpha_bitmap,      0,   "USER",     0, "ENTRY",    0,        0, 0, 0},
-    { "7",      60,  250, 46, 26, WHITE, "7",     1, 0,                0,                 0,                 0,   0,          1, "SOLVE",    0,        0, 0, 0},
-    { "8",      120, 250, 46, 26, WHITE, "8",     1, 0,                0,                 0,                 0,   0,          1, "PLOT",     0,        0, 0, 0},
-    { "9",      180, 250, 46, 26, WHITE, "9",     1, 0,                0,                 0,                 0,   0,          1, "SYMBOLIC", 0,        0, 0, 0},
-    { "DIV",    240, 250, 46, 26, WHITE, 0,       0, div_width,        div_height,        div_bitmap,        0,   "r ",       0, "s",        0,        0, 0, 0},
+    {"ALPHA",  0,   250, 36, 26, WHITE, 0,       0, alpha_width,      alpha_height,      alpha_bitmap,      0,   "USER",     0, "ENTRY",    0,        0, 0, 0},
+    {"7",      60,  250, 46, 26, WHITE, "7",     1, 0,                0,                 0,                 0,   0,          1, "SOLVE",    0,        0, 0, 0},
+    {"8",      120, 250, 46, 26, WHITE, "8",     1, 0,                0,                 0,                 0,   0,          1, "PLOT",     0,        0, 0, 0},
+    {"9",      180, 250, 46, 26, WHITE, "9",     1, 0,                0,                 0,                 0,   0,          1, "SYMBOLIC", 0,        0, 0, 0},
+    {"DIV",    240, 250, 46, 26, WHITE, 0,       0, div_width,        div_height,        div_bitmap,        0,   "r ",       0, "s",        0,        0, 0, 0},
 
-    { "SHL",    0,   300, 36, 26, LEFT,  0,       0, shl_width,        shl_height,        shl_bitmap,        0,   0,          0, 0,          0,        0, 0, 0},
-    { "4",      60,  300, 46, 26, WHITE, "4",     1, 0,                0,                 0,                 0,   0,          1, "TIME",     0,        0, 0, 0},
-    { "5",      120, 300, 46, 26, WHITE, "5",     1, 0,                0,                 0,                 0,   0,          1, "STAT",     0,        0, 0, 0},
-    { "6",      180, 300, 46, 26, WHITE, "6",     1, 0,                0,                 0,                 0,   0,          1, "UNITS",    0,        0, 0, 0},
-    { "MUL",    240, 300, 46, 26, WHITE, 0,       0, mul_width,        mul_height,        mul_bitmap,        0,   "t ",       0, "u",        0,        0, 0, 0},
+    {"SHL",    0,   300, 36, 26, LEFT,  0,       0, shl_width,        shl_height,        shl_bitmap,        0,   0,          0, 0,          0,        0, 0, 0},
+    {"4",      60,  300, 46, 26, WHITE, "4",     1, 0,                0,                 0,                 0,   0,          1, "TIME",     0,        0, 0, 0},
+    {"5",      120, 300, 46, 26, WHITE, "5",     1, 0,                0,                 0,                 0,   0,          1, "STAT",     0,        0, 0, 0},
+    {"6",      180, 300, 46, 26, WHITE, "6",     1, 0,                0,                 0,                 0,   0,          1, "UNITS",    0,        0, 0, 0},
+    {"MUL",    240, 300, 46, 26, WHITE, 0,       0, mul_width,        mul_height,        mul_bitmap,        0,   "t ",       0, "u",        0,        0, 0, 0},
 
-    { "SHR",    0,   350, 36, 26, RIGHT, 0,       0, shr_width,        shr_height,        shr_bitmap,        0,   0,          1, " ",        0,        0, 0, 0},
-    { "1",      60,  350, 46, 26, WHITE, "1",     1, 0,                0,                 0,                 0,   0,          1, "I/O",      0,        0, 0, 0},
-    { "2",      120, 350, 46, 26, WHITE, "2",     1, 0,                0,                 0,                 0,   0,          1, "LIBRARY",  0,        0, 0, 0},
-    { "3",      180, 350, 46, 26, WHITE, "3",     1, 0,                0,                 0,                 0,   0,          1, "EQ LIB",   0,        0, 0, 0},
-    { "MINUS",  240, 350, 46, 26, WHITE, 0,       0, minus_width,      minus_height,      minus_bitmap,      0,   "v ",       0, "w",        0,        0, 0, 0},
+    {"SHR",    0,   350, 36, 26, RIGHT, 0,       0, shr_width,        shr_height,        shr_bitmap,        0,   0,          1, " ",        0,        0, 0, 0},
+    {"1",      60,  350, 46, 26, WHITE, "1",     1, 0,                0,                 0,                 0,   0,          1, "I/O",      0,        0, 0, 0},
+    {"2",      120, 350, 46, 26, WHITE, "2",     1, 0,                0,                 0,                 0,   0,          1, "LIBRARY",  0,        0, 0, 0},
+    {"3",      180, 350, 46, 26, WHITE, "3",     1, 0,                0,                 0,                 0,   0,          1, "EQ LIB",   0,        0, 0, 0},
+    {"MINUS",  240, 350, 46, 26, WHITE, 0,       0, minus_width,      minus_height,      minus_bitmap,      0,   "v ",       0, "w",        0,        0, 0, 0},
 
-    { "ON",     0,   400, 36, 26, WHITE, "ON",    0, 0,                0,                 0,                 0,   "CONT",     0, "OFF",      "CANCEL", 0, 0, 0},
-    { "0",      60,  400, 46, 26, WHITE, "0",     1, 0,                0,                 0,                 0,   "\004 ",    0, "\003",     0,        0, 0, 0},
-    { "PERIOD", 120, 400, 46, 26, WHITE, ".",     1, 0,                0,                 0,                 0,   "\002 ",    0, "\001",     0,        0, 0, 0},
-    { "SPC",    180, 400, 46, 26, WHITE, "SPC",   0, 0,                0,                 0,                 0,   "\005 ",    0, "z",        0,        0, 0, 0},
-    { "PLUS",   240, 400, 46, 26, WHITE, 0,       0, plus_width,       plus_height,       plus_bitmap,       0,   "x ",       0, "y",        0,        0, 0, 0},
+    {"ON",     0,   400, 36, 26, WHITE, "ON",    0, 0,                0,                 0,                 0,   "CONT",     0, "OFF",      "CANCEL", 0, 0, 0},
+    {"0",      60,  400, 46, 26, WHITE, "0",     1, 0,                0,                 0,                 0,   "\004 ",    0, "\003",     0,        0, 0, 0},
+    {"PERIOD", 120, 400, 46, 26, WHITE, ".",     1, 0,                0,                 0,                 0,   "\002 ",    0, "\001",     0,        0, 0, 0},
+    {"SPC",    180, 400, 46, 26, WHITE, "SPC",   0, 0,                0,                 0,                 0,   "\005 ",    0, "z",        0,        0, 0, 0},
+    {"PLUS",   240, 400, 46, 26, WHITE, 0,       0, plus_width,       plus_height,       plus_bitmap,       0,   "x ",       0, "y",        0,        0, 0, 0},
 };
 
 #define MAX_PASTE 128
@@ -481,60 +481,60 @@ static icon_map_t* icon_maps;
 static Pixmap nibble_maps[ 16 ];
 
 static unsigned char nibbles[ 16 ][ 2 ] = {
-    {0x00,  0x00}, /* ---- */
-    { 0x03, 0x03}, /* *--- */
-    { 0x0c, 0x0c}, /* -*-- */
-    { 0x0f, 0x0f}, /* **-- */
-    { 0x30, 0x30}, /* --*- */
-    { 0x33, 0x33}, /* *-*- */
-    { 0x3c, 0x3c}, /* -**- */
-    { 0x3f, 0x3f}, /* ***- */
-    { 0xc0, 0xc0}, /* ---* */
-    { 0xc3, 0xc3}, /* *--* */
-    { 0xcc, 0xcc}, /* -*-* */
-    { 0xcf, 0xcf}, /* **-* */
-    { 0xf0, 0xf0}, /* --** */
-    { 0xf3, 0xf3}, /* *-** */
-    { 0xfc, 0xfc}, /* -*** */
-    { 0xff, 0xff}  /* **** */
+    {0x00, 0x00}, /* ---- */
+    {0x03, 0x03}, /* *--- */
+    {0x0c, 0x0c}, /* -*-- */
+    {0x0f, 0x0f}, /* **-- */
+    {0x30, 0x30}, /* --*- */
+    {0x33, 0x33}, /* *-*- */
+    {0x3c, 0x3c}, /* -**- */
+    {0x3f, 0x3f}, /* ***- */
+    {0xc0, 0xc0}, /* ---* */
+    {0xc3, 0xc3}, /* *--* */
+    {0xcc, 0xcc}, /* -*-* */
+    {0xcf, 0xcf}, /* **-* */
+    {0xf0, 0xf0}, /* --** */
+    {0xf3, 0xf3}, /* *-** */
+    {0xfc, 0xfc}, /* -*** */
+    {0xff, 0xff}  /* **** */
 };
 
 static unsigned char nibble_bitmap[ 16 ];
 
 static x11_ann_struct_t ann_tbl[] = {
-    {16,   4, ann_left_width,    ann_left_height,    ann_left_bitmap,    0},
-    { 61,  4, ann_right_width,   ann_right_height,   ann_right_bitmap,   0},
-    { 106, 4, ann_alpha_width,   ann_alpha_height,   ann_alpha_bitmap,   0},
-    { 151, 4, ann_battery_width, ann_battery_height, ann_battery_bitmap, 0},
-    { 196, 4, ann_busy_width,    ann_busy_height,    ann_busy_bitmap,    0},
-    { 241, 4, ann_io_width,      ann_io_height,      ann_io_bitmap,      0},
- /* { 0 } */
+    {16,  4, ann_left_width,    ann_left_height,    ann_left_bitmap,    0},
+    {61,  4, ann_right_width,   ann_right_height,   ann_right_bitmap,   0},
+    {106, 4, ann_alpha_width,   ann_alpha_height,   ann_alpha_bitmap,   0},
+    {151, 4, ann_battery_width, ann_battery_height, ann_battery_bitmap, 0},
+    {196, 4, ann_busy_width,    ann_busy_height,    ann_busy_bitmap,    0},
+    {241, 4, ann_io_width,      ann_io_height,      ann_io_bitmap,      0},
+    /* { 0 } */
 };
 
 static icon_map_t icon_maps_sx[] = {
-    {hp48_icon_width,    hp48_icon_height,   BLACK,    hp48_icon_bitmap  },
-    { hp48_on_width,     hp48_on_height,     PIXEL,    hp48_on_bitmap    },
-    { hp48_disp_width,   hp48_disp_height,   LCD,      hp48_disp_bitmap  },
-    { hp48_top_width,    hp48_top_height,    DISP_PAD, hp48_top_bitmap   },
-    { hp48_bottom_width, hp48_bottom_height, PAD,      hp48_bottom_bitmap},
-    { hp48_logo_width,   hp48_logo_height,   LOGO,     hp48_logo_bitmap  },
-    { hp48_text_width,   hp48_text_height,   LABEL,    hp48_text_bitmap  },
-    { hp48_keys_width,   hp48_keys_height,   BLACK,    hp48_keys_bitmap  },
-    { hp48_orange_width, hp48_orange_height, LEFT,     hp48_orange_bitmap},
-    { hp48_blue_width,   hp48_blue_height,   RIGHT,    hp48_blue_bitmap  }
+    {hp48_icon_width,   hp48_icon_height,   BLACK,    hp48_icon_bitmap  },
+    {hp48_on_width,     hp48_on_height,     PIXEL,    hp48_on_bitmap    },
+    {hp48_disp_width,   hp48_disp_height,   LCD,      hp48_disp_bitmap  },
+    {hp48_top_width,    hp48_top_height,    DISP_PAD, hp48_top_bitmap   },
+    {hp48_bottom_width, hp48_bottom_height, PAD,      hp48_bottom_bitmap},
+    {hp48_logo_width,   hp48_logo_height,   LOGO,     hp48_logo_bitmap  },
+    {hp48_text_width,   hp48_text_height,   LABEL,    hp48_text_bitmap  },
+    {hp48_keys_width,   hp48_keys_height,   BLACK,    hp48_keys_bitmap  },
+    {hp48_orange_width, hp48_orange_height, LEFT,     hp48_orange_bitmap},
+    {hp48_blue_width,   hp48_blue_height,   RIGHT,    hp48_blue_bitmap  }
 };
 
 static icon_map_t icon_maps_gx[] = {
-    {hp48_icon_width,      hp48_icon_height,     BLACK,    hp48_icon_bitmap    },
-    { hp48_on_width,       hp48_on_height,       PIXEL,    hp48_on_bitmap      },
-    { hp48_disp_width,     hp48_disp_height,     LCD,      hp48_disp_bitmap    },
-    { hp48_top_gx_width,   hp48_top_gx_height,   DISP_PAD, hp48_top_gx_bitmap  },
-    { hp48_bottom_width,   hp48_bottom_height,   PAD,      hp48_bottom_bitmap  },
-    { hp48_logo_gx_width,  hp48_logo_gx_height,  LOGO,     hp48_logo_gx_bitmap },
-    { hp48_text_gx_width,  hp48_text_gx_height,  LABEL,    hp48_text_gx_bitmap },
-    { hp48_keys_width,     hp48_keys_height,     BLACK,    hp48_keys_bitmap    },
-    { hp48_orange_width,   hp48_orange_height,   LEFT,     hp48_orange_bitmap  },
-    { hp48_green_gx_width, hp48_green_gx_height, RIGHT,    hp48_green_gx_bitmap}
+    {hp48_icon_width,     hp48_icon_height,     BLACK,    hp48_icon_bitmap    },
+    {hp48_on_width,       hp48_on_height,       PIXEL,    hp48_on_bitmap      },
+    {hp48_disp_width,     hp48_disp_height,     LCD,      hp48_disp_bitmap    },
+    {hp48_top_gx_width,   hp48_top_gx_height,   DISP_PAD, hp48_top_gx_bitmap  },
+    {hp48_bottom_width,   hp48_bottom_height,   PAD,      hp48_bottom_bitmap  },
+    {hp48_logo_gx_width,  hp48_logo_gx_height,  LOGO,     hp48_logo_gx_bitmap },
+    {hp48_text_gx_width,  hp48_text_gx_height,  LABEL,    hp48_text_gx_bitmap },
+    {hp48_keys_width,     hp48_keys_height,     BLACK,    hp48_keys_bitmap    },
+    {hp48_orange_width,   hp48_orange_height,   LEFT,     hp48_orange_bitmap  },
+    {hp48_green_gx_width, hp48_green_gx_height, RIGHT,    hp48_green_gx_bitmap}
 };
 
 static int saved_argc;
