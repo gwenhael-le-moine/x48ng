@@ -197,8 +197,6 @@ void init_display( void )
 
     display.contrast = saturn.contrast_ctrl;
     display.contrast |= ( ( saturn.disp_test & 0x1 ) << 4 );
-
-    display.annunc = saturn.annunc;
 }
 
 int init_emulator( void )

@@ -102,7 +102,6 @@ void write_dev_mem( long addr, int val )
         case 0x10c: /* ANNUNC */
             saturn.annunc &= ~nibble_masks[ addr - 0x10b ];
             saturn.annunc |= val << ( ( addr - 0x10b ) * 4 );
-            display.annunc = saturn.annunc;
             device.ann_touched = 1;
             return;
         case 0x10d: /* BAUD */

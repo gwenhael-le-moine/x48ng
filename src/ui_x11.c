@@ -1820,8 +1820,8 @@ void refresh_icon( void )
 {
     int icon_state;
 
-    icon_state = ( ( display.on && !( ( ANN_IO & display.annunc ) == ANN_IO ) ) ||
-                   ( display.on && !( ( ANN_ALPHA & display.annunc ) == ANN_ALPHA ) ) );
+    icon_state = ( ( display.on && !( ( ANN_IO & saturn.annunc ) == ANN_IO ) ) ||
+                   ( display.on && !( ( ANN_ALPHA & saturn.annunc ) == ANN_ALPHA ) ) );
     if ( icon_state == last_icon_state )
         return;
 
@@ -3717,7 +3717,7 @@ void x11_menu_draw_nibble( word_20 addr, word_4 val )
 
 void x11_draw_annunc( void )
 {
-    int val = display.annunc;
+    int val = saturn.annunc;
 
     if ( val == last_annunc_state )
         return;

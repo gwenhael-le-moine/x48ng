@@ -357,7 +357,7 @@ void text_menu_draw_nibble( word_20 addr, word_4 val )
 void text_draw_annunc( void )
 {
     wchar_t* annunciators_icons[ 6 ] = { L"↰", L"↱", L"α", L"🪫", L"⌛", L"⇄" };
-    int val = display.annunc;
+    int val = saturn.annunc;
 
     if ( val == last_annunc_state )
         return;

@@ -176,8 +176,6 @@ typedef struct display_t {
 
     long menu_start;
     long menu_end;
-
-    int annunc;
 } display_t;
 
 typedef struct mem_cntl_t {
