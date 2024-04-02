@@ -102,28 +102,8 @@ pretty-code:
 	clang-format -i src/*.c src/*.h src/tools/*.c
 
 # Installing
-dist/ROMs/sxrom-a:
-	curl "https://www.hpcalc.org/hp48/pc/emulators/sxrom-a.zip" --output - | funzip > "dist/ROMs/sxrom-a"
-dist/ROMs/sxrom-b:
-	curl "https://www.hpcalc.org/hp48/pc/emulators/sxrom-b.zip" --output - | funzip > "dist/ROMs/sxrom-b"
-dist/ROMs/sxrom-c:
-	curl "https://www.hpcalc.org/hp48/pc/emulators/sxrom-c.zip" --output - | funzip > "dist/ROMs/sxrom-c"
-dist/ROMs/sxrom-d:
-	curl "https://www.hpcalc.org/hp48/pc/emulators/sxrom-d.zip" --output - | funzip > "dist/ROMs/sxrom-d"
-dist/ROMs/sxrom-e:
-	curl "https://www.hpcalc.org/hp48/pc/emulators/sxrom-e.zip" --output - | funzip > "dist/ROMs/sxrom-e"
-dist/ROMs/sxrom-j:
-	curl "https://www.hpcalc.org/hp48/pc/emulators/sxrom-j.zip" --output - | funzip > "dist/ROMs/sxrom-j"
-dist/ROMs/gxrom-l:
-	curl "https://www.hpcalc.org/hp48/pc/emulators/gxrom-l.zip" --output - | funzip > "dist/ROMs/gxrom-l"
-dist/ROMs/gxrom-m:
-	curl "https://www.hpcalc.org/hp48/pc/emulators/gxrom-m.zip" --output - | funzip > "dist/ROMs/gxrom-m"
-dist/ROMs/gxrom-p:
-	curl "https://www.hpcalc.org/hp48/pc/emulators/gxrom-p.zip" --output - | funzip > "dist/ROMs/gxrom-p"
-dist/ROMs/gxrom-r:
-	curl "https://www.hpcalc.org/hp48/pc/emulators/gxrom-r.zip" --output - | funzip > "dist/ROMs/gxrom-r"
-
-get-roms: dist/ROMs/sxrom-a dist/ROMs/sxrom-b dist/ROMs/sxrom-c dist/ROMs/sxrom-d dist/ROMs/sxrom-e dist/ROMs/sxrom-j dist/ROMs/gxrom-l dist/ROMs/gxrom-m dist/ROMs/gxrom-p dist/ROMs/gxrom-r
+get-roms:
+	make -C dist/ROMs
 
 install: all get-roms
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/bin
