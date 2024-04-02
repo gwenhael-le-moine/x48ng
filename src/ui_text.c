@@ -445,8 +445,6 @@ int text_get_event( void )
                 hpkey = HPKEY_VAR;
                 break;
             case 'k':
-                hpkey = HPKEY_UP;
-                break;
             case KEY_UP:
                 hpkey = HPKEY_UP;
                 break;
@@ -463,20 +461,14 @@ int text_get_event( void )
                 hpkey = HPKEY_EVAL;
                 break;
             case 'p':
-                hpkey = HPKEY_LEFT;
-                break;
             case KEY_LEFT:
                 hpkey = HPKEY_LEFT;
                 break;
             case 'q':
-                hpkey = HPKEY_DOWN;
-                break;
             case KEY_DOWN:
                 hpkey = HPKEY_DOWN;
                 break;
             case 'r':
-                hpkey = HPKEY_RIGHT;
-                break;
             case KEY_RIGHT:
                 hpkey = HPKEY_RIGHT;
                 break;
