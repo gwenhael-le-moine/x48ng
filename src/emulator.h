@@ -215,7 +215,7 @@ typedef struct saturn_t {
 
     keystate_t keybuf;
 
-    unsigned char intenable;
+    unsigned char interruptable;
     unsigned char int_pending;
     unsigned char kbd_ien;
 

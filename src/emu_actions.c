@@ -140,11 +140,11 @@ void do_return_interupt( void )
 {
     if ( saturn.int_pending ) {
         saturn.int_pending = 0;
-        saturn.intenable = 0;
+        saturn.interruptable = 0;
         saturn.PC = 0xf;
     } else {
         saturn.PC = pop_return_addr();
-        saturn.intenable = 1;
+        saturn.interruptable = 1;
 
         if ( adj_time_pending ) {
             schedule_event = 0;
@@ -156,20 +156,20 @@ void do_return_interupt( void )
 void do_interupt( void )
 {
     interrupt_called = 1;
-    if ( saturn.intenable ) {
+    if ( saturn.interruptable ) {
         push_return_addr( saturn.PC );
         saturn.PC = 0xf;
-        saturn.intenable = 0;
+        saturn.interruptable = 0;
     }
 }
 
 void do_kbd_int( void )
 {
     interrupt_called = 1;
-    if ( saturn.intenable ) {
+    if ( saturn.interruptable ) {
         push_return_addr( saturn.PC );
         saturn.PC = 0xf;
-        saturn.intenable = 0;
+        saturn.interruptable = 0;
     } else
         saturn.int_pending = 1;
 }
@@ -304,7 +304,7 @@ void do_shutdown( void )
     start_timer( IDLE_TIMER );
 
     if ( is_zero_register( saturn.OUT, OUT_FIELD ) ) {
-        saturn.intenable = 1;
+        saturn.interruptable = 1;
         saturn.int_pending = 0;
     }
 

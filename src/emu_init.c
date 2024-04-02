@@ -155,7 +155,7 @@ void init_saturn( void )
     saturn.version[ 2 ] = PATCHLEVEL;
     saturn.hexmode = HEX;
     saturn.rstkp = -1;
-    saturn.intenable = 1;
+    saturn.interruptable = 1;
     saturn.int_pending = 0;
     saturn.kbd_ien = 1;
     saturn.timer1 = 0;
@@ -370,7 +370,7 @@ int read_state_file( FILE* fp )
     for ( i = 0; i < 9; i++ )
         if ( !read_16( fp, ( word_16* )&saturn.keybuf.rows[ i ] ) )
             return 0;
-    if ( !read_8( fp, &saturn.intenable ) )
+    if ( !read_8( fp, &saturn.interruptable ) )
         return 0;
     if ( !read_8( fp, &saturn.int_pending ) )
         return 0;
@@ -901,7 +901,7 @@ int write_state_file( char* filename )
     write_16( fp, ( word_16* )&saturn.rstkp );
     for ( i = 0; i < 9; i++ )
         write_16( fp, ( word_16* )&saturn.keybuf.rows[ i ] );
-    write_8( fp, &saturn.intenable );
+    write_8( fp, &saturn.interruptable );
     write_8( fp, &saturn.int_pending );
     write_8( fp, &saturn.kbd_ien );
     write_8( fp, &saturn.disp_io );

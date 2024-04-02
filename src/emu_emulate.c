@@ -2165,7 +2165,7 @@ inline void schedule( void )
     old_sched_instr = instructions;
 
     if ( ( sched_timer2 -= steps ) <= 0 ) {
-        if ( !saturn.intenable )
+        if ( !saturn.interruptable )
             sched_timer2 = SCHED_TIMER2;
         else
             sched_timer2 = saturn.t2_tick;
@@ -2297,7 +2297,7 @@ inline void schedule( void )
         schedule_event = sched_adjtime;
 
     if ( ( sched_timer1 -= steps ) <= 0 ) {
-        if ( !saturn.intenable )
+        if ( !saturn.interruptable )
             sched_timer1 = SCHED_TIMER1;
         else
             sched_timer1 = saturn.t1_tick;
