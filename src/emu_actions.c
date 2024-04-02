@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "runtime_options.h" /* only for inhibit_shutdown in do_shutdown() */
 #include "emulator.h"
 #include "emulator_inner.h"
 #include "romio.h"
@@ -251,6 +252,49 @@ int get_identification( void )
 
 void do_shutdown( void )
 {
+    if ( inhibit_shutdown )
+        return;
+
+    /***************************/
+    /* hpemu/src/opcodes.c:367 */
+    /***************************/
+    /* static void op807( byte* opc ) // SHUTDN */
+    /* { */
+    /*     // TODO: Fix SHUTDN */
+    /*     if ( !cpu.in[ 0 ] && !cpu.in[ 1 ] && !cpu.in[ 3 ] ) { */
+    /*         cpu.shutdown = true; */
+    /*     } */
+    /*     cpu.pc += 3; */
+    /*     cpu.cycles += 5; */
+    /* } */
+
+    /***********************************/
+    /* saturn_bertolotti/src/cpu.c:364 */
+    /***********************************/
+    /* static void ExecSHUTDN( void ) */
+    /* { */
+    /*     debug1( DEBUG_C_TRACE, CPU_I_CALLED, "SHUTDN" ); */
+
+    /* #ifdef CPU_SPIN_SHUTDN */
+    /*     /\* If the CPU_SPIN_SHUTDN symbol is defined, the CPU module implements */
+    /*        SHUTDN as a spin loop; the program counter is reset to the starting */
+    /*        nibble of the SHUTDN opcode. */
+    /*     *\/ */
+    /*     cpu_status.PC -= 3; */
+    /* #endif */
+
+    /*     /\* Set shutdown flag *\/ */
+    /*     cpu_status.shutdn = 1; */
+
+    /* #ifndef CPU_SPIN_SHUTDN */
+    /*     /\* If the CPU_SPIN_SHUTDN symbol is not defined, the CPU module implements */
+    /*        SHUTDN signalling the condition CPU_I_SHUTDN */
+    /*     *\/ */
+    /*     ChfCondition CPU_I_SHUTDN, CHF_INFO ChfEnd; */
+    /*     ChfSignal(); */
+    /* #endif */
+    /* } */
+
     if ( device.display_touched ) {
         device.display_touched = 0;
         ui_refresh_LCD();
@@ -478,7 +522,7 @@ void press_key( int hpkey )
     keyboard[ hpkey ].pressed = 1;
 
     int code = keyboard[ hpkey ].code;
-    if ( code == 0x8000 ) {
+    if ( code == 0x8000 ) { /* HPKEY_ON */
         for ( int i = 0; i < 9; i++ )
             saturn.keybuf.rows[ i ] |= 0x8000;
         do_kbd_int();

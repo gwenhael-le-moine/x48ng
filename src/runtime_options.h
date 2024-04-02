@@ -20,6 +20,7 @@ extern int frontend_type;
 extern char* serialLine;
 
 extern bool leave_shift_keys;
+extern bool inhibit_shutdown;
 
 extern bool mono;
 extern bool gray;
