@@ -2382,40 +2382,12 @@ int CreateWindows( int argc, char** argv )
 
 int key_event( int b, XEvent* xev )
 {
-    int code;
-    int i, r, c;
+    if ( xev->type == KeyPress )
+        press_key( b );
+    else
+        release_key( b );
 
-    code = keyboard[ b ].code;
-    if ( xev->type == KeyPress ) {
-        keyboard[ b ].pressed = 1;
-        DrawButton( b );
-        if ( code == 0x8000 ) {
-            for ( i = 0; i < 9; i++ )
-                saturn.keybuf.rows[ i ] |= 0x8000;
-            do_kbd_int();
-        } else {
-            r = code >> 4;
-            c = 1 << ( code & 0xf );
-            if ( ( saturn.keybuf.rows[ r ] & c ) == 0 ) {
-                if ( saturn.kbd_ien ) {
-                    do_kbd_int();
-                }
-                saturn.keybuf.rows[ r ] |= c;
-            }
-        }
-    } else {
-        if ( code == 0x8000 ) {
-            for ( i = 0; i < 9; i++ )
-                saturn.keybuf.rows[ i ] &= ~0x8000;
-            memset( &saturn.keybuf, 0, sizeof( saturn.keybuf ) );
-        } else {
-            r = code >> 4;
-            c = 1 << ( code & 0xf );
-            saturn.keybuf.rows[ r ] &= ~c;
-        }
-        keyboard[ b ].pressed = 0;
-        DrawButton( b );
-    }
+    DrawButton( b );
 
     return 0;
 }
