@@ -151,6 +151,7 @@ void ( *ui_draw_annunc )( void );
 void ( *init_ui )( int argc, char** argv );
 
 void ui_init_LCD( void ) { memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) ); }
+
 void setup_frontend( void )
 {
     switch ( frontend_type ) {
