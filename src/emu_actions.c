@@ -68,18 +68,14 @@ int get_program_stat( int n ) { return saturn.PSTAT[ n ]; }
 
 void register_to_status( unsigned char* r )
 {
-    int i;
-
-    for ( i = 0; i < 12; i++ ) {
+    for ( int i = 0; i < 12; i++ ) {
         saturn.PSTAT[ i ] = ( r[ i / 4 ] >> ( i % 4 ) ) & 1;
     }
 }
 
 void status_to_register( unsigned char* r )
 {
-    int i;
-
-    for ( i = 0; i < 12; i++ ) {
+    for ( int i = 0; i < 12; i++ ) {
         if ( saturn.PSTAT[ i ] ) {
             r[ i / 4 ] |= 1 << ( i % 4 );
         } else {
@@ -90,9 +86,9 @@ void status_to_register( unsigned char* r )
 
 void swap_register_status( unsigned char* r )
 {
-    int i, tmp;
+    int tmp;
 
-    for ( i = 0; i < 12; i++ ) {
+    for ( int i = 0; i < 12; i++ ) {
         tmp = saturn.PSTAT[ i ];
         saturn.PSTAT[ i ] = ( r[ i / 4 ] >> ( i % 4 ) ) & 1;
         if ( tmp )
@@ -161,12 +157,8 @@ void do_interupt( void )
 
 void do_kbd_int( void )
 {
-    interrupt_called = 1;
-    if ( saturn.interruptable ) {
-        push_return_addr( saturn.PC );
-        saturn.PC = 0xf;
-        saturn.interruptable = 0;
-    } else
+    do_interupt();
+    if ( !saturn.interruptable )
         saturn.int_pending = 1;
 }
 
@@ -394,11 +386,10 @@ int is_zero_hardware_stat( int op )
 
 void push_return_addr( long addr )
 {
-    int i;
-
     if ( ++saturn.rstkp >= NR_RSTK ) {
-        for ( i = 1; i < NR_RSTK; i++ )
+        for ( int i = 1; i < NR_RSTK; i++ )
             saturn.rstk[ i - 1 ] = saturn.rstk[ i ];
+
         saturn.rstkp--;
     }
     saturn.rstk[ saturn.rstkp ] = addr;
@@ -408,6 +399,7 @@ long pop_return_addr( void )
 {
     if ( saturn.rstkp < 0 )
         return 0;
+
     return saturn.rstk[ saturn.rstkp-- ];
 }
 
@@ -431,12 +423,8 @@ void load_addr( word_20* dat, long addr, int n )
 
 void register_to_address( unsigned char* reg, word_20* dat, int s )
 {
-    int n;
+    int n = ( s ) ? 4 : 5;
 
-    if ( s )
-        n = 4;
-    else
-        n = 5;
     for ( int i = 0; i < n; i++ ) {
         *dat &= ~nibble_masks[ i ];
         *dat |= ( reg[ i ] & 0x0f ) << ( i * 4 );
@@ -451,6 +439,7 @@ long dat_to_addr( unsigned char* dat )
         addr <<= 4;
         addr |= ( dat[ i ] & 0xf );
     }
+
     return addr;
 }
 
@@ -465,11 +454,12 @@ void addr_to_dat( long addr, unsigned char* dat )
 void add_address( word_20* dat, int add )
 {
     *dat += add;
-    if ( *dat & ( word_20 )0xfff00000 ) {
+
+    if ( *dat & ( word_20 )0xfff00000 )
         saturn.CARRY = 1;
-    } else {
+    else
         saturn.CARRY = 0;
-    }
+
     *dat &= 0xfffff;
 }
 
