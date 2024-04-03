@@ -20,8 +20,7 @@ int first_press = 1; // PATCH
 int conf_bank1 = 0x00000;
 int conf_bank2 = 0x00000;
 
-short conf_tab_sx[] = { 1, 2, 2, 2, 2, 0 };
-short conf_tab_gx[] = { 1, 2, 2, 2, 2, 0 };
+short conf_tab[] = { 1, 2, 2, 2, 2, 0 };
 
 void do_in( void )
 {
@@ -122,10 +121,7 @@ int get_register_bit( unsigned char* reg, int n ) { return ( ( int )( reg[ n / 4
 void do_reset( void )
 {
     for ( int i = 0; i < 6; i++ ) {
-        if ( opt_gx )
-            saturn.mem_cntl[ i ].unconfigured = conf_tab_gx[ i ];
-        else
-            saturn.mem_cntl[ i ].unconfigured = conf_tab_sx[ i ];
+        saturn.mem_cntl[ i ].unconfigured = conf_tab[ i ];
 
         saturn.mem_cntl[ i ].config[ 0 ] = 0x0;
         saturn.mem_cntl[ i ].config[ 1 ] = 0x0;
@@ -200,10 +196,7 @@ void do_unconfigure( void )
 
     for ( i = 0; i < 6; i++ ) {
         if ( saturn.mem_cntl[ i ].config[ 0 ] == conf ) {
-            if ( opt_gx )
-                saturn.mem_cntl[ i ].unconfigured = conf_tab_gx[ i ];
-            else
-                saturn.mem_cntl[ i ].unconfigured = conf_tab_sx[ i ];
+            saturn.mem_cntl[ i ].unconfigured = conf_tab[ i ];
 
             saturn.mem_cntl[ i ].config[ 0 ] = 0x0;
             saturn.mem_cntl[ i ].config[ 1 ] = 0x0;
