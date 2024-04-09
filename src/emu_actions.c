@@ -293,7 +293,7 @@ void do_shutdown( void )
         saturn.int_pending = false;
     }
 
-    int wake = ( in_debugger ) ? 1 : 0;
+    bool wake = in_debugger;
     t1_t2_ticks ticks;
 
     do {
@@ -314,14 +314,14 @@ void do_shutdown( void )
             interrupt_called = 0;
             ui_get_event();
             if ( interrupt_called )
-                wake = 1;
+                wake = true;
 
             if ( saturn.timer2 <= 0 ) {
                 if ( saturn.t2_ctrl & 0x04 )
-                    wake = 1;
+                    wake = true;
 
                 if ( saturn.t2_ctrl & 0x02 ) {
-                    wake = 1;
+                    wake = true;
                     saturn.t2_ctrl |= 0x08;
                     do_interupt();
                 }
@@ -330,26 +330,26 @@ void do_shutdown( void )
             if ( saturn.timer1 <= 0 ) {
                 saturn.timer1 &= 0x0f;
                 if ( saturn.t1_ctrl & 0x04 )
-                    wake = 1;
+                    wake = true;
 
                 if ( saturn.t1_ctrl & 0x03 ) {
-                    wake = 1;
+                    wake = true;
                     saturn.t1_ctrl |= 0x08;
                     do_interupt();
                 }
             }
 
-            if ( wake == 0 ) {
+            if ( !wake ) {
                 interrupt_called = 0;
                 receive_char();
                 if ( interrupt_called )
-                    wake = 1;
+                    wake = true;
             }
         }
 
         if ( enter_debugger )
-            wake = 1;
-    } while ( wake == 0 );
+            wake = true;
+    } while ( !wake );
 
     stop_timer( IDLE_TIMER );
     start_timer( RUN_TIMER );

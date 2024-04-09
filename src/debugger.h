@@ -11,7 +11,7 @@
 #define CLASS_MNEMONICS 1
 
 extern int enter_debugger;
-extern int in_debugger;
+extern bool in_debugger;
 extern int exec_flags;
 
 /**************/

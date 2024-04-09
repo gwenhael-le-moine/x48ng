@@ -77,7 +77,7 @@
 #define EXEC_BKPT 1
 
 int enter_debugger = 0;
-int in_debugger = 0;
+bool in_debugger = false;
 int exec_flags = 0;
 
 static int continue_flag;
@@ -3990,7 +3990,7 @@ static void cmd_step( int argc, char** argv )
     if ( n <= 0 )
         return;
 
-    in_debugger = 1;
+    in_debugger = true;
     step_instruction();
 
     if ( exec_flags & EXEC_BKPT ) {
@@ -4196,16 +4196,16 @@ int debug( void )
         } else {
             printf( "Undefined command \"%s\". Try \"help\".\n", argv[ 0 ] );
         }
-        in_debugger = 0;
+        in_debugger = false;
 
     } while ( !continue_flag );
 
     /*
      * adjust the hp48's timers
      */
-    in_debugger = 1;
+    in_debugger = true;
     ticks = get_t1_t2();
-    in_debugger = 0;
+    in_debugger = false;
 
     if ( saturn.t2_ctrl & 0x01 ) {
         saturn.timer2 = ticks.t2_ticks;
