@@ -1,5 +1,5 @@
-#ifndef _X48_GUI_H
-#define _X48_GUI_H 1
+#ifndef _UI_H
+#define _UI_H 1
 
 #include "emulator.h" /* word_4; word_20; */
 
@@ -73,4 +73,4 @@ extern void ( *init_ui )( int argc, char** argv );
 extern void ui_init_LCD( void );
 
 extern void setup_frontend( void );
-#endif /* !_X48_GUI_H */
+#endif /* !_UI_H */

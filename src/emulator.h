@@ -1,5 +1,5 @@
-#ifndef _HP48_H
-#define _HP48_H 1
+#ifndef _EMULATOR_H
+#define _EMULATOR_H 1
 
 #include <stdint.h> /* int64_t */
 #include <stdbool.h>
@@ -366,4 +366,4 @@ extern int step_instruction( void );
 extern void schedule( void );
 extern void load_addr( word_20* dat, long addr, int n );
 
-#endif /* !_HP48_H */
+#endif /* !_EMULATOR_H */
