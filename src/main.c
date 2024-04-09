@@ -72,12 +72,12 @@ int main( int argc, char** argv )
     /* set the real time interval timer */
     /************************************/
     /*
-      Every 20000 µs setitimer will trigger a SIGALRM
+      Every <interval>µs setitimer will trigger a SIGALRM
       which will set got_alarm to true
       In emulate() got_alarm triggers LCD refresh and UI event handling
      */
     struct itimerval it;
-    int interval = 20000;
+    int interval = 15625;       /* 64Hz according to https://www.hpcalc.org/hp48/docs/faq/48faq-6.html */
     it.it_interval.tv_sec = 0;
     it.it_interval.tv_usec = interval;
     it.it_value.tv_sec = 0;
