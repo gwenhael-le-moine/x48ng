@@ -26,7 +26,7 @@ static long jumpaddr;
 unsigned long instructions = 0;
 unsigned long old_instr = 0;
 
-int rece_instr = 0;
+/* int rece_instr = 0; */
 bool device_check = false;
 
 int adj_time_pending = 0;
