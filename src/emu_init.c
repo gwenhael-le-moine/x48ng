@@ -133,10 +133,10 @@ void saturn_config_init( void )
     saturn.version[ 1 ] = VERSION_MINOR;
     saturn.version[ 2 ] = PATCHLEVEL;
     memset( &device, 0, sizeof( device ) );
-    device.display_touched = 1;
-    device.contrast_touched = 1;
-    device.baud_touched = 1;
-    device.ann_touched = 1;
+    device.display_touched = true;
+    device.contrast_touched = true;
+    device.baud_touched = true;
+    device.ann_touched = true;
     saturn.rcs = 0x0;
     saturn.tcs = 0x0;
     saturn.lbr = 0x0;
@@ -155,9 +155,9 @@ void init_saturn( void )
     saturn.version[ 2 ] = PATCHLEVEL;
     saturn.hexmode = HEX;
     saturn.rstkp = -1;
-    saturn.interruptable = 1;
-    saturn.int_pending = 0;
-    saturn.kbd_ien = 1;
+    saturn.interruptable = true;
+    saturn.int_pending = false;
+    saturn.kbd_ien = true;
     saturn.timer1 = 0;
     saturn.timer2 = 0x2000;
     saturn.bank_switch = 0;

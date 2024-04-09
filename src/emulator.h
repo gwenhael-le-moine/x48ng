@@ -105,53 +105,53 @@ typedef struct t1_t2_ticks {
 typedef struct device_t {
     int display_touched;
 
-    char contrast_touched;
+    bool contrast_touched;
 
-    char disp_test_touched;
+    bool disp_test_touched;     /* unused */
 
-    char crc_touched;
+    bool crc_touched;           /* unused */
 
-    char power_status_touched;
-    char power_ctrl_touched;
+    bool power_status_touched;  /* unused */
+    bool power_ctrl_touched;    /* unused */
 
-    char mode_touched;
+    bool mode_touched;          /* unused */
 
-    char ann_touched;
+    bool ann_touched;
 
-    char baud_touched;
+    bool baud_touched;
 
-    char card_ctrl_touched;
-    char card_status_touched;
+    bool card_ctrl_touched;     /* unused */
+    bool card_status_touched;   /* unused */
 
-    char ioc_touched;
+    bool ioc_touched;
 
-    char tcs_touched;
-    char rcs_touched;
+    bool tcs_touched;           /* unused */
+    bool rcs_touched;           /* unused */
 
-    char rbr_touched;
-    char tbr_touched;
+    bool rbr_touched;
+    bool tbr_touched;
 
-    char sreq_touched;
+    bool sreq_touched;          /* unused */
 
-    char ir_ctrl_touched;
+    bool ir_ctrl_touched;       /* unused */
 
-    char base_off_touched;
+    bool base_off_touched;      /* unused */
 
-    char lcr_touched;
-    char lbr_touched;
+    bool lcr_touched;           /* unused */
+    bool lbr_touched;           /* unused */
 
-    char scratch_touched;
-    char base_nibble_touched;
+    bool scratch_touched;       /* unused */
+    bool base_nibble_touched;   /* unused */
 
-    char unknown_touched;
+    bool unknown_touched;       /* unused */
 
-    char t1_ctrl_touched;
-    char t2_ctrl_touched;
+    bool t1_ctrl_touched;       /* unused */
+    bool t2_ctrl_touched;       /* unused */
 
-    char unknown2_touched;
+    bool unknown2_touched;      /* unused */
 
-    char t1_touched;
-    char t2_touched;
+    bool t1_touched;
+    bool t2_touched;
 } device_t;
 
 typedef struct keystate_t {
@@ -160,7 +160,7 @@ typedef struct keystate_t {
 
 typedef struct hpkey_t {
     int code;
-    short pressed;
+    bool pressed;
 } hpkey_t;
 
 typedef struct display_t {
@@ -214,9 +214,9 @@ typedef struct saturn_t {
 
     keystate_t keybuf;
 
-    unsigned char interruptable;
-    unsigned char int_pending;
-    unsigned char kbd_ien;
+    unsigned char interruptable; /* bool */
+    unsigned char int_pending;   /* bool */
+    unsigned char kbd_ien;       /* bool */
 
     word_4 disp_io;
 
@@ -307,7 +307,7 @@ extern display_t display;
 
 extern saturn_t saturn;
 
-extern int device_check;
+extern bool device_check;
 extern short port1_is_ram;
 extern long port1_mask;
 extern short port2_is_ram;

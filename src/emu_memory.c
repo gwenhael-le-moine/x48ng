@@ -47,7 +47,7 @@ void write_dev_mem( long addr, int val )
 {
     static int old_line_offset = -1;
 
-    device_check = 1;
+    device_check = true;
     schedule_event = 0;
     switch ( ( int )addr ) {
         case 0x100: /* DISPIO */
@@ -67,17 +67,17 @@ void write_dev_mem( long addr, int val )
             saturn.contrast_ctrl = val;
             display.contrast &= ~0x0f;
             display.contrast |= val;
-            device.contrast_touched = 1;
+            device.contrast_touched = true;
             return;
         case 0x102: /* DISPLAY TEST */
             display.contrast &= ~0xf0;
             display.contrast |= ( ( val & 0x1 ) << 4 );
-            device.contrast_touched = 1;
+            device.contrast_touched = true;
             /* Fall through */
         case 0x103: /* DISPLAY TEST */
             saturn.disp_test &= ~nibble_masks[ addr - 0x102 ];
             saturn.disp_test |= val << ( ( addr - 0x102 ) * 4 );
-            device.disp_test_touched = 1;
+            device.disp_test_touched = true;
             return;
         case 0x104:
         case 0x105:
@@ -88,25 +88,25 @@ void write_dev_mem( long addr, int val )
             return;
         case 0x108: /* POWER STATUS */
             saturn.power_status = val;
-            device.power_status_touched = 1;
+            device.power_status_touched = true;
             return;
         case 0x109: /* POWER CONTROL */
             saturn.power_ctrl = val;
-            device.power_ctrl_touched = 1;
+            device.power_ctrl_touched = true;
             return;
         case 0x10a: /* MODE */
             saturn.mode = val;
-            device.mode_touched = 1;
+            device.mode_touched = true;
             return;
         case 0x10b:
         case 0x10c: /* ANNUNC */
             saturn.annunc &= ~nibble_masks[ addr - 0x10b ];
             saturn.annunc |= val << ( ( addr - 0x10b ) * 4 );
-            device.ann_touched = 1;
+            device.ann_touched = true;
             return;
         case 0x10d: /* BAUD */
             saturn.baud = val;
-            device.baud_touched = 1;
+            device.baud_touched = true;
             return;
         case 0x10e: /* CARD CONTROL */
             saturn.card_ctrl = val;
@@ -114,13 +114,13 @@ void write_dev_mem( long addr, int val )
                 saturn.MP = 1;
             if ( saturn.card_ctrl & 0x01 )
                 do_interupt();
-            device.card_ctrl_touched = 1;
+            device.card_ctrl_touched = true;
             return;
         case 0x10f: /* CARD STATUS */
             return;
         case 0x110: /* IO CONTROL */
             saturn.io_ctrl = val;
-            device.ioc_touched = 1;
+            device.ioc_touched = true;
             return;
         case 0x111: /* RCS */
             saturn.rcs = val;
@@ -139,37 +139,37 @@ void write_dev_mem( long addr, int val )
             saturn.tbr &= ~nibble_masks[ addr - 0x116 ];
             saturn.tbr |= val << ( ( addr - 0x116 ) * 4 );
             saturn.tcs |= 0x01;
-            device.tbr_touched = 1;
+            device.tbr_touched = true;
             return;
         case 0x118:
         case 0x119: /* SERVICE REQ */
             saturn.sreq &= ~nibble_masks[ addr - 0x118 ];
             saturn.sreq |= val << ( ( addr - 0x118 ) * 4 );
-            device.sreq_touched = 1;
+            device.sreq_touched = true;
             return;
         case 0x11a: /* IR CONTROL */
             saturn.ir_ctrl = val;
-            device.ir_ctrl_touched = 1;
+            device.ir_ctrl_touched = true;
             return;
         case 0x11b: /* BASE NIB OFFSET */
             saturn.base_off = val;
-            device.base_off_touched = 1;
+            device.base_off_touched = true;
             return;
         case 0x11c: /* LED CONTROL */
             saturn.lcr = val;
-            device.lcr_touched = 1;
+            device.lcr_touched = true;
             return;
         case 0x11d: /* LED BUFFER */
             saturn.lbr = val;
-            device.lbr_touched = 1;
+            device.lbr_touched = true;
             return;
         case 0x11e: /* SCRATCH PAD */
             saturn.scratch = val;
-            device.scratch_touched = 1;
+            device.scratch_touched = true;
             return;
         case 0x11f: /* BASENIBBLE */
             saturn.base_nibble = val;
-            device.base_nibble_touched = 1;
+            device.base_nibble_touched = true;
             return;
         case 0x120:
         case 0x121:
@@ -218,15 +218,15 @@ void write_dev_mem( long addr, int val )
         case 0x12d: /* Dont know yet */
             saturn.unknown &= ~nibble_masks[ addr - 0x12a ];
             saturn.unknown |= val << ( ( addr - 0x12a ) * 4 );
-            device.unknown_touched = 1;
+            device.unknown_touched = true;
             return;
         case 0x12e: /* TIMER 1 CONTROL */
             saturn.t1_ctrl = val;
-            device.t1_ctrl_touched = 1;
+            device.t1_ctrl_touched = true;
             return;
         case 0x12f: /* TIMER 2 CONTROL */
             saturn.t2_ctrl = val;
-            device.t2_ctrl_touched = 1;
+            device.t2_ctrl_touched = true;
             return;
         case 0x130:
         case 0x131:
@@ -245,11 +245,11 @@ void write_dev_mem( long addr, int val )
         case 0x136: /* Dont know yet 2 */
             saturn.unknown2 &= ~nibble_masks[ addr - 0x135 ];
             saturn.unknown2 |= val << ( ( addr - 0x135 ) * 4 );
-            device.unknown2_touched = 1;
+            device.unknown2_touched = true;
             return;
         case 0x137: /* TIMER1 */
             saturn.timer1 = val;
-            device.t1_touched = 1;
+            device.t1_touched = true;
             return;
         case 0x138:
         case 0x139:
@@ -261,7 +261,7 @@ void write_dev_mem( long addr, int val )
         case 0x13f: /* TIMER2 */
             saturn.timer2 &= ~nibble_masks[ addr - 0x138 ];
             saturn.timer2 |= val << ( ( addr - 0x138 ) * 4 );
-            device.t2_touched = 1;
+            device.t2_touched = true;
             return;
         default:
             if ( verbose )
@@ -311,8 +311,8 @@ int read_dev_mem( long addr )
         case 0x114:
         case 0x115: /* RBR */
             saturn.rcs &= 0x0e;
-            device.rbr_touched = 1;
-            device_check = 1;
+            device.rbr_touched = true;
+            device_check = true;
             schedule_event = 0;
             return ( saturn.rbr >> ( ( addr - 0x114 ) * 4 ) ) & 0x0f;
         case 0x116:

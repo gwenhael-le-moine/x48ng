@@ -27,7 +27,7 @@ unsigned long instructions = 0;
 unsigned long old_instr = 0;
 
 int rece_instr = 0;
-int device_check = 0;
+bool device_check = false;
 
 int adj_time_pending = 0;
 
@@ -73,8 +73,6 @@ word_64 run;
 static word_20 jumpmasks[] = { 0xffffffff, 0xfffffff0, 0xffffff00, 0xfffff000, 0xffff0000, 0xfff00000, 0xff000000, 0xf0000000 };
 
 saturn_t saturn;
-
-extern int device_check;
 
 device_t device;
 
@@ -2182,7 +2180,7 @@ inline void schedule( void )
     schedule_event = sched_timer2;
 
     if ( device_check ) {
-        device_check = 0;
+        device_check = false;
         if ( ( sched_display -= steps ) <= 0 ) {
             if ( device.display_touched )
                 device.display_touched -= steps;
@@ -2198,37 +2196,37 @@ inline void schedule( void )
         }
 
         if ( device.display_touched > 0 )
-            device_check = 1;
+            device_check = true;
 
         if ( device.contrast_touched ) {
-            device.contrast_touched = 0;
+            device.contrast_touched = false;
             ui_adjust_contrast();
         }
 
         if ( device.ann_touched ) {
-            device.ann_touched = 0;
+            device.ann_touched = false;
             ui_draw_annunc();
         }
 
         /* serial */
         if ( device.baud_touched ) {
-            device.baud_touched = 0;
+            device.baud_touched = false;
             serial_baud( saturn.baud );
         }
 
         if ( device.ioc_touched ) {
-            device.ioc_touched = 0;
+            device.ioc_touched = false;
             if ( ( saturn.io_ctrl & 0x02 ) && ( saturn.rcs & 0x01 ) )
                 do_interupt();
         }
 
         if ( device.rbr_touched ) {
-            device.rbr_touched = 0;
+            device.rbr_touched = false;
             receive_char();
         }
 
         if ( device.tbr_touched ) {
-            device.tbr_touched = 0;
+            device.tbr_touched = false;
             transmit_char();
         }
 
@@ -2237,13 +2235,13 @@ inline void schedule( void )
             sched_timer1 = saturn.t1_tick;
             restart_timer( T1_TIMER );
             set_t1 = saturn.timer1;
-            device.t1_touched = 0;
+            device.t1_touched = false;
         }
 
         if ( device.t2_touched ) {
             saturn.t2_instr = 0;
             sched_timer2 = saturn.t2_tick;
-            device.t2_touched = 0;
+            device.t2_touched = false;
         }
         /* end check_device() */
 

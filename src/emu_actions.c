@@ -13,9 +13,9 @@
 static int interrupt_called = 0;
 extern long nibble_masks[ 16 ];
 
-bool got_alarm;
+bool got_alarm = false;
 
-int first_press = 1; // PATCH
+bool first_press = true; // PATCH
 
 int conf_bank1 = 0x00000;
 int conf_bank2 = 0x00000;
@@ -48,9 +48,9 @@ void do_in( void )
         for ( i = 0; i < 9; i++ )
             if ( out & ( 1 << i ) )
                 saturn.keybuf.rows[ i ] = 0;
-        first_press = 1;
+        first_press = true;
     } else
-        first_press = 0;
+        first_press = false;
 
     // FIN PATCH
 
@@ -124,19 +124,19 @@ void do_reset( void )
     }
 }
 
-void do_inton( void ) { saturn.kbd_ien = 1; }
+void do_inton( void ) { saturn.kbd_ien = true; }
 
-void do_intoff( void ) { saturn.kbd_ien = 0; }
+void do_intoff( void ) { saturn.kbd_ien = false; }
 
 void do_return_interupt( void )
 {
     if ( saturn.int_pending ) {
-        saturn.int_pending = 0;
-        saturn.interruptable = 0;
+        saturn.int_pending = false;
+        saturn.interruptable = false;
         saturn.PC = 0xf;
     } else {
         saturn.PC = pop_return_addr();
-        saturn.interruptable = 1;
+        saturn.interruptable = true;
 
         if ( adj_time_pending ) {
             schedule_event = 0;
@@ -151,7 +151,7 @@ void do_interupt( void )
     if ( saturn.interruptable ) {
         push_return_addr( saturn.PC );
         saturn.PC = 0xf;
-        saturn.interruptable = 0;
+        saturn.interruptable = false;
     }
 }
 
@@ -159,12 +159,12 @@ void do_kbd_int( void )
 {
     do_interupt();
     if ( !saturn.interruptable )
-        saturn.int_pending = 1;
+        saturn.int_pending = true;
 }
 
 void do_reset_interrupt_system( void )
 {
-    saturn.kbd_ien = 1;
+    saturn.kbd_ien = true;
     int gen_intr = 0;
     for ( int i = 0; i < 9; i++ ) {
         if ( saturn.keybuf.rows[ i ] != 0 ) {
@@ -289,8 +289,8 @@ void do_shutdown( void )
     start_timer( IDLE_TIMER );
 
     if ( is_zero_register( saturn.OUT, OUT_FIELD ) ) {
-        saturn.interruptable = 1;
-        saturn.int_pending = 0;
+        saturn.interruptable = true;
+        saturn.int_pending = false;
     }
 
     int wake = ( in_debugger ) ? 1 : 0;
@@ -500,10 +500,10 @@ void recall_n( unsigned char* reg, word_20 dat, int n )
 void press_key( int hpkey )
 {
     // Check not already pressed (may be important: avoids a useless do_kbd_int)
-    if ( keyboard[ hpkey ].pressed == 1 )
+    if ( keyboard[ hpkey ].pressed )
         return;
 
-    keyboard[ hpkey ].pressed = 1;
+    keyboard[ hpkey ].pressed = true;
 
     int code = keyboard[ hpkey ].code;
     if ( code == 0x8000 ) { /* HPKEY_ON */
@@ -527,10 +527,10 @@ void press_key( int hpkey )
 void release_key( int hpkey )
 {
     // Check not already released (not critical)
-    if ( keyboard[ hpkey ].pressed == 0 )
+    if ( !keyboard[ hpkey ].pressed )
         return;
 
-    keyboard[ hpkey ].pressed = 0;
+    keyboard[ hpkey ].pressed = false;
 
     int code = keyboard[ hpkey ].code;
     if ( code == 0x8000 ) {
