@@ -29,7 +29,7 @@ unsigned long old_instr = 0;
 /* int rece_instr = 0; */
 bool device_check = false;
 
-int adj_time_pending = 0;
+bool adj_time_pending = false;
 
 int set_t1;
 
@@ -2277,7 +2277,7 @@ inline void schedule( void )
                 }
             }
 
-            adj_time_pending = 0;
+            adj_time_pending = false;
 
             saturn.timer1 = set_t1 - ticks.t1_ticks;
             if ( ( saturn.t1_ctrl & 0x08 ) == 0 && saturn.timer1 <= 0 ) {
@@ -2289,7 +2289,7 @@ inline void schedule( void )
 
             saturn.timer1 &= 0x0f;
         } else
-            adj_time_pending = 1;
+            adj_time_pending = true;
     }
     if ( sched_adjtime < schedule_event )
         schedule_event = sched_adjtime;

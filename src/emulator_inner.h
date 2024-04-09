@@ -8,7 +8,7 @@
 #define T1_TIMER 0
 /* #define T2_TIMER 1 /\* unused? *\/ */
 
-extern int adj_time_pending;
+extern bool adj_time_pending;
 
 extern int start_fields[ 19 ];
 extern int end_fields[ 19 ];

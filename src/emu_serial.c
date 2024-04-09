@@ -156,6 +156,7 @@ int init_serial( void )
         {
             if ( verbose )
                 fprintf( stderr, "ioctl(IR, TCSETS) failed, errno = %d\n", errno );
+
             ir_fd = -1;
         }
     }
@@ -177,6 +178,7 @@ void serial_baud( int baud )
         {
             if ( verbose )
                 fprintf( stderr, "ioctl(IR,  TCGETS) failed, errno = %d\n", errno );
+
             ir_fd = -1;
             error = 1;
         }
@@ -266,6 +268,7 @@ void serial_baud( int baud )
     if ( ( ir_fd >= 0 ) && ( ( ttybuf.c_cflag & CBAUD ) == 0 ) ) {
         if ( verbose )
             fprintf( stderr, "can\'t set baud rate, using 9600\n" );
+
         ttybuf.c_cflag |= B9600;
     }
 #endif
@@ -278,6 +281,7 @@ void serial_baud( int baud )
         {
             if ( verbose )
                 fprintf( stderr, "ioctl(IR,  TCSETS) failed, errno = %d\n", errno );
+
             ir_fd = -1;
             error = 1;
         }
@@ -292,6 +296,7 @@ void serial_baud( int baud )
         {
             if ( verbose )
                 fprintf( stderr, "ioctl(wire, TCGETS) failed, errno = %d\n", errno );
+
             wire_fd = -1;
             ttyp = -1;
             error = 1;
@@ -341,6 +346,7 @@ void serial_baud( int baud )
     if ( ( ttyp >= 0 ) && ( ( ttybuf.c_cflag & CBAUD ) == 0 ) ) {
         if ( verbose )
             fprintf( stderr, "can\'t set baud rate, using 9600\n" );
+
         ttybuf.c_cflag |= B9600;
     }
 #endif
@@ -353,6 +359,7 @@ void serial_baud( int baud )
         {
             if ( verbose )
                 fprintf( stderr, "ioctl(wire, TCSETS) failed, errno = %d\n", errno );
+
             wire_fd = -1;
             ttyp = -1;
             error = 1;
@@ -367,17 +374,17 @@ void transmit_char( void )
     if ( saturn.ir_ctrl & 0x04 ) {
         if ( ir_fd == -1 ) {
             saturn.tcs &= 0x0e;
-            if ( saturn.io_ctrl & 0x04 ) {
+            if ( saturn.io_ctrl & 0x04 )
                 do_interupt();
-            }
+
             return;
         }
     } else {
         if ( wire_fd == -1 ) {
             saturn.tcs &= 0x0e;
-            if ( saturn.io_ctrl & 0x04 ) {
+            if ( saturn.io_ctrl & 0x04 )
                 do_interupt();
-            }
+
             return;
         }
     }
@@ -385,33 +392,28 @@ void transmit_char( void )
     if ( saturn.ir_ctrl & 0x04 ) {
         if ( write( ir_fd, &saturn.tbr, 1 ) == 1 ) {
             saturn.tcs &= 0x0e;
-            if ( saturn.io_ctrl & 0x04 ) {
+            if ( saturn.io_ctrl & 0x04 )
                 do_interupt();
-            }
         } else {
-            if ( errno != EAGAIN ) {
+            if ( errno != EAGAIN )
                 fprintf( stderr, "serial write error: %d\n", errno );
-            }
+
             saturn.tcs &= 0x0e;
-            if ( saturn.io_ctrl & 0x04 ) {
+            if ( saturn.io_ctrl & 0x04 )
                 do_interupt();
-            }
         }
     } else {
         if ( write( wire_fd, &saturn.tbr, 1 ) == 1 ) {
             saturn.tcs &= 0x0e;
-            if ( saturn.io_ctrl & 0x04 ) {
+            if ( saturn.io_ctrl & 0x04 )
                 do_interupt();
-            }
         } else {
-            if ( errno != EAGAIN ) {
-                if ( verbose )
-                    fprintf( stderr, "serial write error: %d\n", errno );
-            }
+            if ( errno != EAGAIN && verbose )
+                fprintf( stderr, "serial write error: %d\n", errno );
+
             saturn.tcs &= 0x0e;
-            if ( saturn.io_ctrl & 0x04 ) {
+            if ( saturn.io_ctrl & 0x04 )
                 do_interupt();
-            }
         }
     }
 }
