@@ -2349,7 +2349,7 @@ inline void schedule( void )
     schedule_event--;
 
     if ( got_alarm ) {
-        got_alarm = 0;
+        got_alarm = false;
 
         ui_refresh_LCD();
 

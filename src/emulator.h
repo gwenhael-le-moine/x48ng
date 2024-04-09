@@ -2,6 +2,7 @@
 #define _HP48_H 1
 
 #include <stdint.h> /* int64_t */
+#include <stdbool.h>
 
 #define DEC 10
 #define HEX 16
@@ -291,7 +292,7 @@ typedef struct saturn_t {
 #define NIBBLES_PER_ROW 0x22
 #define NIBBLES_NB_BITS 4
 
-extern int got_alarm;
+extern bool got_alarm;
 
 extern int set_t1;
 

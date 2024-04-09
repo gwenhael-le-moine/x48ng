@@ -21,7 +21,7 @@ void signal_handler( int sig )
             enter_debugger |= USER_INTERRUPT;
             break;
         case SIGALRM:
-            got_alarm = 1;
+            got_alarm = true;
             break;
         case SIGPIPE:
             exit_emulator();
