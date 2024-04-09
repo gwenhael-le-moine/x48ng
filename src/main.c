@@ -113,7 +113,7 @@ int main( int argc, char** argv )
             emulate_debug();
 
         debug();
-    } while ( 1 );
+    } while ( true );
 
     return 0;
 }
