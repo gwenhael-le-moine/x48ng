@@ -31,16 +31,10 @@ void signal_handler( int sig )
     }
 }
 
+
 int main( int argc, char** argv )
 {
     setlocale( LC_ALL, "C" );
-
-    /**********/
-    /* getopt */
-    /**********/
-    parse_args( argc, argv );
-
-    setup_frontend();
 
     /*****************************************/
     /* handlers for SIGALRM, SIGPIPE */
@@ -77,6 +71,11 @@ int main( int argc, char** argv )
     /************************************/
     /* set the real time interval timer */
     /************************************/
+    /*
+      Every 20000 µs setitimer will trigger a SIGALRM
+      which will set got_alarm to true
+      In emulate() got_alarm triggers LCD refresh and UI event handling
+     */
     struct itimerval it;
     int interval = 20000;
     it.it_interval.tv_sec = 0;
@@ -88,6 +87,9 @@ int main( int argc, char** argv )
     /**********************************************************/
     /* Set stdin flags to not include O_NDELAY and O_NONBLOCK */
     /**********************************************************/
+    /*
+      I don't know what this is for?
+     */
     long flags;
     flags = fcntl( STDIN_FILENO, F_GETFL, 0 );
     flags &= ~O_NDELAY;
@@ -97,11 +99,17 @@ int main( int argc, char** argv )
     /********************/
     /* initialize stuff */
     /********************/
+    parse_args( argc, argv );
+
+    /* Emulator */
     init_emulator();
     init_serial();
     init_display();
-    ui_init_LCD();
+
+    /* (G)UI */
+    setup_frontend();
     init_ui( argc, argv );
+    ui_init_LCD();
 
     /************************/
     /* Start emulation loop */
