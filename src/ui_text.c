@@ -15,13 +15,12 @@
 #include <ncursesw/curses.h>
 
 #include "runtime_options.h" /* mono, gray, small, tiny, progname */
-#include "ui.h"              /* last_annunc_state, lcd_nibbles_buffer, DISP_ROWS */
+#include "ui.h"              /* last_annunc_state, lcd_nibbles_buffer_0, DISP_ROWS */
 
 #define LCD_WIDTH 131
-#define LCD_HEIGHT 64
 #define LCD_OFFSET_X 1
 #define LCD_OFFSET_Y 1
-#define LCD_BOTTOM LCD_OFFSET_Y + ( small ? ( LCD_HEIGHT / 2 ) : tiny ? ( LCD_HEIGHT / 4 ) : LCD_HEIGHT )
+#define LCD_BOTTOM LCD_OFFSET_Y + ( small ? ( DISP_ROWS / 2 ) : tiny ? ( DISP_ROWS / 4 ) : DISP_ROWS )
 #define LCD_RIGHT LCD_OFFSET_X + ( ( small || tiny ) ? ( LCD_WIDTH / 2 ) + 1 : LCD_WIDTH )
 
 #define LCD_COLOR_BG 48
@@ -77,20 +76,20 @@ static inline void ncurses_draw_lcd_tiny( void )
     if ( !mono && has_colors() )
         attron( COLOR_PAIR( LCD_COLORS_PAIR ) );
 
-    for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
+    for ( int y = 0; y < DISP_ROWS; y += step_y ) {
         wcscpy( line, L"" );
 
         for ( int nibble_x = 0; nibble_x < NIBBLES_PER_ROW - 1; ++nibble_x ) {
-            nibble_top = lcd_nibbles_buffer[ y ][ nibble_x ];
+            nibble_top = lcd_nibbles_buffer_0[ y ][ nibble_x ];
             nibble_top &= 0x0f;
 
-            nibble_middle_top = lcd_nibbles_buffer[ y + 1 ][ nibble_x ];
+            nibble_middle_top = lcd_nibbles_buffer_0[ y + 1 ][ nibble_x ];
             nibble_middle_top &= 0x0f;
 
-            nibble_middle_bottom = lcd_nibbles_buffer[ y + 2 ][ nibble_x ];
+            nibble_middle_bottom = lcd_nibbles_buffer_0[ y + 2 ][ nibble_x ];
             nibble_middle_bottom &= 0x0f;
 
-            nibble_bottom = lcd_nibbles_buffer[ y + 3 ][ nibble_x ];
+            nibble_bottom = lcd_nibbles_buffer_0[ y + 3 ][ nibble_x ];
             nibble_bottom &= 0x0f;
 
             for ( int bit_x = 0; bit_x < NIBBLES_NB_BITS; bit_x += step_x ) {
@@ -160,13 +159,13 @@ static inline void ncurses_draw_lcd_small( void )
     if ( !mono && has_colors() )
         attron( COLOR_PAIR( LCD_COLORS_PAIR ) );
 
-    for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
+    for ( int y = 0; y < DISP_ROWS; y += step_y ) {
         wcscpy( line, L"" );
 
         for ( int nibble_x = 0; nibble_x < NIBBLES_PER_ROW - 1; ++nibble_x ) {
-            nibble_top = lcd_nibbles_buffer[ y ][ nibble_x ];
+            nibble_top = lcd_nibbles_buffer_0[ y ][ nibble_x ];
             nibble_top &= 0x0f;
-            nibble_bottom = lcd_nibbles_buffer[ y + 1 ][ nibble_x ];
+            nibble_bottom = lcd_nibbles_buffer_0[ y + 1 ][ nibble_x ];
             nibble_bottom &= 0x0f;
 
             for ( int bit_x = 0; bit_x < NIBBLES_NB_BITS; bit_x += step_x ) {
@@ -201,11 +200,11 @@ static inline void ncurses_draw_lcd_fullsize( void )
     if ( !mono && has_colors() )
         attron( COLOR_PAIR( LCD_COLORS_PAIR ) );
 
-    for ( int y = 0; y < LCD_HEIGHT; ++y ) {
+    for ( int y = 0; y < DISP_ROWS; ++y ) {
         wcscpy( line, L"" );
 
         for ( int nibble_x = 0; nibble_x < NIBBLES_PER_ROW; ++nibble_x ) {
-            nibble = lcd_nibbles_buffer[ y ][ nibble_x ];
+            nibble = lcd_nibbles_buffer_0[ y ][ nibble_x ];
             nibble &= 0x0f;
 
             init_x = nibble_x * NIBBLES_NB_BITS;
@@ -254,10 +253,10 @@ static inline void draw_row( long addr, int row )
 
     for ( int i = 0; i < line_length; i++ ) {
         nibble = read_nibble( addr + i );
-        if ( nibble == lcd_nibbles_buffer[ row ][ i ] )
+        if ( nibble == lcd_nibbles_buffer_0[ row ][ i ] )
             continue;
 
-        lcd_nibbles_buffer[ row ][ i ] = nibble;
+        lcd_nibbles_buffer_0[ row ][ i ] = nibble;
         draw_nibble( i, row, nibble );
     }
 }
@@ -276,12 +275,12 @@ void text_update_LCD( void )
 
         addr = display.disp_start;
         if ( display.offset != old_offset ) {
-            memset( lcd_nibbles_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
+            memset( lcd_nibbles_buffer_0, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
 
             old_offset = display.offset;
         }
         if ( display.lines != old_lines ) {
-            memset( &lcd_nibbles_buffer[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
+            memset( &lcd_nibbles_buffer_0[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
 
             old_lines = display.lines;
         }
@@ -297,7 +296,7 @@ void text_update_LCD( void )
             }
         }
     } else
-        memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
+        memset( lcd_nibbles_buffer_0, 0xf0, sizeof( lcd_nibbles_buffer_0 ) );
 
     /* text UI specific from here */
     ncurses_draw_lcd();
@@ -321,17 +320,17 @@ void text_disp_draw_nibble( word_20 addr, word_4 val )
         if ( y < 0 || y > 63 )
             return;
 
-        if ( val == lcd_nibbles_buffer[ y ][ x ] )
+        if ( val == lcd_nibbles_buffer_0[ y ][ x ] )
             return;
 
-        lcd_nibbles_buffer[ y ][ x ] = val;
+        lcd_nibbles_buffer_0[ y ][ x ] = val;
         draw_nibble( x, y, val );
     } else {
         for ( y = 0; y < display.lines; y++ ) {
-            if ( val == lcd_nibbles_buffer[ y ][ x ] )
+            if ( val == lcd_nibbles_buffer_0[ y ][ x ] )
                 break;
 
-            lcd_nibbles_buffer[ y ][ x ] = val;
+            lcd_nibbles_buffer_0[ y ][ x ] = val;
             draw_nibble( x, y, val );
         }
     }
@@ -347,10 +346,10 @@ void text_menu_draw_nibble( word_20 addr, word_4 val )
     x = offset % NIBBLES_PER_ROW;
     y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
 
-    if ( val == lcd_nibbles_buffer[ y ][ x ] )
+    if ( val == lcd_nibbles_buffer_0[ y ][ x ] )
         return;
 
-    lcd_nibbles_buffer[ y ][ x ] = val;
+    lcd_nibbles_buffer_0[ y ][ x ] = val;
     draw_nibble( x, y, val );
 }
 
