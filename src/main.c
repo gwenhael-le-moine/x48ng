@@ -31,7 +31,6 @@ void signal_handler( int sig )
     }
 }
 
-
 int main( int argc, char** argv )
 {
     setlocale( LC_ALL, "C" );
@@ -77,7 +76,7 @@ int main( int argc, char** argv )
       In emulate() got_alarm triggers LCD refresh and UI event handling
      */
     struct itimerval it;
-    int interval = 15625;       /* 64Hz according to https://www.hpcalc.org/hp48/docs/faq/48faq-6.html */
+    int interval = 15625; /* 64Hz according to https://www.hpcalc.org/hp48/docs/faq/48faq-6.html */
     it.it_interval.tv_sec = 0;
     it.it_interval.tv_usec = interval;
     it.it_value.tv_sec = 0;
@@ -108,7 +107,7 @@ int main( int argc, char** argv )
 
     /* (G)UI */
     ui_init_LCD();
-    setup_frontend();           /* points init_ui to the correct function */
+    setup_frontend(); /* points init_ui to the correct function */
     init_ui( argc, argv );
 
     /************************/

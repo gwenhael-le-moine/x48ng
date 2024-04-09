@@ -355,9 +355,7 @@ void text_draw_annunc( void )
         mvaddwstr( 0, 4 + ( i * 4 ), ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] ) ? annunciators_icons[ i ] : L" " );
 }
 
-void text_adjust_contrast( void ) {
-    text_update_LCD();
-}
+void text_adjust_contrast( void ) { text_update_LCD(); }
 
 int text_get_event( void )
 {
