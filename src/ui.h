@@ -68,7 +68,7 @@ extern void ( *ui_draw_annunc )( void );
 extern void ( *init_ui )( int argc, char** argv );
 
 /*********************************/
-/* used in: debugger.c, ui_sdl.c */
+/* used in: debugger.c */
 /*********************************/
 extern void ui_init_LCD( void );
 

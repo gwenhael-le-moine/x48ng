@@ -312,7 +312,8 @@ void do_shutdown( void )
             set_t1 = ticks.t1_ticks;
 
             interrupt_called = 0;
-            if ( ui_get_event() && interrupt_called )
+            ui_get_event();
+            if ( interrupt_called )
                 wake = 1;
 
             if ( saturn.timer2 <= 0 ) {

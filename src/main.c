@@ -107,9 +107,9 @@ int main( int argc, char** argv )
     init_display();
 
     /* (G)UI */
-    setup_frontend();
-    init_ui( argc, argv );
     ui_init_LCD();
+    setup_frontend();           /* points init_ui to the correct function */
+    init_ui( argc, argv );
 
     /************************/
     /* Start emulation loop */
