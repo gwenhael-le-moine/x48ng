@@ -10,7 +10,7 @@
 
 #include "debugger.h" /* in_debugger, enter_debugger */
 
-static int interrupt_called = 0;
+static bool interrupt_called = false;
 extern long nibble_masks[ 16 ];
 
 bool got_alarm = false;
@@ -147,7 +147,7 @@ void do_return_interupt( void )
 
 void do_interupt( void )
 {
-    interrupt_called = 1;
+    interrupt_called = true;
     if ( saturn.interruptable ) {
         push_return_addr( saturn.PC );
         saturn.PC = 0xf;
@@ -311,7 +311,7 @@ void do_shutdown( void )
             saturn.timer1 = set_t1 - ticks.t1_ticks;
             set_t1 = ticks.t1_ticks;
 
-            interrupt_called = 0;
+            interrupt_called = false;
             ui_get_event();
             if ( interrupt_called )
                 wake = true;
@@ -340,7 +340,7 @@ void do_shutdown( void )
             }
 
             if ( !wake ) {
-                interrupt_called = 0;
+                interrupt_called = false;
                 receive_char();
                 if ( interrupt_called )
                     wake = true;

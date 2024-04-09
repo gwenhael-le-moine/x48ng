@@ -18,14 +18,14 @@
 #define RAM_SIZE_SX 0x10000
 #define RAM_SIZE_GX 0x40000
 
-short rom_is_new = 1;
+bool rom_is_new = true;
 long ram_size;
 long port1_size;
 long port1_mask;
-short port1_is_ram;
+bool port1_is_ram;
 long port2_size;
 long port2_mask;
-short port2_is_ram;
+bool port2_is_ram;
 
 hpkey_t keyboard[ 49 ] = {
     /* From top left to bottom right */
@@ -114,12 +114,12 @@ int read_rom( const char* fname )
 
     port1_size = 0;
     port1_mask = 0;
-    port1_is_ram = 0;
+    port1_is_ram = false;
     saturn.port1 = ( unsigned char* )0;
 
     port2_size = 0;
     port2_mask = 0;
-    port2_is_ram = 0;
+    port2_is_ram = false;
     saturn.port2 = ( unsigned char* )0;
 
     saturn.card_status = 0;
@@ -560,7 +560,7 @@ int read_files( void )
     if ( verbose )
         printf( "read %s\n", normalized_rom_path );
 
-    rom_is_new = 0;
+    rom_is_new = false;
 
     /**************************************************/
     /* 2. read saved state from ~/.x48ng/state into fp */
@@ -663,9 +663,9 @@ int read_files( void )
                     fprintf( stderr, "can\'t malloc PORT1[%ld]\n", port1_size );
             } else if ( !read_mem_file( normalized_port1_path, saturn.port1, port1_size ) ) {
                 port1_size = 0;
-                port1_is_ram = 0;
+                port1_is_ram = false;
             } else {
-                port1_is_ram = ( st.st_mode & S_IWUSR ) ? 1 : 0;
+                port1_is_ram = st.st_mode & S_IWUSR;
                 port1_mask = port1_size - 1;
             }
         }
@@ -684,7 +684,7 @@ int read_files( void )
     /********************************************************/
     port2_size = 0;
     port2_mask = 0;
-    port2_is_ram = 0;
+    port2_is_ram = false;
     saturn.port2 = ( unsigned char* )0;
 
     if ( stat( normalized_port2_path, &st ) >= 0 ) {
@@ -696,9 +696,9 @@ int read_files( void )
                     fprintf( stderr, "can\'t malloc PORT2[%ld]\n", port2_size );
             } else if ( !read_mem_file( normalized_port2_path, saturn.port2, port2_size ) ) {
                 port2_size = 0;
-                port2_is_ram = 0;
+                port2_is_ram = false;
             } else {
-                port2_is_ram = ( st.st_mode & S_IWUSR ) ? 1 : 0;
+                port2_is_ram = st.st_mode & S_IWUSR;
                 port2_mask = port2_size - 1;
             }
         }
@@ -958,12 +958,12 @@ int write_state_file( char* filename )
 int write_files( void )
 {
     struct stat st;
-    int make_dir = 0;
+    bool make_dir = false;
     int ram_size = opt_gx ? RAM_SIZE_GX : RAM_SIZE_SX;
 
     if ( stat( normalized_config_path, &st ) == -1 ) {
         if ( errno == ENOENT ) {
-            make_dir = 1;
+            make_dir = true;
         } else {
             if ( verbose )
                 fprintf( stderr, "can\'t stat %s, saving to /tmp\n", normalized_config_path );

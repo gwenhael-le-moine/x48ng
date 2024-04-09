@@ -29,7 +29,7 @@ int main( int argc, char** argv )
         exit( 1 );
     }
 
-    ver_addr = ( opt_gx != 0 ) ? 0x7ffbf : 0x7fff0;
+    ver_addr = opt_gx ? 0x7ffbf : 0x7fff0;
 
     for ( i = 0; i < 6; i++ ) {
         version[ i ] = rom[ ver_addr + 2 * i + 1 ] << 4;

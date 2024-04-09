@@ -308,9 +308,9 @@ extern display_t display;
 extern saturn_t saturn;
 
 extern bool device_check;
-extern short port1_is_ram;
+extern bool port1_is_ram;
 extern long port1_mask;
-extern short port2_is_ram;
+extern bool port2_is_ram;
 extern long port2_mask;
 
 extern hpkey_t keyboard[ NB_KEYS ];
