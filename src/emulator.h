@@ -107,51 +107,51 @@ typedef struct device_t {
 
     bool contrast_touched;
 
-    bool disp_test_touched;     /* unused */
-
-    bool crc_touched;           /* unused */
-
-    bool power_status_touched;  /* unused */
-    bool power_ctrl_touched;    /* unused */
-
-    bool mode_touched;          /* unused */
-
     bool ann_touched;
 
     bool baud_touched;
 
-    bool card_ctrl_touched;     /* unused */
-    bool card_status_touched;   /* unused */
-
     bool ioc_touched;
-
-    bool tcs_touched;           /* unused */
-    bool rcs_touched;           /* unused */
 
     bool rbr_touched;
     bool tbr_touched;
 
-    bool sreq_touched;          /* unused */
-
-    bool ir_ctrl_touched;       /* unused */
-
-    bool base_off_touched;      /* unused */
-
-    bool lcr_touched;           /* unused */
-    bool lbr_touched;           /* unused */
-
-    bool scratch_touched;       /* unused */
-    bool base_nibble_touched;   /* unused */
-
-    bool unknown_touched;       /* unused */
-
-    bool t1_ctrl_touched;       /* unused */
-    bool t2_ctrl_touched;       /* unused */
-
-    bool unknown2_touched;      /* unused */
-
     bool t1_touched;
     bool t2_touched;
+
+    /* bool disp_test_touched;     /\* unused *\/ */
+
+    /* bool crc_touched;           /\* unused *\/ */
+
+    /* bool power_status_touched;  /\* unused *\/ */
+    /* bool power_ctrl_touched;    /\* unused *\/ */
+
+    /* bool mode_touched;          /\* unused *\/ */
+
+    /* bool card_ctrl_touched;     /\* unused *\/ */
+    /* bool card_status_touched;   /\* unused *\/ */
+
+    /* bool tcs_touched;           /\* unused *\/ */
+    /* bool rcs_touched;           /\* unused *\/ */
+
+    /* bool sreq_touched;          /\* unused *\/ */
+
+    /* bool ir_ctrl_touched;       /\* unused *\/ */
+
+    /* bool base_off_touched;      /\* unused *\/ */
+
+    /* bool lcr_touched;           /\* unused *\/ */
+    /* bool lbr_touched;           /\* unused *\/ */
+
+    /* bool scratch_touched;       /\* unused *\/ */
+    /* bool base_nibble_touched;   /\* unused *\/ */
+
+    /* bool unknown_touched;       /\* unused *\/ */
+
+    /* bool t1_ctrl_touched;       /\* unused *\/ */
+    /* bool t2_ctrl_touched;       /\* unused *\/ */
+
+    /* bool unknown2_touched;      /\* unused *\/ */
 } device_t;
 
 typedef struct keystate_t {

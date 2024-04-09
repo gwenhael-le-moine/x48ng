@@ -77,7 +77,7 @@ void write_dev_mem( long addr, int val )
         case 0x103: /* DISPLAY TEST */
             saturn.disp_test &= ~nibble_masks[ addr - 0x102 ];
             saturn.disp_test |= val << ( ( addr - 0x102 ) * 4 );
-            device.disp_test_touched = true;
+            /* device.disp_test_touched = true; */
             return;
         case 0x104:
         case 0x105:
@@ -88,15 +88,15 @@ void write_dev_mem( long addr, int val )
             return;
         case 0x108: /* POWER STATUS */
             saturn.power_status = val;
-            device.power_status_touched = true;
+            /* device.power_status_touched = true; */
             return;
         case 0x109: /* POWER CONTROL */
             saturn.power_ctrl = val;
-            device.power_ctrl_touched = true;
+            /* device.power_ctrl_touched = true; */
             return;
         case 0x10a: /* MODE */
             saturn.mode = val;
-            device.mode_touched = true;
+            /* device.mode_touched = true; */
             return;
         case 0x10b:
         case 0x10c: /* ANNUNC */
@@ -114,7 +114,7 @@ void write_dev_mem( long addr, int val )
                 saturn.MP = 1;
             if ( saturn.card_ctrl & 0x01 )
                 do_interupt();
-            device.card_ctrl_touched = true;
+            /* device.card_ctrl_touched = true; */
             return;
         case 0x10f: /* CARD STATUS */
             return;
@@ -145,31 +145,31 @@ void write_dev_mem( long addr, int val )
         case 0x119: /* SERVICE REQ */
             saturn.sreq &= ~nibble_masks[ addr - 0x118 ];
             saturn.sreq |= val << ( ( addr - 0x118 ) * 4 );
-            device.sreq_touched = true;
+            /* device.sreq_touched = true; */
             return;
         case 0x11a: /* IR CONTROL */
             saturn.ir_ctrl = val;
-            device.ir_ctrl_touched = true;
+            /* device.ir_ctrl_touched = true; */
             return;
         case 0x11b: /* BASE NIB OFFSET */
             saturn.base_off = val;
-            device.base_off_touched = true;
+            /* device.base_off_touched = true; */
             return;
         case 0x11c: /* LED CONTROL */
             saturn.lcr = val;
-            device.lcr_touched = true;
+            /* device.lcr_touched = true; */
             return;
         case 0x11d: /* LED BUFFER */
             saturn.lbr = val;
-            device.lbr_touched = true;
+            /* device.lbr_touched = true; */
             return;
         case 0x11e: /* SCRATCH PAD */
             saturn.scratch = val;
-            device.scratch_touched = true;
+            /* device.scratch_touched = true; */
             return;
         case 0x11f: /* BASENIBBLE */
             saturn.base_nibble = val;
-            device.base_nibble_touched = true;
+            /* device.base_nibble_touched = true; */
             return;
         case 0x120:
         case 0x121:
@@ -218,15 +218,15 @@ void write_dev_mem( long addr, int val )
         case 0x12d: /* Dont know yet */
             saturn.unknown &= ~nibble_masks[ addr - 0x12a ];
             saturn.unknown |= val << ( ( addr - 0x12a ) * 4 );
-            device.unknown_touched = true;
+            /* device.unknown_touched = true; */
             return;
         case 0x12e: /* TIMER 1 CONTROL */
             saturn.t1_ctrl = val;
-            device.t1_ctrl_touched = true;
+            /* device.t1_ctrl_touched = true; */
             return;
         case 0x12f: /* TIMER 2 CONTROL */
             saturn.t2_ctrl = val;
-            device.t2_ctrl_touched = true;
+            /* device.t2_ctrl_touched = true; */
             return;
         case 0x130:
         case 0x131:
@@ -245,7 +245,7 @@ void write_dev_mem( long addr, int val )
         case 0x136: /* Dont know yet 2 */
             saturn.unknown2 &= ~nibble_masks[ addr - 0x135 ];
             saturn.unknown2 |= val << ( ( addr - 0x135 ) * 4 );
-            device.unknown2_touched = true;
+            /* device.unknown2_touched = true; */
             return;
         case 0x137: /* TIMER1 */
             saturn.timer1 = val;
