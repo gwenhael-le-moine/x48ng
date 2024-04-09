@@ -237,12 +237,6 @@ static inline void ncurses_draw_lcd( void )
         ncurses_draw_lcd_fullsize();
 }
 
-/* TODO: not specific to tui  */
-static inline void draw_nibble( int col, int row, int val )
-{
-    /* Dummy, NCurses version draws the whole LCD at once at the end of update_LCD() */
-}
-
 /* TODO: duplicate of ui_sdl.c:draw_row()  */
 static inline void draw_row( long addr, int row )
 {
@@ -258,7 +252,6 @@ static inline void draw_row( long addr, int row )
             continue;
 
         lcd_nibbles_buffer[ row ][ i ] = nibble;
-        draw_nibble( i, row, nibble );
     }
 }
 
@@ -268,13 +261,13 @@ static inline void draw_row( long addr, int row )
 /* TODO: quasi-duplicate of ui_sdl.c:sdl_update_LCD()  */
 void text_update_LCD( void )
 {
+    /* First populate lcd_nibbles_buffer */
     if ( display.on ) {
         int i;
-        long addr;
+        long addr = display.disp_start;
         static int old_offset = -1;
         static int old_lines = -1;
 
-        addr = display.disp_start;
         if ( display.offset != old_offset ) {
             memset( lcd_nibbles_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
 
@@ -297,14 +290,11 @@ void text_update_LCD( void )
             }
         }
     } else
-        memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) );
+        ui_init_LCD();
 
-    /* text UI specific from here */
+    /* Then actually draw from lcd_nibbles_buffer onto screen */
     ncurses_draw_lcd();
 }
-
-/* TODO: duplicate of ui_sdl.c:sdl_refresh_LCD()  */
-void text_refresh_LCD( void ) {}
 
 /* TODO: duplicate of ui_sdl.c:sdl_disp_draw_nibble()  */
 void text_disp_draw_nibble( word_20 addr, word_4 val )
@@ -325,14 +315,12 @@ void text_disp_draw_nibble( word_20 addr, word_4 val )
             return;
 
         lcd_nibbles_buffer[ y ][ x ] = val;
-        draw_nibble( x, y, val );
     } else {
         for ( y = 0; y < display.lines; y++ ) {
             if ( val == lcd_nibbles_buffer[ y ][ x ] )
                 break;
 
             lcd_nibbles_buffer[ y ][ x ] = val;
-            draw_nibble( x, y, val );
         }
     }
 }
@@ -351,7 +339,6 @@ void text_menu_draw_nibble( word_20 addr, word_4 val )
         return;
 
     lcd_nibbles_buffer[ y ][ x ] = val;
-    draw_nibble( x, y, val );
 }
 
 void text_draw_annunc( void )
@@ -368,7 +355,9 @@ void text_draw_annunc( void )
         mvaddwstr( 0, 4 + ( i * 4 ), ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] ) ? annunciators_icons[ i ] : L" " );
 }
 
-void text_adjust_contrast( void ) { /* Dummy, NCurses version doesn't hand contrast (yet?) */ }
+void text_adjust_contrast( void ) {
+    text_update_LCD();
+}
 
 int text_get_event( void )
 {
@@ -568,8 +557,6 @@ int text_get_event( void )
             press_key( hpkey );
     }
 
-    text_update_LCD();
-
     return 1;
 }
 
@@ -580,7 +567,7 @@ void init_text_ui( int argc, char** argv )
     ui_menu_draw_nibble = text_menu_draw_nibble;
     ui_get_event = text_get_event;
     ui_update_LCD = text_update_LCD;
-    ui_refresh_LCD = text_refresh_LCD;
+    ui_refresh_LCD = text_update_LCD;
     ui_adjust_contrast = text_adjust_contrast;
     ui_draw_annunc = text_draw_annunc;
 
