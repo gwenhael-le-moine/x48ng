@@ -49,7 +49,7 @@ long sched_timer2;
 #define SCHED_STATISTICS 0x7ffff
 #define SCHED_NEVER 0x7fffffff
 
-#define NR_SAMPLES 10
+#define NB_SAMPLES 10
 
 long sched_instr_rollover = SCHED_INSTR_ROLLOVER;
 long sched_receive = SCHED_RECEIVE;
@@ -2320,9 +2320,9 @@ inline void schedule( void )
         delta_i = instructions - old_stat_instr;
         old_stat_instr = instructions;
         if ( delta_t_1 > 0 ) {
-            t1_i_per_tick = ( ( NR_SAMPLES - 1 ) * t1_i_per_tick + ( delta_i / delta_t_16 ) ) / NR_SAMPLES;
+            t1_i_per_tick = ( ( NB_SAMPLES - 1 ) * t1_i_per_tick + ( delta_i / delta_t_16 ) ) / NB_SAMPLES;
             t2_i_per_tick = t1_i_per_tick / 512;
-            saturn.i_per_s = ( ( NR_SAMPLES - 1 ) * saturn.i_per_s + ( delta_i / delta_t_1 ) ) / NR_SAMPLES;
+            saturn.i_per_s = ( ( NB_SAMPLES - 1 ) * saturn.i_per_s + ( delta_i / delta_t_1 ) ) / NB_SAMPLES;
         } else {
             t1_i_per_tick = 8192;
             t2_i_per_tick = 16;

@@ -13,7 +13,7 @@
 #include "runtime_options.h"
 
 #define X48_MAGIC 0x48503438
-#define NR_CONFIG 8
+#define NB_CONFIG 8
 
 #define RAM_SIZE_SX 0x10000
 #define RAM_SIZE_GX 0x40000
@@ -161,7 +161,7 @@ void init_saturn( void )
     saturn.timer1 = 0;
     saturn.timer2 = 0x2000;
     saturn.bank_switch = 0;
-    for ( int i = 0; i < NR_MCTL; i++ ) {
+    for ( int i = 0; i < NB_MCTL; i++ ) {
         if ( i == 0 )
             saturn.mem_cntl[ i ].unconfigured = 1;
         else if ( i == 5 )
@@ -347,7 +347,7 @@ int read_state_file( FILE* fp )
             return 0;
     if ( !read_8( fp, &saturn.CARRY ) )
         return 0;
-    for ( i = 0; i < NR_PSTAT; i++ )
+    for ( i = 0; i < NB_PSTAT; i++ )
         if ( !read_8( fp, &saturn.PSTAT[ i ] ) )
             return 0;
     if ( !read_8( fp, &saturn.XM ) )
@@ -360,7 +360,7 @@ int read_state_file( FILE* fp )
         return 0;
     if ( !read_8( fp, &saturn.hexmode ) )
         return 0;
-    for ( i = 0; i < NR_RSTK; i++ )
+    for ( i = 0; i < NB_RSTK; i++ )
         if ( !read_32( fp, &saturn.rstk[ i ] ) )
             return 0;
     if ( !read_16( fp, ( word_16* )&saturn.rstkp ) )
@@ -452,7 +452,7 @@ int read_state_file( FILE* fp )
         return 0;
     if ( !read_16( fp, ( word_16* )&saturn.bank_switch ) )
         return 0;
-    for ( i = 0; i < NR_MCTL; i++ ) {
+    for ( i = 0; i < NB_MCTL; i++ ) {
         if ( !read_16( fp, &saturn.mem_cntl[ i ].unconfigured ) )
             return 0;
         if ( !read_32( fp, &saturn.mem_cntl[ i ].config[ 0 ] ) )
@@ -887,14 +887,14 @@ int write_state_file( char* filename )
     for ( i = 0; i < 3; i++ )
         write_8( fp, &saturn.OUT[ i ] );
     write_8( fp, &saturn.CARRY );
-    for ( i = 0; i < NR_PSTAT; i++ )
+    for ( i = 0; i < NB_PSTAT; i++ )
         write_8( fp, &saturn.PSTAT[ i ] );
     write_8( fp, &saturn.XM );
     write_8( fp, &saturn.SB );
     write_8( fp, &saturn.SR );
     write_8( fp, &saturn.MP );
     write_8( fp, &saturn.hexmode );
-    for ( i = 0; i < NR_RSTK; i++ )
+    for ( i = 0; i < NB_RSTK; i++ )
         write_32( fp, &saturn.rstk[ i ] );
     write_16( fp, ( word_16* )&saturn.rstkp );
     for ( i = 0; i < 9; i++ )
@@ -941,7 +941,7 @@ int write_state_file( char* filename )
     write_16( fp, ( word_16* )&saturn.t2_tick );
     write_32( fp, &saturn.i_per_s );
     write_16( fp, &saturn.bank_switch );
-    for ( i = 0; i < NR_MCTL; i++ ) {
+    for ( i = 0; i < NB_MCTL; i++ ) {
         write_16( fp, &saturn.mem_cntl[ i ].unconfigured );
         write_32( fp, &saturn.mem_cntl[ i ].config[ 0 ] );
         write_32( fp, &saturn.mem_cntl[ i ].config[ 1 ] );

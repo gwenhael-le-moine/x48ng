@@ -11,7 +11,7 @@
 #include "emulator_inner.h"
 #include "romio.h"
 
-#define NR_TIMERS 4
+#define NB_TIMERS 4
 
 #define RAM_BASE_SX 0x70000
 #define ACCESSTIME_SX ( 0x70052 - RAM_BASE_SX )
@@ -34,7 +34,7 @@ typedef struct x48_timer_t {
     word_64 value;
 } x48_timer_t;
 
-static x48_timer_t timers[ NR_TIMERS ];
+static x48_timer_t timers[ NB_TIMERS ];
 
 static long systime_offset = 0;
 
@@ -154,7 +154,7 @@ void start_timer( int timer )
     struct timeval tv;
     struct timezone tz;
 
-    assert( timer <= NR_TIMERS );
+    assert( timer <= NB_TIMERS );
 
     if ( timers[ timer ].run == 1 )
         return;
@@ -179,7 +179,7 @@ void restart_timer( int timer )
     struct timeval tv;
     struct timezone tz;
 
-    if ( timer > NR_TIMERS )
+    if ( timer > NB_TIMERS )
         return;
 
     timers[ timer ].start = 0;
@@ -206,7 +206,7 @@ void stop_timer( int timer )
     struct timeval tv;
     struct timezone tz;
 
-    if ( timer > NR_TIMERS )
+    if ( timer > NB_TIMERS )
         return;
 
     if ( timers[ timer ].run == 0 )
@@ -231,7 +231,7 @@ void stop_timer( int timer )
 
 void reset_timer( int timer )
 {
-    if ( timer > NR_TIMERS )
+    if ( timer > NB_TIMERS )
         return;
 
     timers[ timer ].run = 0;
@@ -247,7 +247,7 @@ word_64 get_timer( int timer )
 
     word_64 stop;
 
-    if ( timer > NR_TIMERS )
+    if ( timer > NB_TIMERS )
         return zero;
 
     if ( timers[ timer ].run ) {

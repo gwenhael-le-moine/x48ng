@@ -418,14 +418,14 @@ void transmit_char( void )
     }
 }
 
-#define NR_BUFFER 256
+#define NB_BUFFER 256
 
 void receive_char( void )
 {
     struct timeval tout;
     fd_set rfds;
     int nfd;
-    static unsigned char buf[ NR_BUFFER + 1 ];
+    static unsigned char buf[ NB_BUFFER + 1 ];
     static int nrd = 0, bp = 0;
 
     /* rece_instr = 0; */
@@ -453,7 +453,7 @@ void receive_char( void )
         if ( ( nfd = select( nfd, &rfds, ( fd_set* )0, ( fd_set* )0, &tout ) ) > 0 ) {
             if ( saturn.ir_ctrl & 0x04 ) {
                 if ( FD_ISSET( ir_fd, &rfds ) ) {
-                    nrd = read( ir_fd, buf, NR_BUFFER );
+                    nrd = read( ir_fd, buf, NB_BUFFER );
                     if ( nrd < 0 ) {
                         nrd = 0;
                         return;
@@ -464,7 +464,7 @@ void receive_char( void )
 
             } else {
                 if ( FD_ISSET( wire_fd, &rfds ) ) {
-                    nrd = read( wire_fd, buf, NR_BUFFER );
+                    nrd = read( wire_fd, buf, NB_BUFFER );
                     if ( nrd < 0 ) {
                         nrd = 0;
                         return;

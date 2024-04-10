@@ -7,9 +7,9 @@
 #define DEC 10
 #define HEX 16
 
-#define NR_MCTL 6
-#define NR_RSTK 8
-#define NR_PSTAT 16
+#define NB_MCTL 6
+#define NB_RSTK 8
+#define NB_PSTAT 16
 
 #define RUN_TIMER 2
 #define IDLE_TIMER 3
@@ -18,8 +18,6 @@
 #define USEC_PER_FRAME ( 1000000 / 64 )
 
 // Keys
-#define NB_KEYS 49
-
 #define HPKEY_A 0
 #define HPKEY_B 1
 #define HPKEY_C 2
@@ -80,6 +78,7 @@
 
 #define FIRST_HPKEY HPKEY_A
 #define LAST_HPKEY HPKEY_PLUS
+#define NB_KEYS (LAST_HPKEY + 1)
 
 // Annunciators
 #define NB_ANNUNCIATORS 6
@@ -207,12 +206,12 @@ typedef struct saturn_t {
 
     word_1 CARRY;
 
-    unsigned char PSTAT[ NR_PSTAT ];
+    unsigned char PSTAT[ NB_PSTAT ];
     unsigned char XM, SB, SR, MP;
 
     word_4 hexmode;
 
-    word_20 rstk[ NR_RSTK ];
+    word_20 rstk[ NB_RSTK ];
     short rstkp;
 
     keystate_t keybuf;
@@ -284,7 +283,7 @@ typedef struct saturn_t {
     long i_per_s;
 
     word_16 bank_switch;
-    mem_cntl_t mem_cntl[ NR_MCTL ];
+    mem_cntl_t mem_cntl[ NB_MCTL ];
 
     unsigned char* rom;
     unsigned char* ram;

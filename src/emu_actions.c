@@ -387,8 +387,8 @@ int is_zero_hardware_stat( int op )
 
 void push_return_addr( long addr )
 {
-    if ( ++saturn.rstkp >= NR_RSTK ) {
-        for ( int i = 1; i < NR_RSTK; i++ )
+    if ( ++saturn.rstkp >= NB_RSTK ) {
+        for ( int i = 1; i < NB_RSTK; i++ )
             saturn.rstk[ i - 1 ] = saturn.rstk[ i ];
 
         saturn.rstkp--;

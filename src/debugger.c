@@ -3632,12 +3632,12 @@ static void dump_st( void )
     int val;
 
     val = 0;
-    for ( i = NR_PSTAT - 1; i >= 0; i-- ) {
+    for ( i = NB_PSTAT - 1; i >= 0; i-- ) {
         val <<= 1;
         val |= saturn.PSTAT[ i ] ? 1 : 0;
     }
     printf( "    ST:\t%.4X (", val );
-    for ( i = NR_PSTAT - 1; i > 0; i-- ) {
+    for ( i = NB_PSTAT - 1; i > 0; i-- ) {
         if ( saturn.PSTAT[ i ] ) {
             printf( "%.1X ", i );
         } else {
