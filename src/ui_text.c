@@ -607,7 +607,7 @@ void init_text_ui( int argc, char** argv )
     mvprintw( 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
     mvprintw( 0, LCD_RIGHT - 18, "< %s v%i.%i.%i >", progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
 
-    mvprintw( LCD_BOTTOM, 2, "[ wire: %s ]-[ IR: %s ]", wire_name, ir_name );
+    mvprintw( LCD_BOTTOM, 2, "[ wire: %s ]-[ IR: %s ]-[ contrast: %i ]", wire_name, ir_name, display.contrast );
 
     mvprintw( LCD_BOTTOM + 1, 0, "F1: Enter, F2: Left-Shift, F3: Right-Shift, F4: Alpha, F5: On, F7: Quit" );
 }

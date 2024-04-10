@@ -2915,8 +2915,6 @@ int x11_get_event( void )
     int i, wake, bufs = 2;
     char buf[ 2 ];
     KeySym sym;
-    // int button_expose;
-    // static int button_leave = -1;
     static int release_pending = 0;
     static XKeyEvent release_event;
     static Time last_release_time = 0;

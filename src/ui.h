@@ -46,21 +46,17 @@ extern void ( *ui_disp_draw_nibble )( word_20 addr, word_4 val );
 extern void ( *ui_menu_draw_nibble )( word_20 addr, word_4 val );
 
 /*****************************************/
-/* used in: emu_actions.c, emu_emulate.c */
+/* used in: emu_emulate.c */
 /*****************************************/
 extern int ( *ui_get_event )( void );
+extern void ( *ui_adjust_contrast )( void );
+extern void ( *ui_draw_annunc )( void );
 
 /*****************************************************/
-/* used in: emu_actions.c, emu_emulate.c, debugger.c */
+/* used in: emu_emulate.c, debugger.c */
 /*****************************************************/
 extern void ( *ui_update_LCD )( void );
 extern void ( *ui_refresh_LCD )( void );
-
-/**************************/
-/* used in: emu_emulate.c */
-/**************************/
-extern void ( *ui_adjust_contrast )( void );
-extern void ( *ui_draw_annunc )( void );
 
 /*******************/
 /* used in: main.c */
