@@ -347,12 +347,6 @@ extern int ( *read_nibble )( long addr );
 /****************/
 extern long read_nibbles( long addr, int len );
 
-/*****************/
-/* emu_actions.c */
-/*****************/
-extern void load_addr( word_20* dat, long addr, int n );
-extern void do_kbd_int( void );
-
 /******************/
 /* emu_keyboard.c */
 /******************/
@@ -368,8 +362,10 @@ extern int init_serial( void );
 /*****************/
 /* emu_emulate.c */
 /*****************/
-extern void emulate( void );
+extern void load_addr( word_20* dat, long addr, int n );
+extern void do_kbd_int( void );
 extern int step_instruction( void );
 extern void schedule( void );
+extern void emulate( void );
 
 #endif /* !_EMULATOR_H */

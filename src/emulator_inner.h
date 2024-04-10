@@ -20,8 +20,13 @@ extern void reset_timer( int timer );
 extern void restart_timer( int timer );
 extern word_64 get_timer( int timer );
 
+/*****************/
+/* emu_emulate.c */
+/*****************/
+extern void do_interupt( void );
+
 /********************/
-/* hp48emu_memory.c */
+/* emu_memory.c */
 /********************/
 extern void ( *write_nibble )( long addr, int val );
 extern int ( *read_nibble_crc )( long addr );
@@ -30,46 +35,6 @@ extern int ( *read_nibble_crc )( long addr );
 /* emu_memory.c */
 /****************/
 extern void dev_memory_init( void ); /*  */
-
-/*****************/
-/* emu_actions.c */
-/*****************/
-void push_return_addr( long addr );
-long pop_return_addr( void );
-void register_to_status( unsigned char* r );
-void status_to_register( unsigned char* r );
-void swap_register_status( unsigned char* r );
-void clear_status( void );
-void set_program_stat( int n );
-void clear_program_stat( int n );
-int get_program_stat( int n );
-void clear_hardware_stat( int op );
-int is_zero_hardware_stat( int op );
-void set_register_bit( unsigned char* reg, int n );
-void clear_register_bit( unsigned char* reg, int n );
-int get_register_bit( unsigned char* reg, int n );
-void set_register_nibble( unsigned char* reg, int n, unsigned char val );
-unsigned char get_register_nibble( unsigned char* reg, int n );
-void register_to_address( unsigned char* reg, word_20* dat, int s );
-void add_address( word_20* dat, int add );
-void load_constant( unsigned char* reg, int n, long addr );
-void store( word_20 dat, unsigned char* reg, int code );
-void store_n( word_20 dat, unsigned char* reg, int n );
-void recall( unsigned char* reg, word_20 dat, int code );
-void recall_n( unsigned char* reg, word_20 dat, int n );
-long dat_to_addr( unsigned char* dat );
-void addr_to_dat( long addr, unsigned char* dat );
-void do_interupt( void );
-void do_in( void );
-void do_reset( void );
-void do_configure( void );
-void do_unconfigure( void );
-void do_inton( void );
-void do_intoff( void );
-void do_return_interupt( void );
-void do_reset_interrupt_system( void );
-void do_shutdown( void );
-int get_identification( void );
 
 /******************/
 /* emu_register.c */

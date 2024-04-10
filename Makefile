@@ -36,7 +36,6 @@ endif
 DOTOS = src/emu_serial.o \
 	src/emu_emulate.o \
 	src/emu_init.o \
-	src/emu_actions.o \
 	src/emu_keyboard.o \
 	src/emu_memory.o \
 	src/emu_register.o \
