@@ -14,6 +14,9 @@
 #define RUN_TIMER 2
 #define IDLE_TIMER 3
 
+/* LCD refresh rate is 64Hz according to https://www.hpcalc.org/hp48/docs/faq/48faq-6.html */
+#define USEC_PER_FRAME ( 1000000 / 64 )
+
 // Keys
 #define NB_KEYS 49
 

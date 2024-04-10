@@ -13,6 +13,20 @@
 
 #define NR_TIMERS 4
 
+#define RAM_BASE_SX 0x70000
+#define ACCESSTIME_SX ( 0x70052 - RAM_BASE_SX )
+#define ACCESSCRC_SX ( 0x7005F - RAM_BASE_SX )
+#define TIMEOUT_SX ( 0x70063 - RAM_BASE_SX )
+#define TIMEOUTCLK_SX ( 0x70070 - RAM_BASE_SX )
+
+#define RAM_BASE_GX 0x80000
+#define ACCESSTIME_GX ( 0x80058 - RAM_BASE_GX )
+#define ACCESSCRC_GX ( 0x80065 - RAM_BASE_GX )
+#define TIMEOUT_GX ( 0x80069 - RAM_BASE_GX )
+#define TIMEOUTCLK_GX ( 0x80076 - RAM_BASE_GX )
+
+#define calc_crc( nib ) ( crc = ( crc >> 4 ) ^ ( ( ( crc ^ ( nib ) ) & 0xf ) * 0x1081 ) )
+
 typedef struct x48_timer_t {
     word_1 run;
     word_64 start;
@@ -23,6 +37,8 @@ typedef struct x48_timer_t {
 static x48_timer_t timers[ NR_TIMERS ];
 
 static long systime_offset = 0;
+
+static word_64 zero = 0;
 
 /*
  * Ticks for THU 01.01.1970 00:00:00
@@ -39,20 +55,6 @@ word_64 set_0_time = 0x0;
  * Calculated as (unix_0_time + set_0_time)
  */
 word_64 time_offset = 0x0;
-
-#define RAM_BASE_SX 0x70000
-#define ACCESSTIME_SX ( 0x70052 - RAM_BASE_SX )
-#define ACCESSCRC_SX ( 0x7005F - RAM_BASE_SX )
-#define TIMEOUT_SX ( 0x70063 - RAM_BASE_SX )
-#define TIMEOUTCLK_SX ( 0x70070 - RAM_BASE_SX )
-
-#define RAM_BASE_GX 0x80000
-#define ACCESSTIME_GX ( 0x80058 - RAM_BASE_GX )
-#define ACCESSCRC_GX ( 0x80065 - RAM_BASE_GX )
-#define TIMEOUT_GX ( 0x80069 - RAM_BASE_GX )
-#define TIMEOUTCLK_GX ( 0x80076 - RAM_BASE_GX )
-
-#define calc_crc( nib ) ( crc = ( crc >> 4 ) ^ ( ( ( crc ^ ( nib ) ) & 0xf ) * 0x1081 ) )
 
 /*
  * Set ACCESSTIME: (on startup)
@@ -95,7 +97,7 @@ void set_accesstime( void )
 
     ticks = tv.tv_sec;
     ticks <<= 13;
-    ticks += ( tv.tv_usec << 7 ) / 15625;
+    ticks += ( tv.tv_usec << 7 ) / USEC_PER_FRAME;
 
     time_offset = unix_0_time + set_0_time;
     ticks += time_offset;
@@ -164,11 +166,11 @@ void start_timer( int timer )
     timers[ timer ].run = 1;
     if ( timer == T1_TIMER ) {
         timers[ timer ].start = ( tv.tv_sec << 9 );
-        timers[ timer ].start += ( tv.tv_usec / 15625 ) >> 3;
+        timers[ timer ].start += ( tv.tv_usec / USEC_PER_FRAME ) >> 3;
     } else {
         timers[ timer ].start = tv.tv_sec;
         timers[ timer ].start <<= 13;
-        timers[ timer ].start += ( tv.tv_usec << 7 ) / 15625;
+        timers[ timer ].start += ( tv.tv_usec << 7 ) / USEC_PER_FRAME;
     }
 }
 
@@ -191,11 +193,11 @@ void restart_timer( int timer )
     timers[ timer ].run = 1;
     if ( timer == T1_TIMER ) {
         timers[ timer ].start = ( tv.tv_sec << 9 );
-        timers[ timer ].start += ( tv.tv_usec / 15625 ) >> 3;
+        timers[ timer ].start += ( tv.tv_usec / USEC_PER_FRAME ) >> 3;
     } else {
         timers[ timer ].start = tv.tv_sec;
         timers[ timer ].start <<= 13;
-        timers[ timer ].start += ( tv.tv_usec << 7 ) / 15625;
+        timers[ timer ].start += ( tv.tv_usec << 7 ) / USEC_PER_FRAME;
     }
 }
 
@@ -217,29 +219,26 @@ void stop_timer( int timer )
     timers[ timer ].run = 0;
     if ( timer == T1_TIMER ) {
         timers[ timer ].stop = ( tv.tv_sec << 9 );
-        timers[ timer ].stop += ( tv.tv_usec / 15625 ) >> 3;
+        timers[ timer ].stop += ( tv.tv_usec / USEC_PER_FRAME ) >> 3;
     } else {
         timers[ timer ].stop = tv.tv_sec;
         timers[ timer ].stop <<= 13;
-        timers[ timer ].stop += ( tv.tv_usec << 7 ) / 15625;
+        timers[ timer ].stop += ( tv.tv_usec << 7 ) / USEC_PER_FRAME;
     }
 
     timers[ timer ].value += timers[ timer ].stop - timers[ timer ].start;
-    //  add_sub_64(&timers[timer].stop, &timers[timer].start,
-    //  &timers[timer].value);
 }
 
 void reset_timer( int timer )
 {
     if ( timer > NR_TIMERS )
         return;
+
     timers[ timer ].run = 0;
     timers[ timer ].start = 0;
     timers[ timer ].stop = 0;
     timers[ timer ].value = 0;
 }
-
-static word_64 zero = 0;
 
 word_64 get_timer( int timer )
 {
@@ -259,11 +258,11 @@ word_64 get_timer( int timer )
 
         if ( timer == T1_TIMER ) {
             stop = ( tv.tv_sec << 9 );
-            stop += ( tv.tv_usec / 15625 ) >> 3;
+            stop += ( tv.tv_usec / USEC_PER_FRAME ) >> 3;
         } else {
             stop = tv.tv_sec;
             stop <<= 13;
-            stop += ( tv.tv_usec << 7 ) / 15625;
+            stop += ( tv.tv_usec << 7 ) / USEC_PER_FRAME;
         }
         timers[ timer ].value += stop - timers[ timer ].start;
     }
@@ -302,18 +301,18 @@ t1_t2_ticks get_t1_t2( void )
 
     if ( timers[ T1_TIMER ].run ) {
         stop = ( tv.tv_sec << 9 );
-        stop += ( tv.tv_usec / 15625 ) >> 3;
-        if ( timers[ T1_TIMER ].start <= stop ) {
+        stop += ( tv.tv_usec / USEC_PER_FRAME ) >> 3;
+
+        if ( timers[ T1_TIMER ].start <= stop )
             timers[ T1_TIMER ].value += stop - timers[ T1_TIMER ].start;
-        } else {
+        else
             fprintf( stderr, "clock running backwards\n" );
-        }
     }
     ticks.t1_ticks = timers[ T1_TIMER ].value;
 
     stop = tv.tv_sec;
     stop <<= 13;
-    stop += ( tv.tv_usec << 7 ) / 15625;
+    stop += ( tv.tv_usec << 7 ) / USEC_PER_FRAME;
 
     stop += time_offset;
 
