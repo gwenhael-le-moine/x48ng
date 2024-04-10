@@ -1016,4 +1016,11 @@ int init_emulator( void )
     return 0;
 }
 
+void start_emulator( void )
+{
+    init_emulator();
+    init_serial();
+    init_display();
+}
+
 void exit_emulator( void ) { write_files(); }

@@ -100,13 +100,10 @@ int main( int argc, char** argv )
     parse_args( argc, argv );
 
     /* Emulator */
-    init_emulator();
-    init_serial();
-    init_display();
+    start_emulator();
 
     /* (G)UI */
-    setup_frontend(); /* points init_ui to the correct function */
-    init_ui( argc, argv );
+    start_UI( argc, argv );
 
     /************************/
     /* Start emulation loop */

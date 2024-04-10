@@ -77,5 +77,6 @@ extern int is_greater_or_equal_register( unsigned char* r1, unsigned char* r2, i
 extern void serial_baud( int baud );
 extern void transmit_char( void );
 extern void receive_char( void );
+extern int init_serial( void ); /* used in main.c */
 
 #endif /* _EMULATOR_INNER_H */

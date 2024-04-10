@@ -148,39 +148,8 @@ void ( *ui_update_LCD )( void );
 void ( *ui_refresh_LCD )( void );
 void ( *ui_adjust_contrast )( void );
 void ( *ui_draw_annunc )( void );
-void ( *init_ui )( int argc, char** argv );
 
 void ui_init_LCD( void ) { memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) ); }
-
-void setup_frontend( void )
-{
-    switch ( frontend_type ) {
-#if ( defined( HAS_X11 ) )
-        case FRONTEND_X11:
-        default:
-            init_ui = init_x11_ui;
-            break;
-#endif
-
-#if ( defined( HAS_SDL ) )
-        case FRONTEND_SDL:
-#  if ( !defined( HAS_X11 ) )
-        default:
-#  endif
-            init_ui = init_sdl_ui;
-            break;
-#endif
-
-        case FRONTEND_TEXT:
-#if ( !defined( HAS_X11 ) && !defined( HAS_SDL ) )
-        default:
-#endif
-            init_ui = init_text_ui;
-            break;
-    }
-
-    ui_init_LCD();
-}
 
 int SmallTextWidth( const char* string, unsigned int length )
 {
@@ -199,4 +168,34 @@ int SmallTextWidth( const char* string, unsigned int length )
     }
 
     return w;
+}
+
+void start_UI( int argc, char** argv )
+{
+    ui_init_LCD();
+
+    switch ( frontend_type ) {
+#if ( defined( HAS_X11 ) )
+        case FRONTEND_X11:
+        default:
+            init_x11_ui( argc, argv );
+            break;
+#endif
+
+#if ( defined( HAS_SDL ) )
+        case FRONTEND_SDL:
+#  if ( !defined( HAS_X11 ) )
+        default:
+#  endif
+            init_sdl_ui( argc, argv );
+            break;
+#endif
+
+        case FRONTEND_TEXT:
+#if ( !defined( HAS_X11 ) && !defined( HAS_SDL ) )
+        default:
+#endif
+            init_text_ui( argc, argv );
+            break;
+    }
 }

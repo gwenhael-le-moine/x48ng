@@ -322,9 +322,8 @@ extern int annunciators_bits[ NB_ANNUNCIATORS ];
 /**************/
 /* emu_init.c */
 /**************/
-extern void init_display( void );  /* used in main.c */
-extern int init_emulator( void );  /* used in main.c */
-extern void exit_emulator( void ); /* used in debugger.c; main.c; ui_*.c */
+extern void start_emulator( void ); /* used in main.c */
+extern void exit_emulator( void );  /* used in debugger.c; ui_*.c */
 
 /********************/
 /* emu_memory.c */
@@ -337,11 +336,6 @@ extern int ( *read_nibble )( long addr ); /* used in debugger.c; ui_*.c */
 extern void press_key( int hpkey );   /* used in ui_*.c */
 extern void release_key( int hpkey ); /* used in ui_*.c */
 extern void release_all_keys( void ); /* used in ui_*.c */
-
-/****************/
-/* emu_serial.c */
-/****************/
-extern int init_serial( void ); /* used in main.c */
 
 /*****************/
 /* emu_emulate.c */

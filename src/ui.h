@@ -65,7 +65,6 @@ extern void ( *ui_draw_annunc )( void );
 /*******************/
 /* used in: main.c */
 /*******************/
-extern void ( *init_ui )( int argc, char** argv );
+extern void start_UI( int argc, char** argv );
 
-extern void setup_frontend( void );
 #endif /* !_UI_H */
