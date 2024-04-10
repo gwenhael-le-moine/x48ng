@@ -13,7 +13,7 @@
 static bool interrupt_called = false;
 extern long nibble_masks[ 16 ];
 
-bool got_alarm = false;
+bool sigalarm_triggered = false;
 
 bool first_press = true; // PATCH
 
@@ -299,8 +299,8 @@ void do_shutdown( void )
     do {
         pause();
 
-        if ( got_alarm ) {
-            got_alarm = false;
+        if ( sigalarm_triggered ) {
+            sigalarm_triggered = false;
 
             ui_refresh_LCD();
 

@@ -21,7 +21,7 @@ void signal_handler( int sig )
             enter_debugger |= USER_INTERRUPT;
             break;
         case SIGALRM:
-            got_alarm = true;
+            sigalarm_triggered = true;
             break;
         case SIGPIPE:
             exit_emulator();
@@ -72,8 +72,8 @@ int main( int argc, char** argv )
     /************************************/
     /*
       Every <interval>µs setitimer will trigger a SIGALRM
-      which will set got_alarm to true
-      In emulate() got_alarm triggers LCD refresh and UI event handling
+      which will set sigalarm_triggered to true
+      In emulate() sigalarm_triggered triggers LCD refresh and UI event handling
      */
     struct itimerval it;
     int interval = 15625; /* 64Hz according to https://www.hpcalc.org/hp48/docs/faq/48faq-6.html */

@@ -2346,8 +2346,8 @@ inline void schedule( void )
 
     schedule_event--;
 
-    if ( got_alarm ) {
-        got_alarm = false;
+    if ( sigalarm_triggered ) {
+        sigalarm_triggered = false;
 
         ui_refresh_LCD();
 
