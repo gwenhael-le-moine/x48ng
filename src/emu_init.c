@@ -90,43 +90,6 @@ hpkey_t keyboard[ 49 ] = {
 
 int annunciators_bits[ NB_ANNUNCIATORS ] = { ANN_LEFT, ANN_RIGHT, ANN_ALPHA, ANN_BATTERY, ANN_BUSY, ANN_IO };
 
-int read_rom( const char* fname )
-{
-    int ram_size;
-
-    if ( !read_rom_file( fname, &saturn.rom, &rom_size ) )
-        return 0;
-
-    if ( verbose )
-        printf( "read %s\n", fname );
-
-    dev_memory_init();
-
-    ram_size = opt_gx ? RAM_SIZE_GX : RAM_SIZE_SX;
-
-    if ( NULL == ( saturn.ram = ( word_4* )malloc( ram_size ) ) ) {
-        if ( verbose )
-            fprintf( stderr, "can\'t malloc RAM\n" );
-        return 0;
-    }
-
-    memset( saturn.ram, 0, ram_size );
-
-    port1_size = 0;
-    port1_mask = 0;
-    port1_is_ram = false;
-    saturn.port1 = ( unsigned char* )0;
-
-    port2_size = 0;
-    port2_mask = 0;
-    port2_is_ram = false;
-    saturn.port2 = ( unsigned char* )0;
-
-    saturn.card_status = 0;
-
-    return 1;
-}
-
 void saturn_config_init( void )
 {
     saturn.version[ 0 ] = VERSION_MAJOR;
@@ -173,53 +136,6 @@ void init_saturn( void )
     }
     dev_memory_init();
 }
-
-void init_display( void )
-{
-    display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
-
-    display.disp_start = ( saturn.disp_addr & 0xffffe );
-    display.offset = ( saturn.disp_io & 0x7 );
-
-    display.lines = ( saturn.line_count & 0x3f );
-    if ( display.lines == 0 )
-        display.lines = 63;
-
-    if ( display.offset > 3 )
-        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset + 2 ) & 0xfff;
-    else
-        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset ) & 0xfff;
-
-    display.disp_end = display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
-
-    display.menu_start = saturn.menu_addr;
-    display.menu_end = saturn.menu_addr + 0x110;
-
-    display.contrast = saturn.contrast_ctrl;
-    display.contrast |= ( ( saturn.disp_test & 0x1 ) << 4 );
-}
-
-int init_emulator( void )
-{
-    /* If files are successfully read => return and let's go */
-    if ( read_files() ) {
-        if ( resetOnStartup )
-            saturn.PC = 0x00000;
-        return 0;
-    }
-
-    /* if files were not readble => initialize */
-    if ( verbose )
-        fprintf( stderr, "initialization of %s\n", normalized_config_path );
-
-    init_saturn();
-    if ( !read_rom( normalized_rom_path ) )
-        exit( 1 ); /* can't read ROM */
-
-    return 0;
-}
-
-void exit_emulator( void ) { write_files(); }
 
 /***********************************************/
 /* READING ~/.config/x48ng/{rom,ram,state,port1,port2} */
@@ -1017,3 +933,87 @@ int write_files( void )
 
     return 1;
 }
+
+int read_rom( const char* fname )
+{
+    int ram_size;
+
+    if ( !read_rom_file( fname, &saturn.rom, &rom_size ) )
+        return 0;
+
+    if ( verbose )
+        printf( "read %s\n", fname );
+
+    dev_memory_init();
+
+    ram_size = opt_gx ? RAM_SIZE_GX : RAM_SIZE_SX;
+
+    if ( NULL == ( saturn.ram = ( word_4* )malloc( ram_size ) ) ) {
+        if ( verbose )
+            fprintf( stderr, "can\'t malloc RAM\n" );
+        return 0;
+    }
+
+    memset( saturn.ram, 0, ram_size );
+
+    port1_size = 0;
+    port1_mask = 0;
+    port1_is_ram = false;
+    saturn.port1 = ( unsigned char* )0;
+
+    port2_size = 0;
+    port2_mask = 0;
+    port2_is_ram = false;
+    saturn.port2 = ( unsigned char* )0;
+
+    saturn.card_status = 0;
+
+    return 1;
+}
+
+void init_display( void )
+{
+    display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
+
+    display.disp_start = ( saturn.disp_addr & 0xffffe );
+    display.offset = ( saturn.disp_io & 0x7 );
+
+    display.lines = ( saturn.line_count & 0x3f );
+    if ( display.lines == 0 )
+        display.lines = 63;
+
+    if ( display.offset > 3 )
+        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset + 2 ) & 0xfff;
+    else
+        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset ) & 0xfff;
+
+    display.disp_end = display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
+
+    display.menu_start = saturn.menu_addr;
+    display.menu_end = saturn.menu_addr + 0x110;
+
+    display.contrast = saturn.contrast_ctrl;
+    display.contrast |= ( ( saturn.disp_test & 0x1 ) << 4 );
+}
+
+int init_emulator( void )
+{
+    /* If files are successfully read => return and let's go */
+    if ( read_files() ) {
+        if ( resetOnStartup )
+            saturn.PC = 0x00000;
+        return 0;
+    }
+
+    /* if files were not readble => initialize */
+    if ( verbose )
+        fprintf( stderr, "initialization of %s\n", normalized_config_path );
+
+    init_saturn();
+    if ( !read_rom( normalized_rom_path ) )
+        exit( 1 ); /* can't read ROM */
+
+    return 0;
+}
+
+void exit_emulator( void ) { write_files(); }

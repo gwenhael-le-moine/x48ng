@@ -324,48 +324,28 @@ extern int annunciators_bits[ NB_ANNUNCIATORS ];
 /**************/
 extern void init_display( void );  /* used in main.c */
 extern int init_emulator( void );  /* used in main.c */
-extern void exit_emulator( void ); /* debugger.c; main.c; ui_*.c */
-extern int read_files( void );     /* debugger.c */
-extern int write_files( void );    /* used in debugger.c */
-
-/***************/
-/* emu_timer.c */
-/***************/
-extern void start_timer( int timer );
-extern void stop_timer( int timer );
-
-extern t1_t2_ticks get_t1_t2( void );
-extern void set_accesstime( void );
+extern void exit_emulator( void ); /* used in debugger.c; main.c; ui_*.c */
 
 /********************/
 /* emu_memory.c */
 /********************/
-extern int ( *read_nibble )( long addr );
-
-/****************/
-/* emu_memory.c */
-/****************/
-extern long read_nibbles( long addr, int len );
+extern int ( *read_nibble )( long addr ); /* used in debugger.c; ui_*.c */
 
 /******************/
 /* emu_keyboard.c */
 /******************/
-extern void press_key( int hpkey );
-extern void release_key( int hpkey );
-extern void release_all_keys( void );
+extern void press_key( int hpkey );   /* used in ui_*.c */
+extern void release_key( int hpkey ); /* used in ui_*.c */
+extern void release_all_keys( void ); /* used in ui_*.c */
 
 /****************/
 /* emu_serial.c */
 /****************/
-extern int init_serial( void );
+extern int init_serial( void ); /* used in main.c */
 
 /*****************/
 /* emu_emulate.c */
 /*****************/
-extern void load_addr( word_20* dat, long addr, int n );
-extern void do_kbd_int( void );
-extern int step_instruction( void );
-extern void schedule( void );
-extern void emulate( void );
+extern void emulate( void ); /* used in main.c */
 
 #endif /* !_EMULATOR_H */

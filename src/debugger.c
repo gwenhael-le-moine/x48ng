@@ -9,6 +9,7 @@
 
 #include "runtime_options.h"
 #include "emulator.h"
+#include "emulator_for_debugger.h"
 #include "romio.h"
 #include "ui.h" /* ui_update_LCD(); */
 #include "debugger.h"

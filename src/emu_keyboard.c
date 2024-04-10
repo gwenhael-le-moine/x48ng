@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "emulator.h"
+#include "emulator_inner.h"
 
 void press_key( int hpkey )
 {
