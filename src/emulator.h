@@ -78,7 +78,7 @@
 
 #define FIRST_HPKEY HPKEY_A
 #define LAST_HPKEY HPKEY_PLUS
-#define NB_KEYS (LAST_HPKEY + 1)
+#define NB_KEYS ( LAST_HPKEY + 1 )
 
 // Annunciators
 #define NB_ANNUNCIATORS 6
