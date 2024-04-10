@@ -1013,10 +1013,6 @@ int init_emulator( void )
     if ( !read_rom( normalized_rom_path ) )
         exit( 1 ); /* can't read ROM */
 
-    init_serial();
-
-    /* init_display(); */
-
     return 0;
 }
 

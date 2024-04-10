@@ -338,6 +338,11 @@ extern void press_key( int hpkey );   /* used in ui_*.c */
 extern void release_key( int hpkey ); /* used in ui_*.c */
 extern void release_all_keys( void ); /* used in ui_*.c */
 
+/****************/
+/* emu_serial.c */
+/****************/
+extern int init_serial( void ); /* used in main.c */
+
 /*****************/
 /* emu_emulate.c */
 /*****************/
