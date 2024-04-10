@@ -4054,8 +4054,8 @@ static void cmd_rstk( int argc, char** argv )
     } else {
         j = 0;
         for ( i = saturn.rstkp; i >= 0; i-- ) {
-            disassemble( saturn.rstk[ i ], instr );
-            printf( "%2d: %.5lX: %s\n", j, saturn.rstk[ i ], instr );
+            disassemble( saturn.RSTK[ i ], instr );
+            printf( "%2d: %.5lX: %s\n", j, saturn.RSTK[ i ], instr );
             j++;
         }
     }

@@ -214,7 +214,7 @@ typedef struct saturn_t {
 
     word_4 hexmode;
 
-    word_20 rstk[ NB_RSTK ];
+    word_20 RSTK[ NB_RSTK ];
     short rstkp;
 
     keystate_t keybuf;

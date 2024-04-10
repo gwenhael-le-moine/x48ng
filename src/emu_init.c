@@ -277,7 +277,7 @@ int read_state_file( FILE* fp )
     if ( !read_8( fp, &saturn.hexmode ) )
         return 0;
     for ( i = 0; i < NB_RSTK; i++ )
-        if ( !read_32( fp, &saturn.rstk[ i ] ) )
+        if ( !read_32( fp, &saturn.RSTK[ i ] ) )
             return 0;
     if ( !read_16( fp, ( word_16* )&saturn.rstkp ) )
         return 0;
@@ -811,7 +811,7 @@ int write_state_file( char* filename )
     write_8( fp, &saturn.MP );
     write_8( fp, &saturn.hexmode );
     for ( i = 0; i < NB_RSTK; i++ )
-        write_32( fp, &saturn.rstk[ i ] );
+        write_32( fp, &saturn.RSTK[ i ] );
     write_16( fp, ( word_16* )&saturn.rstkp );
     for ( i = 0; i < 9; i++ )
         write_16( fp, ( word_16* )&saturn.keybuf.rows[ i ] );

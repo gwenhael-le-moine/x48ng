@@ -94,11 +94,11 @@ static inline void push_return_addr( long addr )
 {
     if ( ++saturn.rstkp >= NB_RSTK ) {
         for ( int i = 1; i < NB_RSTK; i++ )
-            saturn.rstk[ i - 1 ] = saturn.rstk[ i ];
+            saturn.RSTK[ i - 1 ] = saturn.RSTK[ i ];
 
         saturn.rstkp--;
     }
-    saturn.rstk[ saturn.rstkp ] = addr;
+    saturn.RSTK[ saturn.rstkp ] = addr;
 }
 
 static inline long pop_return_addr( void )
@@ -106,7 +106,7 @@ static inline long pop_return_addr( void )
     if ( saturn.rstkp < 0 )
         return 0;
 
-    return saturn.rstk[ saturn.rstkp-- ];
+    return saturn.RSTK[ saturn.rstkp-- ];
 }
 
 static inline void do_in( void )
