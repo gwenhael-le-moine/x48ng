@@ -101,7 +101,6 @@ int main( int argc, char** argv )
 
     /* Emulator */
     init_emulator();
-    init_serial();
     init_display();
 
     /* (G)UI */
