@@ -21,6 +21,19 @@
 #define IN_FIELD 16
 #define OUTS_FIELD 18
 
+#define SrvcIoStart 0x3c0
+#define SrvcIoEnd 0x5ec
+
+#define SCHED_INSTR_ROLLOVER 0x3fffffff
+#define SCHED_RECEIVE 0x7ff
+#define SCHED_ADJTIME 0x1ffe
+#define SCHED_TIMER1 0x1e00
+#define SCHED_TIMER2 0xf
+#define SCHED_STATISTICS 0x7ffff
+#define SCHED_NEVER 0x7fffffff
+
+#define NB_SAMPLES 10
+
 static long jumpaddr;
 
 unsigned long instructions = 0;
@@ -37,19 +50,6 @@ long schedule_event = 0;
 
 long sched_timer1;
 long sched_timer2;
-
-#define SrvcIoStart 0x3c0
-#define SrvcIoEnd 0x5ec
-
-#define SCHED_INSTR_ROLLOVER 0x3fffffff
-#define SCHED_RECEIVE 0x7ff
-#define SCHED_ADJTIME 0x1ffe
-#define SCHED_TIMER1 0x1e00
-#define SCHED_TIMER2 0xf
-#define SCHED_STATISTICS 0x7ffff
-#define SCHED_NEVER 0x7fffffff
-
-#define NB_SAMPLES 10
 
 long sched_instr_rollover = SCHED_INSTR_ROLLOVER;
 long sched_receive = SCHED_RECEIVE;

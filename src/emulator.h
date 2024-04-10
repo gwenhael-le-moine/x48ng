@@ -17,6 +17,9 @@
 /* LCD refresh rate is 64Hz according to https://www.hpcalc.org/hp48/docs/faq/48faq-6.html */
 #define USEC_PER_FRAME ( 1000000 / 64 )
 
+#define NIBBLES_PER_ROW 0x22
+#define NIBBLES_NB_BITS 4
+
 // Keys
 #define HPKEY_A 0
 #define HPKEY_B 1
@@ -291,9 +294,6 @@ typedef struct saturn_t {
     unsigned char* port2;
 } saturn_t;
 
-#define NIBBLES_PER_ROW 0x22
-#define NIBBLES_NB_BITS 4
-
 extern bool sigalarm_triggered;
 
 extern int set_t1;
@@ -322,7 +322,7 @@ extern int annunciators_bits[ NB_ANNUNCIATORS ];
 /**************/
 /* emu_init.c */
 /**************/
-extern void init_display( void );  /* used in ui_*.c */
+extern void init_display( void );  /* used in main.c */
 extern int init_emulator( void );  /* used in main.c */
 extern void exit_emulator( void ); /* debugger.c; main.c; ui_*.c */
 extern int read_files( void );     /* debugger.c */
@@ -338,7 +338,7 @@ extern t1_t2_ticks get_t1_t2( void );
 extern void set_accesstime( void );
 
 /********************/
-/* hp48emu_memory.c */
+/* emu_memory.c */
 /********************/
 extern int ( *read_nibble )( long addr );
 
@@ -350,7 +350,12 @@ extern long read_nibbles( long addr, int len );
 /*****************/
 /* emu_actions.c */
 /*****************/
+extern void load_addr( word_20* dat, long addr, int n );
 extern void do_kbd_int( void );
+
+/******************/
+/* emu_keyboard.c */
+/******************/
 extern void press_key( int hpkey );
 extern void release_key( int hpkey );
 extern void release_all_keys( void );
@@ -366,6 +371,5 @@ extern int init_serial( void );
 extern void emulate( void );
 extern int step_instruction( void );
 extern void schedule( void );
-extern void load_addr( word_20* dat, long addr, int n );
 
 #endif /* !_EMULATOR_H */
