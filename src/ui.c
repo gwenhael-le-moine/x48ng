@@ -178,6 +178,8 @@ void setup_frontend( void )
             init_ui = init_text_ui;
             break;
     }
+
+    ui_init_LCD();
 }
 
 int SmallTextWidth( const char* string, unsigned int length )

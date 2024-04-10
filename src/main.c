@@ -106,7 +106,6 @@ int main( int argc, char** argv )
     init_display();
 
     /* (G)UI */
-    ui_init_LCD();
     setup_frontend(); /* points init_ui to the correct function */
     init_ui( argc, argv );
 

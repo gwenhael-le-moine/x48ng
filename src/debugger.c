@@ -10,7 +10,7 @@
 #include "runtime_options.h"
 #include "emulator.h"
 #include "romio.h"
-#include "ui.h" /* ui_init_LCD(); ui_update_LCD(); */
+#include "ui.h" /* ui_update_LCD(); */
 #include "debugger.h"
 
 #define MAX_ARGS 16
@@ -3553,7 +3553,6 @@ static void cmd_load( int argc, char** argv )
             free( tmp_saturn.port2 );
 
         /* After reloading state we need to refresh the UI's LCD */
-        ui_init_LCD();
         ui_update_LCD();
     } else {
         printf( "Loading emulator-state from files failed.\n" );
