@@ -996,29 +996,22 @@ void init_display( void )
     display.contrast |= ( ( saturn.disp_test & 0x1 ) << 4 );
 }
 
-int init_emulator( void )
+void start_emulator( void )
 {
     /* If files are successfully read => return and let's go */
     if ( read_files() ) {
         if ( resetOnStartup )
             saturn.PC = 0x00000;
-        return 0;
+    } else {
+        /* if files were not readable => initialize */
+        if ( verbose )
+            fprintf( stderr, "initialization of %s\n", normalized_config_path );
+
+        init_saturn();
+        if ( !read_rom( normalized_rom_path ) )
+            exit( 1 ); /* can't read ROM */
     }
 
-    /* if files were not readble => initialize */
-    if ( verbose )
-        fprintf( stderr, "initialization of %s\n", normalized_config_path );
-
-    init_saturn();
-    if ( !read_rom( normalized_rom_path ) )
-        exit( 1 ); /* can't read ROM */
-
-    return 0;
-}
-
-void start_emulator( void )
-{
-    init_emulator();
     init_serial();
     init_display();
 }
