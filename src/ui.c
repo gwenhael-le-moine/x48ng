@@ -265,11 +265,8 @@ void generate_greyscale_lcd()
                 addr += NIBBLES_PER_ROW;
             }
         }
-    } else {
-        memset( lcd_nibbles_buffer_0, 0xf0, sizeof( lcd_nibbles_buffer_2 ) );
-        memset( lcd_nibbles_buffer_0, 0xf0, sizeof( lcd_nibbles_buffer_1 ) );
-        memset( lcd_nibbles_buffer_0, 0xf0, sizeof( lcd_nibbles_buffer_0 ) );
-    }
+    } else
+        ui_init_LCD();
 
     bool bit_0, bit_1, bit_2;
     int nibble_0, nibble_1, nibble_2;
