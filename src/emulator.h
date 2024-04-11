@@ -296,24 +296,12 @@ typedef struct saturn_t {
 
 extern bool sigalarm_triggered;
 
-extern int set_t1;
-
-extern long sched_adjtime;
-extern long schedule_event;
-
 extern char* wire_name;
 extern char* ir_name;
 
-extern device_t device;
 extern display_t display;
 
 extern saturn_t saturn;
-
-extern bool device_check;
-extern bool port1_is_ram;
-extern long port1_mask;
-extern bool port2_is_ram;
-extern long port2_mask;
 
 extern hpkey_t keyboard[ NB_KEYS ];
 

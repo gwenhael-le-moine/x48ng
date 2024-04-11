@@ -3,6 +3,13 @@
 
 #include "emulator.h"
 
+extern device_t device;
+
+extern int set_t1;
+
+extern long sched_adjtime;
+extern long schedule_event;
+
 /**************/
 /* emu_init.c */
 /**************/

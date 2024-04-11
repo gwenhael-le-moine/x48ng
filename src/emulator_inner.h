@@ -8,6 +8,19 @@
 #define T1_TIMER 0
 /* #define T2_TIMER 1 /\* unused? *\/ */
 
+extern device_t device;
+
+extern int set_t1;
+
+extern long sched_adjtime;
+extern long schedule_event;
+
+extern bool device_check;
+extern bool port1_is_ram;
+extern long port1_mask;
+extern bool port2_is_ram;
+extern long port2_mask;
+
 extern bool adj_time_pending;
 
 extern int start_fields[ 19 ];

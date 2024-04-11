@@ -296,7 +296,6 @@ t1_t2_ticks get_t1_t2( void )
     int i;
 
     gettimeofday( &tv, &tz );
-
     tv.tv_sec -= systime_offset;
 
     if ( timers[ T1_TIMER ].run ) {
