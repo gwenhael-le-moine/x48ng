@@ -8,7 +8,10 @@
 
 int last_annunc_state = -1;
 
-unsigned char lcd_nibbles_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
+unsigned char lcd_nibbles_buffer_2[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
+unsigned char lcd_nibbles_buffer_1[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
+unsigned char lcd_nibbles_buffer_0[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
+unsigned char greyscale_lcd_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW * NIBBLES_NB_BITS ];
 
 letter_t small_font[ 128 ] = {
     {0,                 0,                  0                 },
@@ -149,7 +152,13 @@ void ( *ui_refresh_LCD )( void );
 void ( *ui_adjust_contrast )( void );
 void ( *ui_draw_annunc )( void );
 
-void ui_init_LCD( void ) { memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles_buffer ) ); }
+void ui_init_LCD( void )
+{
+    memset( lcd_nibbles_buffer_2, 0xf0, sizeof( lcd_nibbles_buffer_2 ) );
+    memset( lcd_nibbles_buffer_1, 0xf0, sizeof( lcd_nibbles_buffer_1 ) );
+    memset( lcd_nibbles_buffer_0, 0xf0, sizeof( lcd_nibbles_buffer_0 ) );
+    memset( greyscale_lcd_buffer, 0, sizeof( greyscale_lcd_buffer ) );
+}
 
 int SmallTextWidth( const char* string, unsigned int length )
 {
@@ -197,5 +206,96 @@ void start_UI( int argc, char** argv )
 #endif
             init_text_ui( argc, argv );
             break;
+    }
+}
+
+static inline void copy_row( long addr, int row )
+{
+    int nibble;
+    int line_length = NIBBLES_PER_ROW;
+
+    if ( ( display.offset > 3 ) && ( row <= display.lines ) )
+        line_length += 2;
+
+    for ( int i = 0; i < line_length; i++ ) {
+        nibble = read_nibble( addr + i );
+        nibble &= 0x0f;
+
+        if ( nibble != lcd_nibbles_buffer_0[ row ][ i ] )
+            lcd_nibbles_buffer_0[ row ][ i ] = nibble;
+    }
+}
+
+void generate_greyscale_lcd()
+{
+    /* WIP */
+    /* This populates greyscale_lcd_buffer from the sum of lcd_nibbles_buffer_* */
+
+    /* 1. rotate lcd_nibbles_buffer_{2 ← 1 ← 0} */
+    for ( int y = 0; y < DISP_ROWS; ++y ) {
+        for ( int nibble_x = 0; nibble_x < NIBBLES_PER_ROW; ++nibble_x ) {
+            lcd_nibbles_buffer_2[ y ][ nibble_x ] = lcd_nibbles_buffer_1[ y ][ nibble_x ];
+            lcd_nibbles_buffer_1[ y ][ nibble_x ] = lcd_nibbles_buffer_0[ y ][ nibble_x ];
+        }
+    }
+    /* 2. get lcd_nibbles_buffer_0 from RAM */
+    if ( display.on ) {
+        int i;
+        long addr;
+        static int old_offset = -1;
+        static int old_lines = -1;
+
+        addr = display.disp_start;
+        if ( display.offset != old_offset ) {
+            memset( lcd_nibbles_buffer_0, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
+            old_offset = display.offset;
+        }
+        if ( display.lines != old_lines ) {
+            memset( &lcd_nibbles_buffer_0[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
+            old_lines = display.lines;
+        }
+        for ( i = 0; i <= display.lines; i++ ) {
+            copy_row( addr, i );
+            addr += display.nibs_per_line;
+        }
+        if ( i < DISP_ROWS ) {
+            addr = display.menu_start;
+            for ( ; i < DISP_ROWS; i++ ) {
+                copy_row( addr, i );
+                addr += NIBBLES_PER_ROW;
+            }
+        }
+    } else {
+        memset( lcd_nibbles_buffer_0, 0xf0, sizeof( lcd_nibbles_buffer_2 ) );
+        memset( lcd_nibbles_buffer_0, 0xf0, sizeof( lcd_nibbles_buffer_1 ) );
+        memset( lcd_nibbles_buffer_0, 0xf0, sizeof( lcd_nibbles_buffer_0 ) );
+    }
+
+    bool bit_0, bit_1, bit_2;
+    int nibble_0, nibble_1, nibble_2;
+    int bit_stop;
+    int init_x;
+
+#define LCD_WIDTH 131
+    for ( int y = 0; y < DISP_ROWS; ++y ) {
+        for ( int nibble_x = 0; nibble_x < NIBBLES_PER_ROW; ++nibble_x ) {
+            nibble_0 = lcd_nibbles_buffer_0[ y ][ nibble_x ];
+            nibble_0 &= 0x0f;
+            nibble_1 = lcd_nibbles_buffer_1[ y ][ nibble_x ];
+            nibble_1 &= 0x0f;
+            nibble_2 = lcd_nibbles_buffer_2[ y ][ nibble_x ];
+            nibble_2 &= 0x0f;
+
+            init_x = nibble_x * NIBBLES_NB_BITS;
+            bit_stop = ( ( init_x + NIBBLES_NB_BITS >= LCD_WIDTH ) ? LCD_WIDTH - init_x : 4 );
+
+            for ( int bit_x = 0; bit_x < bit_stop; bit_x++ ) {
+                bit_0 = 0 != ( nibble_0 & ( 1 << ( bit_x & 3 ) ) );
+                bit_1 = 0 != ( nibble_1 & ( 1 << ( bit_x & 3 ) ) );
+                bit_2 = 0 != ( nibble_2 & ( 1 << ( bit_x & 3 ) ) );
+
+                greyscale_lcd_buffer[ y ][ nibble_x + bit_x ] = bit_0 + bit_1 + bit_2;
+            }
+        }
     }
 }

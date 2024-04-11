@@ -568,4 +568,5 @@ static unsigned char equal_gx_bitmap[] = { 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0
 extern int SmallTextWidth( const char* string, unsigned int length );
 extern void ui_init_LCD( void );
 
+extern void generate_greyscale_lcd();
 #endif /* _UI_INNER_H */

@@ -19,7 +19,10 @@ typedef struct letter_t {
 /*************/
 extern int last_annunc_state;
 
-extern unsigned char lcd_nibbles_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
+extern unsigned char lcd_nibbles_buffer_2[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
+extern unsigned char lcd_nibbles_buffer_1[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
+extern unsigned char lcd_nibbles_buffer_0[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
+extern unsigned char greyscale_lcd_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW * NIBBLES_NB_BITS ];
 
 extern letter_t small_font[ 128 ];
 

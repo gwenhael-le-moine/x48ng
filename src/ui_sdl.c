@@ -1664,12 +1664,12 @@ static inline void draw_nibble( int col, int row, int val )
         x -= 2 * display.offset;
     y = row; // y: start in pixels
 
-    /* if ( val == lcd_nibbles_buffer[ row ][ col ] ) */
+    /* if ( val == lcd_nibbles_buffer_0[ row ][ col ] ) */
     /*     return; */
 
     val &= 0x0f;
 
-    lcd_nibbles_buffer[ row ][ col ] = val;
+    lcd_nibbles_buffer_0[ row ][ col ] = val;
 
     SDLDrawNibble( x, y, val );
 }
@@ -1684,10 +1684,10 @@ static inline void draw_row( long addr, int row )
 
     for ( int i = 0; i < line_length; i++ ) {
         nibble = read_nibble( addr + i );
-        if ( nibble == lcd_nibbles_buffer[ row ][ i ] )
+        if ( nibble == lcd_nibbles_buffer_0[ row ][ i ] )
             continue;
 
-        lcd_nibbles_buffer[ row ][ i ] = nibble;
+        /* lcd_nibbles_buffer_0[ row ][ i ] = nibble; */
         draw_nibble( i, row, nibble );
     }
 }
@@ -1937,11 +1937,11 @@ void sdl_update_LCD( void )
 
         addr = display.disp_start;
         if ( display.offset != old_offset ) {
-            memset( lcd_nibbles_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
+            memset( lcd_nibbles_buffer_0, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
             old_offset = display.offset;
         }
         if ( display.lines != old_lines ) {
-            memset( &lcd_nibbles_buffer[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
+            memset( &lcd_nibbles_buffer_0[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
             old_lines = display.lines;
         }
         for ( i = 0; i <= display.lines; i++ ) {
@@ -1975,17 +1975,17 @@ void sdl_disp_draw_nibble( word_20 addr, word_4 val )
         if ( y < 0 || y > 63 )
             return;
 
-        if ( val == lcd_nibbles_buffer[ y ][ x ] )
+        if ( val == lcd_nibbles_buffer_0[ y ][ x ] )
             return;
 
-        lcd_nibbles_buffer[ y ][ x ] = val;
+        lcd_nibbles_buffer_0[ y ][ x ] = val;
         draw_nibble( x, y, val );
     } else {
         for ( y = 0; y < display.lines; y++ ) {
-            if ( val == lcd_nibbles_buffer[ y ][ x ] )
+            if ( val == lcd_nibbles_buffer_0[ y ][ x ] )
                 break;
 
-            lcd_nibbles_buffer[ y ][ x ] = val;
+            lcd_nibbles_buffer_0[ y ][ x ] = val;
             draw_nibble( x, y, val );
         }
     }
@@ -2000,10 +2000,10 @@ void sdl_menu_draw_nibble( word_20 addr, word_4 val )
     x = offset % NIBBLES_PER_ROW;
     y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
 
-    if ( val == lcd_nibbles_buffer[ y ][ x ] )
+    if ( val == lcd_nibbles_buffer_0[ y ][ x ] )
         return;
 
-    lcd_nibbles_buffer[ y ][ x ] = val;
+    lcd_nibbles_buffer_0[ y ][ x ] = val;
     draw_nibble( x, y, val );
 }
 
