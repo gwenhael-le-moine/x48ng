@@ -465,10 +465,8 @@ int parse_args_and_read_config( int argc, char* argv[] )
         fprintf( stderr, "\n" );
     }
 
-    if ( !normalize_config_dir() ) {
+    if ( !normalize_config_dir() )
         fprintf( stderr, "Configuration directory doesn't exist!\n" );
-        exit( 1 );
-    }
 
     /**********************/
     /* 1. read config.lua */
@@ -652,10 +650,9 @@ int parse_args_and_read_config( int argc, char* argv[] )
 
     /* After getting configs and params */
     /* normalize config_dir again in case it's been modified */
-    if ( !normalize_config_dir() ) {
+    if ( !normalize_config_dir() )
         fprintf( stderr, "Configuration directory doesn't exist!\n" );
-        exit( 1 );
-    }
+
     normalize_filenames();
 
     print_config |= verbose;
