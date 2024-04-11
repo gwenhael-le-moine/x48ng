@@ -109,13 +109,14 @@ int main( int argc, char** argv )
     /* Start emulation loop */
     /************************/
     do {
-        if ( !exec_flags )
-            emulate();
-        else
+        if ( exec_flags )
             emulate_debug();
+        else
+            emulate();
 
         debug();
     } while ( true );
 
+    /* never reached */
     return 0;
 }
