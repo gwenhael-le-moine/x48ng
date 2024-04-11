@@ -192,8 +192,7 @@ static inline void normalize_filename( const char* orig, char* dest )
     strcat( dest, orig );
 }
 
-static int normalized_config_path_exist = 1;
-static inline void normalize_config_dir( void )
+static inline bool normalize_config_dir( void )
 {
     struct stat st;
 
@@ -203,7 +202,9 @@ static inline void normalize_config_dir( void )
 
     if ( stat( normalized_config_path, &st ) == -1 )
         if ( errno == ENOENT )
-            normalized_config_path_exist = 0;
+            return false;
+
+    return true;
 }
 
 static inline void normalize_filenames( void )
@@ -217,7 +218,7 @@ static inline void normalize_filenames( void )
     normalize_filename( port2FileName, normalized_port2_path );
 }
 
-int parse_args( int argc, char* argv[] )
+int parse_args_and_read_config( int argc, char* argv[] )
 {
     int option_index;
     int c = '?';
@@ -464,7 +465,10 @@ int parse_args( int argc, char* argv[] )
         fprintf( stderr, "\n" );
     }
 
-    normalize_config_dir();
+    if ( !normalize_config_dir() ) {
+        fprintf( stderr, "Configuration directory doesn't exist!\n" );
+        exit( 1 );
+    }
 
     /**********************/
     /* 1. read config.lua */
@@ -648,7 +652,10 @@ int parse_args( int argc, char* argv[] )
 
     /* After getting configs and params */
     /* normalize config_dir again in case it's been modified */
-    normalize_config_dir();
+    if ( !normalize_config_dir() ) {
+        fprintf( stderr, "Configuration directory doesn't exist!\n" );
+        exit( 1 );
+    }
     normalize_filenames();
 
     print_config |= verbose;

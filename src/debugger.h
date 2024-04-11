@@ -2,6 +2,7 @@
 #define _DEBUGGER_H 1
 
 #include "emulator.h"
+#include "emulator_for_debugger.h"
 
 #define USER_INTERRUPT 1
 #define ILLEGAL_INSTRUCTION 2
@@ -11,7 +12,7 @@
 #define CLASS_MNEMONICS 1
 
 extern int enter_debugger;
-extern int in_debugger;
+extern bool in_debugger;
 extern int exec_flags;
 
 /**************/

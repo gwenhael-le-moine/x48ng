@@ -8,7 +8,8 @@
 #define ROM_SIZE_SX 0x080000
 #define ROM_SIZE_GX 0x100000
 
-unsigned int opt_gx = 0;
+bool opt_gx = false;
+bool opt_49 = false;
 unsigned int rom_size = 0;
 
 int read_rom_file( const char* name, unsigned char** mem, unsigned int* size )
@@ -127,13 +128,13 @@ int read_rom_file( const char* name, unsigned char** mem, unsigned int* size )
 
     if ( ( *mem )[ 0x29 ] == 0x00 ) {
         if ( *size == ROM_SIZE_GX ) {
-            opt_gx = 1;
+            opt_gx = true;
         } else if ( *size == 4 * ROM_SIZE_GX ) {
             fprintf( stderr, "%s seems to be HP49 ROM, but size is 0x%x\n", name, *size );
-            opt_gx = 2;
+            opt_49 = true;
         } else if ( *size == 8 * ROM_SIZE_GX ) {
             fprintf( stderr, "%s seems to be HP49 ROM, but size is 0x%x\n", name, *size );
-            opt_gx = 2;
+            opt_49 = true;
         } else {
             fprintf( stderr, "%s seems to be G/GX ROM, but size is 0x%x\n", name, *size );
             free( *mem );
@@ -143,7 +144,7 @@ int read_rom_file( const char* name, unsigned char** mem, unsigned int* size )
         }
     } else {
         if ( *size == ROM_SIZE_SX ) {
-            opt_gx = 0;
+            opt_gx = false;
         } else {
             fprintf( stderr, "%s seems to be S/SX ROM, but size is 0x%x\n", name, *size );
             free( *mem );

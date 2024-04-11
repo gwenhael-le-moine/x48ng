@@ -15,13 +15,13 @@
 #include <ncursesw/curses.h>
 
 #include "runtime_options.h" /* mono, gray, small, tiny, progname */
-#include "ui.h"              /* last_annunc_state, lcd_nibbles_buffer_0, DISP_ROWS */
+#include "ui.h"              /* last_annunc_state, greyscale_lcd_buffer, DISP_ROWS, DISP_COLS */
+#include "ui_inner.h"        /* generate_greyscale_lcd(); ui_init_LCD(); */
 
-#define LCD_WIDTH 131
 #define LCD_OFFSET_X 1
 #define LCD_OFFSET_Y 1
 #define LCD_BOTTOM LCD_OFFSET_Y + ( small ? ( DISP_ROWS / 2 ) : tiny ? ( DISP_ROWS / 4 ) : DISP_ROWS )
-#define LCD_RIGHT LCD_OFFSET_X + ( ( small || tiny ) ? ( LCD_WIDTH / 2 ) + 1 : LCD_WIDTH )
+#define LCD_RIGHT LCD_OFFSET_X + ( ( small || tiny ) ? ( DISP_COLS / 2 ) + 1 : DISP_COLS )
 
 #define LCD_COLOR_BG 48
 #define LCD_COLOR_FG 49
@@ -34,7 +34,8 @@
 /* functions implementation */
 /****************************/
 
-static inline wchar_t eight_bits_to_braille_char( bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7, bool b8 )
+static inline wchar_t eight_bits_to_braille_char( unsigned char b1, unsigned char b2, unsigned char b3, unsigned char b4, unsigned char b5,
+                                                  unsigned char b6, unsigned char b7, unsigned char b8 )
 {
     /*********/
     /* b1 b4 */
@@ -44,34 +45,33 @@ static inline wchar_t eight_bits_to_braille_char( bool b1, bool b2, bool b3, boo
     /*********/
     wchar_t chr = 0x2800;
 
-    if ( b1 )
+    if ( b1 > 0 )
         chr |= 0b0000000000000001;
-    if ( b2 )
+    if ( b2 > 0 )
         chr |= 0b0000000000000010;
-    if ( b3 )
+    if ( b3 > 0 )
         chr |= 0b0000000000000100;
-    if ( b4 )
+    if ( b4 > 0 )
         chr |= 0b0000000000001000;
-    if ( b5 )
+    if ( b5 > 0 )
         chr |= 0b0000000000010000;
-    if ( b6 )
+    if ( b6 > 0 )
         chr |= 0b0000000000100000;
-    if ( b7 )
+    if ( b7 > 0 )
         chr |= 0b0000000001000000;
-    if ( b8 )
+    if ( b8 > 0 )
         chr |= 0b0000000010000000;
 
     return chr;
 }
 
-static inline void ncurses_draw_lcd_tiny( void )
+static inline void ncurses_draw_greyscale_lcd_tiny( void )
 {
-    bool b1, b2, b3, b4, b5, b6, b7, b8;
-    int nibble_top, nibble_middle_top, nibble_middle_bottom, nibble_bottom;
+    unsigned char b1, b2, b3, b4, b5, b6, b7, b8;
     int step_x = 2;
     int step_y = 4;
 
-    wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
+    wchar_t line[ 66 ]; /* ( DISP_COLS / step_x ) + 1 */
 
     if ( !mono && has_colors() )
         attron( COLOR_PAIR( LCD_COLORS_PAIR ) );
@@ -79,35 +79,21 @@ static inline void ncurses_draw_lcd_tiny( void )
     for ( int y = 0; y < DISP_ROWS; y += step_y ) {
         wcscpy( line, L"" );
 
-        for ( int nibble_x = 0; nibble_x < NIBBLES_PER_ROW - 1; ++nibble_x ) {
-            nibble_top = lcd_nibbles_buffer_0[ y ][ nibble_x ];
-            nibble_top &= 0x0f;
+        for ( int x = 0; x < DISP_COLS; x += step_x ) {
+            b1 = greyscale_lcd_buffer[ y ][ x ];
+            b4 = ( ( x + 1 ) == DISP_COLS ) ? 0 : greyscale_lcd_buffer[ y ][ x + 1 ];
 
-            nibble_middle_top = lcd_nibbles_buffer_0[ y + 1 ][ nibble_x ];
-            nibble_middle_top &= 0x0f;
+            b2 = greyscale_lcd_buffer[ y + 1 ][ x ];
+            b5 = ( ( x + 1 ) == DISP_COLS ) ? 0 : greyscale_lcd_buffer[ y + 1 ][ x + 1 ];
 
-            nibble_middle_bottom = lcd_nibbles_buffer_0[ y + 2 ][ nibble_x ];
-            nibble_middle_bottom &= 0x0f;
+            b3 = greyscale_lcd_buffer[ y + 2 ][ x ];
+            b6 = ( ( x + 1 ) == DISP_COLS ) ? 0 : greyscale_lcd_buffer[ y + 2 ][ x + 1 ];
 
-            nibble_bottom = lcd_nibbles_buffer_0[ y + 3 ][ nibble_x ];
-            nibble_bottom &= 0x0f;
+            b7 = greyscale_lcd_buffer[ y + 3 ][ x ];
+            b8 = ( ( x + 1 ) == DISP_COLS ) ? 0 : greyscale_lcd_buffer[ y + 3 ][ x + 1 ];
 
-            for ( int bit_x = 0; bit_x < NIBBLES_NB_BITS; bit_x += step_x ) {
-                b1 = 0 != ( nibble_top & ( 1 << ( bit_x & 3 ) ) );
-                b4 = 0 != ( nibble_top & ( 1 << ( ( bit_x + 1 ) & 3 ) ) );
-
-                b2 = 0 != ( nibble_middle_top & ( 1 << ( bit_x & 3 ) ) );
-                b5 = 0 != ( nibble_middle_top & ( 1 << ( ( bit_x + 1 ) & 3 ) ) );
-
-                b3 = 0 != ( nibble_middle_bottom & ( 1 << ( bit_x & 3 ) ) );
-                b6 = 0 != ( nibble_middle_bottom & ( 1 << ( ( bit_x + 1 ) & 3 ) ) );
-
-                b7 = 0 != ( nibble_bottom & ( 1 << ( bit_x & 3 ) ) );
-                b8 = 0 != ( nibble_bottom & ( 1 << ( ( bit_x + 1 ) & 3 ) ) );
-
-                wchar_t pixels = eight_bits_to_braille_char( b1, b2, b3, b4, b5, b6, b7, b8 );
-                wcsncat( line, &pixels, 1 );
-            }
+            wchar_t pixels = eight_bits_to_braille_char( b1, b2, b3, b4, b5, b6, b7, b8 );
+            wcsncat( line, &pixels, 1 );
         }
         mvaddwstr( LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
     }
@@ -118,28 +104,29 @@ static inline void ncurses_draw_lcd_tiny( void )
     wrefresh( stdscr );
 }
 
-static inline wchar_t four_bits_to_quadrant_char( bool top_left, bool top_right, bool bottom_left, bool bottom_right )
+static inline wchar_t four_bits_to_quadrant_char( unsigned char top_left, unsigned char top_right, unsigned char bottom_left,
+                                                  unsigned char bottom_right )
 {
-    if ( top_left ) {
-        if ( top_right ) {
-            if ( bottom_left )
+    if ( top_left > 0 ) {
+        if ( top_right > 0 ) {
+            if ( bottom_left > 0 )
                 return bottom_right ? L'█' : L'▛'; /* 0x2588 0x2598 */
             else
                 return bottom_right ? L'▜' : L'▀'; /* 0x259C 0x2580 */
         } else {
-            if ( bottom_left )
+            if ( bottom_left > 0 )
                 return bottom_right ? L'▙' : L'▌';
             else
                 return bottom_right ? L'▚' : L'▘';
         }
     } else {
-        if ( top_right ) {
-            if ( bottom_left )
+        if ( top_right > 0 ) {
+            if ( bottom_left > 0 )
                 return bottom_right ? L'▟' : L'▞';
             else
                 return bottom_right ? L'▐' : L'▝';
         } else {
-            if ( bottom_left )
+            if ( bottom_left > 0 )
                 return bottom_right ? L'▄' : L'▖';
             else
                 return bottom_right ? L'▗' : L' ';
@@ -147,14 +134,13 @@ static inline wchar_t four_bits_to_quadrant_char( bool top_left, bool top_right,
     }
 }
 
-static inline void ncurses_draw_lcd_small( void )
+static inline void ncurses_draw_greyscale_lcd_small( void )
 {
-    bool top_left, top_right, bottom_left, bottom_right;
-    int nibble_top, nibble_bottom;
+    unsigned char top_left, top_right, bottom_left, bottom_right;
     int step_x = 2;
     int step_y = 2;
 
-    wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
+    wchar_t line[ 66 ]; /* ( DISP_COLS / step_x ) + 1 */
 
     if ( !mono && has_colors() )
         attron( COLOR_PAIR( LCD_COLORS_PAIR ) );
@@ -162,22 +148,14 @@ static inline void ncurses_draw_lcd_small( void )
     for ( int y = 0; y < DISP_ROWS; y += step_y ) {
         wcscpy( line, L"" );
 
-        for ( int nibble_x = 0; nibble_x < NIBBLES_PER_ROW - 1; ++nibble_x ) {
-            nibble_top = lcd_nibbles_buffer_0[ y ][ nibble_x ];
-            nibble_top &= 0x0f;
-            nibble_bottom = lcd_nibbles_buffer_0[ y + 1 ][ nibble_x ];
-            nibble_bottom &= 0x0f;
+        for ( int x = 0; x < DISP_COLS; x += step_x ) {
+            top_left = greyscale_lcd_buffer[ y ][ x ];
+            top_right = ( ( x + 1 ) == DISP_COLS ) ? 0 : greyscale_lcd_buffer[ y ][ x + 1 ];
+            bottom_left = greyscale_lcd_buffer[ y + 1 ][ x ];
+            bottom_right = ( ( x + 1 ) == DISP_COLS ) ? 0 : greyscale_lcd_buffer[ y + 1 ][ x + 1 ];
 
-            for ( int bit_x = 0; bit_x < NIBBLES_NB_BITS; bit_x += step_x ) {
-                top_left = 0 != ( nibble_top & ( 1 << ( bit_x & 3 ) ) );
-                top_right = 0 != ( nibble_top & ( 1 << ( ( bit_x + 1 ) & 3 ) ) );
-
-                bottom_left = 0 != ( nibble_bottom & ( 1 << ( bit_x & 3 ) ) );
-                bottom_right = 0 != ( nibble_bottom & ( 1 << ( ( bit_x + 1 ) & 3 ) ) );
-
-                wchar_t pixels = four_bits_to_quadrant_char( top_left, top_right, bottom_left, bottom_right );
-                wcsncat( line, &pixels, 1 );
-            }
+            wchar_t pixels = four_bits_to_quadrant_char( top_left, top_right, bottom_left, bottom_right );
+            wcsncat( line, &pixels, 1 );
         }
         mvaddwstr( LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
     }
@@ -188,14 +166,9 @@ static inline void ncurses_draw_lcd_small( void )
     wrefresh( stdscr );
 }
 
-static inline void ncurses_draw_lcd_fullsize( void )
+static inline void ncurses_draw_greyscale_lcd_fullsize( void )
 {
-    bool bit;
-    int nibble;
-    int bit_stop;
-    int init_x;
-
-    wchar_t line[ LCD_WIDTH ];
+    wchar_t line[ DISP_COLS ];
 
     if ( !mono && has_colors() )
         attron( COLOR_PAIR( LCD_COLORS_PAIR ) );
@@ -203,19 +176,26 @@ static inline void ncurses_draw_lcd_fullsize( void )
     for ( int y = 0; y < DISP_ROWS; ++y ) {
         wcscpy( line, L"" );
 
-        for ( int nibble_x = 0; nibble_x < NIBBLES_PER_ROW; ++nibble_x ) {
-            nibble = lcd_nibbles_buffer_0[ y ][ nibble_x ];
-            nibble &= 0x0f;
+        for ( int x = 0; x < DISP_COLS; ++x ) {
+            wchar_t pixel;
 
-            init_x = nibble_x * NIBBLES_NB_BITS;
-            bit_stop = ( ( init_x + NIBBLES_NB_BITS >= LCD_WIDTH ) ? LCD_WIDTH - init_x : 4 );
-
-            for ( int bit_x = 0; bit_x < bit_stop; bit_x++ ) {
-                bit = 0 != ( nibble & ( 1 << ( bit_x & 3 ) ) );
-
-                wchar_t pixel = bit ? L'█' : L' ';
-                wcsncat( line, &pixel, 1 );
+            switch ( greyscale_lcd_buffer[ y ][ x ] ) {
+                case 3:
+                    pixel = L'█'; /* ▓ */
+                    break;
+                case 2:
+                    pixel = L'▒';
+                    break;
+                case 1:
+                    pixel = L'░';
+                    break;
+                case 0:
+                default:
+                    pixel = L' ';
+                    break;
             }
+
+            wcsncat( line, &pixel, 1 );
         }
         mvaddwstr( LCD_OFFSET_Y + y, LCD_OFFSET_X, line );
     }
@@ -228,18 +208,14 @@ static inline void ncurses_draw_lcd_fullsize( void )
 
 static inline void ncurses_draw_lcd( void )
 {
-    if ( small )
-        ncurses_draw_lcd_small();
-    else if ( tiny )
-        ncurses_draw_lcd_tiny();
-    else
-        ncurses_draw_lcd_fullsize();
-}
+    generate_greyscale_lcd();
 
-/* TODO: not specific to tui  */
-static inline void draw_nibble( int col, int row, int val )
-{
-    /* Dummy, NCurses version draws the whole LCD at once at the end of update_LCD() */
+    if ( small )
+        ncurses_draw_greyscale_lcd_small(); /* no greyscale */
+    else if ( tiny )
+        ncurses_draw_greyscale_lcd_tiny(); /* no greyscale */
+    else
+        ncurses_draw_greyscale_lcd_fullsize();
 }
 
 /* TODO: duplicate of ui_sdl.c:draw_row()  */
@@ -257,7 +233,6 @@ static inline void draw_row( long addr, int row )
             continue;
 
         lcd_nibbles_buffer_0[ row ][ i ] = nibble;
-        draw_nibble( i, row, nibble );
     }
 }
 
@@ -267,13 +242,13 @@ static inline void draw_row( long addr, int row )
 /* TODO: quasi-duplicate of ui_sdl.c:sdl_update_LCD()  */
 void text_update_LCD( void )
 {
+    /* First populate lcd_nibbles_buffer */
     if ( display.on ) {
         int i;
-        long addr;
+        long addr = display.disp_start;
         static int old_offset = -1;
         static int old_lines = -1;
 
-        addr = display.disp_start;
         if ( display.offset != old_offset ) {
             memset( lcd_nibbles_buffer_0, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
 
@@ -296,14 +271,11 @@ void text_update_LCD( void )
             }
         }
     } else
-        memset( lcd_nibbles_buffer_0, 0xf0, sizeof( lcd_nibbles_buffer_0 ) );
+        ui_init_LCD();
 
-    /* text UI specific from here */
+    /* Then actually draw from lcd_nibbles_buffer onto screen */
     ncurses_draw_lcd();
 }
-
-/* TODO: duplicate of ui_sdl.c:sdl_refresh_LCD()  */
-void text_refresh_LCD( void ) {}
 
 /* TODO: duplicate of ui_sdl.c:sdl_disp_draw_nibble()  */
 void text_disp_draw_nibble( word_20 addr, word_4 val )
@@ -324,14 +296,12 @@ void text_disp_draw_nibble( word_20 addr, word_4 val )
             return;
 
         lcd_nibbles_buffer_0[ y ][ x ] = val;
-        draw_nibble( x, y, val );
     } else {
         for ( y = 0; y < display.lines; y++ ) {
             if ( val == lcd_nibbles_buffer_0[ y ][ x ] )
                 break;
 
             lcd_nibbles_buffer_0[ y ][ x ] = val;
-            draw_nibble( x, y, val );
         }
     }
 }
@@ -350,7 +320,6 @@ void text_menu_draw_nibble( word_20 addr, word_4 val )
         return;
 
     lcd_nibbles_buffer_0[ y ][ x ] = val;
-    draw_nibble( x, y, val );
 }
 
 void text_draw_annunc( void )
@@ -367,7 +336,7 @@ void text_draw_annunc( void )
         mvaddwstr( 0, 4 + ( i * 4 ), ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] ) ? annunciators_icons[ i ] : L" " );
 }
 
-void text_adjust_contrast( void ) { /* Dummy, NCurses version doesn't hand contrast (yet?) */ }
+void text_adjust_contrast( void ) { text_update_LCD(); }
 
 int text_get_event( void )
 {
@@ -567,8 +536,6 @@ int text_get_event( void )
             press_key( hpkey );
     }
 
-    text_update_LCD();
-
     return 1;
 }
 
@@ -579,7 +546,7 @@ void init_text_ui( int argc, char** argv )
     ui_menu_draw_nibble = text_menu_draw_nibble;
     ui_get_event = text_get_event;
     ui_update_LCD = text_update_LCD;
-    ui_refresh_LCD = text_refresh_LCD;
+    ui_refresh_LCD = text_update_LCD;
     ui_adjust_contrast = text_adjust_contrast;
     ui_draw_annunc = text_draw_annunc;
 
@@ -620,7 +587,7 @@ void init_text_ui( int argc, char** argv )
     mvprintw( 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
     mvprintw( 0, LCD_RIGHT - 18, "< %s v%i.%i.%i >", progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
 
-    mvprintw( LCD_BOTTOM, 2, "[ wire: %s ]-[ IR: %s ]", wire_name, ir_name );
+    mvprintw( LCD_BOTTOM, 2, "[ wire: %s ]-[ IR: %s ]-[ contrast: %i ]", wire_name, ir_name, display.contrast );
 
     mvprintw( LCD_BOTTOM + 1, 0, "F1: Enter, F2: Left-Shift, F3: Right-Shift, F4: Alpha, F5: On, F7: Quit" );
 }

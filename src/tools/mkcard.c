@@ -3,26 +3,27 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 unsigned char* mem;
 
-int write_mem_file( char* name, unsigned char* mem, size_t size )
+bool write_mem_file( char* name, unsigned char* mem, size_t size )
 {
     FILE* fp;
 
     if ( NULL == ( fp = fopen( name, "w" ) ) ) {
         fprintf( stderr, "can\'t open %s\n", name );
-        return 0;
+        return false;
     }
 
     if ( fwrite( mem, 1, size, fp ) != size ) {
         fprintf( stderr, "can\'t write %s\n", name );
         fclose( fp );
-        return 0;
+        return false;
     }
 
     fclose( fp );
-    return 1;
+    return true;
 }
 
 int main( int argc, char** argv )

@@ -1,21 +1,26 @@
-#ifndef _HP48_H
-#define _HP48_H 1
+#ifndef _EMULATOR_H
+#define _EMULATOR_H 1
 
 #include <stdint.h> /* int64_t */
+#include <stdbool.h>
 
 #define DEC 10
 #define HEX 16
 
-#define NR_MCTL 6
-#define NR_RSTK 8
-#define NR_PSTAT 16
+#define NB_MCTL 6
+#define NB_RSTK 8
+#define NB_PSTAT 16
 
 #define RUN_TIMER 2
 #define IDLE_TIMER 3
 
-// Keys
-#define NB_KEYS 49
+/* LCD refresh rate is 64Hz according to https://www.hpcalc.org/hp48/docs/faq/48faq-6.html */
+#define USEC_PER_FRAME ( 1000000 / 64 )
 
+#define NIBBLES_PER_ROW 0x22
+#define NIBBLES_NB_BITS 4
+
+// Keys
 #define HPKEY_A 0
 #define HPKEY_B 1
 #define HPKEY_C 2
@@ -76,6 +81,7 @@
 
 #define FIRST_HPKEY HPKEY_A
 #define LAST_HPKEY HPKEY_PLUS
+#define NB_KEYS ( LAST_HPKEY + 1 )
 
 // Annunciators
 #define NB_ANNUNCIATORS 6
@@ -104,53 +110,53 @@ typedef struct t1_t2_ticks {
 typedef struct device_t {
     int display_touched;
 
-    char contrast_touched;
+    bool contrast_touched;
 
-    char disp_test_touched;
+    bool ann_touched;
 
-    char crc_touched;
+    bool baud_touched;
 
-    char power_status_touched;
-    char power_ctrl_touched;
+    bool ioc_touched;
 
-    char mode_touched;
+    bool rbr_touched;
+    bool tbr_touched;
 
-    char ann_touched;
+    bool t1_touched;
+    bool t2_touched;
 
-    char baud_touched;
+    /* bool disp_test_touched;     /\* unused *\/ */
 
-    char card_ctrl_touched;
-    char card_status_touched;
+    /* bool crc_touched;           /\* unused *\/ */
 
-    char ioc_touched;
+    /* bool power_status_touched;  /\* unused *\/ */
+    /* bool power_ctrl_touched;    /\* unused *\/ */
 
-    char tcs_touched;
-    char rcs_touched;
+    /* bool mode_touched;          /\* unused *\/ */
 
-    char rbr_touched;
-    char tbr_touched;
+    /* bool card_ctrl_touched;     /\* unused *\/ */
+    /* bool card_status_touched;   /\* unused *\/ */
 
-    char sreq_touched;
+    /* bool tcs_touched;           /\* unused *\/ */
+    /* bool rcs_touched;           /\* unused *\/ */
 
-    char ir_ctrl_touched;
+    /* bool sreq_touched;          /\* unused *\/ */
 
-    char base_off_touched;
+    /* bool ir_ctrl_touched;       /\* unused *\/ */
 
-    char lcr_touched;
-    char lbr_touched;
+    /* bool base_off_touched;      /\* unused *\/ */
 
-    char scratch_touched;
-    char base_nibble_touched;
+    /* bool lcr_touched;           /\* unused *\/ */
+    /* bool lbr_touched;           /\* unused *\/ */
 
-    char unknown_touched;
+    /* bool scratch_touched;       /\* unused *\/ */
+    /* bool base_nibble_touched;   /\* unused *\/ */
 
-    char t1_ctrl_touched;
-    char t2_ctrl_touched;
+    /* bool unknown_touched;       /\* unused *\/ */
 
-    char unknown2_touched;
+    /* bool t1_ctrl_touched;       /\* unused *\/ */
+    /* bool t2_ctrl_touched;       /\* unused *\/ */
 
-    char t1_touched;
-    char t2_touched;
+    /* bool unknown2_touched;      /\* unused *\/ */
 } device_t;
 
 typedef struct keystate_t {
@@ -159,7 +165,7 @@ typedef struct keystate_t {
 
 typedef struct hpkey_t {
     int code;
-    short pressed;
+    bool pressed;
 } hpkey_t;
 
 typedef struct display_t {
@@ -203,19 +209,19 @@ typedef struct saturn_t {
 
     word_1 CARRY;
 
-    unsigned char PSTAT[ NR_PSTAT ];
+    unsigned char PSTAT[ NB_PSTAT ];
     unsigned char XM, SB, SR, MP;
 
     word_4 hexmode;
 
-    word_20 rstk[ NR_RSTK ];
+    word_20 RSTK[ NB_RSTK ];
     short rstkp;
 
     keystate_t keybuf;
 
-    unsigned char interruptable;
-    unsigned char int_pending;
-    unsigned char kbd_ien;
+    unsigned char interruptable; /* bool */
+    unsigned char int_pending;   /* bool */
+    unsigned char kbd_ien;       /* bool */
 
     word_4 disp_io;
 
@@ -280,7 +286,7 @@ typedef struct saturn_t {
     long i_per_s;
 
     word_16 bank_switch;
-    mem_cntl_t mem_cntl[ NR_MCTL ];
+    mem_cntl_t mem_cntl[ NB_MCTL ];
 
     unsigned char* rom;
     unsigned char* ram;
@@ -288,29 +294,14 @@ typedef struct saturn_t {
     unsigned char* port2;
 } saturn_t;
 
-#define NIBBLES_PER_ROW 0x22
-#define NIBBLES_NB_BITS 4
-
-extern int got_alarm;
-
-extern int set_t1;
-
-extern long sched_adjtime;
-extern long schedule_event;
+extern bool sigalarm_triggered;
 
 extern char* wire_name;
 extern char* ir_name;
 
-extern device_t device;
 extern display_t display;
 
 extern saturn_t saturn;
-
-extern int device_check;
-extern short port1_is_ram;
-extern long port1_mask;
-extern short port2_is_ram;
-extern long port2_mask;
 
 extern hpkey_t keyboard[ NB_KEYS ];
 
@@ -319,50 +310,24 @@ extern int annunciators_bits[ NB_ANNUNCIATORS ];
 /**************/
 /* emu_init.c */
 /**************/
-extern void init_display( void );  /* used in ui_*.c */
-extern int init_emulator( void );  /* used in main.c */
-extern void exit_emulator( void ); /* debugger.c; main.c; ui_*.c */
-extern int read_files( void );     /* debugger.c */
-extern int write_files( void );    /* used in debugger.c */
-
-/***************/
-/* emu_timer.c */
-/***************/
-extern void start_timer( int timer );
-extern void stop_timer( int timer );
-
-extern t1_t2_ticks get_t1_t2( void );
-extern void set_accesstime( void );
+extern void start_emulator( void ); /* used in main.c */
+extern void exit_emulator( void );  /* used in debugger.c; ui_*.c */
 
 /********************/
-/* hp48emu_memory.c */
-/********************/
-extern int ( *read_nibble )( long addr );
-
-/****************/
 /* emu_memory.c */
-/****************/
-extern long read_nibbles( long addr, int len );
+/********************/
+extern int ( *read_nibble )( long addr ); /* used in debugger.c; ui_*.c */
 
-/*****************/
-/* emu_actions.c */
-/*****************/
-extern void do_kbd_int( void );
-extern void press_key( int hpkey );
-extern void release_key( int hpkey );
-extern void release_all_keys( void );
-
-/****************/
-/* emu_serial.c */
-/****************/
-extern int init_serial( void );
+/******************/
+/* emu_keyboard.c */
+/******************/
+extern void press_key( int hpkey );   /* used in ui_*.c */
+extern void release_key( int hpkey ); /* used in ui_*.c */
+extern void release_all_keys( void ); /* used in ui_*.c */
 
 /*****************/
 /* emu_emulate.c */
 /*****************/
-extern void emulate( void );
-extern int step_instruction( void );
-extern void schedule( void );
-extern void load_addr( word_20* dat, long addr, int n );
+extern void emulate( void ); /* used in main.c */
 
-#endif /* !_HP48_H */
+#endif /* !_EMULATOR_H */

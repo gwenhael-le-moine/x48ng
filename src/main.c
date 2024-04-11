@@ -12,7 +12,7 @@
 #include "debugger.h"
 #include "emulator.h"
 #include "runtime_options.h"
-#include "ui.h" /* init_ui(); */
+#include "ui.h" /* setup_frontend(); init_ui(); */
 
 void signal_handler( int sig )
 {
@@ -21,7 +21,7 @@ void signal_handler( int sig )
             enter_debugger |= USER_INTERRUPT;
             break;
         case SIGALRM:
-            got_alarm = 1;
+            sigalarm_triggered = true;
             break;
         case SIGPIPE:
             exit_emulator();
@@ -34,13 +34,6 @@ void signal_handler( int sig )
 int main( int argc, char** argv )
 {
     setlocale( LC_ALL, "C" );
-
-    /**********/
-    /* getopt */
-    /**********/
-    parse_args( argc, argv );
-
-    setup_frontend();
 
     /*****************************************/
     /* handlers for SIGALRM, SIGPIPE */
@@ -77,17 +70,24 @@ int main( int argc, char** argv )
     /************************************/
     /* set the real time interval timer */
     /************************************/
+    /*
+      Every <interval>µs setitimer will trigger a SIGALRM
+      which will set sigalarm_triggered to true
+      In emulate() sigalarm_triggered triggers LCD refresh and UI event handling
+     */
     struct itimerval it;
-    int interval = 20000;
     it.it_interval.tv_sec = 0;
-    it.it_interval.tv_usec = interval;
+    it.it_interval.tv_usec = USEC_PER_FRAME;
     it.it_value.tv_sec = 0;
-    it.it_value.tv_usec = interval;
+    it.it_value.tv_usec = USEC_PER_FRAME;
     setitimer( ITIMER_REAL, &it, ( struct itimerval* )0 );
 
     /**********************************************************/
     /* Set stdin flags to not include O_NDELAY and O_NONBLOCK */
     /**********************************************************/
+    /*
+      I don't know what this is for?
+     */
     long flags;
     flags = fcntl( STDIN_FILENO, F_GETFL, 0 );
     flags &= ~O_NDELAY;
@@ -97,23 +97,26 @@ int main( int argc, char** argv )
     /********************/
     /* initialize stuff */
     /********************/
-    init_emulator();
-    init_serial();
-    init_display();
-    ui_init_LCD();
-    init_ui( argc, argv );
+    parse_args_and_read_config( argc, argv );
+
+    /* Emulator */
+    start_emulator();
+
+    /* (G)UI */
+    start_UI( argc, argv );
 
     /************************/
     /* Start emulation loop */
     /************************/
     do {
-        if ( !exec_flags )
-            emulate();
-        else
+        if ( exec_flags )
             emulate_debug();
+        else
+            emulate();
 
         debug();
-    } while ( 1 );
+    } while ( true );
 
+    /* never reached */
     return 0;
 }

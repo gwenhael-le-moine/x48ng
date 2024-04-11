@@ -3,12 +3,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 unsigned char* core;
 
 #define DEFAULT_ROM_FILE "rom.dump"
 
-int write_mem_file( char* name, unsigned char* mem, size_t size )
+bool write_mem_file( char* name, unsigned char* mem, size_t size )
 {
     FILE* fp;
     unsigned char* tmp_mem;
@@ -27,7 +28,7 @@ int write_mem_file( char* name, unsigned char* mem, size_t size )
             if ( 1 != fwrite( &byte, 1, 1, fp ) ) {
                 fprintf( stderr, "can\'t write %s\n", name );
                 fclose( fp );
-                return 0;
+                return false;
             }
         }
     } else {
@@ -40,14 +41,14 @@ int write_mem_file( char* name, unsigned char* mem, size_t size )
             fprintf( stderr, "can\'t write %s\n", name );
             fclose( fp );
             free( tmp_mem );
-            return 0;
+            return false;
         }
 
         free( tmp_mem );
     }
 
     fclose( fp );
-    return 1;
+    return true;
 }
 
 int main( int argc, char** argv )
@@ -55,7 +56,8 @@ int main( int argc, char** argv )
     FILE* dump;
     long addr;
     size_t size;
-    int ch, i, gx, error;
+    int ch, i;
+    bool gx, error;
 
     if ( argc < 2 ) {
         fprintf( stderr, "usage: %s hp48-dump-file\n", argv[ 0 ] );
@@ -73,14 +75,14 @@ int main( int argc, char** argv )
     }
     memset( core, 0, 0x100000 );
 
-    gx = 0;
-    error = 0;
+    gx = false;
+    error = false;
     while ( 1 ) {
         addr = 0;
         for ( i = 0; i < 5; i++ ) {
             addr <<= 4;
             if ( ( ch = fgetc( dump ) ) < 0 ) {
-                error = 1;
+                error = true;
                 break;
             }
             if ( ch >= '0' && ch <= '9' ) {
@@ -89,14 +91,14 @@ int main( int argc, char** argv )
                 addr |= ch - 'A' + 10;
             } else {
                 fprintf( stderr, "%s: Illegal char %c at %lx\n", argv[ 0 ], ch, addr );
-                error = 1;
+                error = true;
                 break;
             }
         }
         if ( error )
             break;
         if ( addr >= 0x80000 )
-            gx = 1;
+            gx = true;
         if ( ( ch = fgetc( dump ) ) < 0 ) {
             fprintf( stderr, "%s: Unexpected EOF at %lx\n", argv[ 0 ], addr );
             break;
@@ -108,7 +110,7 @@ int main( int argc, char** argv )
         for ( i = 0; i < 16; i++ ) {
             if ( ( ch = fgetc( dump ) ) < 0 ) {
                 fprintf( stderr, "%s: Unexpected EOF at %lx\n", argv[ 0 ], addr );
-                error = 1;
+                error = true;
                 break;
             }
             if ( ch >= '0' && ch <= '9' ) {
@@ -117,7 +119,7 @@ int main( int argc, char** argv )
                 core[ addr++ ] = ( unsigned char )( ch - 'A' + 10 );
             } else {
                 fprintf( stderr, "%s: Illegal char %c at %lx\n", argv[ 0 ], ch, addr );
-                error = 1;
+                error = true;
                 break;
             }
         }
@@ -132,7 +134,7 @@ int main( int argc, char** argv )
     }
 
     if ( !gx && core[ 0x29 ] == 0x0 )
-        gx = 1;
+        gx = true;
 
     if ( gx )
         size = 0x100000;

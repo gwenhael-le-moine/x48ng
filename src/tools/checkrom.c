@@ -8,8 +8,6 @@
 unsigned char* rom;
 unsigned short rom_crc, crc;
 
-int verbose = 0;
-
 #define calc_crc( n ) ( crc = ( ( crc >> 4 ) ^ ( ( ( crc ^ n ) & 0xf ) * 0x1081 ) ) )
 
 int main( int argc, char** argv )
@@ -29,7 +27,7 @@ int main( int argc, char** argv )
         exit( 1 );
     }
 
-    ver_addr = ( opt_gx != 0 ) ? 0x7ffbf : 0x7fff0;
+    ver_addr = opt_gx ? 0x7ffbf : 0x7fff0;
 
     for ( i = 0; i < 6; i++ ) {
         version[ i ] = rom[ ver_addr + 2 * i + 1 ] << 4;

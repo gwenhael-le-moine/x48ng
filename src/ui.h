@@ -1,9 +1,10 @@
-#ifndef _X48_GUI_H
-#define _X48_GUI_H 1
+#ifndef _UI_H
+#define _UI_H 1
 
 #include "emulator.h" /* word_4; word_20; */
 
 #define DISP_ROWS 64
+#define DISP_COLS 131
 #define NIBS_PER_BUFFER_ROW ( NIBBLES_PER_ROW + 2 )
 
 /***********/
@@ -22,7 +23,7 @@ extern int last_annunc_state;
 extern unsigned char lcd_nibbles_buffer_2[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
 extern unsigned char lcd_nibbles_buffer_1[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
 extern unsigned char lcd_nibbles_buffer_0[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
-extern unsigned char greyscale_lcd_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW * NIBBLES_NB_BITS ];
+extern unsigned char greyscale_lcd_buffer[ DISP_ROWS ][ DISP_COLS ];
 
 extern letter_t small_font[ 128 ];
 
@@ -49,31 +50,21 @@ extern void ( *ui_disp_draw_nibble )( word_20 addr, word_4 val );
 extern void ( *ui_menu_draw_nibble )( word_20 addr, word_4 val );
 
 /*****************************************/
-/* used in: emu_actions.c, emu_emulate.c */
+/* used in: emu_emulate.c */
 /*****************************************/
 extern int ( *ui_get_event )( void );
+extern void ( *ui_adjust_contrast )( void );
+extern void ( *ui_draw_annunc )( void );
 
 /*****************************************************/
-/* used in: emu_actions.c, emu_emulate.c, debugger.c */
+/* used in: emu_emulate.c, debugger.c */
 /*****************************************************/
 extern void ( *ui_update_LCD )( void );
 extern void ( *ui_refresh_LCD )( void );
 
-/**************************/
-/* used in: emu_emulate.c */
-/**************************/
-extern void ( *ui_adjust_contrast )( void );
-extern void ( *ui_draw_annunc )( void );
-
 /*******************/
 /* used in: main.c */
 /*******************/
-extern void ( *init_ui )( int argc, char** argv );
+extern void start_UI( int argc, char** argv );
 
-/*********************************/
-/* used in: debugger.c, ui_sdl.c */
-/*********************************/
-extern void ui_init_LCD( void );
-
-extern void setup_frontend( void );
-#endif /* !_X48_GUI_H */
+#endif /* !_UI_H */

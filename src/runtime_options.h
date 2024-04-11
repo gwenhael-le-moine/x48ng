@@ -58,6 +58,6 @@ extern char normalized_port2_path[ MAX_LENGTH_FILENAME ];
 /*************/
 /* functions */
 /*************/
-extern int parse_args( int argc, char* argv[] );
+extern int parse_args_and_read_config( int argc, char* argv[] );
 
 #endif /* !_OPTIONS_H */

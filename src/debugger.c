@@ -9,8 +9,9 @@
 
 #include "runtime_options.h"
 #include "emulator.h"
+#include "emulator_for_debugger.h"
 #include "romio.h"
-#include "ui.h" /* ui_init_LCD(); ui_update_LCD(); */
+#include "ui.h" /* ui_update_LCD(); */
 #include "debugger.h"
 
 #define MAX_ARGS 16
@@ -77,7 +78,7 @@
 #define EXEC_BKPT 1
 
 int enter_debugger = 0;
-int in_debugger = 0;
+bool in_debugger = false;
 int exec_flags = 0;
 
 static int continue_flag;
@@ -3553,7 +3554,6 @@ static void cmd_load( int argc, char** argv )
             free( tmp_saturn.port2 );
 
         /* After reloading state we need to refresh the UI's LCD */
-        ui_init_LCD();
         ui_update_LCD();
     } else {
         printf( "Loading emulator-state from files failed.\n" );
@@ -3633,12 +3633,12 @@ static void dump_st( void )
     int val;
 
     val = 0;
-    for ( i = NR_PSTAT - 1; i >= 0; i-- ) {
+    for ( i = NB_PSTAT - 1; i >= 0; i-- ) {
         val <<= 1;
         val |= saturn.PSTAT[ i ] ? 1 : 0;
     }
     printf( "    ST:\t%.4X (", val );
-    for ( i = NR_PSTAT - 1; i > 0; i-- ) {
+    for ( i = NB_PSTAT - 1; i > 0; i-- ) {
         if ( saturn.PSTAT[ i ] ) {
             printf( "%.1X ", i );
         } else {
@@ -3990,7 +3990,7 @@ static void cmd_step( int argc, char** argv )
     if ( n <= 0 )
         return;
 
-    in_debugger = 1;
+    in_debugger = true;
     step_instruction();
 
     if ( exec_flags & EXEC_BKPT ) {
@@ -4054,8 +4054,8 @@ static void cmd_rstk( int argc, char** argv )
     } else {
         j = 0;
         for ( i = saturn.rstkp; i >= 0; i-- ) {
-            disassemble( saturn.rstk[ i ], instr );
-            printf( "%2d: %.5lX: %s\n", j, saturn.rstk[ i ], instr );
+            disassemble( saturn.RSTK[ i ], instr );
+            printf( "%2d: %.5lX: %s\n", j, saturn.RSTK[ i ], instr );
             j++;
         }
     }
@@ -4196,16 +4196,16 @@ int debug( void )
         } else {
             printf( "Undefined command \"%s\". Try \"help\".\n", argv[ 0 ] );
         }
-        in_debugger = 0;
+        in_debugger = false;
 
     } while ( !continue_flag );
 
     /*
      * adjust the hp48's timers
      */
-    in_debugger = 1;
+    in_debugger = true;
     ticks = get_t1_t2();
-    in_debugger = 0;
+    in_debugger = false;
 
     if ( saturn.t2_ctrl & 0x01 ) {
         saturn.timer2 = ticks.t2_ticks;

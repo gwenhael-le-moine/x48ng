@@ -1956,7 +1956,7 @@ void sdl_update_LCD( void )
             }
         }
     } else
-        memset( lcd_nibbles_buffer_0, 0xf0, sizeof( lcd_nibbles_buffer_0 ) );
+        ui_init_LCD();
 }
 
 void sdl_refresh_LCD( void ) {}
@@ -2029,8 +2029,7 @@ void sdl_adjust_contrast()
     SDLCreateAnnunc();
 
     // redraw LCD
-    memset( lcd_nibbles_buffer_0, 0, sizeof( lcd_nibbles_buffer_0 ) );
-
+    ui_init_LCD();
     sdl_update_LCD();
 
     // redraw annunc

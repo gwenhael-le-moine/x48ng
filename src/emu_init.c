@@ -13,19 +13,19 @@
 #include "runtime_options.h"
 
 #define X48_MAGIC 0x48503438
-#define NR_CONFIG 8
+#define NB_CONFIG 8
 
 #define RAM_SIZE_SX 0x10000
 #define RAM_SIZE_GX 0x40000
 
-short rom_is_new = 1;
+bool rom_is_new = true;
 long ram_size;
 long port1_size;
 long port1_mask;
-short port1_is_ram;
+bool port1_is_ram;
 long port2_size;
 long port2_mask;
-short port2_is_ram;
+bool port2_is_ram;
 
 hpkey_t keyboard[ 49 ] = {
     /* From top left to bottom right */
@@ -90,53 +90,16 @@ hpkey_t keyboard[ 49 ] = {
 
 int annunciators_bits[ NB_ANNUNCIATORS ] = { ANN_LEFT, ANN_RIGHT, ANN_ALPHA, ANN_BATTERY, ANN_BUSY, ANN_IO };
 
-int read_rom( const char* fname )
-{
-    int ram_size;
-
-    if ( !read_rom_file( fname, &saturn.rom, &rom_size ) )
-        return 0;
-
-    if ( verbose )
-        printf( "read %s\n", fname );
-
-    dev_memory_init();
-
-    ram_size = opt_gx ? RAM_SIZE_GX : RAM_SIZE_SX;
-
-    if ( NULL == ( saturn.ram = ( word_4* )malloc( ram_size ) ) ) {
-        if ( verbose )
-            fprintf( stderr, "can\'t malloc RAM\n" );
-        return 0;
-    }
-
-    memset( saturn.ram, 0, ram_size );
-
-    port1_size = 0;
-    port1_mask = 0;
-    port1_is_ram = 0;
-    saturn.port1 = ( unsigned char* )0;
-
-    port2_size = 0;
-    port2_mask = 0;
-    port2_is_ram = 0;
-    saturn.port2 = ( unsigned char* )0;
-
-    saturn.card_status = 0;
-
-    return 1;
-}
-
 void saturn_config_init( void )
 {
     saturn.version[ 0 ] = VERSION_MAJOR;
     saturn.version[ 1 ] = VERSION_MINOR;
     saturn.version[ 2 ] = PATCHLEVEL;
     memset( &device, 0, sizeof( device ) );
-    device.display_touched = 1;
-    device.contrast_touched = 1;
-    device.baud_touched = 1;
-    device.ann_touched = 1;
+    device.display_touched = true;
+    device.contrast_touched = true;
+    device.baud_touched = true;
+    device.ann_touched = true;
     saturn.rcs = 0x0;
     saturn.tcs = 0x0;
     saturn.lbr = 0x0;
@@ -155,13 +118,13 @@ void init_saturn( void )
     saturn.version[ 2 ] = PATCHLEVEL;
     saturn.hexmode = HEX;
     saturn.rstkp = -1;
-    saturn.interruptable = 1;
-    saturn.int_pending = 0;
-    saturn.kbd_ien = 1;
+    saturn.interruptable = true;
+    saturn.int_pending = false;
+    saturn.kbd_ien = true;
     saturn.timer1 = 0;
     saturn.timer2 = 0x2000;
     saturn.bank_switch = 0;
-    for ( int i = 0; i < NR_MCTL; i++ ) {
+    for ( int i = 0; i < NB_MCTL; i++ ) {
         if ( i == 0 )
             saturn.mem_cntl[ i ].unconfigured = 1;
         else if ( i == 5 )
@@ -173,53 +136,6 @@ void init_saturn( void )
     }
     dev_memory_init();
 }
-
-void init_display( void )
-{
-    display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
-
-    display.disp_start = ( saturn.disp_addr & 0xffffe );
-    display.offset = ( saturn.disp_io & 0x7 );
-
-    display.lines = ( saturn.line_count & 0x3f );
-    if ( display.lines == 0 )
-        display.lines = 63;
-
-    if ( display.offset > 3 )
-        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset + 2 ) & 0xfff;
-    else
-        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset ) & 0xfff;
-
-    display.disp_end = display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
-
-    display.menu_start = saturn.menu_addr;
-    display.menu_end = saturn.menu_addr + 0x110;
-
-    display.contrast = saturn.contrast_ctrl;
-    display.contrast |= ( ( saturn.disp_test & 0x1 ) << 4 );
-}
-
-int init_emulator( void )
-{
-    /* If files are successfully read => return and let's go */
-    if ( read_files() ) {
-        if ( resetOnStartup )
-            saturn.PC = 0x00000;
-        return 0;
-    }
-
-    /* if files were not readble => initialize */
-    if ( verbose )
-        fprintf( stderr, "initialization of %s\n", normalized_config_path );
-
-    init_saturn();
-    if ( !read_rom( normalized_rom_path ) )
-        exit( 1 ); /* can't read ROM */
-
-    return 0;
-}
-
-void exit_emulator( void ) { write_files(); }
 
 /***********************************************/
 /* READING ~/.config/x48ng/{rom,ram,state,port1,port2} */
@@ -347,7 +263,7 @@ int read_state_file( FILE* fp )
             return 0;
     if ( !read_8( fp, &saturn.CARRY ) )
         return 0;
-    for ( i = 0; i < NR_PSTAT; i++ )
+    for ( i = 0; i < NB_PSTAT; i++ )
         if ( !read_8( fp, &saturn.PSTAT[ i ] ) )
             return 0;
     if ( !read_8( fp, &saturn.XM ) )
@@ -360,8 +276,8 @@ int read_state_file( FILE* fp )
         return 0;
     if ( !read_8( fp, &saturn.hexmode ) )
         return 0;
-    for ( i = 0; i < NR_RSTK; i++ )
-        if ( !read_32( fp, &saturn.rstk[ i ] ) )
+    for ( i = 0; i < NB_RSTK; i++ )
+        if ( !read_32( fp, &saturn.RSTK[ i ] ) )
             return 0;
     if ( !read_16( fp, ( word_16* )&saturn.rstkp ) )
         return 0;
@@ -452,7 +368,7 @@ int read_state_file( FILE* fp )
         return 0;
     if ( !read_16( fp, ( word_16* )&saturn.bank_switch ) )
         return 0;
-    for ( i = 0; i < NR_MCTL; i++ ) {
+    for ( i = 0; i < NB_MCTL; i++ ) {
         if ( !read_16( fp, &saturn.mem_cntl[ i ].unconfigured ) )
             return 0;
         if ( !read_32( fp, &saturn.mem_cntl[ i ].config[ 0 ] ) )
@@ -560,7 +476,7 @@ int read_files( void )
     if ( verbose )
         printf( "read %s\n", normalized_rom_path );
 
-    rom_is_new = 0;
+    rom_is_new = false;
 
     /**************************************************/
     /* 2. read saved state from ~/.x48ng/state into fp */
@@ -663,9 +579,9 @@ int read_files( void )
                     fprintf( stderr, "can\'t malloc PORT1[%ld]\n", port1_size );
             } else if ( !read_mem_file( normalized_port1_path, saturn.port1, port1_size ) ) {
                 port1_size = 0;
-                port1_is_ram = 0;
+                port1_is_ram = false;
             } else {
-                port1_is_ram = ( st.st_mode & S_IWUSR ) ? 1 : 0;
+                port1_is_ram = st.st_mode & S_IWUSR;
                 port1_mask = port1_size - 1;
             }
         }
@@ -684,7 +600,7 @@ int read_files( void )
     /********************************************************/
     port2_size = 0;
     port2_mask = 0;
-    port2_is_ram = 0;
+    port2_is_ram = false;
     saturn.port2 = ( unsigned char* )0;
 
     if ( stat( normalized_port2_path, &st ) >= 0 ) {
@@ -696,9 +612,9 @@ int read_files( void )
                     fprintf( stderr, "can\'t malloc PORT2[%ld]\n", port2_size );
             } else if ( !read_mem_file( normalized_port2_path, saturn.port2, port2_size ) ) {
                 port2_size = 0;
-                port2_is_ram = 0;
+                port2_is_ram = false;
             } else {
-                port2_is_ram = ( st.st_mode & S_IWUSR ) ? 1 : 0;
+                port2_is_ram = st.st_mode & S_IWUSR;
                 port2_mask = port2_size - 1;
             }
         }
@@ -887,15 +803,15 @@ int write_state_file( char* filename )
     for ( i = 0; i < 3; i++ )
         write_8( fp, &saturn.OUT[ i ] );
     write_8( fp, &saturn.CARRY );
-    for ( i = 0; i < NR_PSTAT; i++ )
+    for ( i = 0; i < NB_PSTAT; i++ )
         write_8( fp, &saturn.PSTAT[ i ] );
     write_8( fp, &saturn.XM );
     write_8( fp, &saturn.SB );
     write_8( fp, &saturn.SR );
     write_8( fp, &saturn.MP );
     write_8( fp, &saturn.hexmode );
-    for ( i = 0; i < NR_RSTK; i++ )
-        write_32( fp, &saturn.rstk[ i ] );
+    for ( i = 0; i < NB_RSTK; i++ )
+        write_32( fp, &saturn.RSTK[ i ] );
     write_16( fp, ( word_16* )&saturn.rstkp );
     for ( i = 0; i < 9; i++ )
         write_16( fp, ( word_16* )&saturn.keybuf.rows[ i ] );
@@ -941,7 +857,7 @@ int write_state_file( char* filename )
     write_16( fp, ( word_16* )&saturn.t2_tick );
     write_32( fp, &saturn.i_per_s );
     write_16( fp, &saturn.bank_switch );
-    for ( i = 0; i < NR_MCTL; i++ ) {
+    for ( i = 0; i < NB_MCTL; i++ ) {
         write_16( fp, &saturn.mem_cntl[ i ].unconfigured );
         write_32( fp, &saturn.mem_cntl[ i ].config[ 0 ] );
         write_32( fp, &saturn.mem_cntl[ i ].config[ 1 ] );
@@ -958,12 +874,12 @@ int write_state_file( char* filename )
 int write_files( void )
 {
     struct stat st;
-    int make_dir = 0;
+    bool make_dir = false;
     int ram_size = opt_gx ? RAM_SIZE_GX : RAM_SIZE_SX;
 
     if ( stat( normalized_config_path, &st ) == -1 ) {
         if ( errno == ENOENT ) {
-            make_dir = 1;
+            make_dir = true;
         } else {
             if ( verbose )
                 fprintf( stderr, "can\'t stat %s, saving to /tmp\n", normalized_config_path );
@@ -1017,3 +933,87 @@ int write_files( void )
 
     return 1;
 }
+
+int read_rom( const char* fname )
+{
+    int ram_size;
+
+    if ( !read_rom_file( fname, &saturn.rom, &rom_size ) )
+        return 0;
+
+    if ( verbose )
+        printf( "read %s\n", fname );
+
+    dev_memory_init();
+
+    ram_size = opt_gx ? RAM_SIZE_GX : RAM_SIZE_SX;
+
+    if ( NULL == ( saturn.ram = ( word_4* )malloc( ram_size ) ) ) {
+        if ( verbose )
+            fprintf( stderr, "can\'t malloc RAM\n" );
+        return 0;
+    }
+
+    memset( saturn.ram, 0, ram_size );
+
+    port1_size = 0;
+    port1_mask = 0;
+    port1_is_ram = false;
+    saturn.port1 = ( unsigned char* )0;
+
+    port2_size = 0;
+    port2_mask = 0;
+    port2_is_ram = false;
+    saturn.port2 = ( unsigned char* )0;
+
+    saturn.card_status = 0;
+
+    return 1;
+}
+
+void init_display( void )
+{
+    display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
+
+    display.disp_start = ( saturn.disp_addr & 0xffffe );
+    display.offset = ( saturn.disp_io & 0x7 );
+
+    display.lines = ( saturn.line_count & 0x3f );
+    if ( display.lines == 0 )
+        display.lines = 63;
+
+    if ( display.offset > 3 )
+        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset + 2 ) & 0xfff;
+    else
+        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset ) & 0xfff;
+
+    display.disp_end = display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
+
+    display.menu_start = saturn.menu_addr;
+    display.menu_end = saturn.menu_addr + 0x110;
+
+    display.contrast = saturn.contrast_ctrl;
+    display.contrast |= ( ( saturn.disp_test & 0x1 ) << 4 );
+}
+
+void start_emulator( void )
+{
+    /* If files are successfully read => return and let's go */
+    if ( read_files() ) {
+        if ( resetOnStartup )
+            saturn.PC = 0x00000;
+    } else {
+        /* if files were not readable => initialize */
+        if ( verbose )
+            fprintf( stderr, "initialization of %s\n", normalized_config_path );
+
+        init_saturn();
+        if ( !read_rom( normalized_rom_path ) )
+            exit( 1 ); /* can't read ROM */
+    }
+
+    init_serial();
+    init_display();
+}
+
+void exit_emulator( void ) { write_files(); }

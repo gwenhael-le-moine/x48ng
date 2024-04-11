@@ -2411,7 +2411,7 @@ void refresh_display( void )
 void redraw_display( void )
 {
     XClearWindow( dpy, lcd.win );
-    memset( lcd_nibbles_buffer_0, 0, sizeof( lcd_nibbles_buffer_0 ) );
+    ui_init_LCD();
     x11_update_LCD();
 }
 
@@ -2915,8 +2915,6 @@ int x11_get_event( void )
     int i, wake, bufs = 2;
     char buf[ 2 ];
     KeySym sym;
-    // int button_expose;
-    // static int button_leave = -1;
     static int release_pending = 0;
     static XKeyEvent release_event;
     static Time last_release_time = 0;
@@ -3597,7 +3595,7 @@ void x11_update_LCD( void )
             memset( lcd.menu_image->data, 0, ( size_t )( lcd.menu_image->bytes_per_line * lcd.menu_image->height ) );
             lcd.display_update = UPDATE_DISP | UPDATE_MENU;
         } else {
-            memset( lcd_nibbles_buffer_0, 0xf0, sizeof( lcd_nibbles_buffer_0 ) );
+            ui_init_LCD();
             for ( i = 0; i < 64; i++ ) {
                 for ( j = 0; j < NIBBLES_PER_ROW; j++ ) {
                     draw_nibble( j, i, 0x00 );
