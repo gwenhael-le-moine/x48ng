@@ -97,7 +97,7 @@ int main( int argc, char** argv )
     /********************/
     /* initialize stuff */
     /********************/
-    parse_args( argc, argv );
+    parse_args_and_read_config( argc, argv );
 
     /* Emulator */
     start_emulator();

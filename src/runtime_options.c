@@ -218,7 +218,7 @@ static inline void normalize_filenames( void )
     normalize_filename( port2FileName, normalized_port2_path );
 }
 
-int parse_args( int argc, char* argv[] )
+int parse_args_and_read_config( int argc, char* argv[] )
 {
     int option_index;
     int c = '?';
