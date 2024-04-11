@@ -5,8 +5,8 @@ DOCDIR = $(PREFIX)/doc/x48ng
 MANDIR = $(PREFIX)/man
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 36
-PATCHLEVEL = 90
+VERSION_MINOR = 37
+PATCHLEVEL = 0
 
 MAKEFLAGS +=-j$(NUM_CORES) -l$(NUM_CORES)
 
@@ -105,7 +105,10 @@ pretty-code:
 get-roms:
 	make -C dist/ROMs
 
-install: all get-roms
+dist/config.lua: dist/x48ng
+	$^ --print-config > $@
+
+install: all get-roms dist/config.lua
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/bin
 	install -c -m 755 dist/x48ng $(DESTDIR)$(PREFIX)/bin/x48ng
 
@@ -124,7 +127,6 @@ install: all get-roms
 
 	install -m 755 -d -- $(DESTDIR)$(DOCDIR)
 	cp -R AUTHORS LICENSE README* doc* romdump/ $(DESTDIR)$(DOCDIR)
-	dist/x48ng --print-config > dist/config.lua
 	install -c -m 644 dist/config.lua $(DESTDIR)$(DOCDIR)/config.lua
 
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/share/applications

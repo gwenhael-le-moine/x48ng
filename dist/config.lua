@@ -28,6 +28,7 @@ fullscreen = false
 mono = false
 gray = false
 leave_shift_keys = false
+inhibit_shutdown = false
 
 x11_visual = "default"
 netbook = false
