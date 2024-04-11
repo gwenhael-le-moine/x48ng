@@ -11,7 +11,7 @@ int last_annunc_state = -1;
 unsigned char lcd_nibbles_buffer_2[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
 unsigned char lcd_nibbles_buffer_1[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
 unsigned char lcd_nibbles_buffer_0[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
-unsigned char greyscale_lcd_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW * NIBBLES_NB_BITS ];
+unsigned char greyscale_lcd_buffer[ DISP_ROWS ][ DISP_COLS ];
 
 letter_t small_font[ 128 ] = {
     {0,                 0,                  0                 },
@@ -228,7 +228,6 @@ static inline void copy_row( long addr, int row )
 
 void generate_greyscale_lcd()
 {
-    /* WIP */
     /* This populates greyscale_lcd_buffer from the sum of lcd_nibbles_buffer_* */
 
     /* 1. rotate lcd_nibbles_buffer_{2 ← 1 ← 0} */
@@ -268,12 +267,12 @@ void generate_greyscale_lcd()
     } else
         ui_init_LCD();
 
+    /* 3. combine the 3 nibbles buffers into the greyscale pixels buffer */
     bool bit_0, bit_1, bit_2;
     int nibble_0, nibble_1, nibble_2;
     int bit_stop;
     int init_x;
 
-#define LCD_WIDTH 131
     for ( int y = 0; y < DISP_ROWS; ++y ) {
         for ( int nibble_x = 0; nibble_x < NIBBLES_PER_ROW; ++nibble_x ) {
             nibble_0 = lcd_nibbles_buffer_0[ y ][ nibble_x ];
@@ -284,14 +283,14 @@ void generate_greyscale_lcd()
             nibble_2 &= 0x0f;
 
             init_x = nibble_x * NIBBLES_NB_BITS;
-            bit_stop = ( ( init_x + NIBBLES_NB_BITS >= LCD_WIDTH ) ? LCD_WIDTH - init_x : 4 );
+            bit_stop = ( ( init_x + NIBBLES_NB_BITS >= DISP_COLS ) ? DISP_COLS - init_x : 4 );
 
             for ( int bit_x = 0; bit_x < bit_stop; bit_x++ ) {
                 bit_0 = 0 != ( nibble_0 & ( 1 << ( bit_x & 3 ) ) );
                 bit_1 = 0 != ( nibble_1 & ( 1 << ( bit_x & 3 ) ) );
                 bit_2 = 0 != ( nibble_2 & ( 1 << ( bit_x & 3 ) ) );
 
-                greyscale_lcd_buffer[ y ][ nibble_x + bit_x ] = bit_0 + bit_1 + bit_2;
+                greyscale_lcd_buffer[ y ][ ( nibble_x * NIBBLES_NB_BITS ) + bit_x ] = bit_0 + bit_1 + bit_2;
             }
         }
     }

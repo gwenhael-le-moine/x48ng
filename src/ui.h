@@ -4,6 +4,7 @@
 #include "emulator.h" /* word_4; word_20; */
 
 #define DISP_ROWS 64
+#define DISP_COLS 131
 #define NIBS_PER_BUFFER_ROW ( NIBBLES_PER_ROW + 2 )
 
 /***********/
@@ -22,7 +23,7 @@ extern int last_annunc_state;
 extern unsigned char lcd_nibbles_buffer_2[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
 extern unsigned char lcd_nibbles_buffer_1[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
 extern unsigned char lcd_nibbles_buffer_0[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
-extern unsigned char greyscale_lcd_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW * NIBBLES_NB_BITS ];
+extern unsigned char greyscale_lcd_buffer[ DISP_ROWS ][ DISP_COLS ];
 
 extern letter_t small_font[ 128 ];
 
