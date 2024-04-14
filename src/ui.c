@@ -161,7 +161,7 @@ int SmallTextWidth( const char* string, unsigned int length )
         if ( small_font[ ( int )string[ i ] ].h != 0 ) {
             w += small_font[ ( int )string[ i ] ].w + 1;
         } else {
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "Unknown small letter 0x00%x\n", ( int )string[ i ] );
             w += 5;
         }
@@ -174,7 +174,7 @@ void start_UI( int argc, char** argv )
 {
     ui_init_LCD();
 
-    switch ( frontend_type ) {
+    switch ( config.frontend_type ) {
 #if ( defined( HAS_X11 ) )
         case FRONTEND_X11:
         default:

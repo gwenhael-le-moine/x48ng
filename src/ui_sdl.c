@@ -394,7 +394,7 @@ static void SDLInit( void )
     KEYBOARD_OFFSET_Y = _KEYBOARD_OFFSET_Y;
     KBD_UPLINE = _KBD_UPLINE;
 
-    if ( hide_chrome ) {
+    if ( config.hide_chrome ) {
         width = DISPLAY_WIDTH;
         height = DISPLAY_HEIGHT;
         DISPLAY_OFFSET_X = 0;
@@ -405,7 +405,7 @@ static void SDLInit( void )
     }
 
     uint32_t sdl_window_flags = SDL_SWSURFACE | SDL_RESIZABLE;
-    if ( show_ui_fullscreen )
+    if ( config.show_ui_fullscreen )
         sdl_window_flags |= SDL_FULLSCREEN;
 
     sdlwindow = SDL_SetVideoMode( width, height, 32, sdl_window_flags );
@@ -702,11 +702,11 @@ static int SDLKeyToKey( SDLKey k )
             return HPKEY_ON;
             break;
         case SDLK_LSHIFT:
-            if ( !leave_shift_keys )
+            if ( !config.leave_shift_keys )
                 return HPKEY_SHL;
             break;
         case SDLK_RSHIFT:
-            if ( !leave_shift_keys )
+            if ( !config.leave_shift_keys )
                 return HPKEY_SHR;
             break;
         case SDLK_F2:
@@ -1598,7 +1598,7 @@ static void SDLDrawSerialDevices()
 {
     char text[ 1024 ] = "";
 
-    if ( verbose ) {
+    if ( config.verbose ) {
         fprintf( stderr, "wire_name: %s\n", wire_name );
         fprintf( stderr, "ir_name: %s\n", ir_name );
     }
@@ -1696,7 +1696,7 @@ static void SDLCreateHP( void )
 {
     unsigned int width, height;
 
-    if ( hide_chrome ) {
+    if ( config.hide_chrome ) {
         width = KEYBOARD_WIDTH;
         height = DISPLAY_HEIGHT;
     } else {
@@ -1725,7 +1725,7 @@ static void SDLCreateHP( void )
 
     SDLCreateColors();
 
-    if ( !hide_chrome ) {
+    if ( !config.hide_chrome ) {
         int cut = buttons[ HPKEY_MTH ].y + KEYBOARD_OFFSET_Y - 19;
 
         SDLDrawBackground( width, cut, width, height );
@@ -1896,7 +1896,7 @@ int sdl_get_event( void )
     }
 
     // Display button being pressed, if any
-    if ( !hide_chrome )
+    if ( !config.hide_chrome )
         SDLUIShowKey( keyispressed );
 
     // If we press long, then the button releases makes SDLUIShowKey restore

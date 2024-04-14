@@ -22,8 +22,8 @@
 #define LCD_HEIGHT 64
 #define LCD_OFFSET_X 1
 #define LCD_OFFSET_Y 1
-#define LCD_BOTTOM LCD_OFFSET_Y + ( small ? ( LCD_HEIGHT / 2 ) : tiny ? ( LCD_HEIGHT / 4 ) : LCD_HEIGHT )
-#define LCD_RIGHT LCD_OFFSET_X + ( ( small || tiny ) ? ( LCD_WIDTH / 2 ) + 1 : LCD_WIDTH )
+#define LCD_BOTTOM LCD_OFFSET_Y + ( config.small ? ( LCD_HEIGHT / 2 ) : config.tiny ? ( LCD_HEIGHT / 4 ) : LCD_HEIGHT )
+#define LCD_RIGHT LCD_OFFSET_X + ( ( config.small || config.tiny ) ? ( LCD_WIDTH / 2 ) + 1 : LCD_WIDTH )
 
 #define LCD_COLOR_BG 48
 #define LCD_COLOR_FG 49
@@ -75,7 +75,7 @@ static inline void ncurses_draw_lcd_tiny( void )
 
     wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
 
-    if ( !mono && has_colors() )
+    if ( !config.mono && has_colors() )
         attron( COLOR_PAIR( LCD_COLORS_PAIR ) );
 
     for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
@@ -114,7 +114,7 @@ static inline void ncurses_draw_lcd_tiny( void )
         mvaddwstr( LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
     }
 
-    if ( !mono && has_colors() )
+    if ( !config.mono && has_colors() )
         attroff( COLOR_PAIR( LCD_COLORS_PAIR ) );
 
     wrefresh( stdscr );
@@ -158,7 +158,7 @@ static inline void ncurses_draw_lcd_small( void )
 
     wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
 
-    if ( !mono && has_colors() )
+    if ( !config.mono && has_colors() )
         attron( COLOR_PAIR( LCD_COLORS_PAIR ) );
 
     for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
@@ -184,7 +184,7 @@ static inline void ncurses_draw_lcd_small( void )
         mvaddwstr( LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
     }
 
-    if ( !mono && has_colors() )
+    if ( !config.mono && has_colors() )
         attroff( COLOR_PAIR( LCD_COLORS_PAIR ) );
 
     wrefresh( stdscr );
@@ -199,7 +199,7 @@ static inline void ncurses_draw_lcd_fullsize( void )
 
     wchar_t line[ LCD_WIDTH ];
 
-    if ( !mono && has_colors() )
+    if ( !config.mono && has_colors() )
         attron( COLOR_PAIR( LCD_COLORS_PAIR ) );
 
     for ( int y = 0; y < LCD_HEIGHT; ++y ) {
@@ -222,7 +222,7 @@ static inline void ncurses_draw_lcd_fullsize( void )
         mvaddwstr( LCD_OFFSET_Y + y, LCD_OFFSET_X, line );
     }
 
-    if ( !mono && has_colors() )
+    if ( !config.mono && has_colors() )
         attroff( COLOR_PAIR( LCD_COLORS_PAIR ) );
 
     wrefresh( stdscr );
@@ -230,9 +230,9 @@ static inline void ncurses_draw_lcd_fullsize( void )
 
 static inline void ncurses_draw_lcd( void )
 {
-    if ( small )
+    if ( config.small )
         ncurses_draw_lcd_small();
-    else if ( tiny )
+    else if ( config.tiny )
         ncurses_draw_lcd_tiny();
     else
         ncurses_draw_lcd_fullsize();
@@ -579,10 +579,10 @@ void init_text_ui( int argc, char** argv )
     noecho();
     nonl(); /* tell curses not to do NL->CR/NL on output */
 
-    if ( !mono && has_colors() ) {
+    if ( !config.mono && has_colors() ) {
         start_color();
 
-        if ( gray ) {
+        if ( config.gray ) {
             init_color( LCD_COLOR_BG, 205, 205, 205 );
             init_color( LCD_COLOR_FG, 20, 20, 20 );
         } else {
@@ -605,7 +605,7 @@ void init_text_ui( int argc, char** argv )
     mvvline( 1, LCD_RIGHT, ACS_VLINE, LCD_BOTTOM - 1 );
 
     mvprintw( 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
-    mvprintw( 0, LCD_RIGHT - 18, "< %s v%i.%i.%i >", progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
+    mvprintw( 0, LCD_RIGHT - 18, "< %s v%i.%i.%i >", config.progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
 
     mvprintw( LCD_BOTTOM, 2, "[ wire: %s ]-[ IR: %s ]-[ contrast: %i ]", wire_name, ir_name, display.contrast );
 

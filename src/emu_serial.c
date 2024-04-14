@@ -43,7 +43,7 @@ int init_serial( void )
 
     wire_fd = -1;
     ttyp = -1;
-    if ( useTerminal ) {
+    if ( config.useTerminal ) {
         /* Unix98 PTY (Preferred) */
         if ( ( wire_fd = open( "/dev/ptmx", O_RDWR | O_NONBLOCK, 0666 ) ) >= 0 ) {
             grantpt( wire_fd );
@@ -53,7 +53,7 @@ int init_serial( void )
                 exit( -1 );
             }
             if ( ( ttyp = open( tty_dev_name, O_RDWR | O_NDELAY, 0666 ) ) >= 0 ) {
-                if ( verbose )
+                if ( config.verbose )
                     printf( "wire connection on %s\n", tty_dev_name );
                 wire_name = strdup( tty_dev_name );
             }
@@ -67,7 +67,7 @@ int init_serial( void )
                     if ( ( wire_fd = open( tty_dev_name, O_RDWR | O_EXCL | O_NDELAY, 0666 ) ) >= 0 ) {
                         ttyp = wire_fd;
                         sprintf( tty_dev_name, "/dev/tty%c%x", c, n );
-                        if ( verbose )
+                        if ( config.verbose )
                             printf( "wire connection on %s\n", tty_dev_name );
                         wire_name = strdup( tty_dev_name );
                         break;
@@ -85,7 +85,7 @@ int init_serial( void )
         if ( ioctl( ttyp, TCGETS, ( char* )&ttybuf ) < 0 )
 #endif
         {
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "ioctl(wire, TCGETS) failed, errno = %d\n", errno );
             wire_fd = -1;
             ttyp = -1;
@@ -108,7 +108,7 @@ int init_serial( void )
         if ( ioctl( ttyp, TCSETS, ( char* )&ttybuf ) < 0 )
 #endif
         {
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "ioctl(wire, TCSETS) failed, errno = %d\n", errno );
             wire_fd = -1;
             ttyp = -1;
@@ -116,10 +116,10 @@ int init_serial( void )
     }
 
     ir_fd = -1;
-    if ( useSerial ) {
-        sprintf( tty_dev_name, "%s", serialLine );
+    if ( config.useSerial ) {
+        sprintf( tty_dev_name, "%s", config.serialLine );
         if ( ( ir_fd = open( tty_dev_name, O_RDWR | O_NDELAY ) ) >= 0 ) {
-            if ( verbose )
+            if ( config.verbose )
                 printf( "IR connection on %s\n", tty_dev_name );
             ir_name = strdup( tty_dev_name );
         }
@@ -132,7 +132,7 @@ int init_serial( void )
         if ( ioctl( ir_fd, TCGETS, ( char* )&ttybuf ) < 0 )
 #endif
         {
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "ioctl(IR, TCGETS) failed, errno = %d\n", errno );
             ir_fd = -1;
         }
@@ -154,7 +154,7 @@ int init_serial( void )
         if ( ioctl( ir_fd, TCSETS, ( char* )&ttybuf ) < 0 )
 #endif
         {
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "ioctl(IR, TCSETS) failed, errno = %d\n", errno );
 
             ir_fd = -1;
@@ -176,7 +176,7 @@ void serial_baud( int baud )
         if ( ioctl( ir_fd, TCGETS, ( char* )&ttybuf ) < 0 )
 #endif
         {
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "ioctl(IR,  TCGETS) failed, errno = %d\n", errno );
 
             ir_fd = -1;
@@ -222,7 +222,7 @@ void serial_baud( int baud )
     }
 
     if ( ( ir_fd >= 0 ) && ( ( ttybuf.c_ospeed ) == 0 ) ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t set baud rate, using 9600\n" );
         ttybuf.c_cflag |= B9600;
     }
@@ -266,7 +266,7 @@ void serial_baud( int baud )
     }
 
     if ( ( ir_fd >= 0 ) && ( ( ttybuf.c_cflag & CBAUD ) == 0 ) ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t set baud rate, using 9600\n" );
 
         ttybuf.c_cflag |= B9600;
@@ -279,7 +279,7 @@ void serial_baud( int baud )
         if ( ioctl( ir_fd, TCSETS, ( char* )&ttybuf ) < 0 )
 #endif
         {
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "ioctl(IR,  TCSETS) failed, errno = %d\n", errno );
 
             ir_fd = -1;
@@ -294,7 +294,7 @@ void serial_baud( int baud )
         if ( ioctl( ttyp, TCGETS, ( char* )&ttybuf ) < 0 )
 #endif
         {
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "ioctl(wire, TCGETS) failed, errno = %d\n", errno );
 
             wire_fd = -1;
@@ -344,7 +344,7 @@ void serial_baud( int baud )
     }
 
     if ( ( ttyp >= 0 ) && ( ( ttybuf.c_cflag & CBAUD ) == 0 ) ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t set baud rate, using 9600\n" );
 
         ttybuf.c_cflag |= B9600;
@@ -357,7 +357,7 @@ void serial_baud( int baud )
         if ( ioctl( ttyp, TCSETS, ( char* )&ttybuf ) < 0 )
 #endif
         {
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "ioctl(wire, TCSETS) failed, errno = %d\n", errno );
 
             wire_fd = -1;
@@ -408,7 +408,7 @@ void transmit_char( void )
             if ( saturn.io_ctrl & 0x04 )
                 do_interupt();
         } else {
-            if ( errno != EAGAIN && verbose )
+            if ( errno != EAGAIN && config.verbose )
                 fprintf( stderr, "serial write error: %d\n", errno );
 
             saturn.tcs &= 0x0e;

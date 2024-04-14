@@ -4076,24 +4076,24 @@ int debug( void )
     /*
      * do we want to debug ???
      */
-    if ( !useDebugger ) {
+    if ( !config.useDebugger ) {
         if ( enter_debugger & ILLEGAL_INSTRUCTION ) {
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "reset (illegal instruction at 0x%.5lX)\n", saturn.PC );
             saturn.PC = 0;
         }
         if ( enter_debugger & USER_INTERRUPT )
-            if ( verbose )
+            if ( config.verbose )
                 printf( "usnterrupt (SIGINT) ignored\n" );
 
         exit_emulator();
         exit( 1 );
 
         if ( enter_debugger & BREAKPOINT_HIT )
-            if ( verbose )
+            if ( config.verbose )
                 printf( "breakpoint hit at 0x%.5lX ignored\n", saturn.PC );
         if ( enter_debugger & TRAP_INSTRUCTION )
-            if ( verbose )
+            if ( config.verbose )
                 printf( "trap instruction at 0x%.5lX ignored\n", saturn.PC );
 
         enter_debugger = 0;

@@ -320,7 +320,7 @@ static inline int get_identification( void )
 
 static inline void do_shutdown( void )
 {
-    if ( inhibit_shutdown )
+    if ( config.inhibit_shutdown )
         return;
 
     /***************************/
@@ -2861,7 +2861,7 @@ void emulate( void )
         step_instruction();
 
         for ( int i = 0; i < ( int )( sizeof( saturn.keybuf.rows ) / sizeof( saturn.keybuf.rows[ 0 ] ) ); i++ ) {
-            if ( saturn.keybuf.rows[ i ] || throttle ) {
+            if ( saturn.keybuf.rows[ i ] || config.throttle ) {
                 /* Throttling speed if needed */
                 gettimeofday( &tv, &tz );
                 gettimeofday( &tv2, &tz );

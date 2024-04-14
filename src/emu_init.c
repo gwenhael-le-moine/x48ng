@@ -146,7 +146,7 @@ int read_8( FILE* fp, word_8* var )
     unsigned char tmp;
 
     if ( fread( &tmp, 1, 1, fp ) != 1 ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t read word_8\n" );
         return 0;
     }
@@ -159,7 +159,7 @@ int read_char( FILE* fp, char* var )
     char tmp;
 
     if ( fread( &tmp, 1, 1, fp ) != 1 ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t read char\n" );
         return 0;
     }
@@ -172,7 +172,7 @@ int read_16( FILE* fp, word_16* var )
     unsigned char tmp[ 2 ];
 
     if ( fread( &tmp[ 0 ], 1, 2, fp ) != 2 ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t read word_16\n" );
         return 0;
     }
@@ -186,7 +186,7 @@ int read_32( FILE* fp, word_32* var )
     unsigned char tmp[ 4 ];
 
     if ( fread( &tmp[ 0 ], 1, 4, fp ) != 4 ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t read word_32\n" );
         return 0;
     }
@@ -202,7 +202,7 @@ int read_u_long( FILE* fp, unsigned long* var )
     unsigned char tmp[ 4 ];
 
     if ( fread( &tmp[ 0 ], 1, 4, fp ) != 4 ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t read unsigned long\n" );
         return 0;
     }
@@ -388,13 +388,13 @@ int read_mem_file( char* name, word_4* mem, int size )
     int i, j;
 
     if ( NULL == ( fp = fopen( name, "r" ) ) ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "ct open %s\n", name );
         return 0;
     }
 
     if ( stat( name, &st ) < 0 ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t stat %s\n", name );
         return 0;
     }
@@ -404,7 +404,7 @@ int read_mem_file( char* name, word_4* mem, int size )
          * size is same as memory size, old version file
          */
         if ( fread( mem, 1, ( size_t )size, fp ) != ( unsigned long )size ) {
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "can\'t read %s\n", name );
             fclose( fp );
             return 0;
@@ -415,7 +415,7 @@ int read_mem_file( char* name, word_4* mem, int size )
          */
 
         if ( st.st_size != size / 2 ) {
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "strange size %s, expected %d, found %ld\n", name, size / 2, st.st_size );
             fclose( fp );
             return 0;
@@ -424,7 +424,7 @@ int read_mem_file( char* name, word_4* mem, int size )
         if ( NULL == ( tmp_mem = ( word_8* )malloc( ( size_t )st.st_size ) ) ) {
             for ( i = 0, j = 0; i < size / 2; i++ ) {
                 if ( 1 != fread( &byte, 1, 1, fp ) ) {
-                    if ( verbose )
+                    if ( config.verbose )
                         fprintf( stderr, "can\'t read %s\n", name );
                     fclose( fp );
                     return 0;
@@ -434,7 +434,7 @@ int read_mem_file( char* name, word_4* mem, int size )
             }
         } else {
             if ( fread( tmp_mem, 1, ( size_t )size / 2, fp ) != ( unsigned long )( size / 2 ) ) {
-                if ( verbose )
+                if ( config.verbose )
                     fprintf( stderr, "can\'t read %s\n", name );
                 fclose( fp );
                 free( tmp_mem );
@@ -452,7 +452,7 @@ int read_mem_file( char* name, word_4* mem, int size )
 
     fclose( fp );
 
-    if ( verbose )
+    if ( config.verbose )
         printf( "read %s\n", name );
 
     return 1;
@@ -473,7 +473,7 @@ int read_files( void )
     if ( !read_rom_file( normalized_rom_path, &saturn.rom, &rom_size ) )
         return 0;
 
-    if ( verbose )
+    if ( config.verbose )
         printf( "read %s\n", normalized_rom_path );
 
     rom_is_new = false;
@@ -482,7 +482,7 @@ int read_files( void )
     /* 2. read saved state from ~/.x48ng/state into fp */
     /**************************************************/
     if ( NULL == ( fp = fopen( normalized_state_path, "r" ) ) ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t open %s\n", normalized_state_path );
         return 0;
     }
@@ -506,7 +506,7 @@ int read_files( void )
         read_version = 1;
         for ( i = 0; i < 4; i++ ) {
             if ( !read_char( fp, &saturn.version[ i ] ) ) {
-                if ( verbose )
+                if ( config.verbose )
                     fprintf( stderr, "can\'t read version\n" );
                 read_version = 0;
             }
@@ -525,10 +525,10 @@ int read_files( void )
              * try to read latest version file
              */
             if ( !read_state_file( fp ) ) {
-                if ( verbose )
+                if ( config.verbose )
                     fprintf( stderr, "can\'t handle %s\n", normalized_state_path );
                 init_saturn();
-            } else if ( verbose )
+            } else if ( config.verbose )
                 printf( "read %s\n", normalized_state_path );
         }
     }
@@ -542,7 +542,7 @@ int read_files( void )
 
     saturn.ram = ( word_4* )NULL;
     if ( NULL == ( saturn.ram = ( word_4* )malloc( ram_size ) ) ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t malloc RAM[%d]\n", ram_size );
         exit( 1 );
     }
@@ -551,7 +551,7 @@ int read_files( void )
     /* 3. read RAM from ~/.x48ng/ram into saturn.ram */
     /*************************************************/
     if ( ( fp = fopen( normalized_ram_path, "r" ) ) == NULL ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t open %s\n", normalized_ram_path );
         return 0;
     }
@@ -575,7 +575,7 @@ int read_files( void )
         port1_size = 2 * st.st_size;
         if ( ( port1_size == 0x10000 ) || ( port1_size == 0x40000 ) ) {
             if ( NULL == ( saturn.port1 = ( word_4* )malloc( port1_size ) ) ) {
-                if ( verbose )
+                if ( config.verbose )
                     fprintf( stderr, "can\'t malloc PORT1[%ld]\n", port1_size );
             } else if ( !read_mem_file( normalized_port1_path, saturn.port1, port1_size ) ) {
                 port1_size = 0;
@@ -608,7 +608,7 @@ int read_files( void )
         if ( ( opt_gx && ( ( port2_size % 0x40000 ) == 0 ) ) ||
              ( !opt_gx && ( ( port2_size == 0x10000 ) || ( port2_size == 0x40000 ) ) ) ) {
             if ( NULL == ( saturn.port2 = ( word_4* )malloc( port2_size ) ) ) {
-                if ( verbose )
+                if ( config.verbose )
                     fprintf( stderr, "can\'t malloc PORT2[%ld]\n", port2_size );
             } else if ( !read_mem_file( normalized_port2_path, saturn.port2, port2_size ) ) {
                 port2_size = 0;
@@ -644,7 +644,7 @@ int write_8( FILE* fp, word_8* var )
 
     tmp = *var;
     if ( fwrite( &tmp, 1, 1, fp ) != 1 ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t write word_8\n" );
         return 0;
     }
@@ -657,7 +657,7 @@ int write_char( FILE* fp, char* var )
 
     tmp = *var;
     if ( fwrite( &tmp, 1, 1, fp ) != 1 ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t write char\n" );
         return 0;
     }
@@ -671,7 +671,7 @@ int write_16( FILE* fp, word_16* var )
     tmp[ 0 ] = ( *var >> 8 ) & 0xff;
     tmp[ 1 ] = *var & 0xff;
     if ( fwrite( &tmp[ 0 ], 1, 2, fp ) != 2 ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t write word_16\n" );
         return 0;
     }
@@ -687,7 +687,7 @@ int write_32( FILE* fp, word_32* var )
     tmp[ 2 ] = ( *var >> 8 ) & 0xff;
     tmp[ 3 ] = *var & 0xff;
     if ( fwrite( &tmp[ 0 ], 1, 4, fp ) != 4 ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t write word_32\n" );
         return 0;
     }
@@ -703,7 +703,7 @@ int write_u_long( FILE* fp, unsigned long* var )
     tmp[ 2 ] = ( *var >> 8 ) & 0xff;
     tmp[ 3 ] = *var & 0xff;
     if ( fwrite( &tmp[ 0 ], 1, 4, fp ) != 4 ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t write unsigned long\n" );
         return 0;
     }
@@ -718,7 +718,7 @@ int write_mem_file( char* name, word_4* mem, int size )
     int i, j;
 
     if ( NULL == ( fp = fopen( name, "w" ) ) ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t open %s\n", name );
         return 0;
     }
@@ -728,7 +728,7 @@ int write_mem_file( char* name, word_4* mem, int size )
             byte = ( mem[ j++ ] & 0x0f );
             byte |= ( mem[ j++ ] << 4 ) & 0xf0;
             if ( 1 != fwrite( &byte, 1, 1, fp ) ) {
-                if ( verbose )
+                if ( config.verbose )
                     fprintf( stderr, "can\'t write %s\n", name );
                 fclose( fp );
                 return 0;
@@ -741,7 +741,7 @@ int write_mem_file( char* name, word_4* mem, int size )
         }
 
         if ( fwrite( tmp_mem, 1, ( size_t )size / 2, fp ) != ( unsigned long )size / 2 ) {
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "can\'t write %s\n", name );
             fclose( fp );
             free( tmp_mem );
@@ -753,7 +753,7 @@ int write_mem_file( char* name, word_4* mem, int size )
 
     fclose( fp );
 
-    if ( verbose )
+    if ( config.verbose )
         printf( "wrote %s\n", name );
 
     return 1;
@@ -765,7 +765,7 @@ int write_state_file( char* filename )
     FILE* fp;
 
     if ( ( fp = fopen( filename, "w" ) ) == NULL ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t open %s, no saving done\n", filename );
         return 0;
     }
@@ -865,7 +865,7 @@ int write_state_file( char* filename )
 
     fclose( fp );
 
-    if ( verbose )
+    if ( config.verbose )
         printf( "wrote %s\n", filename );
 
     return 1;
@@ -881,13 +881,13 @@ int write_files( void )
         if ( errno == ENOENT ) {
             make_dir = true;
         } else {
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "can\'t stat %s, saving to /tmp\n", normalized_config_path );
             strcpy( normalized_config_path, "/tmp" );
         }
     } else {
         if ( !S_ISDIR( st.st_mode ) ) {
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "%s is no directory, saving to /tmp\n", normalized_config_path );
             strcpy( normalized_config_path, "/tmp" );
         }
@@ -895,7 +895,7 @@ int write_files( void )
 
     if ( make_dir ) {
         if ( mkdir( normalized_config_path, 0777 ) == -1 ) {
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "can\'t mkdir %s, saving to /tmp\n", normalized_config_path );
             strcpy( normalized_config_path, "/tmp" );
         }
@@ -914,7 +914,7 @@ int write_files( void )
         if ( !write_mem_file( new_rom_path, saturn.rom, rom_size ) )
             return 0;
 
-        if ( verbose )
+        if ( config.verbose )
             printf( "wrote %s\n", new_rom_path );
     }
 
@@ -941,7 +941,7 @@ int read_rom( const char* fname )
     if ( !read_rom_file( fname, &saturn.rom, &rom_size ) )
         return 0;
 
-    if ( verbose )
+    if ( config.verbose )
         printf( "read %s\n", fname );
 
     dev_memory_init();
@@ -949,7 +949,7 @@ int read_rom( const char* fname )
     ram_size = opt_gx ? RAM_SIZE_GX : RAM_SIZE_SX;
 
     if ( NULL == ( saturn.ram = ( word_4* )malloc( ram_size ) ) ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t malloc RAM\n" );
         return 0;
     }
@@ -1000,11 +1000,11 @@ void start_emulator( void )
 {
     /* If files are successfully read => return and let's go */
     if ( read_files() ) {
-        if ( resetOnStartup )
+        if ( config.resetOnStartup )
             saturn.PC = 0x00000;
     } else {
         /* if files were not readable => initialize */
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "initialization of %s\n", normalized_config_path );
 
         init_saturn();

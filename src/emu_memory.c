@@ -264,7 +264,7 @@ void write_dev_mem( long addr, int val )
             device.t2_touched = true;
             return;
         default:
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "%.5lx: UNKNOWN DEVICE WRITE AT 0x%lx !!!\n", saturn.PC, addr );
             return;
     }
@@ -379,7 +379,7 @@ int read_dev_mem( long addr )
         case 0x13f:
             return ( saturn.timer2 >> ( ( addr - 0x138 ) * 4 ) ) & 0xf;
         default:
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "%.5lx: UNKNOWN DEVICE READ AT 0x%lx !!!\n", saturn.PC, addr );
             return 0x00;
     }

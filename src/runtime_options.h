@@ -7,44 +7,48 @@
 #define FRONTEND_X11 1
 #define FRONTEND_TEXT 2
 
-extern char* progname;
+typedef struct {
+    char* progname;
 
-extern bool verbose;
-extern bool useTerminal;
-extern bool useSerial;
-extern bool useDebugger;
-extern bool throttle;
-extern bool resetOnStartup;
-extern int frontend_type;
+    bool verbose;
+    bool print_config;
+    bool useTerminal;
+    bool useSerial;
+    bool useDebugger;
+    bool throttle;
+    bool resetOnStartup;
+    int frontend_type;
 
-extern char* serialLine;
+    char* serialLine;
 
-extern bool leave_shift_keys;
-extern bool inhibit_shutdown;
+    bool leave_shift_keys;
+    bool inhibit_shutdown;
 
-extern bool mono;
-extern bool gray;
+    bool mono;
+    bool gray;
 
-/* tui */
-extern bool small;
-extern bool tiny;
+    /* tui */
+    bool small;
+    bool tiny;
 
-/* sdl */
-extern bool hide_chrome;
-extern bool show_ui_fullscreen;
+    /* sdl */
+    bool hide_chrome;
+    bool show_ui_fullscreen;
 
-/* x11 */
-extern bool netbook;
-extern char* name;
-extern char* title;
-extern char* x11_visual;
-extern bool monoIcon;
-extern bool iconic;
-extern bool xrm;
-extern char* smallFont;
-extern char* mediumFont;
-extern char* largeFont;
-extern char* connFont;
+    /* x11 */
+    bool netbook;
+    char* name;
+    char* title;
+    char* x11_visual;
+    bool monoIcon;
+    bool iconic;
+    bool xrm;
+    char* smallFont;
+    char* mediumFont;
+    char* largeFont;
+    char* connFont;
+} config_t;
+extern config_t config;
 
 #define MAX_LENGTH_FILENAME 2048
 extern char normalized_config_path[ MAX_LENGTH_FILENAME ];

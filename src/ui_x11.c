@@ -611,26 +611,26 @@ Visual* get_visual_resource( Display* dpy, unsigned int* depth )
     int vclass;
     int id;
 
-    if ( !x11_visual || !strcmp( x11_visual, "default" ) )
+    if ( !config.x11_visual || !strcmp( config.x11_visual, "default" ) )
         vclass = -1;
-    else if ( !strcmp( x11_visual, "staticgray" ) )
+    else if ( !strcmp( config.x11_visual, "staticgray" ) )
         vclass = StaticGray;
-    else if ( !strcmp( x11_visual, "staticcolor" ) )
+    else if ( !strcmp( config.x11_visual, "staticcolor" ) )
         vclass = StaticColor;
-    else if ( !strcmp( x11_visual, "truecolor" ) )
+    else if ( !strcmp( config.x11_visual, "truecolor" ) )
         vclass = TrueColor;
-    else if ( !strcmp( x11_visual, "grayscale" ) )
+    else if ( !strcmp( config.x11_visual, "grayscale" ) )
         vclass = GrayScale;
-    else if ( !strcmp( x11_visual, "pseudocolor" ) )
+    else if ( !strcmp( config.x11_visual, "pseudocolor" ) )
         vclass = PseudoColor;
-    else if ( !strcmp( x11_visual, "directcolor" ) )
+    else if ( !strcmp( config.x11_visual, "directcolor" ) )
         vclass = DirectColor;
-    else if ( 1 == sscanf( x11_visual, " %d %c", &id, &c ) )
+    else if ( 1 == sscanf( config.x11_visual, " %d %c", &id, &c ) )
         vclass = -2;
-    else if ( 1 == sscanf( x11_visual, " 0x%d %c", &id, &c ) )
+    else if ( 1 == sscanf( config.x11_visual, " 0x%d %c", &id, &c ) )
         vclass = -2;
     else {
-        fprintf( stderr, "unrecognized visual \"%s\".\n", x11_visual );
+        fprintf( stderr, "unrecognized visual \"%s\".\n", config.x11_visual );
         vclass = -1;
     }
 
@@ -662,7 +662,7 @@ XFontStruct* load_x11_font( Display* dpy, char* fontname )
         char errbuf[ 1024 ];
         char fixbuf[ 1024 ];
         sprintf( errbuf, "can\'t load font \'%s\'", fontname );
-        sprintf( fixbuf, "Please change resource \'%s\'", name );
+        sprintf( fixbuf, "Please change resource \'%s\'", config.name );
         fatal_exit( errbuf, fixbuf );
     }
 
@@ -724,7 +724,7 @@ int AllocColors( void )
                 if ( XAllocColorCells( dpy, cmap, True, ( unsigned long* )0, 0, &colors[ c ].xcolor.pixel, 1 ) == 0 ) {
                     dyn = 0;
                     if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 ) {
-                        if ( verbose )
+                        if ( config.verbose )
                             fprintf( stderr, "XAllocColor failed.\n" );
                         error = c;
                         break;
@@ -732,7 +732,7 @@ int AllocColors( void )
                 } else if ( colors[ c ].xcolor.pixel >= ( unsigned long )( visual->map_entries ) ) {
                     dyn = 0;
                     if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 ) {
-                        if ( verbose )
+                        if ( config.verbose )
                             fprintf( stderr, "XAllocColor failed.\n" );
                         error = c;
                         break;
@@ -742,7 +742,7 @@ int AllocColors( void )
                 }
             } else {
                 if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 ) {
-                    if ( verbose )
+                    if ( config.verbose )
                         fprintf( stderr, "XAllocColor failed.\n" );
                     error = c;
                     break;
@@ -756,7 +756,7 @@ int AllocColors( void )
      */
 
     if ( error != -1 ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "Using own Colormap.\n" );
         /*
          * free colors so far allocated
@@ -831,7 +831,7 @@ int InitDisplay( int argc, char** argv )
      */
     dpy = XOpenDisplay( NULL );
     if ( dpy == ( Display* )0 ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "can\'t open display\n" );
 
         return -1;
@@ -849,10 +849,10 @@ int InitDisplay( int argc, char** argv )
 
     if ( !XShmQueryExtension( dpy ) ) {
         shm_flag = 0;
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "Xserver does not support XShm extension.\n" );
     }
-    if ( verbose && shm_flag )
+    if ( config.verbose && shm_flag )
         fprintf( stderr, "using XShm extension.\n" );
 
     return 0;
@@ -1207,9 +1207,9 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
     unsigned int pw, ph;
     XFontStruct *f_small, *f_med, *f_big;
 
-    f_small = load_x11_font( dpy, smallFont );
-    f_med = load_x11_font( dpy, mediumFont );
-    f_big = load_x11_font( dpy, largeFont );
+    f_small = load_x11_font( dpy, config.smallFont );
+    f_med = load_x11_font( dpy, config.mediumFont );
+    f_big = load_x11_font( dpy, config.largeFont );
 
     /*
      * draw the character labels
@@ -1910,7 +1910,7 @@ void CreateLCDWindow( void )
         lcd.disp_image = XShmCreateImage( dpy, None, 1, XYBitmap, NULL, &lcd.disp_info, 262, 128 );
         if ( lcd.disp_image == NULL ) {
             shm_flag = 0;
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "XShm error in CreateImage(DISP), disabling.\n" );
             goto shm_error;
         }
@@ -1923,7 +1923,7 @@ void CreateLCDWindow( void )
             XDestroyImage( lcd.disp_image );
             lcd.disp_image = NULL;
             shm_flag = 0;
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "XShm error in shmget(DISP), disabling.\n" );
             goto shm_error;
         }
@@ -1936,7 +1936,7 @@ void CreateLCDWindow( void )
             XDestroyImage( lcd.disp_image );
             lcd.disp_image = NULL;
             shm_flag = 0;
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "XShm error in shmat(DISP), disabling.\n" );
             goto shm_error;
         }
@@ -1952,7 +1952,7 @@ void CreateLCDWindow( void )
             XDestroyImage( lcd.disp_image );
             lcd.disp_image = NULL;
             shm_flag = 0;
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "XShm error in CreateImage(MENU), disabling.\n" );
             goto shm_error;
         }
@@ -1967,7 +1967,7 @@ void CreateLCDWindow( void )
             XDestroyImage( lcd.menu_image );
             lcd.menu_image = NULL;
             shm_flag = 0;
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "XShm error in shmget(MENU), disabling.\n" );
             goto shm_error;
         }
@@ -1982,7 +1982,7 @@ void CreateLCDWindow( void )
             XDestroyImage( lcd.menu_image );
             lcd.menu_image = NULL;
             shm_flag = 0;
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "XShm error in shmat(MENU), disabling.\n" );
             goto shm_error;
         }
@@ -2000,7 +2000,7 @@ void CreateLCDWindow( void )
             XDestroyImage( lcd.menu_image );
             lcd.menu_image = NULL;
             shm_flag = 0;
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "XShm error in shmget(MENU), disabling.\n" );
             goto shm_error;
         } else {
@@ -2011,7 +2011,7 @@ void CreateLCDWindow( void )
         memset( lcd.disp_image->data, 0, ( size_t )( lcd.disp_image->bytes_per_line * lcd.disp_image->height ) );
         memset( lcd.menu_image->data, 0, ( size_t )( lcd.menu_image->bytes_per_line * lcd.menu_image->height ) );
 
-        if ( verbose )
+        if ( config.verbose )
             printf( "using XShm extension.\n" );
 
         CompletionType = XShmGetEventBase( dpy ) + ShmCompletion;
@@ -2042,7 +2042,7 @@ void DrawSerialDevices( char* wire, char* ir )
     int dir, fa, fd;
     Pixmap pix;
 
-    finfo = load_x11_font( dpy, connFont );
+    finfo = load_x11_font( dpy, config.connFont );
     val.font = finfo->fid;
     gc_mask = GCFont;
     XChangeGC( dpy, gc, gc_mask, &val );
@@ -2108,7 +2108,7 @@ int CreateWindows( int argc, char** argv )
         icon_maps = icon_maps_sx;
     }
 
-    if ( netbook ) {
+    if ( config.netbook ) {
         int i;
         for ( i = 0; i < 6; i++ ) {
             buttons[ i ].x -= 3;
@@ -2151,29 +2151,29 @@ int CreateWindows( int argc, char** argv )
         color_mode = COLOR_MODE_GRAY;
     else
         color_mode = COLOR_MODE_COLOR;
-    if ( gray )
+    if ( config.gray )
         color_mode = COLOR_MODE_GRAY;
 
-    if ( mono )
+    if ( config.mono )
         color_mode = COLOR_MODE_MONO;
     if ( depth == 1 )
         color_mode = COLOR_MODE_MONO;
 
     icon_color_mode = color_mode;
-    if ( monoIcon )
+    if ( config.monoIcon )
         icon_color_mode = COLOR_MODE_MONO;
 
     clh.res_name = res_name;
     clh.res_class = res_class;
-    if ( !XStringListToTextProperty( &progname, 1, &iname ) )
+    if ( !XStringListToTextProperty( &config.progname, 1, &iname ) )
         return -1;
 
-    if ( ( name = title ) == ( char* )0 ) {
+    if ( ( name = config.title ) == ( char* )0 ) {
         name = ( char* )malloc( 128 );
         if ( name == ( char* )0 )
             fatal_exit( "malloc failed.\n", "" );
 
-        sprintf( name, "%s-%d.%d.%d", progname, saturn.version[ 0 ], saturn.version[ 1 ], saturn.version[ 2 ] );
+        sprintf( name, "%s-%d.%d.%d", config.progname, saturn.version[ 0 ], saturn.version[ 1 ], saturn.version[ 2 ] );
     }
 
     if ( !XStringListToTextProperty( &name, 1, &wname ) )
@@ -2189,7 +2189,7 @@ int CreateWindows( int argc, char** argv )
      * create the window
      */
     width = KEYBOARD_WIDTH + 2 * SIDE_SKIP;
-    if ( netbook ) {
+    if ( config.netbook ) {
         height = KEYBOARD_HEIGHT;
     } else {
         height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP + KEYBOARD_HEIGHT + BOTTOM_SKIP;
@@ -2229,7 +2229,7 @@ int CreateWindows( int argc, char** argv )
     /*
      * check if we start iconic
      */
-    if ( iconic )
+    if ( config.iconic )
         wmh.initial_state = IconicState;
     else
         wmh.initial_state = NormalState;
@@ -2346,7 +2346,7 @@ int CreateWindows( int argc, char** argv )
 
     keypad.pixmap = XCreatePixmap( dpy, mainW, width, height, depth );
 
-    if ( netbook ) {
+    if ( config.netbook ) {
         int cut = buttons[ HPKEY_MTH ].y - ( small_ascent + small_descent + 6 + 4 );
         CreateBackground( width / 2, height, width, height, &keypad );
         DrawMore( KEYBOARD_OFFSET_Y, &keypad );
@@ -2516,7 +2516,7 @@ void save_command_line( void )
     char** wm_argv = ( char** )malloc( ( saved_argc + 5 ) * sizeof( char* ) );
 
     if ( wm_argv == ( char** )0 ) {
-        if ( verbose )
+        if ( config.verbose )
             fprintf( stderr, "warning: malloc failed in wm_save_yourself.\n" );
         XSetCommand( dpy, mainW, saved_argv, saved_argc );
         return;
@@ -2674,7 +2674,7 @@ int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
             wake = 1;
             break;
         case XK_Shift_L:
-            if ( !leave_shift_keys ) {
+            if ( !config.leave_shift_keys ) {
                 key_event( HPKEY_SHL, xev );
                 wake = 1;
             }
@@ -2685,7 +2685,7 @@ int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
             wake = 1;
             break;
         case XK_Shift_R:
-            if ( !leave_shift_keys ) {
+            if ( !config.leave_shift_keys ) {
                 key_event( HPKEY_SHR, xev );
                 wake = 1;
             }
@@ -3503,7 +3503,7 @@ void x11_adjust_contrast( void )
     } else {
         if ( XAllocColor( dpy, cmap, &colors[ PIXEL ].xcolor ) == 0 ) {
             colors[ PIXEL ].xcolor.pixel = old;
-            if ( verbose )
+            if ( config.verbose )
                 fprintf( stderr, "warning: can\'t alloc new pixel color.\n" );
         } else {
             XFreeColors( dpy, cmap, &old, 1, 0 );
