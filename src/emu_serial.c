@@ -9,7 +9,7 @@
 
 #include "emulator.h"
 #include "emulator_inner.h"
-#include "runtime_options.h"
+#include "config.h"
 
 static int wire_fd;
 static int ir_fd;

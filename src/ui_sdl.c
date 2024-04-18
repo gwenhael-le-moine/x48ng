@@ -13,7 +13,7 @@
 #include <SDL/SDL_gfxPrimitives.h> /* lineColor(); pixelColor(); rectangleColor();stringColor(); */
 
 #include "romio.h" /* opt_gx */
-#include "runtime_options.h"
+#include "config.h"
 #include "ui.h"
 #include "ui_inner.h"
 

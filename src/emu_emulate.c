@@ -6,8 +6,8 @@
 #include "debugger.h" /* enter_debugger, TRAP_INSTRUCTION, ILLEGAL_INSTRUCTION */
 #include "emulator.h"
 #include "emulator_inner.h"
-#include "runtime_options.h" /* throttle */
-#include "ui.h"              /* ui_get_event(); ui_adjust_contrast(); ui_update_LCD(); ui_draw_annunc(); */
+#include "config.h" /* throttle */
+#include "ui.h"     /* ui_get_event(); ui_adjust_contrast(); ui_update_LCD(); ui_draw_annunc(); */
 
 #include "debugger.h" /* in_debugger, enter_debugger */
 

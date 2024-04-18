@@ -13,7 +13,7 @@
 #include <lua.h>
 #include <lauxlib.h>
 
-#include "runtime_options.h"
+#include "config.h"
 
 config_t config = {
     .progname = "x48ng",
@@ -220,7 +220,7 @@ static inline void normalize_filenames( void )
     normalize_filename( port2FileName, normalized_port2_path );
 }
 
-int parse_args_and_read_config( int argc, char* argv[] )
+int config_init( int argc, char* argv[] )
 {
     int option_index;
     int c = '?';

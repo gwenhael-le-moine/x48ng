@@ -14,8 +14,8 @@
 
 #include <ncursesw/curses.h>
 
-#include "runtime_options.h" /* mono, gray, small, tiny, progname */
-#include "ui.h"              /* last_annunc_state, lcd_nibbles_buffer, DISP_ROWS */
+#include "config.h" /* mono, gray, small, tiny, progname */
+#include "ui.h"     /* last_annunc_state, lcd_nibbles_buffer, DISP_ROWS */
 #include "ui_inner.h"
 
 #define LCD_WIDTH 131

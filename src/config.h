@@ -1,5 +1,5 @@
-#ifndef _OPTIONS_H
-#define _OPTIONS_H 1
+#ifndef _CONFIG_H
+#define _CONFIG_H 1
 
 #include <stdbool.h>
 
@@ -62,6 +62,6 @@ extern char normalized_port2_path[ MAX_LENGTH_FILENAME ];
 /*************/
 /* functions */
 /*************/
-extern int parse_args_and_read_config( int argc, char* argv[] );
+extern int config_init( int argc, char* argv[] );
 
-#endif /* !_OPTIONS_H */
+#endif /* !_CONFIG_H */

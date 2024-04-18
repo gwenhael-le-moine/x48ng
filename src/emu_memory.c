@@ -7,7 +7,7 @@
 #include "emulator.h"
 #include "emulator_inner.h"
 #include "romio.h"
-#include "runtime_options.h"
+#include "config.h"
 #include "ui.h" /* ui_disp_draw_nibble(); ui_menu_draw_nibble(); */
 
 #define MCTL_MMIO_SX 0

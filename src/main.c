@@ -11,7 +11,7 @@
 
 #include "debugger.h"
 #include "emulator.h"
-#include "runtime_options.h"
+#include "config.h"
 #include "ui.h" /* setup_frontend(); init_ui(); */
 
 void signal_handler( int sig )
@@ -97,7 +97,7 @@ int main( int argc, char** argv )
     /********************/
     /* initialize stuff */
     /********************/
-    parse_args_and_read_config( argc, argv );
+    config_init( argc, argv );
 
     /* Emulator */
     start_emulator();

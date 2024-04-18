@@ -19,7 +19,7 @@
 #include <X11/keysym.h>
 
 #include "romio.h" /* opt_gx */
-#include "runtime_options.h"
+#include "config.h"
 #include "ui.h"
 #include "ui_inner.h"
 

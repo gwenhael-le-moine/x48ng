@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "runtime_options.h"
+#include "config.h"
 #include "ui.h"
 #include "ui_inner.h"
 
