@@ -59,8 +59,8 @@ endif
 
 ### SDL UI
 ifeq ($(WITH_SDL), yes)
-SDLCFLAGS = $(shell pkg-config --cflags SDL_gfx sdl12_compat)
-SDLLIBS = $(shell pkg-config --libs SDL_gfx sdl12_compat)
+SDLCFLAGS = $(shell pkg-config --cflags sdl2 SDL2_ttf)
+SDLLIBS = $(shell pkg-config --libs sdl2 SDL2_ttf)
 
 CFLAGS += $(SDLCFLAGS) -DHAS_SDL=1
 LIBS += $(SDLLIBS)

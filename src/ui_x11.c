@@ -2772,7 +2772,7 @@ int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
             break;
         case XK_m:
         case XK_M:
-            key_event( HPKEY_COLON, xev );
+            key_event( HPKEY_QUOTE, xev );
             wake = 1;
             break;
         case XK_n:
@@ -3161,7 +3161,7 @@ int x11_get_event( void )
                                                 paste[ paste_size++ ] = HPKEY_RIGHT;
                                             } else {
                                                 flag |= 4;
-                                                paste[ paste_size++ ] = HPKEY_COLON;
+                                                paste[ paste_size++ ] = HPKEY_QUOTE;
                                             }
                                             break;
                                         case 'a':
@@ -3254,7 +3254,7 @@ int x11_get_event( void )
                                             paste[ paste_size++ ] = HPKEY_ALPHA;
                                             if ( islower( c ) )
                                                 paste[ paste_size++ ] = HPKEY_SHL;
-                                            paste[ paste_size++ ] = HPKEY_COLON;
+                                            paste[ paste_size++ ] = HPKEY_QUOTE;
                                             break;
                                         case 'n':
                                         case 'N':
