@@ -4,6 +4,9 @@
 #include <stdint.h> /* int64_t */
 #include <stdbool.h>
 
+#define T1_TIMER 0
+/* #define T2_TIMER 1 /\* unused? *\/ */
+
 #define DEC 10
 #define HEX 16
 
@@ -307,6 +310,19 @@ extern hpkey_t keyboard[ NB_KEYS ];
 
 extern int annunciators_bits[ NB_ANNUNCIATORS ];
 
+extern long sched_timer1;
+extern long sched_timer2;
+extern unsigned long t1_i_per_tick;
+extern unsigned long t2_i_per_tick;
+
+extern bool please_exit;
+extern bool save_before_exit;
+
+/***************/
+/* emu_timer.c */
+/***************/
+extern void reset_timer( int timer );
+
 /**************/
 /* emu_init.c */
 /**************/
@@ -324,10 +340,5 @@ extern int ( *read_nibble )( long addr ); /* used in debugger.c; ui_*.c */
 extern void press_key( int hpkey );   /* used in ui_*.c */
 extern void release_key( int hpkey ); /* used in ui_*.c */
 extern void release_all_keys( void ); /* used in ui_*.c */
-
-/*****************/
-/* emu_emulate.c */
-/*****************/
-extern void emulate( void ); /* used in main.c */
 
 #endif /* !_EMULATOR_H */

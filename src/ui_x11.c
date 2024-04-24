@@ -2845,9 +2845,7 @@ int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
             break;
         case XK_F7:
         case XK_F10:
-            exit_emulator();
-            XCloseDisplay( dpy );
-            exit( 0 );
+            please_exit = true;
             break;
         default:
             break;
@@ -2855,6 +2853,8 @@ int decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
 
     return wake;
 }
+
+void x11_ui_stop() { XCloseDisplay( dpy ); }
 
 void x11_release_all_keys( void )
 {
@@ -3425,14 +3425,8 @@ int x11_get_event( void )
                     cm = ( XClientMessageEvent* )&xev;
 
                     if ( cm->message_type == wm_protocols ) {
-                        if ( cm->data.l[ 0 ] == ( long )wm_delete_window ) {
-                            exit_emulator();
-
-                            XCloseDisplay( dpy );
-
-                            exit( 0 );
-                        }
-
+                        if ( cm->data.l[ 0 ] == ( long )wm_delete_window )
+                            please_exit = true;
                         if ( cm->data.l[ 0 ] == ( long )wm_save_yourself )
                             save_command_line();
                     }

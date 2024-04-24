@@ -16,8 +16,6 @@
 
 #define MAX_ARGS 16
 
-#define BREAKPOINT_HIT 4
-
 #define TAB_SKIP 8
 
 /*
@@ -72,16 +70,11 @@
 #define UM_PRE 0x10b7c /* Unit Operator prefix */
 #define UM_END 0x10b86 /* Unit Operator _	*/
 
-/*
- * exec_flags values
- */
-#define EXEC_BKPT 1
-
 int enter_debugger = 0;
 bool in_debugger = false;
 int exec_flags = 0;
 
-static int continue_flag;
+static bool continue_flag;
 static char instr[ 100 ];
 
 /*
@@ -94,14 +87,6 @@ static char instr[ 100 ];
  */
 #define DSKTOP_GX 0x806f8
 #define DSKBOT_GX 0x806fd
-
-/*
- * Breakpoint related stuff
- */
-#define BP_EXEC 1
-#define BP_READ 2
-#define BP_WRITE 4
-#define BP_RANGE 8
 
 #define MAX_BREAKPOINTS 32
 int num_bkpts;
@@ -3207,7 +3192,7 @@ cmd_tbl[] = {
     {0,        0,            0                                                                    }
 };
 
-static int check_breakpoint( int type, word_20 addr )
+int check_breakpoint( int type, word_20 addr )
 {
     struct breakpoint* bp;
     int i, n;
@@ -3441,7 +3426,7 @@ static void cmd_break( int argc, char** argv )
     }
 }
 
-static void cmd_continue( int argc, char** argv ) { continue_flag = 1; }
+static void cmd_continue( int argc, char** argv ) { continue_flag = true; }
 
 static void cmd_delete( int argc, char** argv )
 {
@@ -3492,14 +3477,6 @@ static void cmd_delete( int argc, char** argv )
                 bkpt_tbl[ num ].flags = 0;
             }
         }
-    }
-}
-
-static void cmd_exit( int argc, char** argv )
-{
-    if ( confirm( "Exit the emulator WITHOUT saving its state?" ) ) {
-        printf( "Exit.\n" );
-        exit( 0 );
     }
 }
 
@@ -3590,12 +3567,23 @@ static void cmd_mode( int argc, char** argv )
     }
 }
 
+static void cmd_exit( int argc, char** argv )
+{
+    if ( confirm( "Exit the emulator WITHOUT saving its state?" ) ) {
+        printf( "Exit.\n" );
+
+        save_before_exit = false;
+        please_exit = true;
+    }
+}
+
 static void cmd_quit( int argc, char** argv )
 {
     if ( confirm( "Quit the emulator and save its state?" ) ) {
         printf( "Exit.\n" );
-        exit_emulator();
-        exit( 0 );
+
+        save_before_exit = true;
+        please_exit = true;
     }
 }
 
@@ -4086,8 +4074,7 @@ int debug( void )
             if ( config.verbose )
                 printf( "usnterrupt (SIGINT) ignored\n" );
 
-        exit_emulator();
-        exit( 1 );
+        please_exit = true;
 
         if ( enter_debugger & BREAKPOINT_HIT )
             if ( config.verbose )
@@ -4114,7 +4101,7 @@ int debug( void )
     stop_timer( RUN_TIMER );
     start_timer( IDLE_TIMER );
 
-    continue_flag = 0;
+    continue_flag = false;
 
     if ( enter_debugger & ILLEGAL_INSTRUCTION ) {
         printf( "ILLEGAL INSTRUCTION at %.5lX : %s\n", saturn.PC, str_nibbles( saturn.PC, 16 ) );
@@ -4136,10 +4123,10 @@ int debug( void )
         /*
          * read a command
          */
-        rl = readline( "x48-debug> " );
+        rl = readline( "x48ng-debug> " );
 
         if ( rl == ( char* )0 ) {
-            continue_flag = 1;
+            continue_flag = true;
             continue;
         }
         if ( *rl == '\0' ) {
@@ -4198,7 +4185,7 @@ int debug( void )
         }
         in_debugger = false;
 
-    } while ( !continue_flag );
+    } while ( !continue_flag && !please_exit );
 
     /*
      * adjust the hp48's timers
@@ -4240,21 +4227,4 @@ int debug( void )
         exec_flags |= EXEC_BKPT;
 
     return 0;
-}
-
-void emulate_debug( void )
-{
-    do {
-        step_instruction();
-
-        if ( exec_flags & EXEC_BKPT ) {
-            if ( check_breakpoint( BP_EXEC, saturn.PC ) ) {
-                enter_debugger |= BREAKPOINT_HIT;
-                break;
-            }
-        }
-
-        if ( schedule_event-- == 0 )
-            schedule();
-    } while ( !enter_debugger );
 }

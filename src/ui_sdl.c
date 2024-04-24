@@ -724,8 +724,7 @@ static int SDLKeyToKey( SDLKey k )
             break;
         case SDLK_F7:
         case SDLK_F10:
-            exit_emulator();
-            exit( 0 );
+            please_exit = true;
             break;
         default:
             return -1;
@@ -1779,8 +1778,7 @@ int sdl_get_event( void )
     if ( SDL_PollEvent( &event ) ) {
         switch ( event.type ) {
             case SDL_QUIT:
-                exit_emulator();
-                exit( 0 );
+                please_exit = true;
                 break;
 
                 /* // Mouse move: react to state changes in the buttons that are
@@ -2037,6 +2035,8 @@ void sdl_adjust_contrast()
 
     sdl_draw_annunc();
 }
+
+void sdl_ui_stop() {}
 
 void init_sdl_ui( int argc, char** argv )
 {

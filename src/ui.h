@@ -28,13 +28,16 @@ extern letter_t small_font[ 128 ];
 /*************/
 #ifdef HAS_X11
 extern void init_x11_ui( int argc, char** argv );
+extern void x11_ui_stop();
 #endif
 
 #ifdef HAS_SDL
 extern void init_sdl_ui( int argc, char** argv );
+extern void sdl_ui_stop();
 #endif
 
 extern void init_text_ui( int argc, char** argv );
+extern void text_ui_stop();
 
 /*************************************************/
 /* public API: if it's there it's used elsewhere */
@@ -61,6 +64,8 @@ extern void ( *ui_refresh_LCD )( void );
 /*******************/
 /* used in: main.c */
 /*******************/
+extern void ui_stop( void );
+
 extern void start_UI( int argc, char** argv );
 
 #endif /* !_UI_H */

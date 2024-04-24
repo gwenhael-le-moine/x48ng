@@ -199,3 +199,33 @@ void start_UI( int argc, char** argv )
             break;
     }
 }
+
+void ui_stop()
+{
+    ui_init_LCD();
+
+    switch ( config.frontend_type ) {
+#if ( defined( HAS_X11 ) )
+        case FRONTEND_X11:
+        default:
+            x11_ui_stop();
+            break;
+#endif
+
+#if ( defined( HAS_SDL ) )
+        case FRONTEND_SDL:
+#  if ( !defined( HAS_X11 ) )
+        default:
+#  endif
+            sdl_ui_stop();
+            break;
+#endif
+
+        case FRONTEND_TEXT:
+#if ( !defined( HAS_X11 ) && !defined( HAS_SDL ) )
+        default:
+#endif
+            text_ui_stop();
+            break;
+    }
+}

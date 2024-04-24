@@ -62,9 +62,6 @@ int set_t1;
 
 long schedule_event = 0;
 
-long sched_timer1;
-long sched_timer2;
-
 long sched_instr_rollover = SCHED_INSTR_ROLLOVER;
 long sched_receive = SCHED_RECEIVE;
 long sched_adjtime = SCHED_ADJTIME;
@@ -2835,50 +2832,4 @@ inline void schedule( void )
 
         ui_get_event();
     }
-}
-
-void emulate( void )
-{
-    struct timeval tv;
-    struct timeval tv2;
-    struct timezone tz;
-
-    reset_timer( T1_TIMER );
-    reset_timer( RUN_TIMER );
-    reset_timer( IDLE_TIMER );
-
-    set_accesstime();
-    start_timer( T1_TIMER );
-
-    start_timer( RUN_TIMER );
-
-    sched_timer1 = t1_i_per_tick = saturn.t1_tick;
-    sched_timer2 = t2_i_per_tick = saturn.t2_tick;
-
-    set_t1 = saturn.timer1;
-
-    do {
-        step_instruction();
-
-        for ( int i = 0; i < ( int )( sizeof( saturn.keybuf.rows ) / sizeof( saturn.keybuf.rows[ 0 ] ) ); i++ ) {
-            if ( saturn.keybuf.rows[ i ] || config.throttle ) {
-                /* Throttling speed if needed */
-                gettimeofday( &tv, &tz );
-                gettimeofday( &tv2, &tz );
-                while ( ( tv.tv_sec == tv2.tv_sec ) && ( ( tv.tv_usec - tv2.tv_usec ) < 2 ) )
-                    gettimeofday( &tv, &tz );
-
-                tv2.tv_usec = tv.tv_usec;
-                tv2.tv_sec = tv.tv_sec;
-                break;
-            }
-        }
-
-        if ( schedule_event < 0 ) {
-            fprintf( stderr, "bug" );
-            schedule_event = 0;
-        }
-        if ( schedule_event-- <= 0 )
-            schedule();
-    } while ( !enter_debugger );
 }

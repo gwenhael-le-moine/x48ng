@@ -5,9 +5,6 @@
 
 #define OUT_FIELD 17
 
-#define T1_TIMER 0
-/* #define T2_TIMER 1 /\* unused? *\/ */
-
 extern device_t device;
 
 extern int set_t1;
@@ -29,7 +26,6 @@ extern int end_fields[ 19 ];
 /***************/
 /* emu_timer.c */
 /***************/
-extern void reset_timer( int timer );
 extern void restart_timer( int timer );
 extern word_64 get_timer( int timer );
 

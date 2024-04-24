@@ -543,12 +543,7 @@ int text_get_event( void )
             case '|':      /* Shift+\ */
             case KEY_SEND: /* Shift+End */
             case KEY_F( 10 ):
-                nodelay( stdscr, FALSE );
-                echo();
-
-                endwin();
-                exit_emulator();
-                exit( 0 );
+                please_exit = true;
                 break;
         }
 
@@ -557,6 +552,13 @@ int text_get_event( void )
     }
 
     return 1;
+}
+
+void text_ui_stop()
+{
+    nodelay( stdscr, FALSE );
+    echo();
+    endwin();
 }
 
 void init_text_ui( int argc, char** argv )

@@ -18,6 +18,9 @@
 #define RAM_SIZE_SX 0x10000
 #define RAM_SIZE_GX 0x40000
 
+bool please_exit = false;
+bool save_before_exit = true;
+
 bool rom_is_new = true;
 long ram_size;
 long port1_size;
@@ -998,6 +1001,9 @@ void init_display( void )
 
 void start_emulator( void )
 {
+    please_exit = false;
+    save_before_exit = true;
+
     /* If files are successfully read => return and let's go */
     if ( read_files() ) {
         if ( config.resetOnStartup )
@@ -1016,4 +1022,8 @@ void start_emulator( void )
     init_display();
 }
 
-void exit_emulator( void ) { write_files(); }
+void exit_emulator( void )
+{
+    if ( save_before_exit )
+        write_files();
+}

@@ -24,6 +24,7 @@ void signal_handler( int sig )
             sigalarm_triggered = true;
             break;
         case SIGPIPE:
+            ui_stop();
             exit_emulator();
             exit( 0 );
         default:
@@ -109,14 +110,64 @@ int main( int argc, char** argv )
     /* Start emulation loop */
     /************************/
     do {
-        if ( exec_flags )
-            emulate_debug();
-        else
-            emulate();
+        struct timeval tv;
+        struct timeval tv2;
+        struct timezone tz;
 
-        debug();
-    } while ( true );
+        reset_timer( T1_TIMER );
+        reset_timer( RUN_TIMER );
+        reset_timer( IDLE_TIMER );
 
-    /* never reached */
+        set_accesstime();
+        start_timer( T1_TIMER );
+
+        start_timer( RUN_TIMER );
+
+        sched_timer1 = t1_i_per_tick = saturn.t1_tick;
+        sched_timer2 = t2_i_per_tick = saturn.t2_tick;
+
+        set_t1 = saturn.timer1;
+
+        do {
+            step_instruction();
+
+            if ( exec_flags & EXEC_BKPT ) {
+                if ( check_breakpoint( BP_EXEC, saturn.PC ) ) {
+                    enter_debugger |= BREAKPOINT_HIT;
+                    break;
+                }
+            }
+
+            for ( int i = 0; i < ( int )( sizeof( saturn.keybuf.rows ) / sizeof( saturn.keybuf.rows[ 0 ] ) ); i++ ) {
+                if ( saturn.keybuf.rows[ i ] || config.throttle ) {
+                    /* Throttling speed if needed */
+                    gettimeofday( &tv, &tz );
+                    gettimeofday( &tv2, &tz );
+                    while ( ( tv.tv_sec == tv2.tv_sec ) && ( ( tv.tv_usec - tv2.tv_usec ) < 2 ) )
+                        gettimeofday( &tv, &tz );
+
+                    tv2.tv_usec = tv.tv_usec;
+                    tv2.tv_sec = tv.tv_sec;
+                    break;
+                }
+            }
+
+            if ( schedule_event < 0 ) {
+                fprintf( stderr, "bug" );
+                schedule_event = 0;
+            }
+            if ( schedule_event-- <= 0 )
+                schedule();
+        } while ( !please_exit && !enter_debugger );
+
+        fprintf( stderr, "please_exit = %i, enter_debugger = %i\n", please_exit, enter_debugger );
+
+        if ( enter_debugger )
+            debug();
+    } while ( !please_exit );
+
+    ui_stop();
+    exit_emulator();
+
     return 0;
 }
