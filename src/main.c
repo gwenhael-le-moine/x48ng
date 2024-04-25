@@ -131,11 +131,9 @@ int main( int argc, char** argv )
         do {
             step_instruction();
 
-            if ( exec_flags & EXEC_BKPT ) {
-                if ( check_breakpoint( BP_EXEC, saturn.PC ) ) {
-                    enter_debugger |= BREAKPOINT_HIT;
-                    break;
-                }
+            if ( ( config.useDebugger ) && ( exec_flags & EXEC_BKPT ) && ( check_breakpoint( BP_EXEC, saturn.PC ) ) ) {
+                enter_debugger |= BREAKPOINT_HIT;
+                break;
             }
 
             for ( int i = 0; i < ( int )( sizeof( saturn.keybuf.rows ) / sizeof( saturn.keybuf.rows[ 0 ] ) ); i++ ) {
@@ -159,8 +157,6 @@ int main( int argc, char** argv )
             if ( schedule_event-- <= 0 )
                 schedule();
         } while ( !please_exit && !enter_debugger );
-
-        fprintf( stderr, "please_exit = %i, enter_debugger = %i\n", please_exit, enter_debugger );
 
         if ( enter_debugger )
             debug();
