@@ -960,93 +960,72 @@ static inline void _button_mouse_up( int mouse_x, int mouse_y, int mouse_button 
     }
 }
 
-/********************/
-/* PUBLIC FUNCTIONS */
-/********************/
-bool shouldRender = true; /* FIXME */
-void gui_update()
+static inline void _draw_lcd()
 {
-    SDL_SetRenderDrawColor( renderer, gui_colors.faceplate.r, gui_colors.faceplate.g, gui_colors.faceplate.b, gui_colors.faceplate.a );
-    SDL_RenderClear( renderer );
+    int pitch, _w, _h;
+    int _access;                 /* unknown use? */
+    Uint32 format;
+    if ( SDL_QueryTexture( window_texture, &format, &_access, &_w, &_h ) ) {
+        printf( "SDL_QueryTexture: %s.\n", SDL_GetError() );
+        please_exit = true;
+    }
 
-    if ( shouldRender ) {
-        shouldRender = false;
+    Uint32* pixels;
+    if ( SDL_LockTexture( window_texture, NULL, ( void** )&pixels, &pitch ) ) {
+        printf( "SDL_LockTexture: %s.\n", SDL_GetError() );
+        please_exit = true;
+    }
 
-        int pitch, w, h;
-        Uint32* pixels;
-        int access;
-        Uint32 format;
-        int pixel;
-        Uint32 color;
-        Uint32 pixelPosition;
+    SDL_PixelFormat* pixelFormat = SDL_AllocFormat( format );
 
-        int nibble;
-        int bit_stop;
-        int init_x;
+    bool bit_0, bit_1, bit_2;
+    int pixel;
+    Uint32 color;
+    Uint32 pixelPosition;
 
-        if ( SDL_QueryTexture( window_texture, &format, &access, &w, &h ) ) {
-            printf( "SDL_QueryTexture: %s.\n", SDL_GetError() );
-            please_exit = true;
-        }
+    int nibble;
+    int bit_stop;
+    int init_x;
 
-        if ( SDL_LockTexture( window_texture, NULL, ( void** )&pixels, &pitch ) ) {
-            printf( "SDL_LockTexture: %s.\n", SDL_GetError() );
-            please_exit = true;
-        }
+    for ( int y = 0; y < LCD_HEIGHT; ++y ) {
+        for ( int nibble_x = 0; nibble_x < NIBBLES_PER_ROW; ++nibble_x ) {
+            nibble = lcd_nibbles_buffer[ y ][ nibble_x ];
+            nibble &= 0x0f;
 
-        SDL_PixelFormat* pixelFormat = SDL_AllocFormat( format );
+            init_x = nibble_x * NIBBLES_NB_BITS;
+            bit_stop = ( ( init_x + NIBBLES_NB_BITS >= LCD_WIDTH ) ? LCD_WIDTH - init_x : 4 );
 
-        for ( int y = 0; y < LCD_HEIGHT; ++y ) {
-            for ( int nibble_x = 0; nibble_x < NIBBLES_PER_ROW; ++nibble_x ) {
-                nibble = lcd_nibbles_buffer[ y ][ nibble_x ];
-                nibble &= 0x0f;
+            for ( int bit_x = 0; bit_x < bit_stop; bit_x++ ) {
+                bit_0 = ( nibble & ( 1 << ( bit_x & 3 ) ) );
+                bit_1 = true;
+                bit_2 = true;
+                pixel = bit_0 + bit_1 + bit_2;
 
-                init_x = nibble_x * NIBBLES_NB_BITS;
-                bit_stop = ( ( init_x + NIBBLES_NB_BITS >= LCD_WIDTH ) ? LCD_WIDTH - init_x : 4 );
+                color = SDL_MapRGB( pixelFormat, pixels_colors[ pixel ].r, pixels_colors[ pixel ].g, pixels_colors[ pixel ].b );
+                pixelPosition = ( y * ( pitch / sizeof( Uint32 ) ) ) + ( nibble_x * NIBBLES_NB_BITS ) + bit_x;
 
-                for ( int bit_x = 0; bit_x < bit_stop; bit_x++ ) {
-                    pixel = ( nibble & ( 1 << ( bit_x & 3 ) ) ) ? 3 : 0;
-
-                    // Now you want to format the color to a correct format that SDL
-                    // can use. Basically we convert our RGB color to a hex-like BGR
-                    // color.
-                    color = SDL_MapRGB( pixelFormat, pixels_colors[ pixel ].r, pixels_colors[ pixel ].g, pixels_colors[ pixel ].b );
-
-                    // Before setting the color, we need to know where we have to
-                    // place it.
-                    pixelPosition = y * ( pitch / sizeof( unsigned int ) ) + nibble_x + bit_x;
-
-                    pixels[ pixelPosition ] = color;
-                }
+                pixels[ pixelPosition ] = color;
             }
         }
-
-        /* // do stuff */
-        /* for ( int y = 0; y < LCD_HEIGHT; y++ ) { */
-        /*     for ( int x = 0; x < LCD_WIDTH; x++ ) { */
-        /*         pixel = lcdScreenGS[ x + y * LCD_WIDTH ]; */
-
-        /*         // Now you want to format the color to a correct format that SDL */
-        /*         // can use. Basically we convert our RGB color to a hex-like BGR */
-        /*         // color. */
-        /*         color = SDL_MapRGB( pixelFormat, pixels_colors[ pixel ].r, pixels_colors[ pixel ].g, pixels_colors[ pixel ].b ); */
-
-        /*         // Before setting the color, we need to know where we have to */
-        /*         // place it. */
-        /*         pixelPosition = y * ( pitch / sizeof( unsigned int ) ) + x; */
-
-        /*         pixels[ pixelPosition ] = color; */
-        /*     } */
-        /* } */
-
-        SDL_UnlockTexture( window_texture );
     }
+
+    SDL_UnlockTexture( window_texture );
 
     // Show rendered to texture
     SDL_Rect r1 = { 0, 0, LCD_WIDTH, LCD_HEIGHT };
     SDL_Rect r2 = { LCD_X * UI_SCALE, LCD_Y * UI_SCALE, LCD_WIDTH * UI_SCALE, LCD_HEIGHT * UI_SCALE };
     SDL_RenderCopyEx( renderer, window_texture, &r1, &r2, 0, NULL, SDL_FLIP_NONE );
+}
 
+/********************/
+/* PUBLIC FUNCTIONS */
+/********************/
+void gui_update()
+{
+    SDL_SetRenderDrawColor( renderer, gui_colors.faceplate.r, gui_colors.faceplate.g, gui_colors.faceplate.b, gui_colors.faceplate.a );
+    SDL_RenderClear( renderer );
+
+    _draw_lcd();
     _draw_keyboard();
 
     SDL_RenderPresent( renderer );
@@ -1422,6 +1401,7 @@ bool gui_events()
                 }
         }
     }
+
     return true;
 }
 
