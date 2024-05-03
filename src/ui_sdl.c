@@ -1038,11 +1038,11 @@ bool gui_events()
     while ( SDL_PollEvent( &event ) ) {
         switch ( event.type ) {
             case SDL_MOUSEBUTTONUP:
-                _button_mouse_up( event.button.x, event.button.y, 1 );
+                _button_mouse_up( event.button.x, event.button.y, event.button.button );
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
-                _button_mouse_down( event.button.x, event.button.y, 1 );
+                _button_mouse_down( event.button.x, event.button.y, event.button.button );
                 break;
 
             case SDL_KEYDOWN:
