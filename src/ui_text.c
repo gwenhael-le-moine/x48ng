@@ -12,7 +12,7 @@
 #include <locale.h>
 #include <wchar.h>
 
-#include <ncursesw/curses.h>
+#include <curses.h>
 
 #include "config.h" /* mono, gray, small, tiny, progname */
 #include "ui.h"     /* last_annunc_state, lcd_nibbles_buffer, DISP_ROWS */
