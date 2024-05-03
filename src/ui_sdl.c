@@ -58,14 +58,12 @@
  */
 // Set if button is pushed
 #define BUTTON_PUSHED 0x01
-// If set the button will be grayed out
-#define BUTTON_DISABLED 0x02
 // Mouse button 1 toggles this button
-#define BUTTON_B1TOGGLE 0x04
+#define BUTTON_B1TOGGLE 0x02
 // Mouse button 2 toggles this button
-#define BUTTON_B2TOGGLE 0x08
+#define BUTTON_B2TOGGLE 0x04
 // Releaseing mouse button 1 anywhere unpushes the button
-#define BUTTON_B1RELEASE 0x10
+#define BUTTON_B1RELEASE 0x08
 
 /***********/
 /* TYPEDEF */
@@ -743,6 +741,63 @@ static SDL_Color pixels_colors[] = {
 /*************/
 /* FUNCTIONS */
 /*************/
+static inline void _draw_lcd()
+{
+    int pitch, _w, _h;
+    int _access; /* unknown use? */
+    Uint32 format;
+    if ( SDL_QueryTexture( window_texture, &format, &_access, &_w, &_h ) ) {
+        printf( "SDL_QueryTexture: %s.\n", SDL_GetError() );
+        please_exit = true;
+    }
+
+    Uint32* pixels;
+    if ( SDL_LockTexture( window_texture, NULL, ( void** )&pixels, &pitch ) ) {
+        printf( "SDL_LockTexture: %s.\n", SDL_GetError() );
+        please_exit = true;
+    }
+
+    SDL_PixelFormat* pixelFormat = SDL_AllocFormat( format );
+
+    bool bit_0, bit_1, bit_2;
+    int pixel;
+    Uint32 color;
+    Uint32 pixelPosition;
+
+    int nibble;
+    int bit_stop;
+    int init_x;
+
+    for ( int y = 0; y < LCD_HEIGHT; ++y ) {
+        for ( int nibble_x = 0; nibble_x < NIBBLES_PER_ROW; ++nibble_x ) {
+            nibble = lcd_nibbles_buffer[ y ][ nibble_x ];
+            nibble &= 0x0f;
+
+            init_x = nibble_x * NIBBLES_NB_BITS;
+            bit_stop = ( ( init_x + NIBBLES_NB_BITS >= LCD_WIDTH ) ? LCD_WIDTH - init_x : 4 );
+
+            for ( int bit_x = 0; bit_x < bit_stop; bit_x++ ) {
+                bit_0 = ( nibble & ( 1 << ( bit_x & 3 ) ) );
+                bit_1 = true;
+                bit_2 = true;
+                pixel = bit_0 + bit_1 + bit_2;
+
+                color = SDL_MapRGB( pixelFormat, pixels_colors[ pixel ].r, pixels_colors[ pixel ].g, pixels_colors[ pixel ].b );
+                pixelPosition = ( y * ( pitch / sizeof( Uint32 ) ) ) + ( nibble_x * NIBBLES_NB_BITS ) + bit_x;
+
+                pixels[ pixelPosition ] = color;
+            }
+        }
+    }
+
+    SDL_UnlockTexture( window_texture );
+
+    // Show rendered to texture
+    SDL_Rect r1 = { 0, 0, LCD_WIDTH, LCD_HEIGHT };
+    SDL_Rect r2 = { LCD_X * UI_SCALE, LCD_Y * UI_SCALE, LCD_WIDTH * UI_SCALE, LCD_HEIGHT * UI_SCALE };
+    SDL_RenderCopyEx( renderer, window_texture, &r1, &r2, 0, NULL, SDL_FLIP_NONE );
+}
+
 static inline bool _init_keyboard_textures()
 {
     SDL_Surface* s = NULL;
@@ -900,12 +955,8 @@ static inline int _find_button( int x, int y )
 {
     for ( int i = 0; i < NB_KEYS; ++i )
         if ( x >= gui_buttons[ i ].x * UI_SCALE && x < gui_buttons[ i ].x * UI_SCALE + gui_buttons[ i ].w * UI_SCALE &&
-             y >= gui_buttons[ i ].y * UI_SCALE && y < gui_buttons[ i ].y * UI_SCALE + gui_buttons[ i ].h * UI_SCALE ) {
-            if ( gui_buttons[ i ].flags & BUTTON_DISABLED )
-                return -1;
-            else
-                return i;
-        }
+             y >= gui_buttons[ i ].y * UI_SCALE && y < gui_buttons[ i ].y * UI_SCALE + gui_buttons[ i ].h * UI_SCALE )
+          return i;
 
     return -1;
 }
@@ -938,83 +989,25 @@ static inline void _button_mouse_down( int mouse_x, int mouse_y, int mouse_butto
 
 static inline void _button_mouse_up( int mouse_x, int mouse_y, int mouse_button )
 {
-    int bindex = _find_button( mouse_x, mouse_y );
-    if ( bindex == -1 )
-        return;
+  int bindex = _find_button( mouse_x, mouse_y );
+  if ( bindex == -1 )
+    return;
 
-    if ( !( gui_buttons[ bindex ].flags & BUTTON_DISABLED ) ) {
-        if ( mouse_button == 1 && ( gui_buttons[ bindex ].flags & BUTTON_PUSHED ) && !( gui_buttons[ bindex ].flags & BUTTON_B1TOGGLE ) ) {
-            gui_buttons[ bindex ].flags &= ~BUTTON_PUSHED;
+  if ( mouse_button == 1 && ( gui_buttons[ bindex ].flags & BUTTON_PUSHED ) && !( gui_buttons[ bindex ].flags & BUTTON_B1TOGGLE ) ) {
+    gui_buttons[ bindex ].flags &= ~BUTTON_PUSHED;
 
-            press_key( gui_buttons[ bindex ].hpkey );
-        }
+    press_key( gui_buttons[ bindex ].hpkey );
+  }
+
+  if ( mouse_button == 1 ) {
+    /* for ( b = buttons; gui_buttons[ bindex ].label; b++ ) { */
+    if ( ( gui_buttons[ bindex ].flags & ( BUTTON_B1RELEASE | BUTTON_PUSHED ) ) == ( BUTTON_B1RELEASE | BUTTON_PUSHED ) ) {
+      gui_buttons[ bindex ].flags &= ~BUTTON_PUSHED;
+
+      release_key( gui_buttons[ bindex ].hpkey );
     }
-    if ( mouse_button == 1 ) {
-        /* for ( b = buttons; gui_buttons[ bindex ].label; b++ ) { */
-        if ( ( gui_buttons[ bindex ].flags & ( BUTTON_B1RELEASE | BUTTON_PUSHED ) ) == ( BUTTON_B1RELEASE | BUTTON_PUSHED ) ) {
-            gui_buttons[ bindex ].flags &= ~BUTTON_PUSHED;
-
-            release_key( gui_buttons[ bindex ].hpkey );
-        }
-        /* } */
-    }
-}
-
-static inline void _draw_lcd()
-{
-    int pitch, _w, _h;
-    int _access;                 /* unknown use? */
-    Uint32 format;
-    if ( SDL_QueryTexture( window_texture, &format, &_access, &_w, &_h ) ) {
-        printf( "SDL_QueryTexture: %s.\n", SDL_GetError() );
-        please_exit = true;
-    }
-
-    Uint32* pixels;
-    if ( SDL_LockTexture( window_texture, NULL, ( void** )&pixels, &pitch ) ) {
-        printf( "SDL_LockTexture: %s.\n", SDL_GetError() );
-        please_exit = true;
-    }
-
-    SDL_PixelFormat* pixelFormat = SDL_AllocFormat( format );
-
-    bool bit_0, bit_1, bit_2;
-    int pixel;
-    Uint32 color;
-    Uint32 pixelPosition;
-
-    int nibble;
-    int bit_stop;
-    int init_x;
-
-    for ( int y = 0; y < LCD_HEIGHT; ++y ) {
-        for ( int nibble_x = 0; nibble_x < NIBBLES_PER_ROW; ++nibble_x ) {
-            nibble = lcd_nibbles_buffer[ y ][ nibble_x ];
-            nibble &= 0x0f;
-
-            init_x = nibble_x * NIBBLES_NB_BITS;
-            bit_stop = ( ( init_x + NIBBLES_NB_BITS >= LCD_WIDTH ) ? LCD_WIDTH - init_x : 4 );
-
-            for ( int bit_x = 0; bit_x < bit_stop; bit_x++ ) {
-                bit_0 = ( nibble & ( 1 << ( bit_x & 3 ) ) );
-                bit_1 = true;
-                bit_2 = true;
-                pixel = bit_0 + bit_1 + bit_2;
-
-                color = SDL_MapRGB( pixelFormat, pixels_colors[ pixel ].r, pixels_colors[ pixel ].g, pixels_colors[ pixel ].b );
-                pixelPosition = ( y * ( pitch / sizeof( Uint32 ) ) ) + ( nibble_x * NIBBLES_NB_BITS ) + bit_x;
-
-                pixels[ pixelPosition ] = color;
-            }
-        }
-    }
-
-    SDL_UnlockTexture( window_texture );
-
-    // Show rendered to texture
-    SDL_Rect r1 = { 0, 0, LCD_WIDTH, LCD_HEIGHT };
-    SDL_Rect r2 = { LCD_X * UI_SCALE, LCD_Y * UI_SCALE, LCD_WIDTH * UI_SCALE, LCD_HEIGHT * UI_SCALE };
-    SDL_RenderCopyEx( renderer, window_texture, &r1, &r2, 0, NULL, SDL_FLIP_NONE );
+    /* } */
+  }
 }
 
 /********************/
@@ -1211,13 +1204,11 @@ bool gui_events()
                     case SDL_SCANCODE_F7:
                         please_exit = true;
                         break;
-
                         /* case SDL_SCANCODE_F11: */
                         /*     { */
                         /*         load_file_on_stack( "zeldahp.dir" ); */
                         /*     } */
                         /*     break; */
-
                     default:
                         break;
                 }
@@ -1500,38 +1491,38 @@ int sdl_get_event( void ) { return gui_events(); }
 
 void sdl_update_LCD( void )
 {
-    /* if ( display.on ) { */
-    /*     int i; */
-    /*     long addr; */
-    /*     static int old_offset = -1; */
-    /*     static int old_lines = -1; */
+    if ( display.on ) {
+        /*     int i; */
+        /*     long addr; */
+        /*     static int old_offset = -1; */
+        /*     static int old_lines = -1; */
 
-    /*     addr = display.disp_start; */
-    /*     if ( display.offset != old_offset ) { */
-    /*         memset( lcd_nibbles_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) ); */
-    /*         old_offset = display.offset; */
-    /*     } */
-    /*     if ( display.lines != old_lines ) { */
-    /*         memset( &lcd_nibbles_buffer[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) ); */
-    /*         old_lines = display.lines; */
-    /*     } */
-    /*     for ( i = 0; i <= display.lines; i++ ) { */
-    /*         draw_row( addr, i ); */
-    /*         addr += display.nibs_per_line; */
-    /*     } */
-    /*     if ( i < DISP_ROWS ) { */
-    /*         addr = display.menu_start; */
-    /*         for ( ; i < DISP_ROWS; i++ ) { */
-    /*             draw_row( addr, i ); */
-    /*             addr += NIBBLES_PER_ROW; */
-    /*         } */
-    /*     } */
-    /* } else */
-    /*     ui_init_LCD(); */
-    gui_update();
+        /*     addr = display.disp_start; */
+        /*     if ( display.offset != old_offset ) { */
+        /*         memset( lcd_nibbles_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) ); */
+        /*         old_offset = display.offset; */
+        /*     } */
+        /*     if ( display.lines != old_lines ) { */
+        /*         memset( &lcd_nibbles_buffer[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) ); */
+        /*         old_lines = display.lines; */
+        /*     } */
+        /*     for ( i = 0; i <= display.lines; i++ ) { */
+        /*         draw_row( addr, i ); */
+        /*         addr += display.nibs_per_line; */
+        /*     } */
+        /*     if ( i < DISP_ROWS ) { */
+        /*         addr = display.menu_start; */
+        /*         for ( ; i < DISP_ROWS; i++ ) { */
+        /*             draw_row( addr, i ); */
+        /*             addr += NIBBLES_PER_ROW; */
+        /*         } */
+        /*     } */
+        gui_update();
+    } else
+        ui_init_LCD();
 }
 
-void sdl_refresh_LCD( void ) {}
+void sdl_refresh_LCD( void ) { gui_update(); }
 
 void sdl_disp_draw_nibble( word_20 addr, word_4 val )
 {
