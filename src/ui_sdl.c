@@ -956,7 +956,7 @@ static inline int _find_button( int x, int y )
     for ( int i = 0; i < NB_KEYS; ++i )
         if ( x >= gui_buttons[ i ].x * UI_SCALE && x < gui_buttons[ i ].x * UI_SCALE + gui_buttons[ i ].w * UI_SCALE &&
              y >= gui_buttons[ i ].y * UI_SCALE && y < gui_buttons[ i ].y * UI_SCALE + gui_buttons[ i ].h * UI_SCALE )
-          return i;
+            return i;
 
     return -1;
 }
@@ -989,25 +989,25 @@ static inline void _button_mouse_down( int mouse_x, int mouse_y, int mouse_butto
 
 static inline void _button_mouse_up( int mouse_x, int mouse_y, int mouse_button )
 {
-  int bindex = _find_button( mouse_x, mouse_y );
-  if ( bindex == -1 )
-    return;
+    int bindex = _find_button( mouse_x, mouse_y );
+    if ( bindex == -1 )
+        return;
 
-  if ( mouse_button == 1 && ( gui_buttons[ bindex ].flags & BUTTON_PUSHED ) && !( gui_buttons[ bindex ].flags & BUTTON_B1TOGGLE ) ) {
-    gui_buttons[ bindex ].flags &= ~BUTTON_PUSHED;
+    if ( mouse_button == 1 && ( gui_buttons[ bindex ].flags & BUTTON_PUSHED ) && !( gui_buttons[ bindex ].flags & BUTTON_B1TOGGLE ) ) {
+        gui_buttons[ bindex ].flags &= ~BUTTON_PUSHED;
 
-    press_key( gui_buttons[ bindex ].hpkey );
-  }
-
-  if ( mouse_button == 1 ) {
-    /* for ( b = buttons; gui_buttons[ bindex ].label; b++ ) { */
-    if ( ( gui_buttons[ bindex ].flags & ( BUTTON_B1RELEASE | BUTTON_PUSHED ) ) == ( BUTTON_B1RELEASE | BUTTON_PUSHED ) ) {
-      gui_buttons[ bindex ].flags &= ~BUTTON_PUSHED;
-
-      release_key( gui_buttons[ bindex ].hpkey );
+        press_key( gui_buttons[ bindex ].hpkey );
     }
-    /* } */
-  }
+
+    if ( mouse_button == 1 ) {
+        /* for ( b = buttons; gui_buttons[ bindex ].label; b++ ) { */
+        if ( ( gui_buttons[ bindex ].flags & ( BUTTON_B1RELEASE | BUTTON_PUSHED ) ) == ( BUTTON_B1RELEASE | BUTTON_PUSHED ) ) {
+            gui_buttons[ bindex ].flags &= ~BUTTON_PUSHED;
+
+            release_key( gui_buttons[ bindex ].hpkey );
+        }
+        /* } */
+    }
 }
 
 /********************/
@@ -1492,37 +1492,37 @@ int sdl_get_event( void ) { return gui_events(); }
 void sdl_update_LCD( void )
 {
     if ( display.on ) {
-        /*     int i; */
-        /*     long addr; */
-        /*     static int old_offset = -1; */
-        /*     static int old_lines = -1; */
+        int i;
+        long addr;
+        static int old_offset = -1;
+        static int old_lines = -1;
 
-        /*     addr = display.disp_start; */
-        /*     if ( display.offset != old_offset ) { */
-        /*         memset( lcd_nibbles_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) ); */
-        /*         old_offset = display.offset; */
-        /*     } */
-        /*     if ( display.lines != old_lines ) { */
-        /*         memset( &lcd_nibbles_buffer[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) ); */
-        /*         old_lines = display.lines; */
-        /*     } */
-        /*     for ( i = 0; i <= display.lines; i++ ) { */
-        /*         draw_row( addr, i ); */
-        /*         addr += display.nibs_per_line; */
-        /*     } */
-        /*     if ( i < DISP_ROWS ) { */
-        /*         addr = display.menu_start; */
-        /*         for ( ; i < DISP_ROWS; i++ ) { */
-        /*             draw_row( addr, i ); */
-        /*             addr += NIBBLES_PER_ROW; */
-        /*         } */
-        /*     } */
-        gui_update();
+        addr = display.disp_start;
+        if ( display.offset != old_offset ) {
+            memset( lcd_nibbles_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
+            old_offset = display.offset;
+        }
+        if ( display.lines != old_lines ) {
+            memset( &lcd_nibbles_buffer[ 56 ][ 0 ], 0xf0, ( size_t )( 8 * NIBS_PER_BUFFER_ROW ) );
+            old_lines = display.lines;
+        }
+        for ( i = 0; i <= display.lines; i++ ) {
+            draw_row( addr, i );
+            addr += display.nibs_per_line;
+        }
+        if ( i < DISP_ROWS ) {
+            addr = display.menu_start;
+            for ( ; i < DISP_ROWS; i++ ) {
+                draw_row( addr, i );
+                addr += NIBBLES_PER_ROW;
+            }
+        }
     } else
         ui_init_LCD();
+    gui_update();
 }
 
-void sdl_refresh_LCD( void ) { gui_update(); }
+void sdl_refresh_LCD( void ) { sdl_update_LCD(); }
 
 void sdl_disp_draw_nibble( word_20 addr, word_4 val )
 {
@@ -1552,6 +1552,8 @@ void sdl_disp_draw_nibble( word_20 addr, word_4 val )
             draw_nibble( x, y, val );
         }
     }
+
+    sdl_refresh_LCD();
 }
 
 void sdl_menu_draw_nibble( word_20 addr, word_4 val )
@@ -1599,7 +1601,7 @@ void sdl_adjust_contrast()
     /* last_annunc_state = -1; */
 
     /* sdl_draw_annunc(); */
-    gui_update();
+    sdl_update_LCD();
 }
 
 void sdl_ui_stop() { gui_exit(); }
