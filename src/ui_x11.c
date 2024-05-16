@@ -2838,6 +2838,7 @@ static inline void draw_nibble( int c, int r, int val )
     XCopyPlane( dpy, nibble_maps[ val ], lcd.win, lcd.gc, 0, 0, 8, 2, x, y, 1 );
 }
 
+/* Identical in all ui_*.c */
 static inline void draw_row( long addr, int row )
 {
     int line_length = NIBBLES_PER_ROW;

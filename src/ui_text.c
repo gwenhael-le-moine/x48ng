@@ -238,22 +238,25 @@ static inline void ncurses_draw_lcd( void )
         ncurses_draw_lcd_fullsize();
 }
 
-/* TODO: duplicate of ui_sdl.c:draw_row()  */
+static inline void draw_nibble( int col, int row, int val )
+{
+    val &= 0x0f;
+    if ( val == lcd_nibbles_buffer[ row ][ col ] )
+        return;
+
+    lcd_nibbles_buffer[ row ][ col ] = val;
+}
+
+/* Identical in all ui_*.c */
 static inline void draw_row( long addr, int row )
 {
-    int nibble;
     int line_length = NIBBLES_PER_ROW;
 
     if ( ( display.offset > 3 ) && ( row <= display.lines ) )
         line_length += 2;
 
-    for ( int i = 0; i < line_length; i++ ) {
-        nibble = read_nibble( addr + i );
-        if ( nibble == lcd_nibbles_buffer[ row ][ i ] )
-            continue;
-
-        lcd_nibbles_buffer[ row ][ i ] = nibble;
-    }
+    for ( int i = 0; i < line_length; i++ )
+        draw_nibble( i, row, read_nibble( addr + i ) );
 }
 
 /**********/

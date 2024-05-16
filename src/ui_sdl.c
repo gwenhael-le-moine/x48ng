@@ -1669,20 +1669,16 @@ static inline void draw_nibble( int col, int row, int val )
     SDLDrawNibble( x, y, val );
 }
 
-/* Same as in ui_x11.c */
+/* Identical in all ui_*.c */
 static inline void draw_row( long addr, int row )
 {
-    int nibble;
     int line_length = NIBBLES_PER_ROW;
 
     if ( ( display.offset > 3 ) && ( row <= display.lines ) )
         line_length += 2;
 
-    for ( int i = 0; i < line_length; i++ ) {
-        nibble = read_nibble( addr + i );
-
-        draw_nibble( i, row, nibble );
-    }
+    for ( int i = 0; i < line_length; i++ )
+        draw_nibble( i, row, read_nibble( addr + i ) );
 }
 
 static void SDLCreateHP( void )
