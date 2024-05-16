@@ -1655,24 +1655,21 @@ static void SDLDrawNibble( int nx, int ny, int val )
 
 static inline void draw_nibble( int col, int row, int val )
 {
-    int x, y;
-
-    x = ( col * 4 ); // x: start in pixels
-
-    if ( row <= display.lines )
-        x -= 2 * display.offset;
-    y = row; // y: start in pixels
-
-    /* if ( val == lcd_nibbles_buffer[ row ][ col ] ) */
-    /*     return; */
-
     val &= 0x0f;
+    if ( val == lcd_nibbles_buffer[ row ][ col ] )
+        return;
 
     lcd_nibbles_buffer[ row ][ col ] = val;
+
+    int y = row;
+    int x = col * 4;
+    if ( row <= display.lines )
+        x -= ( 2 * display.offset );
 
     SDLDrawNibble( x, y, val );
 }
 
+/* Same as in ui_x11.c */
 static inline void draw_row( long addr, int row )
 {
     int nibble;
@@ -1683,10 +1680,7 @@ static inline void draw_row( long addr, int row )
 
     for ( int i = 0; i < line_length; i++ ) {
         nibble = read_nibble( addr + i );
-        if ( nibble == lcd_nibbles_buffer[ row ][ i ] )
-            continue;
 
-        lcd_nibbles_buffer[ row ][ i ] = nibble;
         draw_nibble( i, row, nibble );
     }
 }
@@ -1968,25 +1962,16 @@ void sdl_disp_draw_nibble( word_20 addr, word_4 val )
     x = offset % display.nibs_per_line;
     if ( x < 0 || x > 35 )
         return;
+
     if ( display.nibs_per_line != 0 ) {
         y = offset / display.nibs_per_line;
         if ( y < 0 || y > 63 )
             return;
 
-        if ( val == lcd_nibbles_buffer[ y ][ x ] )
-            return;
-
-        lcd_nibbles_buffer[ y ][ x ] = val;
         draw_nibble( x, y, val );
-    } else {
-        for ( y = 0; y < display.lines; y++ ) {
-            if ( val == lcd_nibbles_buffer[ y ][ x ] )
-                break;
-
-            lcd_nibbles_buffer[ y ][ x ] = val;
+    } else
+        for ( y = 0; y < display.lines; y++ )
             draw_nibble( x, y, val );
-        }
-    }
 }
 
 void sdl_menu_draw_nibble( word_20 addr, word_4 val )
@@ -1998,17 +1983,12 @@ void sdl_menu_draw_nibble( word_20 addr, word_4 val )
     x = offset % NIBBLES_PER_ROW;
     y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
 
-    if ( val == lcd_nibbles_buffer[ y ][ x ] )
-        return;
-
-    lcd_nibbles_buffer[ y ][ x ] = val;
     draw_nibble( x, y, val );
 }
 
 void sdl_draw_annunc( void )
 {
     int val = saturn.annunc;
-
     if ( val == last_annunc_state )
         return;
 

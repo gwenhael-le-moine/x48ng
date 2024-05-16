@@ -508,7 +508,6 @@ static x11_ann_struct_t ann_tbl[] = {
     {151, 4, ann_battery_width, ann_battery_height, ann_battery_bitmap, 0},
     {196, 4, ann_busy_width,    ann_busy_height,    ann_busy_bitmap,    0},
     {241, 4, ann_io_width,      ann_io_height,      ann_io_bitmap,      0},
-    /* { 0 } */
 };
 
 static icon_map_t icon_maps_sx[] = {
@@ -1215,7 +1214,6 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
      * draw the character labels
      */
     for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
-
         CreateButton( i, offset_x, offset_y, f_small, f_med, f_big );
 
         if ( i < HPKEY_MTH )
@@ -1224,7 +1222,6 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
             pixel = COLOR( PAD );
 
         if ( buttons[ i ].letter != ( char* )0 ) {
-
             XSetBackground( dpy, gc, pixel );
             XSetForeground( dpy, gc, COLOR( WHITE ) );
 
@@ -1248,9 +1245,7 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
      * draw the bottom labels
      */
     for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
-
         if ( buttons[ i ].sub != ( char* )0 ) {
-
             XSetBackground( dpy, gc, pixel );
             XSetForeground( dpy, gc, COLOR( WHITE ) );
 
@@ -1265,11 +1260,8 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
      * draw the left labels
      */
     for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
-
         if ( buttons[ i ].left != ( char* )0 ) {
-
             if ( buttons[ i ].is_menu ) {
-
                 /*
                  * draw the dark shade under the label
                  */
@@ -1291,10 +1283,7 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
                 XSetForeground( dpy, gc, COLOR( LEFT ) );
 
                 x = ( pw + 1 - SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) ) ) / 2;
-                if ( opt_gx )
-                    y = 14;
-                else
-                    y = 9;
+                y = ( opt_gx ) ? 14 : 9;
 
                 DrawSmallString( dpy, pix, gc, x, y, buttons[ i ].left, strlen( buttons[ i ].left ) );
 
@@ -1318,19 +1307,14 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
                 XCopyArea( dpy, pix, keypad->pixmap, gc, 0, 0, pw, ph, x, y );
 
                 XFreePixmap( dpy, pix );
-
             } else {
-
                 XSetBackground( dpy, gc, pixel );
                 XSetForeground( dpy, gc, COLOR( LEFT ) );
 
-                if ( buttons[ i ].right == ( char* )0 ) { /* centered label */
-
+                if ( buttons[ i ].right == ( char* )0 ) /* centered label */
                     x = offset_x + buttons[ i ].x +
                         ( 1 + buttons[ i ].w - SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) ) ) / 2;
-
-                } else { /* label to the left */
-
+                else { /* label to the left */
                     wl = SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) );
                     wr = SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) );
                     ws = SmallTextWidth( " ", 1 );
@@ -1349,16 +1333,10 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
      * draw the right labels
      */
     for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
-
-        if ( i < HPKEY_MTH )
-            pixel = COLOR( DISP_PAD );
-        else
-            pixel = COLOR( PAD );
+        pixel = ( i < HPKEY_MTH ) ? COLOR( DISP_PAD ) : COLOR( PAD );
 
         if ( buttons[ i ].right != ( char* )0 ) {
-
             if ( buttons[ i ].is_menu ) {
-
                 /*
                  * draw the dark shade under the label
                  */
@@ -1380,10 +1358,7 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
                 XSetForeground( dpy, gc, COLOR( RIGHT ) );
 
                 x = ( pw + 1 - SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) ) ) / 2;
-                if ( opt_gx )
-                    y = 14;
-                else
-                    y = 8;
+                y = ( opt_gx ) ? 14 : 8;
 
                 DrawSmallString( dpy, pix, gc, x, y, buttons[ i ].right, strlen( buttons[ i ].right ) );
 
@@ -1407,19 +1382,14 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
                 XCopyArea( dpy, pix, keypad->pixmap, gc, 0, 0, pw, ph, x, y );
 
                 XFreePixmap( dpy, pix );
-
             } else {
-
                 XSetBackground( dpy, gc, pixel );
                 XSetForeground( dpy, gc, COLOR( RIGHT ) );
 
-                if ( buttons[ i ].left == ( char* )0 ) { /* centered label */
-
+                if ( buttons[ i ].left == ( char* )0 ) /* centered label */
                     x = offset_x + buttons[ i ].x +
                         ( 1 + buttons[ i ].w - SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) ) ) / 2;
-
-                } else { /* label to the right */
-
+                else { /* label to the right */
                     wl = SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) );
                     wr = SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) );
                     ws = SmallTextWidth( " ", 1 );
@@ -1818,10 +1788,8 @@ void CreateIcon( void )
 
 void refresh_icon( void )
 {
-    int icon_state;
-
-    icon_state = ( ( display.on && !( ( ANN_IO & saturn.annunc ) == ANN_IO ) ) ||
-                   ( display.on && !( ( ANN_ALPHA & saturn.annunc ) == ANN_ALPHA ) ) );
+    int icon_state = ( ( display.on && !( ( ANN_IO & saturn.annunc ) == ANN_IO ) ) ||
+                       ( display.on && !( ( ANN_ALPHA & saturn.annunc ) == ANN_ALPHA ) ) );
     if ( icon_state == last_icon_state )
         return;
 
@@ -1850,14 +1818,13 @@ void refresh_icon( void )
         XFillRectangle( dpy, icon_pix, gc, 0, 0, icon_maps[ DISP_MAP ].w, icon_maps[ DISP_MAP ].h );
     }
     XSetFillStyle( dpy, gc, FillSolid );
-    if ( iconW ) {
+    if ( iconW )
         XCopyArea( dpy, icon_pix, iconW, gc, 0, 0, hp48_icon_width, hp48_icon_height, 0, 0 );
-    }
 }
 
 void DrawIcon( void ) { XCopyArea( dpy, icon_pix, iconW, gc, 0, 0, hp48_icon_width, hp48_icon_height, 0, 0 ); }
 
-int handle_xerror( Display* the_dpy, XErrorEvent* eev )
+int handle_xerror( Display* _the_dpy, XErrorEvent* _eev )
 {
     xerror_flag = 1;
 
@@ -2122,12 +2089,9 @@ int CreateWindows( int argc, char** argv )
 
     class = InputOutput;
     visual = get_visual_resource( dpy, &depth );
-    if ( visual != DefaultVisual( dpy, screen ) ) {
-        if ( visual->class == DirectColor )
-            cmap = XCreateColormap( dpy, RootWindow( dpy, screen ), visual, AllocAll );
-        else
-            cmap = XCreateColormap( dpy, RootWindow( dpy, screen ), visual, AllocNone );
-    } else
+    if ( visual != DefaultVisual( dpy, screen ) )
+        cmap = XCreateColormap( dpy, RootWindow( dpy, screen ), visual, ( visual->class == DirectColor ) ? AllocAll : AllocNone );
+    else
         cmap = DefaultColormap( dpy, screen );
 
     direct_color = 0;
@@ -2189,11 +2153,10 @@ int CreateWindows( int argc, char** argv )
      * create the window
      */
     width = KEYBOARD_WIDTH + 2 * SIDE_SKIP;
-    if ( config.netbook ) {
+    if ( config.netbook )
         height = KEYBOARD_HEIGHT;
-    } else {
+    else
         height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP + KEYBOARD_HEIGHT + BOTTOM_SKIP;
-    }
 
     mainW = XCreateWindow( dpy, RootWindow( dpy, screen ), 0, 0, width, height, 0, ( int )depth, class, visual, mask, &xswa );
 
@@ -2229,10 +2192,7 @@ int CreateWindows( int argc, char** argv )
     /*
      * check if we start iconic
      */
-    if ( config.iconic )
-        wmh.initial_state = IconicState;
-    else
-        wmh.initial_state = NormalState;
+    wmh.initial_state = ( config.iconic ) ? IconicState : NormalState;
     wmh.input = True;
     wmh.flags = StateHint | InputHint;
 
@@ -2397,14 +2357,14 @@ void refresh_display( void )
     if ( !shm_flag )
         return;
 
-    if ( lcd.display_update & UPDATE_DISP ) {
+    if ( lcd.display_update & UPDATE_DISP )
         XShmPutImage( dpy, lcd.win, lcd.gc, lcd.disp_image, 2 * display.offset, 0, 5, 20, 262,
                       ( unsigned int )( ( 2 * display.lines ) + 2 ), 0 );
-    }
-    if ( ( ( 2 * display.lines ) < 126 ) && ( lcd.display_update & UPDATE_MENU ) ) {
+
+    if ( ( ( 2 * display.lines ) < 126 ) && ( lcd.display_update & UPDATE_MENU ) )
         XShmPutImage( dpy, lcd.win, lcd.gc, lcd.menu_image, 0, 0, 5, ( int )( ( 2 * display.lines ) + 22 ), 262,
                       ( unsigned int )( 126 - ( 2 * display.lines ) ), 0 );
-    }
+
     lcd.display_update = 0;
 }
 
@@ -2426,14 +2386,13 @@ void DrawDisp( void )
     if ( shm_flag ) {
         XShmPutImage( dpy, lcd.win, lcd.gc, lcd.disp_image, 2 * display.offset, 0, 5, 20, 262,
                       ( unsigned int )( ( 2 * display.lines ) + 2 ), 0 );
-        if ( display.lines < 63 ) {
+        if ( display.lines < 63 )
             XShmPutImage( dpy, lcd.win, lcd.gc, lcd.menu_image, 0, ( 2 * display.lines ) - 110, 5, 22 + ( 2 * display.lines ), 262,
                           ( unsigned int )( 126 - ( 2 * display.lines ) ), 0 );
-        }
+
         lcd.display_update = 0;
-    } else {
+    } else
         redraw_display();
-    }
 
     redraw_annunc();
 }
@@ -2865,37 +2824,29 @@ void x11_release_all_keys( void )
 
 static inline void draw_nibble( int c, int r, int val )
 {
-    int x, y;
-
-    x = ( c * 8 ) + 5;
-    if ( r <= display.lines )
-        x -= ( 2 * display.offset );
-    y = ( r * 2 ) + 20;
     val &= 0x0f;
-
     if ( val == lcd_nibbles_buffer[ r ][ c ] )
         return;
 
     lcd_nibbles_buffer[ r ][ c ] = val;
+
+    int y = ( r * 2 ) + 20;
+    int x = ( c * 8 ) + 5;
+    if ( r <= display.lines )
+        x -= ( 2 * display.offset );
+
     XCopyPlane( dpy, nibble_maps[ val ], lcd.win, lcd.gc, 0, 0, 8, 2, x, y, 1 );
 }
 
 static inline void draw_row( long addr, int row )
 {
-    int nibble;
     int line_length = NIBBLES_PER_ROW;
 
     if ( ( display.offset > 3 ) && ( row <= display.lines ) )
         line_length += 2;
 
-    for ( int i = 0; i < line_length; i++ ) {
-        nibble = read_nibble( addr + i );
-        if ( nibble == lcd_nibbles_buffer[ row ][ i ] )
-            continue;
-
-        lcd_nibbles_buffer[ row ][ i ] = nibble;
-        draw_nibble( i, row, nibble );
-    }
+    for ( int i = 0; i < line_length; i++ )
+        draw_nibble( i, row, read_nibble( addr + i ) );
 }
 
 static inline void init_annunc_pixmaps( void )
@@ -2974,13 +2925,13 @@ int x11_get_event( void )
                 case Expose:
 
                     if ( xev.xexpose.count == 0 ) {
-                        if ( xev.xexpose.window == lcd.win ) {
+                        if ( xev.xexpose.window == lcd.win )
                             DrawDisp();
-                        } else if ( xev.xexpose.window == iconW ) {
+                        else if ( xev.xexpose.window == iconW )
                             DrawIcon();
-                        } else if ( xev.xexpose.window == mainW ) {
+                        else if ( xev.xexpose.window == mainW )
                             DrawKeypad( &keypad );
-                        } else
+                        else
                             for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
                                 if ( xev.xexpose.window == buttons[ i ].xwin ) {
                                     DrawButton( i );
@@ -3385,9 +3336,9 @@ int x11_get_event( void )
                 case ButtonRelease:
 
                     first_key = 0;
-                    if ( xev.xbutton.button == Button1 ) {
+                    if ( xev.xbutton.button == Button1 )
                         x11_release_all_keys();
-                    }
+
                     if ( xev.xbutton.button == Button2 ) {
                         if ( last_button >= 0 ) {
                             release_key( last_button );
@@ -3511,6 +3462,12 @@ void x11_adjust_contrast( void )
     }
 }
 
+void x11_refresh_LCD( void )
+{
+    if ( lcd.display_update )
+        refresh_display();
+}
+
 void x11_update_LCD( void )
 {
     int i, j;
@@ -3576,12 +3533,11 @@ void x11_update_LCD( void )
                     data_addr_2 += line_pad;
                 }
                 lcd.display_update |= UPDATE_MENU;
-            } else {
+            } else
                 for ( ; i < DISP_ROWS; i++ ) {
                     draw_row( addr, i );
                     addr += NIBBLES_PER_ROW;
                 }
-            }
         }
     } else {
         if ( shm_flag ) {
@@ -3590,22 +3546,14 @@ void x11_update_LCD( void )
             lcd.display_update = UPDATE_DISP | UPDATE_MENU;
         } else {
             ui_init_LCD();
-            for ( i = 0; i < 64; i++ ) {
-                for ( j = 0; j < NIBBLES_PER_ROW; j++ ) {
+
+            for ( i = 0; i < 64; i++ )
+                for ( j = 0; j < NIBBLES_PER_ROW; j++ )
                     draw_nibble( j, i, 0x00 );
-                }
-            }
         }
     }
 
-    if ( lcd.display_update )
-        refresh_display();
-}
-
-void x11_refresh_LCD( void )
-{
-    if ( lcd.display_update )
-        refresh_display();
+    x11_refresh_LCD();
 }
 
 void x11_disp_draw_nibble( word_20 addr, word_4 val )
@@ -3618,22 +3566,19 @@ void x11_disp_draw_nibble( word_20 addr, word_4 val )
     x = offset % display.nibs_per_line;
     if ( x < 0 || x > 35 )
         return;
+
     if ( display.nibs_per_line != 0 ) {
         y = offset / display.nibs_per_line;
         if ( y < 0 || y > 63 )
             return;
+
         if ( shm_flag ) {
             shm_addr = ( 2 * y * lcd.disp_image->bytes_per_line ) + x;
             lcd.disp_image->data[ shm_addr ] = nibble_bitmap[ val ];
             lcd.disp_image->data[ shm_addr + lcd.disp_image->bytes_per_line ] = nibble_bitmap[ val ];
             lcd.display_update |= UPDATE_DISP;
-        } else {
-            if ( val == lcd_nibbles_buffer[ y ][ x ] )
-                return;
-
-            lcd_nibbles_buffer[ y ][ x ] = val;
+        } else
             draw_nibble( x, y, val );
-        }
     } else {
         if ( shm_flag ) {
             shm_addr = x;
@@ -3644,14 +3589,9 @@ void x11_disp_draw_nibble( word_20 addr, word_4 val )
                 shm_addr += lcd.disp_image->bytes_per_line;
             }
             lcd.display_update |= UPDATE_DISP;
-        } else {
-            for ( y = 0; y < display.lines; y++ ) {
-                if ( val == lcd_nibbles_buffer[ y ][ x ] )
-                    continue;
-                lcd_nibbles_buffer[ y ][ x ] = val;
+        } else
+            for ( y = 0; y < display.lines; y++ )
                 draw_nibble( x, y, val );
-            }
-        }
     }
 }
 
@@ -3671,10 +3611,6 @@ void x11_menu_draw_nibble( word_20 addr, word_4 val )
         x = offset % NIBBLES_PER_ROW;
         y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
 
-        if ( val == lcd_nibbles_buffer[ y ][ x ] )
-            return;
-
-        lcd_nibbles_buffer[ y ][ x ] = val;
         draw_nibble( x, y, val );
     }
 }
@@ -3682,18 +3618,17 @@ void x11_menu_draw_nibble( word_20 addr, word_4 val )
 void x11_draw_annunc( void )
 {
     int val = saturn.annunc;
-
     if ( val == last_annunc_state )
         return;
+
     last_annunc_state = val;
 
-    for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
+    for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
         if ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] )
             XCopyPlane( dpy, ann_tbl[ i ].pixmap, lcd.win, lcd.gc, 0, 0, ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].x,
                         ann_tbl[ i ].y, 1 );
         else
             XClearArea( dpy, lcd.win, ann_tbl[ i ].x, ann_tbl[ i ].y, ann_tbl[ i ].width, ann_tbl[ i ].height, False );
-    }
 
     refresh_icon();
 }
