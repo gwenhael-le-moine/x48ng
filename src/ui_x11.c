@@ -2879,7 +2879,6 @@ int x11_get_event( void )
             switch ( ( int )xev.type ) {
 
                 case KeyPress:
-
                     release_pending = 0;
                     if ( ( xev.xkey.time - last_release_time ) <= 1 ) {
                         release_pending = 0;
@@ -2892,7 +2891,6 @@ int x11_get_event( void )
                     break;
 
                 case KeyRelease:
-
                     i = XLookupString( &xev.xkey, buf, bufs, &sym, NULL );
                     first_key = 0;
                     release_pending = 1;
@@ -2901,11 +2899,9 @@ int x11_get_event( void )
                     break;
 
                 case NoExpose:
-
                     break;
 
                 case Expose:
-
                     if ( xev.xexpose.count == 0 ) {
                         if ( xev.xexpose.window == lcd.win )
                             DrawDisp();
@@ -2922,13 +2918,12 @@ int x11_get_event( void )
                             }
                     }
                     break;
-                case UnmapNotify:
 
+                case UnmapNotify:
                     mapped = 0;
                     break;
 
                 case MapNotify:
-
                     if ( !mapped ) {
                         mapped = 1;
                         x11_update_LCD();
@@ -2937,7 +2932,6 @@ int x11_get_event( void )
                     break;
 
                 case ButtonPress:
-
                     if ( xev.xbutton.subwindow == lcd.win ) {
                         if ( xev.xbutton.button == Button2 ) {
                             if ( xev.xbutton.subwindow == lcd.win ) {
@@ -3316,7 +3310,6 @@ int x11_get_event( void )
                     break;
 
                 case ButtonRelease:
-
                     first_key = 0;
                     if ( xev.xbutton.button == Button1 )
                         x11_release_all_keys();
@@ -3336,7 +3329,6 @@ int x11_get_event( void )
                     break;
 
                 case MappingNotify:
-
                     switch ( xev.xmapping.request ) {
                         case MappingModifier:
                         case MappingKeyboard:
@@ -3350,11 +3342,9 @@ int x11_get_event( void )
 
                 case EnterNotify:
                 case LeaveNotify:
-
                     break;
 
                 case ClientMessage:
-
                     cm = ( XClientMessageEvent* )&xev;
 
                     if ( cm->message_type == wm_protocols ) {
@@ -3365,11 +3355,10 @@ int x11_get_event( void )
                     }
                     break;
 
-                default:
-
                 case KeymapNotify:
                 case ConfigureNotify:
                 case ReparentNotify:
+                default:
                     break;
             }
         }
