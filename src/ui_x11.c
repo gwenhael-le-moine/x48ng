@@ -1208,10 +1208,7 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
     for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
         CreateButton( i, offset_x, offset_y, f_small, f_med, f_big );
 
-        if ( i < HPKEY_MTH )
-            pixel = COLOR( DISP_PAD );
-        else
-            pixel = COLOR( PAD );
+        pixel = ( i < HPKEY_MTH ) ? COLOR( DISP_PAD ) : COLOR( PAD );
 
         if ( buttons[ i ].letter != ( char* )0 ) {
             XSetBackground( dpy, gc, pixel );
@@ -1227,16 +1224,10 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
 
             DrawSmallString( dpy, keypad->pixmap, gc, x, y, buttons[ i ].letter, 1 );
         }
-    }
 
-    XFreeFont( dpy, f_big );
-    XFreeFont( dpy, f_med );
-    XFreeFont( dpy, f_small );
-
-    /*
-     * draw the bottom labels
-     */
-    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
+        /*
+         * draw the bottom labels
+         */
         if ( buttons[ i ].sub != ( char* )0 ) {
             XSetBackground( dpy, gc, pixel );
             XSetForeground( dpy, gc, COLOR( WHITE ) );
@@ -1246,12 +1237,10 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
 
             DrawSmallString( dpy, keypad->pixmap, gc, x, y, buttons[ i ].sub, strlen( buttons[ i ].sub ) );
         }
-    }
 
-    /*
-     * draw the left labels
-     */
-    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
+        /*
+         * draw the left labels
+         */
         if ( buttons[ i ].left != ( char* )0 ) {
             if ( buttons[ i ].is_menu ) {
                 /*
@@ -1319,14 +1308,10 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
                 DrawSmallString( dpy, keypad->pixmap, gc, x, y, buttons[ i ].left, strlen( buttons[ i ].left ) );
             }
         }
-    }
 
-    /*
-     * draw the right labels
-     */
-    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
-        pixel = ( i < HPKEY_MTH ) ? COLOR( DISP_PAD ) : COLOR( PAD );
-
+        /*
+         * draw the right labels
+         */
         if ( buttons[ i ].right != ( char* )0 ) {
             if ( buttons[ i ].is_menu ) {
                 /*
@@ -1395,6 +1380,10 @@ void CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* k
             }
         }
     }
+
+    XFreeFont( dpy, f_big );
+    XFreeFont( dpy, f_med );
+    XFreeFont( dpy, f_small );
 
     /*
      * at last draw the v--- LAST ---v thing
