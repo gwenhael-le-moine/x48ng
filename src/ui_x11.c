@@ -261,7 +261,7 @@ static int CompletionType = -1;
 
 static x11_lcd_t lcd;
 
-static int shm_flag;
+static bool shm_flag;
 
 static Display* dpy;
 static int screen;
@@ -280,10 +280,10 @@ static Pixmap icon_pix;
 static Pixmap icon_text_pix;
 static Pixmap icon_disp_pix;
 static int last_icon_state = -1;
-static int xerror_flag;
+static bool xerror_flag;
 
-static int dynamic_color;
-static int direct_color;
+static bool dynamic_color;
+static bool direct_color;
 static int color_mode;
 static int icon_color_mode;
 
@@ -844,10 +844,10 @@ int InitDisplay( int argc, char** argv )
     /*
      * Try to use XShm-Extension
      */
-    shm_flag = 1;
+    shm_flag = true;
 
     if ( !XShmQueryExtension( dpy ) ) {
-        shm_flag = 0;
+        shm_flag = false;
         if ( config.verbose )
             fprintf( stderr, "Xserver does not support XShm extension.\n" );
     }
@@ -1826,7 +1826,7 @@ void DrawIcon( void ) { XCopyArea( dpy, icon_pix, iconW, gc, 0, 0, hp48_icon_wid
 
 int handle_xerror( Display* _the_dpy, XErrorEvent* _eev )
 {
-    xerror_flag = 1;
+    xerror_flag = true;
 
     return 0;
 }
@@ -1864,7 +1864,7 @@ void CreateLCDWindow( void )
 
     lcd.display_update = UPDATE_DISP | UPDATE_MENU;
 
-    xerror_flag = 0;
+    xerror_flag = false;
     XSetErrorHandler( handle_xerror );
     XFlush( dpy );
 
@@ -1876,7 +1876,7 @@ void CreateLCDWindow( void )
          */
         lcd.disp_image = XShmCreateImage( dpy, None, 1, XYBitmap, NULL, &lcd.disp_info, 262, 128 );
         if ( lcd.disp_image == NULL ) {
-            shm_flag = 0;
+            shm_flag = false;
             if ( config.verbose )
                 fprintf( stderr, "XShm error in CreateImage(DISP), disabling.\n" );
             goto shm_error;
@@ -1889,7 +1889,7 @@ void CreateLCDWindow( void )
         if ( lcd.disp_info.shmid < 0 ) {
             XDestroyImage( lcd.disp_image );
             lcd.disp_image = NULL;
-            shm_flag = 0;
+            shm_flag = false;
             if ( config.verbose )
                 fprintf( stderr, "XShm error in shmget(DISP), disabling.\n" );
             goto shm_error;
@@ -1902,7 +1902,7 @@ void CreateLCDWindow( void )
         if ( lcd.disp_info.shmaddr == ( ( char* )-1 ) ) {
             XDestroyImage( lcd.disp_image );
             lcd.disp_image = NULL;
-            shm_flag = 0;
+            shm_flag = false;
             if ( config.verbose )
                 fprintf( stderr, "XShm error in shmat(DISP), disabling.\n" );
             goto shm_error;
@@ -1918,7 +1918,7 @@ void CreateLCDWindow( void )
         if ( lcd.menu_image == NULL ) {
             XDestroyImage( lcd.disp_image );
             lcd.disp_image = NULL;
-            shm_flag = 0;
+            shm_flag = false;
             if ( config.verbose )
                 fprintf( stderr, "XShm error in CreateImage(MENU), disabling.\n" );
             goto shm_error;
@@ -1933,7 +1933,7 @@ void CreateLCDWindow( void )
             lcd.disp_image = NULL;
             XDestroyImage( lcd.menu_image );
             lcd.menu_image = NULL;
-            shm_flag = 0;
+            shm_flag = false;
             if ( config.verbose )
                 fprintf( stderr, "XShm error in shmget(MENU), disabling.\n" );
             goto shm_error;
@@ -1948,7 +1948,7 @@ void CreateLCDWindow( void )
             lcd.disp_image = NULL;
             XDestroyImage( lcd.menu_image );
             lcd.menu_image = NULL;
-            shm_flag = 0;
+            shm_flag = false;
             if ( config.verbose )
                 fprintf( stderr, "XShm error in shmat(MENU), disabling.\n" );
             goto shm_error;
@@ -1966,7 +1966,7 @@ void CreateLCDWindow( void )
             lcd.disp_image = NULL;
             XDestroyImage( lcd.menu_image );
             lcd.menu_image = NULL;
-            shm_flag = 0;
+            shm_flag = false;
             if ( config.verbose )
                 fprintf( stderr, "XShm error in shmget(MENU), disabling.\n" );
             goto shm_error;
@@ -2094,20 +2094,20 @@ int CreateWindows( int argc, char** argv )
     else
         cmap = DefaultColormap( dpy, screen );
 
-    direct_color = 0;
+    direct_color = false;
     switch ( visual->class ) {
         case DirectColor:
-            direct_color = 1;
+            direct_color = true;
             break;
         case GrayScale:
         case PseudoColor:
-            dynamic_color = 1;
+            dynamic_color = true;
             break;
         case StaticGray:
         case StaticColor:
         case TrueColor:
         default:
-            dynamic_color = 0;
+            dynamic_color = false;
             break;
     }
 
