@@ -1162,26 +1162,18 @@ void CreateButton( int i, int off_x, int off_y, XFontStruct* f_small, XFontStruc
     }
 }
 
-void DrawButtons( void )
-{
-    int i;
-
-    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
-        if ( keyboard[ i ].pressed ) {
-            XCopyArea( dpy, buttons[ i ].down, buttons[ i ].xwin, gc, 0, 0, buttons[ i ].w, buttons[ i ].h, 0, 0 );
-        } else {
-            XCopyArea( dpy, buttons[ i ].map, buttons[ i ].xwin, gc, 0, 0, buttons[ i ].w, buttons[ i ].h, 0, 0 );
-        }
-    }
-}
-
 void DrawButton( int i )
 {
-    if ( keyboard[ i ].pressed ) {
+    if ( keyboard[ i ].pressed )
         XCopyArea( dpy, buttons[ i ].down, buttons[ i ].xwin, gc, 0, 0, buttons[ i ].w, buttons[ i ].h, 0, 0 );
-    } else {
+    else
         XCopyArea( dpy, buttons[ i ].map, buttons[ i ].xwin, gc, 0, 0, buttons[ i ].w, buttons[ i ].h, 0, 0 );
-    }
+}
+
+void DrawButtons( void )
+{
+    for ( int b = FIRST_HPKEY; b <= LAST_HPKEY; b++ )
+        DrawButton( b );
 }
 
 void CreateBackground( int width, int height, int w_top, int h_top, x11_keypad_t* keypad )
