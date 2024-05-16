@@ -3636,6 +3636,9 @@ void x11_draw_annunc( void )
 
 void init_x11_ui( int argc, char** argv )
 {
+    if ( config.verbose )
+        fprintf( stderr, "UI is x11\n" );
+
     /* Set public API to this UI's functions */
     ui_disp_draw_nibble = x11_disp_draw_nibble;
     ui_menu_draw_nibble = x11_menu_draw_nibble;

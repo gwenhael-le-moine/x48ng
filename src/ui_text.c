@@ -566,6 +566,9 @@ void text_ui_stop()
 
 void init_text_ui( int argc, char** argv )
 {
+    if ( config.verbose )
+        fprintf( stderr, "UI is ncurses\n" );
+
     /* Set public API to this UIs functions */
     ui_disp_draw_nibble = text_disp_draw_nibble;
     ui_menu_draw_nibble = text_menu_draw_nibble;

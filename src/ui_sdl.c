@@ -2016,6 +2016,9 @@ void sdl_ui_stop() {}
 
 void init_sdl_ui( int argc, char** argv )
 {
+    if ( config.verbose )
+        fprintf( stderr, "UI is sdl1\n" );
+
     /* Set public API to this UI's functions */
     ui_disp_draw_nibble = sdl_disp_draw_nibble;
     ui_menu_draw_nibble = sdl_menu_draw_nibble;
