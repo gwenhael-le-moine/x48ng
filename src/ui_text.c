@@ -361,7 +361,7 @@ void text_draw_annunc( void )
 
 void text_adjust_contrast( void ) { text_update_LCD(); }
 
-int text_get_event( void )
+void text_get_event( void )
 {
     int hpkey = -1;
     uint32_t k;
@@ -553,8 +553,6 @@ int text_get_event( void )
         if ( !keyboard[ hpkey ].pressed )
             press_key( hpkey );
     }
-
-    return 1;
 }
 
 void text_ui_stop()

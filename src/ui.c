@@ -143,7 +143,7 @@ letter_t small_font[ 128 ] = {
 
 void ( *ui_disp_draw_nibble )( word_20 addr, word_4 val );
 void ( *ui_menu_draw_nibble )( word_20 addr, word_4 val );
-int ( *ui_get_event )( void );
+void ( *ui_get_event )( void );
 void ( *ui_update_LCD )( void );
 void ( *ui_refresh_LCD )( void );
 void ( *ui_adjust_contrast )( void );

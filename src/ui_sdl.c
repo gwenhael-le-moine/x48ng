@@ -1734,7 +1734,7 @@ static void SDLCreateHP( void )
 /**********/
 /* public */
 /**********/
-int sdl_get_event( void )
+void sdl_get_event( void )
 {
     SDL_Event event;
     int hpkey;
@@ -1911,8 +1911,6 @@ int sdl_get_event( void )
         dispupdate_t1 = dispupdate_t2;
     }
 #endif
-
-    return 1;
 }
 
 void sdl_update_LCD( void )

@@ -51,7 +51,7 @@ extern void ( *ui_menu_draw_nibble )( word_20 addr, word_4 val );
 /*****************************************/
 /* used in: emu_emulate.c */
 /*****************************************/
-extern int ( *ui_get_event )( void );
+extern void ( *ui_get_event )( void );
 extern void ( *ui_adjust_contrast )( void );
 extern void ( *ui_draw_annunc )( void );
 
