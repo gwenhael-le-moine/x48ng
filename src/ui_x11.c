@@ -245,14 +245,14 @@ typedef struct x11_lcd_t {
     XImage* menu_image;
 } x11_lcd_t;
 
-typedef struct icon_t {
+typedef struct icon_map_t {
     unsigned int w;
     unsigned int h;
     int c;
     unsigned char* bits;
 } icon_map_t;
 
-static short mapped;
+static bool mapped;
 
 static x11_keypad_t keypad;
 static x11_color_t* colors;
@@ -1748,7 +1748,7 @@ static inline void _CreateLCDWindow( void )
     lcd.win = XCreateSimpleWindow( dpy, mainW, ( int )DISPLAY_OFFSET_X, ( int )DISPLAY_OFFSET_Y, DISPLAY_WIDTH, DISPLAY_HEIGHT, 0,
                                    COLOR( BLACK ), COLOR( LCD ) );
 
-    mapped = 1;
+    mapped = true;
 
     xswa.event_mask = ExposureMask | StructureNotifyMask;
     xswa.backing_store = Always;
@@ -2764,12 +2764,12 @@ void x11_get_event( void )
                     break;
 
                 case UnmapNotify:
-                    mapped = 0;
+                    mapped = false;
                     break;
 
                 case MapNotify:
                     if ( !mapped ) {
-                        mapped = 1;
+                        mapped = true;
                         x11_update_LCD();
                         redraw_annunc();
                     }
