@@ -184,84 +184,42 @@ void serial_baud( int baud )
         }
     }
 
-#if defined( __APPLE__ )
-    baud &= 0x7;
-    switch ( baud ) {
-        case 0: /* 1200 */
-            ttybuf.c_cflag |= B1200;
-            break;
-        case 1: /* 1920 */
-#  ifdef B1920
-            ttybuf.c_cflag |= B1920;
-#  endif
-            break;
-        case 2: /* 2400 */
-            ttybuf.c_cflag |= B2400;
-            break;
-        case 3: /* 3840 */
-#  ifdef B3840
-            ttybuf.c_cflag |= B3840;
-#  endif
-            break;
-        case 4: /* 4800 */
-            ttybuf.c_cflag |= B4800;
-            break;
-        case 5: /* 7680 */
-#  ifdef B7680
-            ttybuf.c_cflag |= B7680;
-#  endif
-            break;
-        case 6: /* 9600 */
-            ttybuf.c_cflag |= B9600;
-            break;
-        case 7: /* 15360 */
-#  ifdef B15360
-            ttybuf.c_cflag |= B15360;
-#  endif
-            break;
-    }
-
-    if ( ( ir_fd >= 0 ) && ( ( ttybuf.c_ospeed ) == 0 ) ) {
-        if ( config.verbose )
-            fprintf( stderr, "can\'t set baud rate, using 9600\n" );
-        ttybuf.c_cflag |= B9600;
-    }
-#else
+#if !defined( __APPLE__ )
     ttybuf.c_cflag &= ~CBAUD;
-
+#endif
     baud &= 0x7;
     switch ( baud ) {
         case 0: /* 1200 */
             ttybuf.c_cflag |= B1200;
             break;
         case 1: /* 1920 */
-#  ifdef B1920
+#ifdef B1920
             ttybuf.c_cflag |= B1920;
-#  endif
+#endif
             break;
         case 2: /* 2400 */
             ttybuf.c_cflag |= B2400;
             break;
         case 3: /* 3840 */
-#  ifdef B3840
+#ifdef B3840
             ttybuf.c_cflag |= B3840;
-#  endif
+#endif
             break;
         case 4: /* 4800 */
             ttybuf.c_cflag |= B4800;
             break;
         case 5: /* 7680 */
-#  ifdef B7680
+#ifdef B7680
             ttybuf.c_cflag |= B7680;
-#  endif
+#endif
             break;
         case 6: /* 9600 */
             ttybuf.c_cflag |= B9600;
             break;
         case 7: /* 15360 */
-#  ifdef B15360
+#ifdef B15360
             ttybuf.c_cflag |= B15360;
-#  endif
+#endif
             break;
     }
 
@@ -271,7 +229,7 @@ void serial_baud( int baud )
 
         ttybuf.c_cflag |= B9600;
     }
-#endif
+
     if ( ir_fd >= 0 ) {
 #if defined( TCSANOW )
         if ( tcsetattr( ir_fd, TCSANOW, &ttybuf ) < 0 )
@@ -303,68 +261,6 @@ void serial_baud( int baud )
         }
     }
 
-#if defined( __APPLE__ )
-#else
-    ttybuf.c_cflag &= ~CBAUD;
-
-    baud &= 0x7;
-    switch ( baud ) {
-        case 0: /* 1200 */
-            ttybuf.c_cflag |= B1200;
-            break;
-        case 1: /* 1920 */
-#  ifdef B1920
-            ttybuf.c_cflag |= B1920;
-#  endif
-            break;
-        case 2: /* 2400 */
-            ttybuf.c_cflag |= B2400;
-            break;
-        case 3: /* 3840 */
-#  ifdef B3840
-            ttybuf.c_cflag |= B3840;
-#  endif
-            break;
-        case 4: /* 4800 */
-            ttybuf.c_cflag |= B4800;
-            break;
-        case 5: /* 7680 */
-#  ifdef B7680
-            ttybuf.c_cflag |= B7680;
-#  endif
-            break;
-        case 6: /* 9600 */
-            ttybuf.c_cflag |= B9600;
-            break;
-        case 7: /* 15360 */
-#  ifdef B15360
-            ttybuf.c_cflag |= B15360;
-#  endif
-            break;
-    }
-
-    if ( ( ttyp >= 0 ) && ( ( ttybuf.c_cflag & CBAUD ) == 0 ) ) {
-        if ( config.verbose )
-            fprintf( stderr, "can\'t set baud rate, using 9600\n" );
-
-        ttybuf.c_cflag |= B9600;
-    }
-#endif
-    if ( ttyp >= 0 ) {
-#if defined( TCSANOW )
-        if ( tcsetattr( ttyp, TCSANOW, &ttybuf ) < 0 )
-#else
-        if ( ioctl( ttyp, TCSETS, ( char* )&ttybuf ) < 0 )
-#endif
-        {
-            if ( config.verbose )
-                fprintf( stderr, "ioctl(wire, TCSETS) failed, errno = %d\n", errno );
-
-            wire_fd = -1;
-            ttyp = -1;
-            error = 1;
-        }
-    }
     if ( error )
         update_connection_display();
 }
