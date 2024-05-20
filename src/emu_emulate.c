@@ -2386,7 +2386,7 @@ static inline int decode_8_thru_f( int op1 )
     }
 }
 
-inline int step_instruction( void )
+int step_instruction( void )
 {
     int op0, op1, op2, op3;
     int stop = 0;

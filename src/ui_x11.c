@@ -2400,7 +2400,7 @@ void x11_update_LCD( void );
 /*************/
 /* functions */
 /*************/
-static inline void fatal_exit( char* error, char* advice )
+static inline void fatal_exit( const char* error, const char* advice )
 {
     if ( error[ 0 ] == '\0' ) {
         fprintf( stderr, "FATAL ERROR, exit.\n" );
@@ -2415,48 +2415,48 @@ static inline void fatal_exit( char* error, char* advice )
     exit( 1 );
 }
 
-inline Visual* pick_visual_of_class( Display* dpy, int visual_class, unsigned int* depth )
+inline Visual* pick_visual_of_class( Display* local_dpy, int visual_class, unsigned int* local_depth )
 {
     XVisualInfo vi_in, *vi_out;
     int out_count;
 
     vi_in.class = visual_class;
-    vi_in.screen = DefaultScreen( dpy );
-    vi_out = XGetVisualInfo( dpy, VisualClassMask | VisualScreenMask, &vi_in, &out_count );
+    vi_in.screen = DefaultScreen( local_dpy );
+    vi_out = XGetVisualInfo( local_dpy, VisualClassMask | VisualScreenMask, &vi_in, &out_count );
     if ( vi_out ) { /* choose the 'best' one, if multiple */
         int i, best;
-        Visual* visual;
+        Visual* local_visual;
         for ( i = 0, best = 0; i < out_count; i++ )
             if ( vi_out[ i ].depth > vi_out[ best ].depth )
                 best = i;
-        visual = vi_out[ best ].visual;
-        *depth = vi_out[ best ].depth;
+        local_visual = vi_out[ best ].visual;
+        *local_depth = vi_out[ best ].depth;
         XFree( ( char* )vi_out );
-        return visual;
+        return local_visual;
     } else {
-        *depth = DefaultDepth( dpy, DefaultScreen( dpy ) );
-        return DefaultVisual( dpy, DefaultScreen( dpy ) );
+        *local_depth = DefaultDepth( local_dpy, DefaultScreen( local_dpy ) );
+        return DefaultVisual( local_dpy, DefaultScreen( local_dpy ) );
     }
 }
 
-inline Visual* id_to_visual( Display* dpy, int id, unsigned int* depth )
+inline Visual* id_to_visual( Display* local_dpy, int id, unsigned int* local_depth )
 {
     XVisualInfo vi_in, *vi_out;
     int out_count;
 
-    vi_in.screen = DefaultScreen( dpy );
+    vi_in.screen = DefaultScreen( local_dpy );
     vi_in.visualid = id;
-    vi_out = XGetVisualInfo( dpy, VisualScreenMask | VisualIDMask, &vi_in, &out_count );
+    vi_out = XGetVisualInfo( local_dpy, VisualScreenMask | VisualIDMask, &vi_in, &out_count );
     if ( vi_out ) {
         Visual* v = vi_out[ 0 ].visual;
-        *depth = vi_out[ 0 ].depth;
+        *local_depth = vi_out[ 0 ].depth;
         XFree( ( char* )vi_out );
         return v;
     }
     return 0;
 }
 
-Visual* get_visual_resource( Display* dpy, unsigned int* depth )
+Visual* get_visual_resource( Display* local_dpy, unsigned int* local_depth )
 {
     char c;
     int vclass;
@@ -2486,28 +2486,28 @@ Visual* get_visual_resource( Display* dpy, unsigned int* depth )
     }
 
     if ( vclass == -1 ) {
-        *depth = DefaultDepth( dpy, DefaultScreen( dpy ) );
+        *local_depth = DefaultDepth( local_dpy, DefaultScreen( local_dpy ) );
 
-        return DefaultVisual( dpy, DefaultScreen( dpy ) );
+        return DefaultVisual( local_dpy, DefaultScreen( local_dpy ) );
     } else if ( vclass == -2 ) {
-        Visual* v = id_to_visual( dpy, id, depth );
+        Visual* v = id_to_visual( local_dpy, id, local_depth );
         if ( v )
             return v;
 
         fprintf( stderr, "no visual with id 0x%x.\n", id );
 
-        *depth = DefaultDepth( dpy, DefaultScreen( dpy ) );
+        *local_depth = DefaultDepth( local_dpy, DefaultScreen( local_dpy ) );
 
-        return DefaultVisual( dpy, DefaultScreen( dpy ) );
+        return DefaultVisual( local_dpy, DefaultScreen( local_dpy ) );
     } else
-        return pick_visual_of_class( dpy, vclass, depth );
+        return pick_visual_of_class( local_dpy, vclass, local_depth );
 }
 
-static inline XFontStruct* load_x11_font( Display* dpy, char* fontname )
+static inline XFontStruct* load_x11_font( Display* local_dpy, char* fontname )
 {
     XFontStruct* f = ( XFontStruct* )0;
 
-    f = XLoadQueryFont( dpy, fontname );
+    f = XLoadQueryFont( local_dpy, fontname );
 
     if ( f == ( XFontStruct* )0 ) {
         char errbuf[ 1024 ];
@@ -2956,7 +2956,7 @@ static inline void __CreateButton( int i, int off_x, int off_y, XFontStruct* f_s
     XDrawPoint( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 3 ), ( int )( buttons[ i ].h - 3 ) );
 }
 
-static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* keypad )
+static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* local_keypad )
 {
     int i, x, y;
     int wl, wr, ws;
@@ -2989,7 +2989,7 @@ static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, 
                 y = offset_y + buttons[ i ].y + buttons[ i ].h - 2;
             }
 
-            __WriteButtonText( dpy, keypad->pixmap, gc, x, y, buttons[ i ].letter, 1 );
+            __WriteButtonText( dpy, local_keypad->pixmap, gc, x, y, buttons[ i ].letter, 1 );
         }
 
         /*
@@ -3002,7 +3002,7 @@ static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, 
             x = offset_x + buttons[ i ].x + ( 1 + buttons[ i ].w - SmallTextWidth( buttons[ i ].sub, strlen( buttons[ i ].sub ) ) ) / 2;
             y = offset_y + buttons[ i ].y + buttons[ i ].h + small_ascent + 2;
 
-            __WriteButtonText( dpy, keypad->pixmap, gc, x, y, buttons[ i ].sub, strlen( buttons[ i ].sub ) );
+            __WriteButtonText( dpy, local_keypad->pixmap, gc, x, y, buttons[ i ].sub, strlen( buttons[ i ].sub ) );
         }
 
         /*
@@ -3021,7 +3021,7 @@ static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, 
                     ph = 11;
                 }
 
-                pix = XCreatePixmap( dpy, keypad->pixmap, pw, ph, depth );
+                pix = XCreatePixmap( dpy, local_keypad->pixmap, pw, ph, depth );
 
                 XSetForeground( dpy, gc, COLOR( UNDERLAY ) );
 
@@ -3052,7 +3052,7 @@ static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, 
                     y = offset_y + buttons[ i ].y - small_ascent - small_descent;
                 }
 
-                XCopyArea( dpy, pix, keypad->pixmap, gc, 0, 0, pw, ph, x, y );
+                XCopyArea( dpy, pix, local_keypad->pixmap, gc, 0, 0, pw, ph, x, y );
 
                 XFreePixmap( dpy, pix );
             } else {
@@ -3072,7 +3072,7 @@ static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, 
 
                 y = offset_y + buttons[ i ].y - small_descent;
 
-                __WriteButtonText( dpy, keypad->pixmap, gc, x, y, buttons[ i ].left, strlen( buttons[ i ].left ) );
+                __WriteButtonText( dpy, local_keypad->pixmap, gc, x, y, buttons[ i ].left, strlen( buttons[ i ].left ) );
             }
         }
 
@@ -3092,7 +3092,7 @@ static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, 
                     ph = 9;
                 }
 
-                pix = XCreatePixmap( dpy, keypad->pixmap, pw, ph, depth );
+                pix = XCreatePixmap( dpy, local_keypad->pixmap, pw, ph, depth );
 
                 XSetForeground( dpy, gc, COLOR( UNDERLAY ) );
 
@@ -3123,7 +3123,7 @@ static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, 
                     y = offset_y + buttons[ i ].y - small_ascent - small_descent;
                 }
 
-                XCopyArea( dpy, pix, keypad->pixmap, gc, 0, 0, pw, ph, x, y );
+                XCopyArea( dpy, pix, local_keypad->pixmap, gc, 0, 0, pw, ph, x, y );
 
                 XFreePixmap( dpy, pix );
             } else {
@@ -3143,7 +3143,7 @@ static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, 
 
                 y = offset_y + buttons[ i ].y - small_descent;
 
-                __WriteButtonText( dpy, keypad->pixmap, gc, x, y, buttons[ i ].right, strlen( buttons[ i ].right ) );
+                __WriteButtonText( dpy, local_keypad->pixmap, gc, x, y, buttons[ i ].right, strlen( buttons[ i ].right ) );
             }
         }
     }
@@ -3160,19 +3160,19 @@ static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, 
         XSetBackground( dpy, gc, COLOR( PAD ) );
         XSetForeground( dpy, gc, COLOR( WHITE ) );
 
-        pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )last_bitmap, last_width, last_height );
+        pix = XCreateBitmapFromData( dpy, local_keypad->pixmap, ( char* )last_bitmap, last_width, last_height );
 
         x = offset_x + buttons[ HPKEY_1 ].x + buttons[ HPKEY_1 ].w +
             ( buttons[ HPKEY_2 ].x - buttons[ HPKEY_1 ].x - buttons[ HPKEY_1 ].w ) / 2;
         y = offset_y + buttons[ HPKEY_5 ].y + buttons[ HPKEY_5 ].h + 2;
 
-        XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, last_width, last_height, x, y, 1 );
+        XCopyPlane( dpy, pix, local_keypad->pixmap, gc, 0, 0, last_width, last_height, x, y, 1 );
 
         XFreePixmap( dpy, pix );
     }
 }
 
-static inline void _CreateBezel( x11_keypad_t* keypad )
+static inline void _CreateBezel( x11_keypad_t* local_keypad )
 {
     int i;
 
@@ -3182,20 +3182,20 @@ static inline void _CreateBezel( x11_keypad_t* keypad )
     XSetForeground( dpy, gc, COLOR( DISP_PAD_TOP ) );
 
     for ( i = 0; i < DISP_FRAME; i++ ) {
-        XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i ),
+        XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i ),
                    ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i ) );
-        XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i + 1 ),
+        XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i + 1 ),
                    ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i + 1 ) );
-        XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i ), ( int )( DISPLAY_OFFSET_Y - i ),
+        XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i ), ( int )( DISPLAY_OFFSET_Y - i ),
                    ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i ) );
     }
 
     XSetForeground( dpy, gc, COLOR( DISP_PAD_BOT ) );
 
     for ( i = 0; i < DISP_FRAME; i++ ) {
-        XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i - 1 ), ( int )( DISPLAY_OFFSET_Y - i - 1 ),
+        XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i - 1 ), ( int )( DISPLAY_OFFSET_Y - i - 1 ),
                    ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + i - 1 ), ( int )( DISPLAY_OFFSET_Y - i - 1 ) );
-        XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i - 1 ), ( int )( DISPLAY_OFFSET_Y - i - 1 ),
+        XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - i - 1 ), ( int )( DISPLAY_OFFSET_Y - i - 1 ),
                    ( int )( DISPLAY_OFFSET_X - i - 1 ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * i - 1 ) );
     }
 
@@ -3204,39 +3204,39 @@ static inline void _CreateBezel( x11_keypad_t* keypad )
      */
     XSetForeground( dpy, gc, COLOR( DISP_PAD ) );
 
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME ), ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ),
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME ), ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ),
                ( int )( DISPLAY_OFFSET_X - DISP_FRAME + 3 ), ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ) );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME ), ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ),
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME ), ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ),
                ( int )( DISPLAY_OFFSET_X - DISP_FRAME ), ( int )( DISPLAY_OFFSET_Y - DISP_FRAME + 3 ) );
-    XDrawPoint( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME + 1 ), ( int )( DISPLAY_OFFSET_Y - DISP_FRAME + 1 ) );
+    XDrawPoint( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME + 1 ), ( int )( DISPLAY_OFFSET_Y - DISP_FRAME + 1 ) );
 
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 4 ),
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 4 ),
                ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ), ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
                ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ) );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
                ( int )( DISPLAY_OFFSET_Y - DISP_FRAME ), ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
                ( int )( DISPLAY_OFFSET_Y - DISP_FRAME + 3 ) );
-    XDrawPoint( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 2 ),
+    XDrawPoint( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 2 ),
                 ( int )( DISPLAY_OFFSET_Y - DISP_FRAME + 1 ) );
 
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME ),
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME ),
                ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 4 ), ( int )( DISPLAY_OFFSET_X - DISP_FRAME ),
                ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME ),
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME ),
                ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ), ( int )( DISPLAY_OFFSET_X - DISP_FRAME + 3 ),
                ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ) );
-    XDrawPoint( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME + 1 ),
+    XDrawPoint( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - DISP_FRAME + 1 ),
                 ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 2 ) );
 
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
                ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 4 ),
                ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
                ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 4 ),
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 4 ),
                ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ),
                ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 1 ),
                ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1 ) );
-    XDrawPoint( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 2 ),
+    XDrawPoint( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH + DISP_FRAME - 2 ),
                 ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 2 ) );
 
     /*
@@ -3244,17 +3244,17 @@ static inline void _CreateBezel( x11_keypad_t* keypad )
      */
     XSetForeground( dpy, gc, COLOR( LCD ) );
 
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - 1 ), ( int )( DISPLAY_OFFSET_Y + 1 ), ( int )( DISPLAY_OFFSET_X - 1 ),
-               ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT - 2 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + 1 ), ( int )( DISPLAY_OFFSET_Y - 1 ),
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - 1 ), ( int )( DISPLAY_OFFSET_Y + 1 ),
+               ( int )( DISPLAY_OFFSET_X - 1 ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT - 2 ) );
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + 1 ), ( int )( DISPLAY_OFFSET_Y - 1 ),
                ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH - 2 ), ( int )( DISPLAY_OFFSET_Y - 1 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + 1 ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT ),
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + 1 ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT ),
                ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH - 2 ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT ) );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH ), ( int )( DISPLAY_OFFSET_Y + 1 ),
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH ), ( int )( DISPLAY_OFFSET_Y + 1 ),
                ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT - 2 ) );
 }
 
-static inline void _DrawMore( unsigned int offset_y, x11_keypad_t* keypad )
+static inline void _DrawMore( unsigned int offset_y, x11_keypad_t* local_keypad )
 {
     Pixmap pix;
     int cut = 0;
@@ -3266,35 +3266,38 @@ static inline void _DrawMore( unsigned int offset_y, x11_keypad_t* keypad )
     XSetForeground( dpy, gc, COLOR( PAD_TOP ) );
 
     /* bottom lines */
-    int keypad_width = keypad->width;
-    XDrawLine( dpy, keypad->pixmap, gc, 1, ( int )( keypad->height - 1 ), ( int )( keypad_width - 1 ), ( int )( keypad->height - 1 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, 2, ( int )( keypad->height - 2 ), ( int )( keypad_width - 2 ), ( int )( keypad->height - 2 ) );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 1, ( int )( local_keypad->height - 1 ), ( int )( local_keypad->width - 1 ),
+               ( int )( local_keypad->height - 1 ) );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 2, ( int )( local_keypad->height - 2 ), ( int )( local_keypad->width - 2 ),
+               ( int )( local_keypad->height - 2 ) );
 
     /* right lines */
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 1 ), ( int )( keypad->height - 1 ), ( int )( keypad->width - 1 ), cut );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 2 ), ( int )( keypad->height - 2 ), ( int )( keypad->width - 2 ), cut );
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( local_keypad->width - 1 ), ( int )( local_keypad->height - 1 ),
+               ( int )( local_keypad->width - 1 ), cut );
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( local_keypad->width - 2 ), ( int )( local_keypad->height - 2 ),
+               ( int )( local_keypad->width - 2 ), cut );
 
     XSetForeground( dpy, gc, COLOR( DISP_PAD_TOP ) );
 
     /* right lines */
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 1 ), cut - 1, ( int )( keypad->width - 1 ), 1 );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 2 ), cut - 1, ( int )( keypad->width - 2 ), 2 );
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( local_keypad->width - 1 ), cut - 1, ( int )( local_keypad->width - 1 ), 1 );
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( local_keypad->width - 2 ), cut - 1, ( int )( local_keypad->width - 2 ), 2 );
 
     XSetForeground( dpy, gc, COLOR( DISP_PAD_BOT ) );
 
     /* top lines */
-    XDrawLine( dpy, keypad->pixmap, gc, 0, 0, ( int )( keypad->width - 2 ), 0 );
-    XDrawLine( dpy, keypad->pixmap, gc, 1, 1, ( int )( keypad->width - 3 ), 1 );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 0, 0, ( int )( local_keypad->width - 2 ), 0 );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 1, 1, ( int )( local_keypad->width - 3 ), 1 );
 
     /* left lines */
-    XDrawLine( dpy, keypad->pixmap, gc, 0, cut - 1, 0, 0 );
-    XDrawLine( dpy, keypad->pixmap, gc, 1, cut - 1, 1, 1 );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 0, cut - 1, 0, 0 );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 1, cut - 1, 1, 1 );
 
     XSetForeground( dpy, gc, COLOR( PAD_BOT ) );
 
     /* left lines */
-    XDrawLine( dpy, keypad->pixmap, gc, 0, ( int )( keypad->height - 2 ), 0, cut );
-    XDrawLine( dpy, keypad->pixmap, gc, 1, ( int )( keypad->height - 3 ), 1, cut );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 0, ( int )( local_keypad->height - 2 ), 0, cut );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 1, ( int )( local_keypad->height - 3 ), 1, cut );
 
     /*
      * lower the menu buttons
@@ -3302,34 +3305,40 @@ static inline void _DrawMore( unsigned int offset_y, x11_keypad_t* keypad )
     XSetForeground( dpy, gc, COLOR( PAD_TOP ) );
 
     /* bottom lines */
-    XDrawLine( dpy, keypad->pixmap, gc, 3, ( int )( keypad->height - 3 ), ( int )( keypad->width - 3 ), ( int )( keypad->height - 3 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, 4, ( int )( keypad->height - 4 ), ( int )( keypad->width - 4 ), ( int )( keypad->height - 4 ) );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 3, ( int )( local_keypad->height - 3 ), ( int )( local_keypad->width - 3 ),
+               ( int )( local_keypad->height - 3 ) );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 4, ( int )( local_keypad->height - 4 ), ( int )( local_keypad->width - 4 ),
+               ( int )( local_keypad->height - 4 ) );
 
     /* right lines */
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 3 ), ( int )( keypad->height - 3 ), ( int )( keypad->width - 3 ), cut );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 4 ), ( int )( keypad->height - 4 ), ( int )( keypad->width - 4 ), cut );
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( local_keypad->width - 3 ), ( int )( local_keypad->height - 3 ),
+               ( int )( local_keypad->width - 3 ), cut );
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( local_keypad->width - 4 ), ( int )( local_keypad->height - 4 ),
+               ( int )( local_keypad->width - 4 ), cut );
 
     XSetForeground( dpy, gc, COLOR( DISP_PAD_TOP ) );
 
     /* right lines */
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 3 ), cut - 1, ( int )( keypad->width - 3 ), offset_y - 24 );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 4 ), cut - 1, ( int )( keypad->width - 4 ), offset_y - 23 );
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( local_keypad->width - 3 ), cut - 1, ( int )( local_keypad->width - 3 ),
+               offset_y - 24 );
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( local_keypad->width - 4 ), cut - 1, ( int )( local_keypad->width - 4 ),
+               offset_y - 23 );
 
     XSetForeground( dpy, gc, COLOR( DISP_PAD_BOT ) );
 
     /* top lines */
-    XDrawLine( dpy, keypad->pixmap, gc, 2, offset_y - 25, ( int )( keypad->width - 4 ), offset_y - 25 );
-    XDrawLine( dpy, keypad->pixmap, gc, 3, offset_y - 24, ( int )( keypad->width - 5 ), offset_y - 24 );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 2, offset_y - 25, ( int )( local_keypad->width - 4 ), offset_y - 25 );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 3, offset_y - 24, ( int )( local_keypad->width - 5 ), offset_y - 24 );
 
     /* left lines */
-    XDrawLine( dpy, keypad->pixmap, gc, 2, cut - 1, 2, offset_y - 24 );
-    XDrawLine( dpy, keypad->pixmap, gc, 3, cut - 1, 3, offset_y - 23 );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 2, cut - 1, 2, offset_y - 24 );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 3, cut - 1, 3, offset_y - 23 );
 
     XSetForeground( dpy, gc, COLOR( PAD_BOT ) );
 
     /* left lines */
-    XDrawLine( dpy, keypad->pixmap, gc, 2, ( int )( keypad->height - 4 ), 2, cut );
-    XDrawLine( dpy, keypad->pixmap, gc, 3, ( int )( keypad->height - 5 ), 3, cut );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 2, ( int )( local_keypad->height - 4 ), 2, cut );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 3, ( int )( local_keypad->height - 5 ), 3, cut );
 
     /*
      * lower the keyboard
@@ -3337,47 +3346,49 @@ static inline void _DrawMore( unsigned int offset_y, x11_keypad_t* keypad )
     XSetForeground( dpy, gc, COLOR( PAD_TOP ) );
 
     /* bottom lines */
-    XDrawLine( dpy, keypad->pixmap, gc, 5, ( int )( keypad->height - 5 ), ( int )( keypad->width - 3 ), ( int )( keypad->height - 5 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, 6, ( int )( keypad->height - 6 ), ( int )( keypad->width - 4 ), ( int )( keypad->height - 6 ) );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 5, ( int )( local_keypad->height - 5 ), ( int )( local_keypad->width - 3 ),
+               ( int )( local_keypad->height - 5 ) );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 6, ( int )( local_keypad->height - 6 ), ( int )( local_keypad->width - 4 ),
+               ( int )( local_keypad->height - 6 ) );
 
     /* right lines */
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 5 ), ( int )( keypad->height - 5 ), ( int )( keypad->width - 5 ),
-               cut + 1 );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 6 ), ( int )( keypad->height - 6 ), ( int )( keypad->width - 6 ),
-               cut + 2 );
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( local_keypad->width - 5 ), ( int )( local_keypad->height - 5 ),
+               ( int )( local_keypad->width - 5 ), cut + 1 );
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( local_keypad->width - 6 ), ( int )( local_keypad->height - 6 ),
+               ( int )( local_keypad->width - 6 ), cut + 2 );
 
     XSetForeground( dpy, gc, COLOR( DISP_PAD_BOT ) );
 
     /* top lines */
-    XDrawLine( dpy, keypad->pixmap, gc, 4, cut, ( int )( keypad->width - 6 ), cut );
-    XDrawLine( dpy, keypad->pixmap, gc, 5, cut + 1, ( int )( keypad->width - 7 ), cut + 1 );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 4, cut, ( int )( local_keypad->width - 6 ), cut );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 5, cut + 1, ( int )( local_keypad->width - 7 ), cut + 1 );
 
     XSetForeground( dpy, gc, COLOR( PAD_BOT ) );
 
     /* left lines */
-    XDrawLine( dpy, keypad->pixmap, gc, 4, ( int )( keypad->height - 6 ), 4, cut + 1 );
-    XDrawLine( dpy, keypad->pixmap, gc, 5, ( int )( keypad->height - 7 ), 5, cut + 2 );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 4, ( int )( local_keypad->height - 6 ), 4, cut + 1 );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 5, ( int )( local_keypad->height - 7 ), 5, cut + 2 );
 
     /*
      * round off the bottom edge
      */
     XSetForeground( dpy, gc, COLOR( PAD_TOP ) );
 
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 7 ), ( int )( keypad->height - 7 ), ( int )( keypad->width - 7 ),
-               ( int )( keypad->height - 14 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 8 ), ( int )( keypad->height - 8 ), ( int )( keypad->width - 8 ),
-               ( int )( keypad->height - 11 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 7 ), ( int )( keypad->height - 7 ), ( int )( keypad->width - 14 ),
-               ( int )( keypad->height - 7 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, ( int )( keypad->width - 7 ), ( int )( keypad->height - 8 ), ( int )( keypad->width - 11 ),
-               ( int )( keypad->height - 8 ) );
-    XDrawPoint( dpy, keypad->pixmap, gc, ( int )( keypad->width - 9 ), ( int )( keypad->height - 9 ) );
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( local_keypad->width - 7 ), ( int )( local_keypad->height - 7 ),
+               ( int )( local_keypad->width - 7 ), ( int )( local_keypad->height - 14 ) );
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( local_keypad->width - 8 ), ( int )( local_keypad->height - 8 ),
+               ( int )( local_keypad->width - 8 ), ( int )( local_keypad->height - 11 ) );
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( local_keypad->width - 7 ), ( int )( local_keypad->height - 7 ),
+               ( int )( local_keypad->width - 14 ), ( int )( local_keypad->height - 7 ) );
+    XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( local_keypad->width - 7 ), ( int )( local_keypad->height - 8 ),
+               ( int )( local_keypad->width - 11 ), ( int )( local_keypad->height - 8 ) );
+    XDrawPoint( dpy, local_keypad->pixmap, gc, ( int )( local_keypad->width - 9 ), ( int )( local_keypad->height - 9 ) );
 
-    XDrawLine( dpy, keypad->pixmap, gc, 7, ( int )( keypad->height - 7 ), 13, ( int )( keypad->height - 7 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, 8, ( int )( keypad->height - 8 ), 10, ( int )( keypad->height - 8 ) );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 7, ( int )( local_keypad->height - 7 ), 13, ( int )( local_keypad->height - 7 ) );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 8, ( int )( local_keypad->height - 8 ), 10, ( int )( local_keypad->height - 8 ) );
     XSetForeground( dpy, gc, COLOR( PAD_BOT ) );
-    XDrawLine( dpy, keypad->pixmap, gc, 6, ( int )( keypad->height - 8 ), 6, ( int )( keypad->height - 14 ) );
-    XDrawLine( dpy, keypad->pixmap, gc, 7, ( int )( keypad->height - 9 ), 7, ( int )( keypad->height - 11 ) );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 6, ( int )( local_keypad->height - 8 ), 6, ( int )( local_keypad->height - 14 ) );
+    XDrawLine( dpy, local_keypad->pixmap, gc, 7, ( int )( local_keypad->height - 9 ), 7, ( int )( local_keypad->height - 11 ) );
 
     /*
      * insert the HP Logo
@@ -3386,22 +3397,23 @@ static inline void _DrawMore( unsigned int offset_y, x11_keypad_t* keypad )
     XSetBackground( dpy, gc, COLOR( LOGO_BACK ) );
     XSetForeground( dpy, gc, COLOR( LOGO ) );
 
-    pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )hp_bitmap, hp_width, hp_height );
+    pix = XCreateBitmapFromData( dpy, local_keypad->pixmap, ( char* )hp_bitmap, hp_width, hp_height );
 
     x = opt_gx ? DISPLAY_OFFSET_X - 6 : DISPLAY_OFFSET_X;
 
-    XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, hp_width, hp_height, x, 10, 1 );
+    XCopyPlane( dpy, pix, local_keypad->pixmap, gc, 0, 0, hp_width, hp_height, x, 10, 1 );
 
     XFreePixmap( dpy, pix );
 
     if ( !opt_gx ) {
         XSetForeground( dpy, gc, COLOR( FRAME ) );
 
-        XDrawLine( dpy, keypad->pixmap, gc, ( int )DISPLAY_OFFSET_X, 9, ( int )( DISPLAY_OFFSET_X + hp_width - 1 ), 9 );
-        XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - 1 ), 10, ( int )( DISPLAY_OFFSET_X - 1 ), 10 + hp_height - 1 );
-        XDrawLine( dpy, keypad->pixmap, gc, ( int )DISPLAY_OFFSET_X, 10 + hp_height, ( int )( DISPLAY_OFFSET_X + hp_width - 1 ),
+        XDrawLine( dpy, local_keypad->pixmap, gc, ( int )DISPLAY_OFFSET_X, 9, ( int )( DISPLAY_OFFSET_X + hp_width - 1 ), 9 );
+        XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X - 1 ), 10, ( int )( DISPLAY_OFFSET_X - 1 ),
+                   10 + hp_height - 1 );
+        XDrawLine( dpy, local_keypad->pixmap, gc, ( int )DISPLAY_OFFSET_X, 10 + hp_height, ( int )( DISPLAY_OFFSET_X + hp_width - 1 ),
                    10 + hp_height );
-        XDrawLine( dpy, keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + hp_width ), 10, ( int )( DISPLAY_OFFSET_X + hp_width ),
+        XDrawLine( dpy, local_keypad->pixmap, gc, ( int )( DISPLAY_OFFSET_X + hp_width ), 10, ( int )( DISPLAY_OFFSET_X + hp_width ),
                    10 + hp_height - 1 );
     }
 
@@ -3414,33 +3426,33 @@ static inline void _DrawMore( unsigned int offset_y, x11_keypad_t* keypad )
     if ( opt_gx ) {
         x = DISPLAY_OFFSET_X + DISPLAY_WIDTH - gx_128K_ram_width + gx_128K_ram_x_hot + 2;
         y = 10 + gx_128K_ram_y_hot;
-        pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )gx_128K_ram_bitmap, gx_128K_ram_width, gx_128K_ram_height );
-        XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, gx_128K_ram_width, gx_128K_ram_height, x, y, 1 );
+        pix = XCreateBitmapFromData( dpy, local_keypad->pixmap, ( char* )gx_128K_ram_bitmap, gx_128K_ram_width, gx_128K_ram_height );
+        XCopyPlane( dpy, pix, local_keypad->pixmap, gc, 0, 0, gx_128K_ram_width, gx_128K_ram_height, x, y, 1 );
         XFreePixmap( dpy, pix );
 
         XSetForeground( dpy, gc, COLOR( LOGO ) );
         x = DISPLAY_OFFSET_X + hp_width;
         y = hp_height + 8 - hp48gx_height;
-        pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )hp48gx_bitmap, hp48gx_width, hp48gx_height );
-        XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, hp48gx_width, hp48gx_height, x, y, 1 );
+        pix = XCreateBitmapFromData( dpy, local_keypad->pixmap, ( char* )hp48gx_bitmap, hp48gx_width, hp48gx_height );
+        XCopyPlane( dpy, pix, local_keypad->pixmap, gc, 0, 0, hp48gx_width, hp48gx_height, x, y, 1 );
         XFreePixmap( dpy, pix );
 
         XSetFillStyle( dpy, gc, FillStippled );
         x = DISPLAY_OFFSET_X + DISPLAY_WIDTH - gx_128K_ram_width + gx_silver_x_hot + 2;
         y = 10 + gx_silver_y_hot;
-        pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )gx_silver_bitmap, gx_silver_width, gx_silver_height );
+        pix = XCreateBitmapFromData( dpy, local_keypad->pixmap, ( char* )gx_silver_bitmap, gx_silver_width, gx_silver_height );
         XSetStipple( dpy, gc, pix );
         XSetTSOrigin( dpy, gc, x, y );
-        XFillRectangle( dpy, keypad->pixmap, gc, x, y, gx_silver_width, gx_silver_height );
+        XFillRectangle( dpy, local_keypad->pixmap, gc, x, y, gx_silver_width, gx_silver_height );
         XFreePixmap( dpy, pix );
 
         XSetForeground( dpy, gc, COLOR( RIGHT ) );
         x = DISPLAY_OFFSET_X + DISPLAY_WIDTH - gx_128K_ram_width + gx_green_x_hot + 2;
         y = 10 + gx_green_y_hot;
-        pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )gx_green_bitmap, gx_green_width, gx_green_height );
+        pix = XCreateBitmapFromData( dpy, local_keypad->pixmap, ( char* )gx_green_bitmap, gx_green_width, gx_green_height );
         XSetStipple( dpy, gc, pix );
         XSetTSOrigin( dpy, gc, x, y );
-        XFillRectangle( dpy, keypad->pixmap, gc, x, y, gx_green_width, gx_green_height );
+        XFillRectangle( dpy, local_keypad->pixmap, gc, x, y, gx_green_width, gx_green_height );
         XFreePixmap( dpy, pix );
 
         XSetTSOrigin( dpy, gc, 0, 0 );
@@ -3449,22 +3461,25 @@ static inline void _DrawMore( unsigned int offset_y, x11_keypad_t* keypad )
         x = DISPLAY_OFFSET_X;
         y = TOP_SKIP - DISP_FRAME - hp48sx_height - 3;
 
-        pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )hp48sx_bitmap, hp48sx_width, hp48sx_height );
+        pix = XCreateBitmapFromData( dpy, local_keypad->pixmap, ( char* )hp48sx_bitmap, hp48sx_width, hp48sx_height );
 
-        XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, hp48sx_width, hp48sx_height, x, y, 1 );
+        XCopyPlane( dpy, pix, local_keypad->pixmap, gc, 0, 0, hp48sx_width, hp48sx_height, x, y, 1 );
 
         XFreePixmap( dpy, pix );
 
         x = DISPLAY_OFFSET_X + DISPLAY_WIDTH - 1 - science_width;
         y = TOP_SKIP - DISP_FRAME - science_height - 4;
 
-        pix = XCreateBitmapFromData( dpy, keypad->pixmap, ( char* )science_bitmap, science_width, science_height );
+        pix = XCreateBitmapFromData( dpy, local_keypad->pixmap, ( char* )science_bitmap, science_width, science_height );
 
-        XCopyPlane( dpy, pix, keypad->pixmap, gc, 0, 0, science_width, science_height, x, y, 1 );
+        XCopyPlane( dpy, pix, local_keypad->pixmap, gc, 0, 0, science_width, science_height, x, y, 1 );
     }
 }
 
-void DrawKeypad( x11_keypad_t* keypad ) { XCopyArea( dpy, keypad->pixmap, mainW, gc, 0, 0, keypad->width, keypad->height, 0, 0 ); }
+void DrawKeypad( x11_keypad_t* local_keypad )
+{
+    XCopyArea( dpy, local_keypad->pixmap, mainW, gc, 0, 0, local_keypad->width, local_keypad->height, 0, 0 );
+}
 
 static inline void DrawButton( int i )
 {
@@ -3800,17 +3815,17 @@ void _DrawSerialDevices( char* wire, char* ir )
     XFreeFont( dpy, finfo );
 }
 
-static inline void _CreateBackground( int width, int height, int w_top, int h_top, x11_keypad_t* keypad )
+static inline void _CreateBackground( int width, int height, int w_top, int h_top, x11_keypad_t* local_keypad )
 {
     XSetBackground( dpy, gc, COLOR( PAD ) );
     XSetForeground( dpy, gc, COLOR( PAD ) );
 
-    XFillRectangle( dpy, keypad->pixmap, gc, 0, 0, w_top, h_top );
+    XFillRectangle( dpy, local_keypad->pixmap, gc, 0, 0, w_top, h_top );
 
     XSetBackground( dpy, gc, COLOR( DISP_PAD ) );
     XSetForeground( dpy, gc, COLOR( DISP_PAD ) );
 
-    XFillRectangle( dpy, keypad->pixmap, gc, 0, 0, width, height );
+    XFillRectangle( dpy, local_keypad->pixmap, gc, 0, 0, width, height );
 }
 
 bool CreateWindows( int argc, char** argv )
@@ -4463,7 +4478,7 @@ void decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
     }
 }
 
-void x11_ui_stop() { XCloseDisplay( dpy ); }
+void x11_ui_stop( void ) { XCloseDisplay( dpy ); }
 
 void x11_release_all_keys( void )
 {
@@ -4500,7 +4515,7 @@ static inline void draw_row( long addr, int row )
         draw_nibble( i, row, read_nibble( addr + i ) );
 }
 
-static inline bool InitDisplay()
+static inline bool InitDisplay( void )
 {
     /*
      * open the display
@@ -5315,7 +5330,7 @@ void init_x11_ui( int argc, char** argv )
     if ( !InitDisplay() )
         exit( 1 );
 
-    if ( CreateWindows( saved_argc, saved_argv ) < 0 ) {
+    if ( !CreateWindows( saved_argc, saved_argv ) ) {
         fprintf( stderr, "can\'t create window\n" );
         exit( 1 );
     }

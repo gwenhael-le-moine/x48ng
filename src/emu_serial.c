@@ -185,7 +185,11 @@ void serial_baud( int baud )
     }
 
 #if !defined( __APPLE__ )
+#  pragma GCC diagnostic push                            // save the actual diag context
+#  pragma GCC diagnostic ignored "-Wmaybe-uninitialized" // disable maybe warnings
+#  pragma GCC diagnostic ignored "-Wuninitialized"       // disable maybe warnings
     ttybuf.c_cflag &= ~CBAUD;
+#  pragma GCC diagnostic pop // restore previous diag context
 #endif
     baud &= 0x7;
     switch ( baud ) {

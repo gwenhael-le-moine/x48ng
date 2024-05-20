@@ -822,7 +822,7 @@ static void SDLDrawMore( unsigned int cut, unsigned int offset_y, int keypad_wid
     lineColor( sdlwindow, 7, keypad_height - 9, 7, keypad_height - 11, bgra2argb( ARGBColors[ PAD_BOT ] ) );
 }
 
-static void SDLDrawLogo()
+static void SDLDrawLogo( void )
 {
     int x, y;
     SDL_Surface* surf;
@@ -1391,7 +1391,7 @@ static void SDLDrawKeypad( void )
     SDLDrawButtons();
 }
 
-static void SDLDrawBezel()
+static void SDLDrawBezel( void )
 {
     unsigned int i;
     int display_height = DISPLAY_HEIGHT;
@@ -1472,7 +1472,7 @@ static void SDLDrawBackground( int width, int height, int w_top, int h_top )
     SDL_FillRect( sdlwindow, &rect, ARGBColors[ DISP_PAD ] );
 }
 
-static void SDLDrawBackgroundLCD()
+static void SDLDrawBackgroundLCD( void )
 {
     SDL_Rect rect;
 
@@ -1593,7 +1593,7 @@ static void SDLUIShowKey( int hpkey )
 
 static inline void SDLUIFeedback( void ) {}
 
-static void SDLDrawSerialDevices()
+static void SDLDrawSerialDevices( void )
 {
     char text[ 1024 ] = "";
 
@@ -1995,7 +1995,7 @@ void sdl_draw_annunc( void )
     SDLDrawAnnunc( sdl_annuncstate );
 }
 
-void sdl_adjust_contrast()
+void sdl_adjust_contrast( void )
 {
     SDLCreateColors();
     SDLCreateAnnunc();
@@ -2010,7 +2010,10 @@ void sdl_adjust_contrast()
     sdl_draw_annunc();
 }
 
-void sdl_ui_stop() {}
+void sdl_ui_stop( void )
+{
+    // nop;
+}
 
 void init_sdl_ui( int argc, char** argv )
 {

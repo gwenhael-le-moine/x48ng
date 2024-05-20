@@ -200,7 +200,7 @@ void start_UI( int argc, char** argv )
     }
 }
 
-void ui_stop()
+void ui_stop( void )
 {
     ui_init_LCD();
 

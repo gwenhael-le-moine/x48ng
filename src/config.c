@@ -16,7 +16,7 @@
 #include "config.h"
 
 config_t config = {
-    .progname = "x48ng",
+    .progname = ( char* )"x48ng",
 
     .verbose = false,
     .print_config = false,
@@ -46,8 +46,8 @@ config_t config = {
 
     /* x11 */
     .netbook = false,
-    .name = "x48ng",
-    .title = "x48ng",
+    .name = ( char* )"x48ng",
+    .title = ( char* )"x48ng",
     .x11_visual = NULL,
     /* default | staticgray | staticcolor | truecolor | grayscale |
      * pseudocolor | directcolor | 0xnn | nn
@@ -61,8 +61,8 @@ config_t config = {
     .connFont = NULL,
 };
 
-char* configDir = "x48ng";
-char* config_file = "config.lua";
+char* configDir = ( char* )"x48ng";
+char* config_file = ( char* )"config.lua";
 char* romFileName = NULL;
 char* ramFileName = NULL;
 char* stateFileName = NULL;
@@ -253,7 +253,7 @@ int config_init( int argc, char* argv[] )
     int clopt_leave_shift_keys = -1;
     int clopt_inhibit_shutdown = -1;
 
-    char* optstring = "c:hvVtsirT";
+    const char* optstring = "c:hvVtsirT";
     struct option long_options[] = {
         {"config",           required_argument, NULL,                           'c'         },
         {"config-dir",       required_argument, NULL,                           1000        },
@@ -304,67 +304,67 @@ int config_init( int argc, char* argv[] )
         {0,                  0,                 0,                              0           }
     };
 
-    char* help_text = "usage: %s [options]\n"
-                      "options:\n"
-                      "  -h --help               what you are reading\n"
-                      "  -v --version            show version\n"
-                      "     --print-config       print configuration as config file\n"
-                      "  -c --config=<path>      use <path> as x48ng's config file (default: "
-                      "$XDG_CONFIG_HOME/x48ng/config.lua)\n"
-                      "     --config-dir=<path>  use <path> as x48ng's home (default: "
-                      "$XDG_CONFIG_HOME/x48ng/)\n"
-                      "     --rom=<filename>     use <filename> (absolute or relative to "
-                      "<config-dir>) as ROM (default: rom)\n"
-                      "     --ram=<filename>     use <filename> (absolute or relative to "
-                      "<config-dir>) as RAM (default: ram)\n"
-                      "     --state=<filename>   use <filename> (absolute or relative "
-                      "to <config-dir>) as STATE (default: hp48)\n"
-                      "     --port1=<filename>   use <filename> (absolute or relative "
-                      "to <config-dir>) as PORT1 (default: port1)\n"
-                      "     --port2=<filename>   use <filename> (absolute or relative "
-                      "to <config-dir>) as PORT2 (default: port2)\n"
-                      "     --serial-line=<path> use <path> as serial device default: "
-                      "%s)\n"
-                      "  -V --verbose            be verbose (default: false)\n"
-                      "     --x11                use X11 front-end (default: true)\n"
-                      "     --sdl                use SDL front-end (default: false)\n"
-                      "     --tui                use text front-end (default: false)\n"
-                      "     --tui-small          use text small front-end (2×2 pixels per character) (default: "
-                      "false)\n"
-                      "     --tui-tiny           use text tiny front-end (2×4 pixels per character) (default: "
-                      "false)\n"
-                      "  -t --use-terminal       activate pseudo terminal interface (default: "
-                      "true)\n"
-                      "  -s --use-serial         activate serial interface (default: false)\n"
-                      "     --debug              enable the debugger\n"
-                      "  -r --reset              perform a reset on startup\n"
-                      "  -T --throttle           try to emulate real speed (default: false)\n"
-                      "     --no-chrome          only display the LCD (default: "
-                      "false)\n"
-                      "     --fullscreen         make the UI fullscreen "
-                      "(default: false)\n"
-                      "     --netbook            make the UI horizontal (default: "
-                      "false)\n"
-                      "     --visual=<X visual>  use x11 visual <X visual> (default: "
-                      "default), possible values: "
-                      "<default | staticgray | staticcolor | truecolor | grayscale | "
-                      "pseudocolor | directcolor | 0xnn | nn>\n"
-                      "     --small-font=<font>  use <X font name> as small "
-                      "font (default: %s)\n"
-                      "     --medium-font=<font> use <X font name> as medium "
-                      "font (default: %s)\n"
-                      "     --large-font=<font>  use <X font name> as large "
-                      "font (default: %s)\n"
-                      "     --connection-font=<font> use <X font name> as "
-                      "connection font (default: %s)\n"
-                      "     --mono               make the UI monochrome (default: "
-                      "false)\n"
-                      "     --gray               make the UI grayscale (default: "
-                      "false)\n"
-                      "     --leave-shift-keys   _not_ mapping the shift keys to let them free for numbers (default: "
-                      "false)\n"
-                      "     --inhibit-shutdown   __tentative fix for stuck-on-OFF bug__ (default: "
-                      "false)\n";
+    const char* help_text = "usage: %s [options]\n"
+                            "options:\n"
+                            "  -h --help               what you are reading\n"
+                            "  -v --version            show version\n"
+                            "     --print-config       print configuration as config file\n"
+                            "  -c --config=<path>      use <path> as x48ng's config file (default: "
+                            "$XDG_CONFIG_HOME/x48ng/config.lua)\n"
+                            "     --config-dir=<path>  use <path> as x48ng's home (default: "
+                            "$XDG_CONFIG_HOME/x48ng/)\n"
+                            "     --rom=<filename>     use <filename> (absolute or relative to "
+                            "<config-dir>) as ROM (default: rom)\n"
+                            "     --ram=<filename>     use <filename> (absolute or relative to "
+                            "<config-dir>) as RAM (default: ram)\n"
+                            "     --state=<filename>   use <filename> (absolute or relative "
+                            "to <config-dir>) as STATE (default: hp48)\n"
+                            "     --port1=<filename>   use <filename> (absolute or relative "
+                            "to <config-dir>) as PORT1 (default: port1)\n"
+                            "     --port2=<filename>   use <filename> (absolute or relative "
+                            "to <config-dir>) as PORT2 (default: port2)\n"
+                            "     --serial-line=<path> use <path> as serial device default: "
+                            "%s)\n"
+                            "  -V --verbose            be verbose (default: false)\n"
+                            "     --x11                use X11 front-end (default: true)\n"
+                            "     --sdl                use SDL front-end (default: false)\n"
+                            "     --tui                use text front-end (default: false)\n"
+                            "     --tui-small          use text small front-end (2×2 pixels per character) (default: "
+                            "false)\n"
+                            "     --tui-tiny           use text tiny front-end (2×4 pixels per character) (default: "
+                            "false)\n"
+                            "  -t --use-terminal       activate pseudo terminal interface (default: "
+                            "true)\n"
+                            "  -s --use-serial         activate serial interface (default: false)\n"
+                            "     --debug              enable the debugger\n"
+                            "  -r --reset              perform a reset on startup\n"
+                            "  -T --throttle           try to emulate real speed (default: false)\n"
+                            "     --no-chrome          only display the LCD (default: "
+                            "false)\n"
+                            "     --fullscreen         make the UI fullscreen "
+                            "(default: false)\n"
+                            "     --netbook            make the UI horizontal (default: "
+                            "false)\n"
+                            "     --visual=<X visual>  use x11 visual <X visual> (default: "
+                            "default), possible values: "
+                            "<default | staticgray | staticcolor | truecolor | grayscale | "
+                            "pseudocolor | directcolor | 0xnn | nn>\n"
+                            "     --small-font=<font>  use <X font name> as small "
+                            "font (default: %s)\n"
+                            "     --medium-font=<font> use <X font name> as medium "
+                            "font (default: %s)\n"
+                            "     --large-font=<font>  use <X font name> as large "
+                            "font (default: %s)\n"
+                            "     --connection-font=<font> use <X font name> as "
+                            "connection font (default: %s)\n"
+                            "     --mono               make the UI monochrome (default: "
+                            "false)\n"
+                            "     --gray               make the UI grayscale (default: "
+                            "false)\n"
+                            "     --leave-shift-keys   _not_ mapping the shift keys to let them free for numbers (default: "
+                            "false)\n"
+                            "     --inhibit-shutdown   __tentative fix for stuck-on-OFF bug__ (default: "
+                            "false)\n";
     while ( c != EOF ) {
         c = getopt_long( argc, argv, optstring, long_options, &option_index );
 
@@ -424,6 +424,7 @@ int config_init( int argc, char* argv[] )
                 break;
             case 9109:
                 fprintf( stdout, "`--small` is deprecated, please use `--tui-small` instead of `--tui --small`" );
+                /* break; */ /* intentional fall-through */
             case 9110:
                 clopt_frontend_type = FRONTEND_TEXT;
                 clopt_small = true;
@@ -431,6 +432,7 @@ int config_init( int argc, char* argv[] )
                 break;
             case 9119:
                 fprintf( stdout, "`--tiny` is deprecated, please use `--tui-tiny` instead of `--tui --tiny`" );
+                /* break; */ /* intentional fall-through */
             case 9120:
                 clopt_frontend_type = FRONTEND_TEXT;
                 clopt_small = false;

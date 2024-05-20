@@ -9,7 +9,7 @@ unsigned char* core;
 
 #define DEFAULT_ROM_FILE "rom.dump"
 
-bool write_mem_file( char* name, unsigned char* mem, size_t size )
+bool write_mem_file( const char* name, unsigned char* mem, size_t size )
 {
     FILE* fp;
     unsigned char* tmp_mem;

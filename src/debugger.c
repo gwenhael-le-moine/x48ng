@@ -2227,7 +2227,6 @@ static char* dec_string( word_20* addr, char* string )
 static char* dec_hex_string( word_20* addr, char* string )
 {
     int len, lead, i, n;
-    static char hex[] = "0123456789ABCDEF";
     char* p = string;
 
     len = read_nibbles( *addr, 5 );
@@ -2239,7 +2238,7 @@ static char* dec_hex_string( word_20* addr, char* string )
         *p++ = ' ';
         lead = 1;
         for ( i = len - 1; i >= 0; i-- ) {
-            *p = hex[ read_nibble( *addr + i ) ];
+            *p = hex[ disassembler_mode ][ read_nibble( *addr + i ) ];
             if ( lead ) {
                 if ( ( i != 0 ) && ( *p == '0' ) )
                     p--;
@@ -2265,7 +2264,7 @@ static char* dec_hex_string( word_20* addr, char* string )
             n = 1000;
 
         for ( i = 0; i < n; i++ )
-            *p++ = hex[ read_nibble( *addr + i ) ];
+            *p++ = hex[ disassembler_mode ][ read_nibble( *addr + i ) ];
 
         if ( n != len ) {
             *p++ = '.';
@@ -2767,17 +2766,16 @@ static char* dec_acptr( word_20* addr, char* string )
     word_20 size;
     char* p = string;
     int i;
-    static char hex[] = "0123456789ABCDEF";
 
     if ( opt_gx ) {
         size = 10;
         sprintf( p, "ACPTR " );
         p += strlen( p );
         for ( i = 0; i < 5; i++ )
-            *p++ = hex[ read_nibble( *addr + i ) ];
+            *p++ = hex[ disassembler_mode ][ read_nibble( *addr + i ) ];
         *p++ = ' ';
         for ( i = 5; i < 10; i++ )
-            *p++ = hex[ read_nibble( *addr + i ) ];
+            *p++ = hex[ disassembler_mode ][ read_nibble( *addr + i ) ];
     } else {
         size = read_nibbles( *addr, 5 );
         sprintf( p, "Ext 1" );

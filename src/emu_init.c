@@ -22,7 +22,6 @@ bool please_exit = false;
 bool save_before_exit = true;
 
 bool rom_is_new = true;
-long ram_size;
 long port1_size;
 long port1_mask;
 bool port1_is_ram;
@@ -463,8 +462,9 @@ int read_mem_file( char* name, word_4* mem, int size )
 
 int read_files( void )
 {
-    unsigned long v1, v2;
-    int i, read_version;
+    /* unsigned long v1, v2; */
+    int i;
+    bool read_version;
     int ram_size;
     struct stat st;
     FILE* fp;
@@ -506,30 +506,30 @@ int read_files( void )
         /*
          * MAGIC ok, read and compare the version
          */
-        read_version = 1;
+        read_version = true;
         for ( i = 0; i < 4; i++ ) {
             if ( !read_char( fp, &saturn.version[ i ] ) ) {
                 if ( config.verbose )
                     fprintf( stderr, "can\'t read version\n" );
-                read_version = 0;
+                read_version = false;
             }
         }
 
         if ( read_version ) {
-            v1 = ( ( int )saturn.version[ 0 ] & 0xff ) << 24;
-            v1 |= ( ( int )saturn.version[ 1 ] & 0xff ) << 16;
-            v1 |= ( ( int )saturn.version[ 2 ] & 0xff ) << 8;
-            v1 |= ( ( int )saturn.version[ 3 ] & 0xff );
-            v2 = ( ( int )VERSION_MAJOR & 0xff ) << 24;
-            v2 |= ( ( int )VERSION_MINOR & 0xff ) << 16;
-            v2 |= ( ( int )PATCHLEVEL & 0xff ) << 8;
+            /* v1 = ( ( int )saturn.version[ 0 ] & 0xff ) << 24; */
+            /* v1 |= ( ( int )saturn.version[ 1 ] & 0xff ) << 16; */
+            /* v1 |= ( ( int )saturn.version[ 2 ] & 0xff ) << 8; */
+            /* v1 |= ( ( int )saturn.version[ 3 ] & 0xff ); */
+            /* v2 = ( ( int )VERSION_MAJOR & 0xff ) << 24; */
+            /* v2 |= ( ( int )VERSION_MINOR & 0xff ) << 16; */
+            /* v2 |= ( ( int )PATCHLEVEL & 0xff ) << 8; */
 
             /*
              * try to read latest version file
              */
             if ( !read_state_file( fp ) ) {
                 if ( config.verbose )
-                    fprintf( stderr, "can\'t handle %s\n", normalized_state_path );
+                    fprintf( stderr, "can't handle %s\n", normalized_state_path );
                 init_saturn();
             } else if ( config.verbose )
                 printf( "read %s\n", normalized_state_path );

@@ -5,8 +5,6 @@
 #include <unistd.h>
 #include <stdbool.h>
 
-unsigned char* mem;
-
 bool write_mem_file( char* name, unsigned char* mem, size_t size )
 {
     FILE* fp;

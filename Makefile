@@ -20,6 +20,23 @@ OPTIM ?= 2
 CFLAGS = -g -O$(OPTIM) -I./src/ -D_GNU_SOURCE=1 -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DPATCHLEVEL=$(PATCHLEVEL)
 LIBS = -lm
 
+# Useful warnings
+CFLAGS += -Wall -Wextra -Wpedantic \
+	  -Wformat=2 -Wshadow \
+	  -Wwrite-strings -Wstrict-prototypes -Wold-style-definition \
+	  -Wnested-externs -Wmissing-include-dirs
+# GCC warnings that Clang doesn't provide:
+ifeq ($(CC),gcc)
+	CFLAGS += -Wjump-misses-init -Wlogical-op
+endif
+ifeq ($(CC),clang)
+	CFLAGS += -Wno-unknown-warning-option
+endif
+
+# Ok we still disable some warnings for (hopefully) good reasons
+# 1. The debugger uses Xprintf format strings declared as char*, triggering this warning
+CFLAGS += -Wno-format-nonliteral
+
 ### lua
 CFLAGS += $(shell pkg-config --cflags lua)
 LIBS += $(shell pkg-config --libs lua)
@@ -29,8 +46,23 @@ CFLAGS += $(shell pkg-config --cflags readline)
 LIBS += $(shell pkg-config --libs readline)
 
 FULL_WARNINGS = no
-ifeq ($(FULL_WARNINGS), yes)
-	CFLAGS += -Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-function -Wconversion -Wdouble-promotion -Wno-sign-conversion -fsanitize=undefined -fsanitize-trap
+ifeq ($(FULL_WARNINGS), no)
+	CFLAGS += -Wno-unused-variable
+	CFLAGS += -Wno-unused-parameter
+	CFLAGS += -Wno-redundant-decls
+	ifeq ($(CC),gcc)
+		CFLAGS += -Wno-maybe-uninitialized
+		CFLAGS += -Wno-discarded-qualifiers
+	endif
+	ifeq ($(CC),clang)
+		CFLAGS += -Wno-uninitialized
+		CFLAGS += -Wno-ignored-qualifiers
+	endif
+else
+	CFLAGS += -Wredundant-decls
+	ifeq ($(CC),clang)
+		CFLAGS += -Wunused-variable
+	endif
 endif
 
 DOTOS = src/emu_serial.o \

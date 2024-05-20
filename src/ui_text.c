@@ -47,21 +47,21 @@ static inline wchar_t eight_bits_to_braille_char( bool b1, bool b2, bool b3, boo
     wchar_t chr = 0x2800;
 
     if ( b1 )
-        chr |= 0b0000000000000001;
+        chr |= 1; // 0b0000000000000001;
     if ( b2 )
-        chr |= 0b0000000000000010;
+        chr |= 2; // 0b0000000000000010;
     if ( b3 )
-        chr |= 0b0000000000000100;
+        chr |= 4; // 0b0000000000000100;
     if ( b4 )
-        chr |= 0b0000000000001000;
+        chr |= 8; // 0b0000000000001000;
     if ( b5 )
-        chr |= 0b0000000000010000;
+        chr |= 16; // 0b0000000000010000;
     if ( b6 )
-        chr |= 0b0000000000100000;
+        chr |= 32; // 0b0000000000100000;
     if ( b7 )
-        chr |= 0b0000000001000000;
+        chr |= 64; // 0b0000000001000000;
     if ( b8 )
-        chr |= 0b0000000010000000;
+        chr |= 128; // 0b0000000010000000;
 
     return chr;
 }
@@ -347,7 +347,7 @@ void text_menu_draw_nibble( word_20 addr, word_4 val )
 
 void text_draw_annunc( void )
 {
-    wchar_t* annunciators_icons[ 6 ] = { L"↰", L"↱", L"α", L"🪫", L"⌛", L"⇄" };
+    const wchar_t* annunciators_icons[ 6 ] = { L"↰", L"↱", L"α", L"🪫", L"⌛", L"⇄" };
     int val = saturn.annunc;
 
     if ( val == last_annunc_state )
@@ -555,7 +555,7 @@ void text_get_event( void )
     }
 }
 
-void text_ui_stop()
+void text_ui_stop( void )
 {
     nodelay( stdscr, FALSE );
     echo();
