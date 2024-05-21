@@ -8,63 +8,6 @@ VERSION_MAJOR = 0
 VERSION_MINOR = 37
 PATCHLEVEL = 0
 
-MAKEFLAGS +=-j$(NUM_CORES) -l$(NUM_CORES)
-
-CC ?= gcc
-
-WITH_X11 ?= yes
-WITH_SDL ?= yes
-
-OPTIM ?= 2
-
-CFLAGS = -g -O$(OPTIM) -I./src/ -D_GNU_SOURCE=1 -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DPATCHLEVEL=$(PATCHLEVEL)
-LIBS = -lm
-
-# Useful warnings
-CFLAGS += -Wall -Wextra -Wpedantic \
-	  -Wformat=2 -Wshadow \
-	  -Wwrite-strings -Wstrict-prototypes -Wold-style-definition \
-	  -Wnested-externs -Wmissing-include-dirs
-# GCC warnings that Clang doesn't provide:
-ifeq ($(CC),gcc)
-	CFLAGS += -Wjump-misses-init -Wlogical-op
-endif
-ifeq ($(CC),clang)
-	CFLAGS += -Wno-unknown-warning-option
-endif
-
-# Ok we still disable some warnings for (hopefully) good reasons
-# 1. The debugger uses Xprintf format strings declared as char*, triggering this warning
-CFLAGS += -Wno-format-nonliteral
-
-### lua
-CFLAGS += $(shell pkg-config --cflags lua)
-LIBS += $(shell pkg-config --libs lua)
-
-### debugger
-CFLAGS += $(shell pkg-config --cflags readline)
-LIBS += $(shell pkg-config --libs readline)
-
-FULL_WARNINGS = no
-ifeq ($(FULL_WARNINGS), no)
-	CFLAGS += -Wno-unused-variable
-	CFLAGS += -Wno-unused-parameter
-	CFLAGS += -Wno-redundant-decls
-	ifeq ($(CC),gcc)
-		CFLAGS += -Wno-maybe-uninitialized
-		CFLAGS += -Wno-discarded-qualifiers
-	endif
-	ifeq ($(CC),clang)
-		CFLAGS += -Wno-uninitialized
-		CFLAGS += -Wno-ignored-qualifiers
-	endif
-else
-	CFLAGS += -Wredundant-decls
-	ifeq ($(CC),clang)
-		CFLAGS += -Wunused-variable
-	endif
-endif
-
 DOTOS = src/emu_serial.o \
 	src/emu_emulate.o \
 	src/emu_init.o \
@@ -79,29 +22,111 @@ DOTOS = src/emu_serial.o \
 	src/ui.o \
 	src/main.o
 
-### X11 UI
-ifeq ($(WITH_X11), yes)
-X11CFLAGS = $(shell pkg-config --cflags x11 xext) -D_GNU_SOURCE=1
-X11LIBS = $(shell pkg-config --libs x11 xext)
+MAKEFLAGS +=-j$(NUM_CORES) -l$(NUM_CORES)
 
-CFLAGS += $(X11CFLAGS) -DHAS_X11=1
-LIBS += $(X11LIBS)
-DOTOS += src/ui_x11.o
-endif
+CC ?= gcc
 
-### SDL UI
-ifeq ($(WITH_SDL), yes)
-SDLCFLAGS = $(shell pkg-config --cflags SDL_gfx sdl12_compat)
-SDLLIBS = $(shell pkg-config --libs SDL_gfx sdl12_compat)
+WITH_X11 ?= yes
+WITH_SDL ?= yes
 
-CFLAGS += $(SDLCFLAGS) -DHAS_SDL=1
-LIBS += $(SDLLIBS)
-DOTOS += src/ui_sdl.o
-endif
+OPTIM ?= 2
+
+CFLAGS = -std=c11 -g -O$(OPTIM) -I./src/ -D_GNU_SOURCE=1 -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DPATCHLEVEL=$(PATCHLEVEL)
+LIBS = -lm
+
+### lua
+CFLAGS += $(shell pkg-config --cflags lua)
+LIBS += $(shell pkg-config --libs lua)
+
+### debugger
+CFLAGS += $(shell pkg-config --cflags readline)
+LIBS += $(shell pkg-config --libs readline)
 
 ### Text UI
 CFLAGS += $(shell pkg-config --cflags ncursesw) -DNCURSES_WIDECHAR=1
 LIBS += $(shell pkg-config --libs ncursesw)
+
+# Warnings
+FULL_WARNINGS = no
+
+# Useful warnings
+CFLAGS += -Wall -Wextra -Wpedantic \
+	  -Wformat=2 -Wshadow \
+	  -Wwrite-strings -Wstrict-prototypes -Wold-style-definition \
+	  -Wnested-externs -Wmissing-include-dirs \
+	  -Wdouble-promotion
+# GCC warnings that Clang doesn't provide:
+ifeq ($(CC),gcc)
+	CFLAGS += -Wjump-misses-init -Wlogical-op
+endif
+ifeq ($(CC),clang)
+	CFLAGS += -Wno-unknown-warning-option
+endif
+
+# Ok we still disable some warnings for (hopefully) good reasons
+# Not useful warnings
+CFLAGS += -Wno-sign-conversion
+CFLAGS += -Wno-unused-variable
+CFLAGS += -Wno-unused-parameter
+CFLAGS += -Wno-conversion
+# 1. The debugger uses Xprintf format strings declared as char*, triggering this warning
+CFLAGS += -Wno-format-nonliteral
+
+ifeq ($(FULL_WARNINGS), no)
+	CFLAGS += -Wno-unused-function
+	CFLAGS += -Wno-redundant-decls
+	ifeq ($(CC),gcc)
+		CFLAGS += -Wno-maybe-uninitialized
+		CFLAGS += -Wno-discarded-qualifiers
+	endif
+	ifeq ($(CC),clang)
+		CFLAGS += -Wno-uninitialized
+		CFLAGS += -Wno-ignored-qualifiers
+	endif
+else
+	# CFLAGS += -Wunused-variable
+	# CFLAGS += -Wunused-parameter
+	CFLAGS += -Wunused-function
+	CFLAGS += -Wredundant-decls
+	# CFLAGS += -Wconversion
+	# CFLAGS += -fsanitize=undefined # this breaks build
+	CFLAGS += -fsanitize-trap
+	ifeq ($(CC),clang)
+		CFLAGS += -Wunused-variable
+	endif
+endif
+
+### X11 UI
+ifeq ($(WITH_X11), yes)
+	X11CFLAGS = $(shell pkg-config --cflags x11 xext) -D_GNU_SOURCE=1
+	X11LIBS = $(shell pkg-config --libs x11 xext)
+
+	CFLAGS += $(X11CFLAGS) -DHAS_X11=1
+	LIBS += $(X11LIBS)
+	DOTOS += src/ui_x11.o
+endif
+
+### SDL UI
+ifeq ($(WITH_SDL), yes)
+	SDLCFLAGS = $(shell pkg-config --cflags SDL_gfx sdl12_compat)
+	SDLLIBS = $(shell pkg-config --libs SDL_gfx sdl12_compat)
+
+	CFLAGS += $(SDLCFLAGS) -DHAS_SDL=1
+	LIBS += $(SDLLIBS)
+	DOTOS += src/ui_sdl.o
+endif
+
+# depfiles = $(objects:.o=.d)
+
+# # Have the compiler output dependency files with make targets for each
+# # of the object files. The `MT` option specifies the dependency file
+# # itself as a target, so that it's regenerated when it should be.
+# %.dep.mk: %.c
+#	$(CC) -M -MP -MT '$(<:.c=.o) $@' $(CPPFLAGS) $< > $@
+
+# # Include each of those dependency files; Make will run the rule above
+# # to generate each dependency file (if it needs to).
+# -include $(depfiles)
 
 .PHONY: all clean clean-all pretty-code install mrproper
 
@@ -122,7 +147,7 @@ dist/x48ng: $(DOTOS)
 
 # Cleaning
 clean:
-	rm -f src/*.o src/tools/*.o
+	rm -f src/*.o src/tools/*.o src/*.dep.mk src/tools/*.dep.mk
 
 mrproper: clean
 	rm -f dist/mkcard dist/checkrom dist/dump2rom dist/x48ng
