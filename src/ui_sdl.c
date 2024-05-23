@@ -100,51 +100,49 @@ static sdl_keypad_t keypad;
 static sdl_color_t* sdl_colors;
 
 static sdl_color_t sdl_colors_sx[] = {
-    {"white",        255, 255, 255},
-    {"left",         255, 166, 0  },
-    {"right",        0,   210, 255},
-    {"but_top",      109, 93,  93 },
-    {"button",       90,  77,  77 },
-    {"but_bot",      76,  65,  65 },
-    {"lcd_col",      202, 221, 92 },
-    {"pix_col",      0,   0,   128},
-    {"pad_top",      109, 78,  78 },
-    {"pad",          90,  64,  64 },
-    {"pad_bot",      76,  54,  54 },
-    {"disp_pad_top", 155, 118, 84 },
-    {"disp_pad",     124, 94,  67 },
-    {"disp_pad_bot", 100, 75,  53 },
-    {"logo",         204, 169, 107},
-    {"logo_back",    64,  64,  64 },
-    {"label",        202, 184, 144},
-    {"frame",        0,   0,   0  },
-    {"underlay",     60,  42,  42 },
-    {"black",        0,   0,   0  },
-    /* { 0 } */
+    {.name = "white",        .r = 255, .g = 255, .b = 255},
+    {.name = "left",         .r = 255, .g = 166, .b = 0  },
+    {.name = "right",        .r = 0,   .g = 210, .b = 255},
+    {.name = "but_top",      .r = 109, .g = 93,  .b = 93 },
+    {.name = "button",       .r = 90,  .g = 77,  .b = 77 },
+    {.name = "but_bot",      .r = 76,  .g = 65,  .b = 65 },
+    {.name = "lcd_col",      .r = 202, .g = 221, .b = 92 },
+    {.name = "pix_col",      .r = 0,   .g = 0,   .b = 128},
+    {.name = "pad_top",      .r = 109, .g = 78,  .b = 78 },
+    {.name = "pad",          .r = 90,  .g = 64,  .b = 64 },
+    {.name = "pad_bot",      .r = 76,  .g = 54,  .b = 54 },
+    {.name = "disp_pad_top", .r = 155, .g = 118, .b = 84 },
+    {.name = "disp_pad",     .r = 124, .g = 94,  .b = 67 },
+    {.name = "disp_pad_bot", .r = 100, .g = 75,  .b = 53 },
+    {.name = "logo",         .r = 204, .g = 169, .b = 107},
+    {.name = "logo_back",    .r = 64,  .g = 64,  .b = 64 },
+    {.name = "label",        .r = 202, .g = 184, .b = 144},
+    {.name = "frame",        .r = 0,   .g = 0,   .b = 0  },
+    {.name = "underlay",     .r = 60,  .g = 42,  .b = 42 },
+    {.name = "black",        .r = 0,   .g = 0,   .b = 0  },
 };
 
 static sdl_color_t sdl_colors_gx[] = {
-    {"white",        255, 255, 255},
-    {"left",         255, 186, 255},
-    {"right",        0,   255, 204},
-    {"but_top",      104, 104, 104},
-    {"button",       88,  88,  88 },
-    {"but_bot",      74,  74,  74 },
-    {"lcd_col",      202, 221, 92 },
-    {"pix_col",      0,   0,   128},
-    {"pad_top",      88,  88,  88 },
-    {"pad",          74,  74,  74 },
-    {"pad_bot",      64,  64,  64 },
-    {"disp_pad_top", 128, 128, 138},
-    {"disp_pad",     104, 104, 110},
-    {"disp_pad_bot", 84,  84,  90 },
-    {"logo",         176, 176, 184},
-    {"logo_back",    104, 104, 110},
-    {"label",        240, 240, 240},
-    {"frame",        0,   0,   0  },
-    {"underlay",     104, 104, 110},
-    {"black",        0,   0,   0  },
-    /* { 0 } */
+    {.name = "white",        .r = 255, .g = 255, .b = 255},
+    {.name = "left",         .r = 255, .g = 186, .b = 255},
+    {.name = "right",        .r = 0,   .g = 255, .b = 204},
+    {.name = "but_top",      .r = 104, .g = 104, .b = 104},
+    {.name = "button",       .r = 88,  .g = 88,  .b = 88 },
+    {.name = "but_bot",      .r = 74,  .g = 74,  .b = 74 },
+    {.name = "lcd_col",      .r = 202, .g = 221, .b = 92 },
+    {.name = "pix_col",      .r = 0,   .g = 0,   .b = 128},
+    {.name = "pad_top",      .r = 88,  .g = 88,  .b = 88 },
+    {.name = "pad",          .r = 74,  .g = 74,  .b = 74 },
+    {.name = "pad_bot",      .r = 64,  .g = 64,  .b = 64 },
+    {.name = "disp_pad_top", .r = 128, .g = 128, .b = 138},
+    {.name = "disp_pad",     .r = 104, .g = 104, .b = 110},
+    {.name = "disp_pad_bot", .r = 84,  .g = 84,  .b = 90 },
+    {.name = "logo",         .r = 176, .g = 176, .b = 184},
+    {.name = "logo_back",    .r = 104, .g = 104, .b = 110},
+    {.name = "label",        .r = 240, .g = 240, .b = 240},
+    {.name = "frame",        .r = 0,   .g = 0,   .b = 0  },
+    {.name = "underlay",     .r = 104, .g = 104, .b = 110},
+    {.name = "black",        .r = 0,   .g = 0,   .b = 0  },
 };
 
 // This will take the value of the defines, but can be run-time modified
@@ -273,16 +271,21 @@ static sdl_button_t buttons_gx[] = {
     {"PERIOD", 120, 400, 46, 26, WHITE, ".",     1, 0,                0,                 0,                 0,   "\002 ",    0, "\001",     0,        0, 0},
     {"SPC",    180, 400, 46, 26, WHITE, "SPC",   0, 0,                0,                 0,                 0,   "\005 ",    0, "z",        0,        0, 0},
     {"PLUS",   240, 400, 46, 26, WHITE, 0,       0, plus_width,       plus_height,       plus_bitmap,       0,   "x ",       0, "y",        0,        0, 0},
-    /* { 0 } */
 };
 
 static sdl_ann_struct_t ann_tbl[] = {
-    {16,  4, ann_left_width,    ann_left_height,    ann_left_bitmap,    0, 0},
-    {61,  4, ann_right_width,   ann_right_height,   ann_right_bitmap,   0, 0},
-    {106, 4, ann_alpha_width,   ann_alpha_height,   ann_alpha_bitmap,   0, 0},
-    {151, 4, ann_battery_width, ann_battery_height, ann_battery_bitmap, 0, 0},
-    {196, 4, ann_busy_width,    ann_busy_height,    ann_busy_bitmap,    0, 0},
-    {241, 4, ann_io_width,      ann_io_height,      ann_io_bitmap,      0, 0},
+    {.x = 16,  .y = 4, .width = ann_left_width,  .height = ann_left_height,  .bits = ann_left_bitmap,  .surfaceon = 0, .surfaceoff = 0},
+    {.x = 61,  .y = 4, .width = ann_right_width, .height = ann_right_height, .bits = ann_right_bitmap, .surfaceon = 0, .surfaceoff = 0},
+    {.x = 106, .y = 4, .width = ann_alpha_width, .height = ann_alpha_height, .bits = ann_alpha_bitmap, .surfaceon = 0, .surfaceoff = 0},
+    {.x = 151,
+     .y = 4,
+     .width = ann_battery_width,
+     .height = ann_battery_height,
+     .bits = ann_battery_bitmap,
+     .surfaceon = 0,
+     .surfaceoff = 0                                                                                                                  },
+    {.x = 196, .y = 4, .width = ann_busy_width,  .height = ann_busy_height,  .bits = ann_busy_bitmap,  .surfaceon = 0, .surfaceoff = 0},
+    {.x = 241, .y = 4, .width = ann_io_width,    .height = ann_io_height,    .bits = ann_io_bitmap,    .surfaceon = 0, .surfaceoff = 0},
 };
 
 // State to displayed zoomed last pressed key
@@ -1108,13 +1111,9 @@ static void draw_keypad( void )
     for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
         if ( buttons[ i ].is_menu ) {
             // draw the dark shade under the label
-            if ( opt_gx ) {
-                pw = 58;
-                ph = 48;
-            } else {
-                pw = 44;
-                ph = 9;
-            }
+            pw = opt_gx ? 58 : 44;
+            ph = opt_gx ? 48 : 9;
+
             color = ARGBColors[ UNDERLAY ];
 
             // Set the coordinates to absolute
@@ -1167,21 +1166,13 @@ static void draw_keypad( void )
         if ( buttons[ i ].left != ( char* )0 ) {
             if ( buttons[ i ].is_menu ) {
                 // draw the dark shade under the label
-
-                if ( opt_gx ) {
-                    pw = 58;
-                } else {
-                    pw = 46;
-                }
+                pw = opt_gx ? 58 : 46;
 
                 colorbg = ARGBColors[ UNDERLAY ];
                 colorfg = ARGBColors[ LEFT ];
 
                 x = ( pw + 1 - SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) ) ) / 2;
-                if ( opt_gx )
-                    y = 14;
-                else
-                    y = 9;
+                y = opt_gx ? 14 : 9;
 
                 // Set the coordinates to absolute
                 if ( opt_gx ) {
@@ -1222,20 +1213,13 @@ static void draw_keypad( void )
         if ( buttons[ i ].right != ( char* )0 ) {
             if ( buttons[ i ].is_menu ) {
                 // draw the dark shade under the label
-                if ( opt_gx ) {
-                    pw = 58;
-                } else {
-                    pw = 44;
-                }
+                pw = opt_gx ? 58 : 44;
 
                 colorbg = ARGBColors[ UNDERLAY ];
                 colorfg = ARGBColors[ RIGHT ];
 
                 x = ( pw + 1 - SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) ) ) / 2;
-                if ( opt_gx )
-                    y = 14;
-                else
-                    y = 8;
+                y = opt_gx ? 14 : 8;
 
                 // Set the coordinates to absolute
                 if ( opt_gx ) {
