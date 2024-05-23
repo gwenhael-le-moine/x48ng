@@ -305,8 +305,7 @@ static inline unsigned bgra2argb( unsigned color )
 /*
         Create a surface from binary bitmap data
 */
-static SDL_Surface* SDLCreateSurfFromData( unsigned int w, unsigned int h, unsigned char* data, unsigned int coloron,
-                                           unsigned int coloroff )
+static SDL_Surface* bitmap_to_surface( unsigned int w, unsigned int h, unsigned char* data, unsigned int coloron, unsigned int coloroff )
 {
     unsigned int x, y;
     SDL_Surface* surf;
@@ -339,14 +338,14 @@ static SDL_Surface* SDLCreateSurfFromData( unsigned int w, unsigned int h, unsig
     return surf;
 }
 
-static void SDLDrawSmallString( int x, int y, const char* string, unsigned int length, unsigned int coloron, unsigned int coloroff )
+static void write_text( int x, int y, const char* string, unsigned int length, unsigned int coloron, unsigned int coloroff )
 {
     for ( unsigned int i = 0; i < length; i++ ) {
         if ( small_font[ ( int )string[ i ] ].h != 0 ) {
             int w = small_font[ ( int )string[ i ] ].w;
             int h = small_font[ ( int )string[ i ] ].h;
 
-            SDL_Surface* surf = SDLCreateSurfFromData( w, h, small_font[ ( int )string[ i ] ].bits, coloron, coloroff );
+            SDL_Surface* surf = bitmap_to_surface( w, h, small_font[ ( int )string[ i ] ].bits, coloron, coloroff );
 
             SDL_Rect srect;
             SDL_Rect drect;
@@ -365,58 +364,7 @@ static void SDLDrawSmallString( int x, int y, const char* string, unsigned int l
     }
 }
 
-static void SDLInit( void )
-{
-    unsigned int width, height;
-
-    // Initialize SDL
-    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
-        printf( "Couldn't initialize SDL: %s\n", SDL_GetError() );
-        exit( 1 );
-    }
-
-    // On exit: clean SDL
-    atexit( SDL_Quit );
-
-    // Initialize the geometric values
-    KEYBOARD_HEIGHT = _KEYBOARD_HEIGHT;
-    KEYBOARD_WIDTH = _KEYBOARD_WIDTH;
-    TOP_SKIP = _TOP_SKIP;
-    SIDE_SKIP = _SIDE_SKIP;
-    BOTTOM_SKIP = _BOTTOM_SKIP;
-    DISP_KBD_SKIP = _DISP_KBD_SKIP;
-    DISPLAY_WIDTH = _DISPLAY_WIDTH;
-    DISPLAY_HEIGHT = _DISPLAY_HEIGHT;
-    DISPLAY_OFFSET_X = _DISPLAY_OFFSET_X;
-    DISPLAY_OFFSET_Y = _DISPLAY_OFFSET_Y;
-    DISP_FRAME = _DISP_FRAME;
-    KEYBOARD_OFFSET_X = _KEYBOARD_OFFSET_X;
-    KEYBOARD_OFFSET_Y = _KEYBOARD_OFFSET_Y;
-    KBD_UPLINE = _KBD_UPLINE;
-
-    if ( config.hide_chrome ) {
-        width = DISPLAY_WIDTH;
-        height = DISPLAY_HEIGHT;
-        DISPLAY_OFFSET_X = 0;
-        DISPLAY_OFFSET_Y = 0;
-    } else {
-        width = ( buttons_gx[ LAST_HPKEY ].x + buttons_gx[ LAST_HPKEY ].w ) + 2 * SIDE_SKIP;
-        height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP + buttons_gx[ LAST_HPKEY ].y + buttons_gx[ LAST_HPKEY ].h + BOTTOM_SKIP;
-    }
-
-    uint32_t sdl_window_flags = SDL_SWSURFACE | SDL_RESIZABLE;
-    if ( config.show_ui_fullscreen )
-        sdl_window_flags |= SDL_FULLSCREEN;
-
-    sdlwindow = SDL_SetVideoMode( width, height, 32, sdl_window_flags );
-
-    if ( sdlwindow == NULL ) {
-        printf( "Couldn't set video mode: %s\n", SDL_GetError() );
-        exit( 1 );
-    }
-}
-
-static void SDLCreateColors( void )
+static void colors_setup( void )
 {
     unsigned i;
 
@@ -440,7 +388,7 @@ static void SDLCreateColors( void )
 
 // This should be called once to setup the surfaces. Calling it multiple
 // times is fine, it won't do anything on subsequent calls.
-static void SDLCreateAnnunc( void )
+static void create_annunc( void )
 {
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
         // If the SDL surface does not exist yet, we create it on the fly
@@ -450,7 +398,7 @@ static void SDLCreateAnnunc( void )
         }
 
         ann_tbl[ i ].surfaceon =
-            SDLCreateSurfFromData( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, ARGBColors[ PIXEL ], ARGBColors[ LCD ] );
+            bitmap_to_surface( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, ARGBColors[ PIXEL ], ARGBColors[ LCD ] );
 
         if ( ann_tbl[ i ].surfaceoff ) {
             SDL_FreeSurface( ann_tbl[ i ].surfaceoff );
@@ -458,13 +406,13 @@ static void SDLCreateAnnunc( void )
         }
 
         ann_tbl[ i ].surfaceoff =
-            SDLCreateSurfFromData( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, ARGBColors[ LCD ], ARGBColors[ LCD ] );
+            bitmap_to_surface( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, ARGBColors[ LCD ], ARGBColors[ LCD ] );
     }
 }
 
 // Find which key is pressed, if any.
 // Returns -1 is no key is pressed
-static int SDLCoordinateToKey( unsigned int x, unsigned int y )
+static int mouse_click_to_hpkey( unsigned int x, unsigned int y )
 {
     /* return immediatly if the click isn't even in the keyboard area */
     if ( y < KEYBOARD_OFFSET_Y )
@@ -500,7 +448,7 @@ static int SDLCoordinateToKey( unsigned int x, unsigned int y )
 
 // Map the keyboard keys to the HP keys
 // Returns -1 if there is no mapping
-static int SDLKeyToKey( SDLKey k )
+static int sdlkey_to_hpkey( SDLKey k )
 {
     switch ( k ) {
         case SDLK_0:
@@ -733,7 +681,7 @@ static int SDLKeyToKey( SDLKey k )
     return -1;
 }
 
-static void SDLDrawMore( unsigned int cut, unsigned int offset_y, int keypad_width, int keypad_height )
+static void draw_bezel( unsigned int cut, unsigned int offset_y, int keypad_width, int keypad_height )
 {
     // bottom lines
     lineColor( sdlwindow, 1, keypad_height - 1, keypad_width - 1, keypad_height - 1, bgra2argb( ARGBColors[ PAD_TOP ] ) );
@@ -822,7 +770,7 @@ static void SDLDrawMore( unsigned int cut, unsigned int offset_y, int keypad_wid
     lineColor( sdlwindow, 7, keypad_height - 9, 7, keypad_height - 11, bgra2argb( ARGBColors[ PAD_BOT ] ) );
 }
 
-static void SDLDrawLogo( void )
+static void draw_header( void )
 {
     int x, y;
     SDL_Surface* surf;
@@ -830,7 +778,7 @@ static void SDLDrawLogo( void )
     int display_width = DISPLAY_WIDTH;
 
     // insert the HP Logo
-    surf = SDLCreateSurfFromData( hp_width, hp_height, hp_bitmap, ARGBColors[ LOGO ], ARGBColors[ LOGO_BACK ] );
+    surf = bitmap_to_surface( hp_width, hp_height, hp_bitmap, ARGBColors[ LOGO ], ARGBColors[ LOGO_BACK ] );
     if ( opt_gx )
         x = DISPLAY_OFFSET_X - 6;
     else
@@ -864,8 +812,7 @@ static void SDLDrawLogo( void )
         x = DISPLAY_OFFSET_X + display_width - gx_128K_ram_width + gx_128K_ram_x_hot + 2;
         y = 10 + gx_128K_ram_y_hot;
 
-        surf =
-            SDLCreateSurfFromData( gx_128K_ram_width, gx_128K_ram_height, gx_128K_ram_bitmap, ARGBColors[ LABEL ], ARGBColors[ DISP_PAD ] );
+        surf = bitmap_to_surface( gx_128K_ram_width, gx_128K_ram_height, gx_128K_ram_bitmap, ARGBColors[ LABEL ], ARGBColors[ DISP_PAD ] );
         srect.x = 0;
         srect.y = 0;
         srect.w = gx_128K_ram_width;
@@ -879,7 +826,7 @@ static void SDLDrawLogo( void )
 
         x = DISPLAY_OFFSET_X + hp_width;
         y = hp_height + 8 - hp48gx_height;
-        surf = SDLCreateSurfFromData( hp48gx_width, hp48gx_height, hp48gx_bitmap, ARGBColors[ LOGO ], ARGBColors[ DISP_PAD ] );
+        surf = bitmap_to_surface( hp48gx_width, hp48gx_height, hp48gx_bitmap, ARGBColors[ LOGO ], ARGBColors[ DISP_PAD ] );
         srect.x = 0;
         srect.y = 0;
         srect.w = hp48gx_width;
@@ -893,8 +840,8 @@ static void SDLDrawLogo( void )
 
         x = DISPLAY_OFFSET_X + DISPLAY_WIDTH - gx_128K_ram_width + gx_silver_x_hot + 2;
         y = 10 + gx_silver_y_hot;
-        surf = SDLCreateSurfFromData( gx_silver_width, gx_silver_height, gx_silver_bitmap, ARGBColors[ LOGO ],
-                                      0 ); // Background transparent: draw only silver line
+        surf = bitmap_to_surface( gx_silver_width, gx_silver_height, gx_silver_bitmap, ARGBColors[ LOGO ],
+                                  0 ); // Background transparent: draw only silver line
         srect.x = 0;
         srect.y = 0;
         srect.w = gx_silver_width;
@@ -908,8 +855,8 @@ static void SDLDrawLogo( void )
 
         x = DISPLAY_OFFSET_X + display_width - gx_128K_ram_width + gx_green_x_hot + 2;
         y = 10 + gx_green_y_hot;
-        surf = SDLCreateSurfFromData( gx_green_width, gx_green_height, gx_green_bitmap, ARGBColors[ RIGHT ],
-                                      0 ); // Background transparent: draw only green menu
+        surf = bitmap_to_surface( gx_green_width, gx_green_height, gx_green_bitmap, ARGBColors[ RIGHT ],
+                                  0 ); // Background transparent: draw only green menu
         srect.x = 0;
         srect.y = 0;
         srect.w = gx_green_width;
@@ -923,8 +870,8 @@ static void SDLDrawLogo( void )
     } else {
         x = DISPLAY_OFFSET_X;
         y = TOP_SKIP - DISP_FRAME - hp48sx_height - 3;
-        surf = SDLCreateSurfFromData( hp48sx_width, hp48sx_height, hp48sx_bitmap, ARGBColors[ RIGHT ],
-                                      0 ); // Background transparent: draw only green menu
+        surf = bitmap_to_surface( hp48sx_width, hp48sx_height, hp48sx_bitmap, ARGBColors[ RIGHT ],
+                                  0 ); // Background transparent: draw only green menu
         srect.x = 0;
         srect.y = 0;
         srect.w = hp48sx_width;
@@ -938,8 +885,8 @@ static void SDLDrawLogo( void )
 
         x = DISPLAY_OFFSET_X + display_width - 1 - science_width;
         y = TOP_SKIP - DISP_FRAME - science_height - 4;
-        surf = SDLCreateSurfFromData( science_width, science_height, science_bitmap, ARGBColors[ RIGHT ],
-                                      0 ); // Background transparent: draw only green menu
+        surf = bitmap_to_surface( science_width, science_height, science_bitmap, ARGBColors[ RIGHT ],
+                                  0 ); // Background transparent: draw only green menu
         srect.x = 0;
         srect.y = 0;
         srect.w = science_width;
@@ -953,7 +900,7 @@ static void SDLDrawLogo( void )
     }
 }
 
-static void SDLCreateKeys( void )
+static void _create_buttons( void )
 {
     unsigned i, x, y;
     unsigned pixel;
@@ -1097,7 +1044,7 @@ static void SDLCreateKeys( void )
 
             // Blit the label surface to the button
             SDL_Surface* surf;
-            surf = SDLCreateSurfFromData( buttons[ i ].lw, buttons[ i ].lh, buttons[ i ].lb, colorfg, colorbg );
+            surf = bitmap_to_surface( buttons[ i ].lw, buttons[ i ].lh, buttons[ i ].lb, colorfg, colorbg );
             // Draw the surface on the center of the button
             x = ( 1 + buttons[ i ].w - buttons[ i ].lw ) / 2;
             y = ( 1 + buttons[ i ].h - buttons[ i ].lh ) / 2 + 1;
@@ -1118,243 +1065,7 @@ static void SDLCreateKeys( void )
     }
 }
 
-// Draw the left labels (violet on GX)
-static void SDLDrawKeysLabelsLeft( void )
-{
-    int i, x, y;
-    unsigned int pw /* , ph */;
-    int wl, wr, ws;
-    int offset_y = KEYBOARD_OFFSET_Y;
-    int offset_x = KEYBOARD_OFFSET_X;
-
-    unsigned colorbg, colorfg;
-
-    // Draw the left labels
-    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
-        // No label -> skip
-        if ( buttons[ i ].left == ( char* )0 )
-            continue;
-
-        if ( buttons[ i ].is_menu ) {
-            // draw the dark shade under the label
-
-            if ( opt_gx ) {
-                pw = 58;
-            } else {
-                pw = 46;
-            }
-
-            colorbg = ARGBColors[ UNDERLAY ];
-            colorfg = ARGBColors[ LEFT ];
-
-            x = ( pw + 1 - SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) ) ) / 2;
-            if ( opt_gx )
-                y = 14;
-            else
-                y = 9;
-
-            // Set the coordinates to absolute
-            if ( opt_gx ) {
-                x += offset_x + buttons[ i ].x - 6;
-                y += offset_y + buttons[ i ].y - small_ascent - small_descent - 6;
-            } else {
-                x += offset_x + buttons[ i ].x + ( buttons[ i ].w - pw ) / 2;
-                y += offset_y + buttons[ i ].y - small_ascent - small_descent;
-            }
-
-            SDLDrawSmallString( x, y, buttons[ i ].left, strlen( buttons[ i ].left ), colorfg, colorbg );
-        } else // is_menu
-        {
-            colorbg = ARGBColors[ BLACK ];
-            colorfg = ARGBColors[ LEFT ];
-
-            if ( buttons[ i ].right == ( char* )0 ) {
-                // centered label
-                x = offset_x + buttons[ i ].x +
-                    ( 1 + buttons[ i ].w - SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) ) ) / 2;
-            } else {
-                // label to the left
-                wl = SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) );
-                wr = SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) );
-                ws = SmallTextWidth( " ", 1 );
-
-                x = offset_x + buttons[ i ].x + ( 1 + buttons[ i ].w - ( wl + wr + ws ) ) / 2;
-            }
-
-            y = offset_y + buttons[ i ].y - small_descent;
-
-            SDLDrawSmallString( x, y, buttons[ i ].left, strlen( buttons[ i ].left ), colorfg, colorbg );
-        } // is_menu
-
-    } // for
-}
-
-// Draw the right labels (green on GX)
-static void SDLDrawKeysLabelsRight( void )
-{
-    int i, x, y;
-    unsigned int pw /* , ph */;
-    int wl, wr, ws;
-    int offset_y = KEYBOARD_OFFSET_Y;
-    int offset_x = KEYBOARD_OFFSET_X;
-    unsigned colorbg, colorfg;
-
-    // draw the right labels
-    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
-        if ( buttons[ i ].right == ( char* )0 )
-            continue;
-
-        if ( buttons[ i ].is_menu ) {
-            // draw the dark shade under the label
-            if ( opt_gx ) {
-                pw = 58;
-            } else {
-                pw = 44;
-            }
-
-            colorbg = ARGBColors[ UNDERLAY ];
-            colorfg = ARGBColors[ RIGHT ];
-
-            x = ( pw + 1 - SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) ) ) / 2;
-            if ( opt_gx )
-                y = 14;
-            else
-                y = 8;
-
-            // Set the coordinates to absolute
-            if ( opt_gx ) {
-                x += offset_x + buttons[ i ].x - 6;
-                y += offset_y + buttons[ i ].y - small_ascent - small_descent - 6;
-            } else {
-                x += offset_x + buttons[ i ].x + ( buttons[ i ].w - pw ) / 2;
-                y += offset_y + buttons[ i ].y - small_ascent - small_descent;
-            }
-
-            SDLDrawSmallString( x, y, buttons[ i ].right, strlen( buttons[ i ].right ), colorfg, colorbg );
-        } // buttons[i].is_menu
-        else {
-            colorbg = ARGBColors[ BLACK ];
-            colorfg = ARGBColors[ RIGHT ];
-
-            if ( buttons[ i ].left == ( char* )0 ) {
-                // centered label
-                x = offset_x + buttons[ i ].x +
-                    ( 1 + buttons[ i ].w - SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) ) ) / 2;
-            } else {
-                // label to the right
-                wl = SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) );
-                wr = SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) );
-                ws = SmallTextWidth( " ", 1 );
-
-                x = offset_x + buttons[ i ].x + ( 1 + buttons[ i ].w - ( wl + wr + ws ) ) / 2 + wl + ws;
-            }
-
-            y = offset_y + buttons[ i ].y - small_descent;
-
-            SDLDrawSmallString( x, y, buttons[ i ].right, strlen( buttons[ i ].right ), colorfg, colorbg );
-        }
-
-    } // for
-}
-
-// Draw the letter bottom right of the keys
-static void SDLDrawKeysLetters( void )
-{
-    int i, x, y;
-    int offset_y = KEYBOARD_OFFSET_Y;
-    int offset_x = KEYBOARD_OFFSET_X;
-    unsigned colorbg;
-
-    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
-
-        if ( i < HPKEY_MTH )
-            colorbg = ARGBColors[ DISP_PAD ];
-        else
-            colorbg = ARGBColors[ PAD ];
-
-        // Letter ( small character bottom right of key)
-        if ( buttons[ i ].letter != ( char* )0 ) {
-            if ( opt_gx ) {
-                x = offset_x + buttons[ i ].x + buttons[ i ].w + 3;
-                y = offset_y + buttons[ i ].y + buttons[ i ].h + 1;
-            } else {
-                x = offset_x + buttons[ i ].x + buttons[ i ].w - SmallTextWidth( buttons[ i ].letter, 1 ) / 2 + 5;
-                y = offset_y + buttons[ i ].y + buttons[ i ].h - 2;
-            }
-
-            SDLDrawSmallString( x, y, buttons[ i ].letter, 1, 0xffffffff, colorbg );
-        }
-    }
-}
-
-// Bottom label: the only one is the cancel button
-static void SDLDrawKeysLabelsBottom( void )
-{
-    int i, x, y;
-    int offset_y = KEYBOARD_OFFSET_Y;
-    int offset_x = KEYBOARD_OFFSET_X;
-    unsigned colorbg, colorfg;
-
-    // Bottom label: the only one is the cancel button
-    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
-        if ( buttons[ i ].sub == ( char* )0 )
-            continue;
-
-        if ( i < HPKEY_MTH )
-            colorbg = ARGBColors[ DISP_PAD ];
-        else
-            colorbg = ARGBColors[ PAD ];
-
-        colorfg = ARGBColors[ WHITE ];
-
-        x = offset_x + buttons[ i ].x + ( 1 + buttons[ i ].w - SmallTextWidth( buttons[ i ].sub, strlen( buttons[ i ].sub ) ) ) / 2;
-        y = offset_y + buttons[ i ].y + buttons[ i ].h + small_ascent + 2;
-        SDLDrawSmallString( x, y, buttons[ i ].sub, strlen( buttons[ i ].sub ), colorfg, colorbg );
-    }
-}
-
-// Draws the greyish area around keys that trigger menus
-static void SDLDrawKeyMenu( void )
-{
-    int i, x, y;
-    int offset_y = KEYBOARD_OFFSET_Y;
-    int offset_x = KEYBOARD_OFFSET_X;
-    SDL_Rect rect;
-    unsigned color;
-    unsigned pw, ph;
-
-    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
-        if ( !buttons[ i ].is_menu )
-            continue;
-
-        // draw the dark shade under the label
-        if ( opt_gx ) {
-            pw = 58;
-            ph = 48;
-        } else {
-            pw = 44;
-            ph = 9;
-        }
-        color = ARGBColors[ UNDERLAY ];
-
-        // Set the coordinates to absolute
-        if ( opt_gx ) {
-            x = offset_x + buttons[ i ].x - 6;
-            y = offset_y + buttons[ i ].y - small_ascent - small_descent - 6;
-        } else {
-            x = offset_x + buttons[ i ].x + ( buttons[ i ].w - pw ) / 2;
-            y = offset_y + buttons[ i ].y - small_ascent - small_descent;
-        }
-
-        rect.x = x;
-        rect.y = y;
-        rect.w = pw;
-        rect.h = ph;
-        SDL_FillRect( sdlwindow, &rect, color );
-    }
-}
-
-static void SDLDrawButtons( void )
+static void draw_buttons( void )
 {
     SDL_Rect srect, drect;
 
@@ -1380,18 +1091,191 @@ static void SDLDrawButtons( void )
                     buttons[ LAST_HPKEY ].y + buttons[ LAST_HPKEY ].h - buttons[ 0 ].y );
 }
 
-static void SDLDrawKeypad( void )
+static void draw_keypad( void )
 {
-    SDLDrawKeyMenu();
-    SDLDrawKeysLetters();
-    SDLDrawKeysLabelsBottom();
-    SDLDrawKeysLabelsLeft();
-    SDLDrawKeysLabelsRight();
-    SDLCreateKeys();
-    SDLDrawButtons();
+    int i, x, y;
+    int offset_y = KEYBOARD_OFFSET_Y;
+    int offset_x = KEYBOARD_OFFSET_X;
+    SDL_Rect rect;
+    unsigned color;
+    unsigned pw, ph;
+    unsigned colorbg, colorfg;
+    int wl, wr, ws;
+
+    _create_buttons();
+
+    // SDLDrawKeyMenu();
+    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
+        if ( buttons[ i ].is_menu ) {
+            // draw the dark shade under the label
+            if ( opt_gx ) {
+                pw = 58;
+                ph = 48;
+            } else {
+                pw = 44;
+                ph = 9;
+            }
+            color = ARGBColors[ UNDERLAY ];
+
+            // Set the coordinates to absolute
+            if ( opt_gx ) {
+                x = offset_x + buttons[ i ].x - 6;
+                y = offset_y + buttons[ i ].y - small_ascent - small_descent - 6;
+            } else {
+                x = offset_x + buttons[ i ].x + ( buttons[ i ].w - pw ) / 2;
+                y = offset_y + buttons[ i ].y - small_ascent - small_descent;
+            }
+
+            rect.x = x;
+            rect.y = y;
+            rect.w = pw;
+            rect.h = ph;
+            SDL_FillRect( sdlwindow, &rect, color );
+        }
+
+        // SDLDrawKeysLetters();
+        if ( i < HPKEY_MTH )
+            colorbg = ARGBColors[ DISP_PAD ];
+        else
+            colorbg = ARGBColors[ PAD ];
+
+        // Letter ( small character bottom right of key)
+        if ( buttons[ i ].letter != ( char* )0 ) {
+            if ( opt_gx ) {
+                x = offset_x + buttons[ i ].x + buttons[ i ].w + 3;
+                y = offset_y + buttons[ i ].y + buttons[ i ].h + 1;
+            } else {
+                x = offset_x + buttons[ i ].x + buttons[ i ].w - SmallTextWidth( buttons[ i ].letter, 1 ) / 2 + 5;
+                y = offset_y + buttons[ i ].y + buttons[ i ].h - 2;
+            }
+
+            write_text( x, y, buttons[ i ].letter, 1, 0xffffffff, colorbg );
+        }
+
+        // SDLDrawKeysLabelsBottom();
+        // Bottom label: the only one is the cancel button
+        if ( buttons[ i ].sub != ( char* )0 ) {
+            colorfg = ARGBColors[ WHITE ];
+
+            x = offset_x + buttons[ i ].x + ( 1 + buttons[ i ].w - SmallTextWidth( buttons[ i ].sub, strlen( buttons[ i ].sub ) ) ) / 2;
+            y = offset_y + buttons[ i ].y + buttons[ i ].h + small_ascent + 2;
+            write_text( x, y, buttons[ i ].sub, strlen( buttons[ i ].sub ), colorfg, colorbg );
+        }
+
+        // SDLDrawKeysLabelsLeft();
+        // Draw the left labels
+        if ( buttons[ i ].left != ( char* )0 ) {
+            if ( buttons[ i ].is_menu ) {
+                // draw the dark shade under the label
+
+                if ( opt_gx ) {
+                    pw = 58;
+                } else {
+                    pw = 46;
+                }
+
+                colorbg = ARGBColors[ UNDERLAY ];
+                colorfg = ARGBColors[ LEFT ];
+
+                x = ( pw + 1 - SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) ) ) / 2;
+                if ( opt_gx )
+                    y = 14;
+                else
+                    y = 9;
+
+                // Set the coordinates to absolute
+                if ( opt_gx ) {
+                    x += offset_x + buttons[ i ].x - 6;
+                    y += offset_y + buttons[ i ].y - small_ascent - small_descent - 6;
+                } else {
+                    x += offset_x + buttons[ i ].x + ( buttons[ i ].w - pw ) / 2;
+                    y += offset_y + buttons[ i ].y - small_ascent - small_descent;
+                }
+
+                write_text( x, y, buttons[ i ].left, strlen( buttons[ i ].left ), colorfg, colorbg );
+            } else // is_menu
+            {
+                colorbg = ARGBColors[ BLACK ];
+                colorfg = ARGBColors[ LEFT ];
+
+                if ( buttons[ i ].right == ( char* )0 ) {
+                    // centered label
+                    x = offset_x + buttons[ i ].x +
+                        ( 1 + buttons[ i ].w - SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) ) ) / 2;
+                } else {
+                    // label to the left
+                    wl = SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) );
+                    wr = SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) );
+                    ws = SmallTextWidth( " ", 1 );
+
+                    x = offset_x + buttons[ i ].x + ( 1 + buttons[ i ].w - ( wl + wr + ws ) ) / 2;
+                }
+
+                y = offset_y + buttons[ i ].y - small_descent;
+
+                write_text( x, y, buttons[ i ].left, strlen( buttons[ i ].left ), colorfg, colorbg );
+            } // is_menu
+        }
+
+        // SDLDrawKeysLabelsRight();
+        // draw the right labels
+        if ( buttons[ i ].right != ( char* )0 ) {
+            if ( buttons[ i ].is_menu ) {
+                // draw the dark shade under the label
+                if ( opt_gx ) {
+                    pw = 58;
+                } else {
+                    pw = 44;
+                }
+
+                colorbg = ARGBColors[ UNDERLAY ];
+                colorfg = ARGBColors[ RIGHT ];
+
+                x = ( pw + 1 - SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) ) ) / 2;
+                if ( opt_gx )
+                    y = 14;
+                else
+                    y = 8;
+
+                // Set the coordinates to absolute
+                if ( opt_gx ) {
+                    x += offset_x + buttons[ i ].x - 6;
+                    y += offset_y + buttons[ i ].y - small_ascent - small_descent - 6;
+                } else {
+                    x += offset_x + buttons[ i ].x + ( buttons[ i ].w - pw ) / 2;
+                    y += offset_y + buttons[ i ].y - small_ascent - small_descent;
+                }
+
+                write_text( x, y, buttons[ i ].right, strlen( buttons[ i ].right ), colorfg, colorbg );
+            } // buttons[i].is_menu
+            else {
+                colorbg = ARGBColors[ BLACK ];
+                colorfg = ARGBColors[ RIGHT ];
+
+                if ( buttons[ i ].left == ( char* )0 ) {
+                    // centered label
+                    x = offset_x + buttons[ i ].x +
+                        ( 1 + buttons[ i ].w - SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) ) ) / 2;
+                } else {
+                    // label to the right
+                    wl = SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) );
+                    wr = SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) );
+                    ws = SmallTextWidth( " ", 1 );
+
+                    x = offset_x + buttons[ i ].x + ( 1 + buttons[ i ].w - ( wl + wr + ws ) ) / 2 + wl + ws;
+                }
+
+                y = offset_y + buttons[ i ].y - small_descent;
+
+                write_text( x, y, buttons[ i ].right, strlen( buttons[ i ].right ), colorfg, colorbg );
+            }
+        }
+    }
+
+    draw_buttons();
 }
 
-static void SDLDrawBezel( void )
+static void draw_bezel_LCD( void )
 {
     unsigned int i;
     int display_height = DISPLAY_HEIGHT;
@@ -1457,7 +1341,7 @@ static void SDLDrawBezel( void )
                DISPLAY_OFFSET_Y + display_height - 2, bgra2argb( ARGBColors[ LCD ] ) );
 }
 
-static void SDLDrawBackground( int width, int height, int w_top, int h_top )
+static void draw_background( int width, int height, int w_top, int h_top )
 {
     SDL_Rect rect;
 
@@ -1472,7 +1356,7 @@ static void SDLDrawBackground( int width, int height, int w_top, int h_top )
     SDL_FillRect( sdlwindow, &rect, ARGBColors[ DISP_PAD ] );
 }
 
-static void SDLDrawBackgroundLCD( void )
+static void draw_background_LCD( void )
 {
     SDL_Rect rect;
 
@@ -1485,7 +1369,7 @@ static void SDLDrawBackgroundLCD( void )
 
 static void SDLDrawAnnunc( char* annunc )
 {
-    SDLCreateAnnunc();
+    create_annunc();
 
     // Print the annunciator
     for ( int i = 0; i < 6; i++ ) {
@@ -1681,56 +1565,6 @@ static inline void draw_row( long addr, int row )
         draw_nibble( i, row, read_nibble( addr + i ) );
 }
 
-static void SDLCreateHP( void )
-{
-    unsigned int width, height;
-
-    if ( config.hide_chrome ) {
-        width = KEYBOARD_WIDTH;
-        height = DISPLAY_HEIGHT;
-    } else {
-        width = KEYBOARD_WIDTH + 2 * SIDE_SKIP;
-        height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP + KEYBOARD_HEIGHT + BOTTOM_SKIP;
-    }
-
-    keypad.width = width;
-    keypad.height = height;
-
-    sdl_colors = opt_gx ? sdl_colors_gx : sdl_colors_sx;
-
-    // we allocate memory for the buttons because we need to modify
-    // their coordinates, and we don't want to change the original buttons_gx or
-    // buttons_sx
-    if ( buttons ) {
-        free( buttons );
-        buttons = 0;
-    }
-    buttons = ( sdl_button_t* )malloc( sizeof( buttons_gx ) );
-
-    if ( opt_gx )
-        memcpy( buttons, buttons_gx, sizeof( buttons_gx ) );
-    else
-        memcpy( buttons, buttons_sx, sizeof( buttons_sx ) );
-
-    SDLCreateColors();
-
-    if ( !config.hide_chrome ) {
-        int cut = buttons[ HPKEY_MTH ].y + KEYBOARD_OFFSET_Y - 19;
-
-        SDLDrawBackground( width, cut, width, height );
-        SDLDrawMore( cut, KEYBOARD_OFFSET_Y, keypad.width, keypad.height );
-        SDLDrawLogo();
-        SDLDrawBezel();
-        SDLDrawKeypad();
-
-        SDLDrawSerialDevices();
-    }
-
-    SDLDrawBackgroundLCD();
-
-    SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 );
-}
-
 /**********/
 /* public */
 /**********/
@@ -1757,7 +1591,7 @@ void sdl_get_event( void )
         int x, y, state;
         state = SDL_GetMouseState( &x, &y );
 
-        if ( state & SDL_BUTTON( 1 ) && SDLCoordinateToKey( x, y ) == lasthpkey ) {
+        if ( state & SDL_BUTTON( 1 ) && mouse_click_to_hpkey( x, y ) == lasthpkey ) {
             lastislongpress = 1;
             SDLUIFeedback();
         }
@@ -1775,7 +1609,7 @@ void sdl_get_event( void )
                  */
                 /* // pressed */
                 /* case SDL_MOUSEMOTION: */
-                /*     hpkey = SDLCoordinateToKey( event.motion.x,
+                /*     hpkey = mouse_click_to_hpkey( event.motion.x,
                  * event.motion.y ); */
                 /*     if ( event.motion.state & SDL_BUTTON( 1 ) ) { */
                 /*         // Mouse moves on a key different from the last key
@@ -1823,7 +1657,7 @@ void sdl_get_event( void )
 
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP:
-                hpkey = SDLCoordinateToKey( event.button.x, event.button.y );
+                hpkey = mouse_click_to_hpkey( event.button.x, event.button.y );
 
                 // React to mouse up/down when click over a button
                 if ( hpkey == -1 )
@@ -1859,7 +1693,7 @@ void sdl_get_event( void )
 
             case SDL_KEYDOWN:
             case SDL_KEYUP:
-                hpkey = SDLKeyToKey( event.key.keysym.sym );
+                hpkey = sdlkey_to_hpkey( event.key.keysym.sym );
 
                 if ( hpkey == -1 )
                     break;
@@ -1897,7 +1731,7 @@ void sdl_get_event( void )
     // button is pressed (otherwise it overwrites the zoomed button)
     if ( keyneedshow && keyispressed == -1 ) {
         keyneedshow = 0;
-        SDLDrawButtons();
+        draw_buttons();
     }
 
 #ifdef DELAYEDDISPUPDATE
@@ -1997,8 +1831,8 @@ void sdl_draw_annunc( void )
 
 void sdl_adjust_contrast( void )
 {
-    SDLCreateColors();
-    SDLCreateAnnunc();
+    colors_setup();
+    create_annunc();
 
     // redraw LCD
     ui_init_LCD();
@@ -2029,6 +1863,86 @@ void init_sdl_ui( int argc, char** argv )
     ui_adjust_contrast = sdl_adjust_contrast;
     ui_draw_annunc = sdl_draw_annunc;
 
-    SDLInit();
-    SDLCreateHP();
+    // SDLInit();
+    unsigned int width, height;
+
+    // Initialize SDL
+    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
+        printf( "Couldn't initialize SDL: %s\n", SDL_GetError() );
+        exit( 1 );
+    }
+
+    // On exit: clean SDL
+    atexit( SDL_Quit );
+
+    // Initialize the geometric values
+    KEYBOARD_HEIGHT = _KEYBOARD_HEIGHT;
+    KEYBOARD_WIDTH = _KEYBOARD_WIDTH;
+    TOP_SKIP = _TOP_SKIP;
+    SIDE_SKIP = _SIDE_SKIP;
+    BOTTOM_SKIP = _BOTTOM_SKIP;
+    DISP_KBD_SKIP = _DISP_KBD_SKIP;
+    DISPLAY_WIDTH = _DISPLAY_WIDTH;
+    DISPLAY_HEIGHT = _DISPLAY_HEIGHT;
+    DISPLAY_OFFSET_X = _DISPLAY_OFFSET_X;
+    DISPLAY_OFFSET_Y = _DISPLAY_OFFSET_Y;
+    DISP_FRAME = _DISP_FRAME;
+    KEYBOARD_OFFSET_X = _KEYBOARD_OFFSET_X;
+    KEYBOARD_OFFSET_Y = _KEYBOARD_OFFSET_Y;
+    KBD_UPLINE = _KBD_UPLINE;
+
+    if ( config.hide_chrome ) {
+        width = DISPLAY_WIDTH;
+        height = DISPLAY_HEIGHT;
+        DISPLAY_OFFSET_X = 0;
+        DISPLAY_OFFSET_Y = 0;
+    } else {
+        width = ( buttons_gx[ LAST_HPKEY ].x + buttons_gx[ LAST_HPKEY ].w ) + 2 * SIDE_SKIP;
+        height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP + buttons_gx[ LAST_HPKEY ].y + buttons_gx[ LAST_HPKEY ].h + BOTTOM_SKIP;
+    }
+
+    uint32_t sdl_window_flags = SDL_SWSURFACE | SDL_RESIZABLE;
+    if ( config.show_ui_fullscreen )
+        sdl_window_flags |= SDL_FULLSCREEN;
+
+    sdlwindow = SDL_SetVideoMode( width, height, 32, sdl_window_flags );
+
+    if ( sdlwindow == NULL ) {
+        printf( "Couldn't set video mode: %s\n", SDL_GetError() );
+        exit( 1 );
+    }
+
+    // SDLCreateHP();
+    keypad.width = width;
+    keypad.height = height;
+
+    sdl_colors = opt_gx ? sdl_colors_gx : sdl_colors_sx;
+
+    // we allocate memory for the buttons because we need to modify
+    // their coordinates, and we don't want to change the original buttons_gx or
+    // buttons_sx
+    buttons = ( sdl_button_t* )malloc( sizeof( buttons_gx ) );
+
+    if ( opt_gx )
+        memcpy( buttons, buttons_gx, sizeof( buttons_gx ) );
+    else
+        memcpy( buttons, buttons_sx, sizeof( buttons_sx ) );
+
+    colors_setup();
+
+    if ( !config.hide_chrome ) {
+        int cut = buttons[ HPKEY_MTH ].y + KEYBOARD_OFFSET_Y - 19;
+
+        draw_background( width, cut, width, height );
+        draw_bezel( cut, KEYBOARD_OFFSET_Y, keypad.width, keypad.height );
+        draw_header();
+        draw_bezel_LCD();
+        draw_keypad();
+
+        SDLDrawSerialDevices();
+    }
+
+    draw_background_LCD();
+
+    SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 );
 }
