@@ -3557,6 +3557,8 @@ static inline void _CreateIcon( void )
     XSetFillStyle( dpy, gc, FillSolid );
 }
 
+static inline void DrawIcon( void ) { XCopyArea( dpy, icon_pix, iconW, gc, 0, 0, hp48_icon_width, hp48_icon_height, 0, 0 ); }
+
 static void refresh_icon( void )
 {
     int icon_state = ( ( display.on && !( ( ANN_IO & saturn.annunc ) == ANN_IO ) ) ||
@@ -3590,10 +3592,8 @@ static void refresh_icon( void )
     }
     XSetFillStyle( dpy, gc, FillSolid );
     if ( iconW )
-        XCopyArea( dpy, icon_pix, iconW, gc, 0, 0, hp48_icon_width, hp48_icon_height, 0, 0 );
+      DrawIcon();
 }
-
-static inline void DrawIcon( void ) { XCopyArea( dpy, icon_pix, iconW, gc, 0, 0, hp48_icon_width, hp48_icon_height, 0, 0 ); }
 
 int handle_xerror( Display* _the_dpy, XErrorEvent* _eev )
 {
