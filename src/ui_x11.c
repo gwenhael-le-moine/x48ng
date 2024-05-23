@@ -3823,6 +3823,318 @@ static inline void _draw_background( int width, int height, int w_top, int h_top
     XFillRectangle( dpy, local_keypad->pixmap, gc, 0, 0, width, height );
 }
 
+static void key_event( int b, XEvent* xev )
+{
+    if ( xev->type == KeyPress )
+        press_key( b );
+    else
+        release_key( b );
+
+    draw_button( b );
+}
+
+static void decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
+{
+    if ( buflen == 1 )
+        switch ( buf[ 0 ] ) {
+            case '0':
+                sym = XK_0;
+                break;
+            case '1':
+                sym = XK_1;
+                break;
+            case '2':
+                sym = XK_2;
+                break;
+            case '3':
+                sym = XK_3;
+                break;
+            case '4':
+                sym = XK_4;
+                break;
+            case '5':
+                sym = XK_5;
+                break;
+            case '6':
+                sym = XK_6;
+                break;
+            case '7':
+                sym = XK_7;
+                break;
+            case '8':
+                sym = XK_8;
+                break;
+            case '9':
+                sym = XK_9;
+                break;
+            default:
+                break;
+        }
+
+    switch ( ( int )sym ) {
+        case XK_KP_0:
+        case XK_0:
+            key_event( HPKEY_0, xev );
+            break;
+        case XK_KP_1:
+        case XK_1:
+            key_event( HPKEY_1, xev );
+            break;
+        case XK_KP_2:
+        case XK_2:
+            key_event( HPKEY_2, xev );
+            break;
+        case XK_KP_3:
+        case XK_3:
+            key_event( HPKEY_3, xev );
+            break;
+        case XK_KP_4:
+        case XK_4:
+            key_event( HPKEY_4, xev );
+            break;
+        case XK_KP_5:
+        case XK_5:
+            key_event( HPKEY_5, xev );
+            break;
+        case XK_KP_6:
+        case XK_6:
+            key_event( HPKEY_6, xev );
+            break;
+        case XK_KP_7:
+        case XK_7:
+            key_event( HPKEY_7, xev );
+            break;
+        case XK_KP_8:
+        case XK_8:
+            key_event( HPKEY_8, xev );
+            break;
+        case XK_KP_9:
+        case XK_9:
+            key_event( HPKEY_9, xev );
+            break;
+        case XK_KP_Add:
+        case XK_plus:
+        case XK_equal:
+            key_event( HPKEY_PLUS, xev );
+            break;
+        case XK_KP_Subtract:
+        case XK_minus:
+            key_event( HPKEY_MINUS, xev );
+            break;
+#ifdef XK_F25
+        case XK_F25:
+#endif
+        case XK_KP_Divide:
+        case XK_slash:
+            key_event( HPKEY_DIV, xev );
+            break;
+#ifdef XK_F26
+        case XK_F26:
+#endif
+        case XK_KP_Multiply:
+        case XK_asterisk:
+        case XK_comma:
+            key_event( HPKEY_MUL, xev );
+            break;
+        case XK_F1:
+        case XK_KP_Enter:
+        case XK_Return:
+            key_event( HPKEY_ENTER, xev );
+            break;
+        case XK_KP_Decimal:
+        case XK_KP_Separator:
+        case XK_period:
+            key_event( HPKEY_PERIOD, xev );
+            break;
+        case XK_space:
+            key_event( HPKEY_SPC, xev );
+            break;
+        case XK_Delete:
+            key_event( HPKEY_DEL, xev );
+            break;
+        case XK_BackSpace:
+            key_event( HPKEY_BS, xev );
+            break;
+        case XK_F5:
+        case XK_Escape:
+            key_event( HPKEY_ON, xev );
+            break;
+        case XK_Shift_L:
+            if ( !config.leave_shift_keys ) {
+                key_event( HPKEY_SHL, xev );
+            }
+            break;
+        case XK_F2:
+        case XK_Control_R:
+            key_event( HPKEY_SHL, xev );
+            break;
+        case XK_Shift_R:
+            if ( !config.leave_shift_keys ) {
+                key_event( HPKEY_SHR, xev );
+            }
+            break;
+        case XK_F3:
+        case XK_Control_L:
+            key_event( HPKEY_SHR, xev );
+            break;
+        case XK_F4:
+        case XK_Alt_L:
+        case XK_Alt_R:
+        case XK_Meta_L:
+        case XK_Meta_R:
+            key_event( HPKEY_ALPHA, xev );
+            break;
+        case XK_a:
+        case XK_A:
+            /* case XK_F1: */
+            key_event( HPKEY_A, xev );
+            break;
+        case XK_b:
+        case XK_B:
+            /* case XK_F2: */
+            key_event( HPKEY_B, xev );
+            break;
+        case XK_c:
+        case XK_C:
+            /* case XK_F3: */
+            key_event( HPKEY_C, xev );
+            break;
+        case XK_d:
+        case XK_D:
+            /* case XK_F4: */
+            key_event( HPKEY_D, xev );
+            break;
+        case XK_e:
+        case XK_E:
+            /* case XK_F5: */
+            key_event( HPKEY_E, xev );
+            break;
+        case XK_f:
+        case XK_F:
+            /* case XK_F6: */
+            key_event( HPKEY_F, xev );
+            break;
+        case XK_g:
+        case XK_G:
+            key_event( HPKEY_MTH, xev );
+            break;
+        case XK_h:
+        case XK_H:
+            key_event( HPKEY_PRG, xev );
+            break;
+        case XK_i:
+        case XK_I:
+            key_event( HPKEY_CST, xev );
+            break;
+        case XK_j:
+        case XK_J:
+            key_event( HPKEY_VAR, xev );
+            break;
+        case XK_k:
+        case XK_K:
+        case XK_Up:
+            key_event( HPKEY_UP, xev );
+            break;
+        case XK_l:
+        case XK_L:
+            key_event( HPKEY_NXT, xev );
+            break;
+        case XK_m:
+        case XK_M:
+            key_event( HPKEY_COLON, xev );
+            break;
+        case XK_n:
+        case XK_N:
+            key_event( HPKEY_STO, xev );
+            break;
+        case XK_o:
+        case XK_O:
+            key_event( HPKEY_EVAL, xev );
+            break;
+        case XK_p:
+        case XK_P:
+        case XK_Left:
+            key_event( HPKEY_LEFT, xev );
+            break;
+        case XK_q:
+        case XK_Q:
+        case XK_Down:
+            key_event( HPKEY_DOWN, xev );
+            break;
+        case XK_r:
+        case XK_R:
+        case XK_Right:
+            key_event( HPKEY_RIGHT, xev );
+            break;
+        case XK_s:
+        case XK_S:
+            key_event( HPKEY_SIN, xev );
+            break;
+        case XK_t:
+        case XK_T:
+            key_event( HPKEY_COS, xev );
+            break;
+        case XK_u:
+        case XK_U:
+            key_event( HPKEY_TAN, xev );
+            break;
+        case XK_v:
+        case XK_V:
+            key_event( HPKEY_SQRT, xev );
+            break;
+        case XK_w:
+        case XK_W:
+            key_event( HPKEY_POWER, xev );
+            break;
+        case XK_x:
+        case XK_X:
+            key_event( HPKEY_INV, xev );
+            break;
+        case XK_y:
+        case XK_Y:
+            key_event( HPKEY_NEG, xev );
+            break;
+        case XK_z:
+        case XK_Z:
+            key_event( HPKEY_EEX, xev );
+            break;
+        case XK_F7:
+        case XK_F10:
+            please_exit = true;
+            break;
+        default:
+            break;
+    }
+}
+
+static inline void draw_nibble( int c, int r, int val )
+{
+    val &= 0x0f;
+    if ( val == lcd_nibbles_buffer[ r ][ c ] )
+        return;
+
+    lcd_nibbles_buffer[ r ][ c ] = val;
+
+    int y = ( r * 2 ) + 20;
+    int x = ( c * 8 ) + 5;
+    if ( r <= display.lines )
+        x -= ( 2 * display.offset );
+
+    XCopyPlane( dpy, nibble_maps[ val ], lcd.win, lcd.gc, 0, 0, 8, 2, x, y, 1 );
+}
+
+/* Identical in all ui_*.c */
+static inline void draw_row( long addr, int row )
+{
+    int line_length = NIBBLES_PER_ROW;
+
+    if ( ( display.offset > 3 ) && ( row <= display.lines ) )
+        line_length += 2;
+
+    for ( int i = 0; i < line_length; i++ )
+        draw_nibble( i, row, read_nibble( addr + i ) );
+}
+
 static bool create_window( int argc, char** argv )
 {
     XSizeHints hint, ih;
@@ -4109,360 +4421,6 @@ static bool create_window( int argc, char** argv )
     if ( shm_flag ) {
         XSetForeground( dpy, lcd.gc, COLOR( PIXEL ) );
         XFillRectangle( dpy, lcd.win, lcd.gc, 5, 20, 262, 128 );
-    }
-
-    return true;
-}
-
-static void key_event( int b, XEvent* xev )
-{
-    if ( xev->type == KeyPress )
-        press_key( b );
-    else
-        release_key( b );
-
-    draw_button( b );
-}
-
-static void decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
-{
-    if ( buflen == 1 )
-        switch ( buf[ 0 ] ) {
-            case '0':
-                sym = XK_0;
-                break;
-            case '1':
-                sym = XK_1;
-                break;
-            case '2':
-                sym = XK_2;
-                break;
-            case '3':
-                sym = XK_3;
-                break;
-            case '4':
-                sym = XK_4;
-                break;
-            case '5':
-                sym = XK_5;
-                break;
-            case '6':
-                sym = XK_6;
-                break;
-            case '7':
-                sym = XK_7;
-                break;
-            case '8':
-                sym = XK_8;
-                break;
-            case '9':
-                sym = XK_9;
-                break;
-            default:
-                break;
-        }
-
-    switch ( ( int )sym ) {
-        case XK_KP_0:
-        case XK_0:
-            key_event( HPKEY_0, xev );
-            break;
-        case XK_KP_1:
-        case XK_1:
-            key_event( HPKEY_1, xev );
-            break;
-        case XK_KP_2:
-        case XK_2:
-            key_event( HPKEY_2, xev );
-            break;
-        case XK_KP_3:
-        case XK_3:
-            key_event( HPKEY_3, xev );
-            break;
-        case XK_KP_4:
-        case XK_4:
-            key_event( HPKEY_4, xev );
-            break;
-        case XK_KP_5:
-        case XK_5:
-            key_event( HPKEY_5, xev );
-            break;
-        case XK_KP_6:
-        case XK_6:
-            key_event( HPKEY_6, xev );
-            break;
-        case XK_KP_7:
-        case XK_7:
-            key_event( HPKEY_7, xev );
-            break;
-        case XK_KP_8:
-        case XK_8:
-            key_event( HPKEY_8, xev );
-            break;
-        case XK_KP_9:
-        case XK_9:
-            key_event( HPKEY_9, xev );
-            break;
-        case XK_KP_Add:
-        case XK_plus:
-        case XK_equal:
-            key_event( HPKEY_PLUS, xev );
-            break;
-        case XK_KP_Subtract:
-        case XK_minus:
-            key_event( HPKEY_MINUS, xev );
-            break;
-#ifdef XK_F25
-        case XK_F25:
-#endif
-        case XK_KP_Divide:
-        case XK_slash:
-            key_event( HPKEY_DIV, xev );
-            break;
-#ifdef XK_F26
-        case XK_F26:
-#endif
-        case XK_KP_Multiply:
-        case XK_asterisk:
-        case XK_comma:
-            key_event( HPKEY_MUL, xev );
-            break;
-        case XK_F1:
-        case XK_KP_Enter:
-        case XK_Return:
-            key_event( HPKEY_ENTER, xev );
-            break;
-        case XK_KP_Decimal:
-        case XK_KP_Separator:
-        case XK_period:
-            key_event( HPKEY_PERIOD, xev );
-            break;
-        case XK_space:
-            key_event( HPKEY_SPC, xev );
-            break;
-        case XK_Delete:
-            key_event( HPKEY_DEL, xev );
-            break;
-        case XK_BackSpace:
-            key_event( HPKEY_BS, xev );
-            break;
-        case XK_F5:
-        case XK_Escape:
-            key_event( HPKEY_ON, xev );
-            break;
-        case XK_Shift_L:
-            if ( !config.leave_shift_keys ) {
-                key_event( HPKEY_SHL, xev );
-            }
-            break;
-        case XK_F2:
-        case XK_Control_R:
-            key_event( HPKEY_SHL, xev );
-            break;
-        case XK_Shift_R:
-            if ( !config.leave_shift_keys ) {
-                key_event( HPKEY_SHR, xev );
-            }
-            break;
-        case XK_F3:
-        case XK_Control_L:
-            key_event( HPKEY_SHR, xev );
-            break;
-        case XK_F4:
-        case XK_Alt_L:
-        case XK_Alt_R:
-        case XK_Meta_L:
-        case XK_Meta_R:
-            key_event( HPKEY_ALPHA, xev );
-            break;
-        case XK_a:
-        case XK_A:
-            /* case XK_F1: */
-            key_event( HPKEY_A, xev );
-            break;
-        case XK_b:
-        case XK_B:
-            /* case XK_F2: */
-            key_event( HPKEY_B, xev );
-            break;
-        case XK_c:
-        case XK_C:
-            /* case XK_F3: */
-            key_event( HPKEY_C, xev );
-            break;
-        case XK_d:
-        case XK_D:
-            /* case XK_F4: */
-            key_event( HPKEY_D, xev );
-            break;
-        case XK_e:
-        case XK_E:
-            /* case XK_F5: */
-            key_event( HPKEY_E, xev );
-            break;
-        case XK_f:
-        case XK_F:
-            /* case XK_F6: */
-            key_event( HPKEY_F, xev );
-            break;
-        case XK_g:
-        case XK_G:
-            key_event( HPKEY_MTH, xev );
-            break;
-        case XK_h:
-        case XK_H:
-            key_event( HPKEY_PRG, xev );
-            break;
-        case XK_i:
-        case XK_I:
-            key_event( HPKEY_CST, xev );
-            break;
-        case XK_j:
-        case XK_J:
-            key_event( HPKEY_VAR, xev );
-            break;
-        case XK_k:
-        case XK_K:
-        case XK_Up:
-            key_event( HPKEY_UP, xev );
-            break;
-        case XK_l:
-        case XK_L:
-            key_event( HPKEY_NXT, xev );
-            break;
-        case XK_m:
-        case XK_M:
-            key_event( HPKEY_COLON, xev );
-            break;
-        case XK_n:
-        case XK_N:
-            key_event( HPKEY_STO, xev );
-            break;
-        case XK_o:
-        case XK_O:
-            key_event( HPKEY_EVAL, xev );
-            break;
-        case XK_p:
-        case XK_P:
-        case XK_Left:
-            key_event( HPKEY_LEFT, xev );
-            break;
-        case XK_q:
-        case XK_Q:
-        case XK_Down:
-            key_event( HPKEY_DOWN, xev );
-            break;
-        case XK_r:
-        case XK_R:
-        case XK_Right:
-            key_event( HPKEY_RIGHT, xev );
-            break;
-        case XK_s:
-        case XK_S:
-            key_event( HPKEY_SIN, xev );
-            break;
-        case XK_t:
-        case XK_T:
-            key_event( HPKEY_COS, xev );
-            break;
-        case XK_u:
-        case XK_U:
-            key_event( HPKEY_TAN, xev );
-            break;
-        case XK_v:
-        case XK_V:
-            key_event( HPKEY_SQRT, xev );
-            break;
-        case XK_w:
-        case XK_W:
-            key_event( HPKEY_POWER, xev );
-            break;
-        case XK_x:
-        case XK_X:
-            key_event( HPKEY_INV, xev );
-            break;
-        case XK_y:
-        case XK_Y:
-            key_event( HPKEY_NEG, xev );
-            break;
-        case XK_z:
-        case XK_Z:
-            key_event( HPKEY_EEX, xev );
-            break;
-        case XK_F7:
-        case XK_F10:
-            please_exit = true;
-            break;
-        default:
-            break;
-    }
-}
-
-static void x11_release_all_keys( void )
-{
-    release_all_keys();
-    for ( int b = FIRST_HPKEY; b <= LAST_HPKEY; b++ )
-        draw_button( b );
-}
-
-static inline void draw_nibble( int c, int r, int val )
-{
-    val &= 0x0f;
-    if ( val == lcd_nibbles_buffer[ r ][ c ] )
-        return;
-
-    lcd_nibbles_buffer[ r ][ c ] = val;
-
-    int y = ( r * 2 ) + 20;
-    int x = ( c * 8 ) + 5;
-    if ( r <= display.lines )
-        x -= ( 2 * display.offset );
-
-    XCopyPlane( dpy, nibble_maps[ val ], lcd.win, lcd.gc, 0, 0, 8, 2, x, y, 1 );
-}
-
-/* Identical in all ui_*.c */
-static inline void draw_row( long addr, int row )
-{
-    int line_length = NIBBLES_PER_ROW;
-
-    if ( ( display.offset > 3 ) && ( row <= display.lines ) )
-        line_length += 2;
-
-    for ( int i = 0; i < line_length; i++ )
-        draw_nibble( i, row, read_nibble( addr + i ) );
-}
-
-// Used in init_x11_ui()
-static inline bool init_display( void )
-{
-    /*
-     * open the display
-     */
-    dpy = XOpenDisplay( NULL );
-    if ( dpy == ( Display* )0 ) {
-        if ( config.verbose )
-            fprintf( stderr, "can\'t open display\n" );
-
-        return false;
-    }
-
-    /*
-     * Get the default screen
-     */
-    screen = DefaultScreen( dpy );
-
-    /*
-     * Try to use XShm-Extension
-     */
-    if ( !XShmQueryExtension( dpy ) ) {
-        shm_flag = false;
-        if ( config.verbose )
-            fprintf( stderr, "Xserver does not support XShm extension.\n" );
-    } else {
-        shm_flag = true;
-        if ( config.verbose && shm_flag )
-            fprintf( stderr, "using XShm extension.\n" );
     }
 
     return true;
@@ -4954,8 +4912,11 @@ void x11_get_event( void )
 
                 case ButtonRelease:
                     first_key = 0;
-                    if ( xev.xbutton.button == Button1 )
-                        x11_release_all_keys();
+                    if ( xev.xbutton.button == Button1 ) {
+                        release_all_keys();
+                        for ( int b = FIRST_HPKEY; b <= LAST_HPKEY; b++ )
+                            draw_button( b );
+                    }
 
                     if ( xev.xbutton.button == Button2 ) {
                         if ( last_button >= 0 ) {
@@ -4968,7 +4929,9 @@ void x11_get_event( void )
 
                 case FocusOut:
                     first_key = 0;
-                    x11_release_all_keys();
+                    release_all_keys();
+                    for ( int b = FIRST_HPKEY; b <= LAST_HPKEY; b++ )
+                        draw_button( b );
                     break;
 
                 case MappingNotify:
@@ -5282,6 +5245,7 @@ void x11_draw_annunc( void )
 
 void init_x11_ui( int argc, char** argv )
 {
+    bool status;
     if ( config.verbose )
         fprintf( stderr, "UI is x11\n" );
 
@@ -5294,7 +5258,7 @@ void init_x11_ui( int argc, char** argv )
     ui_adjust_contrast = x11_adjust_contrast;
     ui_draw_annunc = x11_draw_annunc;
 
-    // save_options( argc, argv );
+    // save_options
     {
         int l;
 
@@ -5316,10 +5280,36 @@ void init_x11_ui( int argc, char** argv )
         }
     }
 
-    if ( !init_display() )
-        exit( 1 );
+    // init_display
+    /*
+     * open the display
+     */
+    dpy = XOpenDisplay( NULL );
+    if ( dpy == ( Display* )0 ) {
+        if ( config.verbose )
+            fprintf( stderr, "can\'t open display\n" );
 
-    if ( !create_window( saved_argc, saved_argv ) ) {
+        exit( 1 );
+    }
+
+    /*
+     * Get the default screen
+     */
+    screen = DefaultScreen( dpy );
+
+    /*
+     * Try to use XShm-Extension
+     */
+    shm_flag = XShmQueryExtension( dpy );
+    if ( config.verbose ) {
+        if ( shm_flag )
+            fprintf( stderr, "Xserver does not support XShm extension.\n" );
+        else
+            fprintf( stderr, "using XShm extension.\n" );
+    }
+
+    status = create_window( saved_argc, saved_argv );
+    if ( !status ) {
         fprintf( stderr, "can\'t create window\n" );
         exit( 1 );
     }
