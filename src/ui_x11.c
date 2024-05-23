@@ -3592,7 +3592,7 @@ static void refresh_icon( void )
     }
     XSetFillStyle( dpy, gc, FillSolid );
     if ( iconW )
-      DrawIcon();
+        DrawIcon();
 }
 
 int handle_xerror( Display* _the_dpy, XErrorEvent* _eev )
@@ -4146,44 +4146,6 @@ static inline void _DrawDisp( void )
     x11_draw_annunc();
 }
 
-// Used in init_x11_ui()
-static void save_options( int argc, char** argv )
-{
-    int l;
-
-    saved_argc = argc;
-    saved_argv = ( char** )malloc( ( argc + 2 ) * sizeof( char* ) );
-    if ( saved_argv == ( char** )0 ) {
-        fprintf( stderr, "malloc failed in save_options(), exit\n" );
-        exit( 1 );
-    }
-    saved_argv[ argc ] = ( char* )0;
-    while ( argc-- ) {
-        l = strlen( argv[ argc ] ) + 1;
-        saved_argv[ argc ] = ( char* )malloc( l );
-        if ( saved_argv[ argc ] == ( char* )0 ) {
-            fprintf( stderr, "malloc failed in save_options(), exit\n" );
-            exit( 1 );
-        }
-        memcpy( saved_argv[ argc ], argv[ argc ], l );
-    }
-}
-
-static void save_command_line( void )
-{
-    int wm_argc = 0;
-    char** wm_argv = ( char** )malloc( ( saved_argc + 5 ) * sizeof( char* ) );
-
-    if ( wm_argv == ( char** )0 ) {
-        if ( config.verbose )
-            fprintf( stderr, "warning: malloc failed in wm_save_yourself.\n" );
-        XSetCommand( dpy, mainW, saved_argv, saved_argc );
-        return;
-    }
-
-    XSetCommand( dpy, mainW, wm_argv, wm_argc );
-}
-
 static void decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
 {
     if ( buflen == 1 )
@@ -4515,15 +4477,15 @@ static inline bool InitDisplay( void )
     /*
      * Try to use XShm-Extension
      */
-    shm_flag = true;
-
     if ( !XShmQueryExtension( dpy ) ) {
         shm_flag = false;
         if ( config.verbose )
             fprintf( stderr, "Xserver does not support XShm extension.\n" );
+    } else {
+        shm_flag = true;
+        if ( config.verbose && shm_flag )
+            fprintf( stderr, "using XShm extension.\n" );
     }
-    if ( config.verbose && shm_flag )
-        fprintf( stderr, "using XShm extension.\n" );
 
     return true;
 }
@@ -5041,8 +5003,20 @@ void x11_get_event( void )
                     if ( cm->message_type == wm_protocols ) {
                         if ( cm->data.l[ 0 ] == ( long )wm_delete_window )
                             please_exit = true;
-                        if ( cm->data.l[ 0 ] == ( long )wm_save_yourself )
-                            save_command_line();
+                        if ( cm->data.l[ 0 ] == ( long )wm_save_yourself ) {
+                            /* save_command_line(); */
+                            int wm_argc = 0;
+                            char** wm_argv = ( char** )malloc( ( saved_argc + 5 ) * sizeof( char* ) );
+
+                            if ( wm_argv == ( char** )0 ) {
+                                if ( config.verbose )
+                                    fprintf( stderr, "warning: malloc failed in wm_save_yourself.\n" );
+                                XSetCommand( dpy, mainW, saved_argv, saved_argc );
+                                return;
+                            }
+
+                            XSetCommand( dpy, mainW, wm_argv, wm_argc );
+                        }
                     }
                     break;
 
@@ -5330,7 +5304,27 @@ void init_x11_ui( int argc, char** argv )
     ui_adjust_contrast = x11_adjust_contrast;
     ui_draw_annunc = x11_draw_annunc;
 
-    save_options( argc, argv );
+    // save_options( argc, argv );
+    {
+        int l;
+
+        saved_argc = argc;
+        saved_argv = ( char** )malloc( ( argc + 2 ) * sizeof( char* ) );
+        if ( saved_argv == ( char** )0 ) {
+            fprintf( stderr, "malloc failed in save_options(), exit\n" );
+            exit( 1 );
+        }
+        saved_argv[ argc ] = ( char* )0;
+        while ( argc-- ) {
+            l = strlen( argv[ argc ] ) + 1;
+            saved_argv[ argc ] = ( char* )malloc( l );
+            if ( saved_argv[ argc ] == ( char* )0 ) {
+                fprintf( stderr, "malloc failed in save_options(), exit\n" );
+                exit( 1 );
+            }
+            memcpy( saved_argv[ argc ], argv[ argc ], l );
+        }
+    }
 
     if ( !InitDisplay() )
         exit( 1 );
