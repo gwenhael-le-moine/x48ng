@@ -153,14 +153,11 @@ void ui_init_LCD( void ) { memset( lcd_nibbles_buffer, 0xf0, sizeof( lcd_nibbles
 
 int SmallTextWidth( const char* string, unsigned int length )
 {
-    unsigned int i;
-    int w;
-
-    w = 0;
-    for ( i = 0; i < length; i++ ) {
-        if ( small_font[ ( int )string[ i ] ].h != 0 ) {
+    int w = 0;
+    for ( unsigned int i = 0; i < length; i++ ) {
+        if ( small_font[ ( int )string[ i ] ].h != 0 )
             w += small_font[ ( int )string[ i ] ].w + 1;
-        } else {
+        else {
             if ( config.verbose )
                 fprintf( stderr, "Unknown small letter 0x00%x\n", ( int )string[ i ] );
             w += 5;
@@ -175,16 +172,16 @@ void start_UI( int argc, char** argv )
     ui_init_LCD();
 
     switch ( config.frontend_type ) {
-#if ( defined( HAS_X11 ) )
+#if defined( HAS_X11 )
         case FRONTEND_X11:
         default:
             init_x11_ui( argc, argv );
             break;
 #endif
 
-#if ( defined( HAS_SDL ) )
+#if defined( HAS_SDL )
         case FRONTEND_SDL:
-#  if ( !defined( HAS_X11 ) )
+#  if !defined( HAS_X11 )
         default:
 #  endif
             init_sdl_ui( argc, argv );
@@ -205,16 +202,16 @@ void ui_stop( void )
     ui_init_LCD();
 
     switch ( config.frontend_type ) {
-#if ( defined( HAS_X11 ) )
+#if defined( HAS_X11 )
         case FRONTEND_X11:
         default:
             x11_ui_stop();
             break;
 #endif
 
-#if ( defined( HAS_SDL ) )
+#if defined( HAS_SDL )
         case FRONTEND_SDL:
-#  if ( !defined( HAS_X11 ) )
+#  if !defined( HAS_X11 )
         default:
 #  endif
             sdl_ui_stop();

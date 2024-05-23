@@ -3476,7 +3476,7 @@ static inline void _DrawMore( unsigned int offset_y, x11_keypad_t* local_keypad 
     }
 }
 
-void DrawKeypad( x11_keypad_t* local_keypad )
+static void DrawKeypad( x11_keypad_t* local_keypad )
 {
     XCopyArea( dpy, local_keypad->pixmap, mainW, gc, 0, 0, local_keypad->width, local_keypad->height, 0, 0 );
 }
@@ -3557,7 +3557,7 @@ static inline void _CreateIcon( void )
     XSetFillStyle( dpy, gc, FillSolid );
 }
 
-void refresh_icon( void )
+static void refresh_icon( void )
 {
     int icon_state = ( ( display.on && !( ( ANN_IO & saturn.annunc ) == ANN_IO ) ) ||
                        ( display.on && !( ( ANN_ALPHA & saturn.annunc ) == ANN_ALPHA ) ) );
@@ -3768,7 +3768,7 @@ shm_error:
     }
 }
 
-void _DrawSerialDevices( char* wire, char* ir )
+static void _DrawSerialDevices( char* wire, char* ir )
 {
     char name[ 128 ];
     int x, y, w, h;
@@ -3828,7 +3828,7 @@ static inline void _CreateBackground( int width, int height, int w_top, int h_to
     XFillRectangle( dpy, local_keypad->pixmap, gc, 0, 0, width, height );
 }
 
-bool CreateWindows( int argc, char** argv )
+static bool CreateWindows( int argc, char** argv )
 {
     XSizeHints hint, ih;
     XWMHints wmh;
@@ -4119,7 +4119,7 @@ bool CreateWindows( int argc, char** argv )
     return true;
 }
 
-void key_event( int b, XEvent* xev )
+static void key_event( int b, XEvent* xev )
 {
     if ( xev->type == KeyPress )
         press_key( b );
@@ -4129,7 +4129,7 @@ void key_event( int b, XEvent* xev )
     DrawButton( b );
 }
 
-void refresh_display( void )
+static void refresh_display( void )
 {
     if ( !shm_flag )
         return;
@@ -4145,7 +4145,7 @@ void refresh_display( void )
     lcd.display_update = 0;
 }
 
-void redraw_annunc( void )
+static void redraw_annunc( void )
 {
     last_annunc_state = -1;
     x11_draw_annunc();
@@ -4167,7 +4167,8 @@ static inline void _DrawDisp( void )
     redraw_annunc();
 }
 
-void save_options( int argc, char** argv )
+// Used in init_x11_ui()
+static void save_options( int argc, char** argv )
 {
     int l;
 
@@ -4189,7 +4190,7 @@ void save_options( int argc, char** argv )
     }
 }
 
-void save_command_line( void )
+static void save_command_line( void )
 {
     int wm_argc = 0;
     char** wm_argv = ( char** )malloc( ( saved_argc + 5 ) * sizeof( char* ) );
@@ -4204,7 +4205,7 @@ void save_command_line( void )
     XSetCommand( dpy, mainW, wm_argv, wm_argc );
 }
 
-void decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
+static void decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
 {
     if ( buflen == 1 )
         switch ( buf[ 0 ] ) {
@@ -4478,9 +4479,7 @@ void decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
     }
 }
 
-void x11_ui_stop( void ) { XCloseDisplay( dpy ); }
-
-void x11_release_all_keys( void )
+static void x11_release_all_keys( void )
 {
     release_all_keys();
     for ( int b = FIRST_HPKEY; b <= LAST_HPKEY; b++ )
@@ -4515,6 +4514,7 @@ static inline void draw_row( long addr, int row )
         draw_nibble( i, row, read_nibble( addr + i ) );
 }
 
+// Used in init_x11_ui()
 static inline bool InitDisplay( void )
 {
     /*
@@ -4552,6 +4552,8 @@ static inline bool InitDisplay( void )
 /**********/
 /* public */
 /**********/
+
+void x11_ui_stop( void ) { XCloseDisplay( dpy ); }
 
 void x11_get_event( void )
 {
