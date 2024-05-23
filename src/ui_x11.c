@@ -2520,7 +2520,7 @@ static inline XFontStruct* load_x11_font( Display* local_dpy, char* fontname )
     return f;
 }
 
-static inline void AllocColors( void )
+static inline void colors_setup( void )
 {
     int c, error, dyn;
     int r_shift = 0, g_shift = 0, b_shift = 0;
@@ -2672,7 +2672,7 @@ static inline void AllocColors( void )
     dynamic_color = dyn;
 }
 
-static inline void __WriteButtonText( Display* the_dpy, Drawable d, GC the_gc, int x, int y, const char* string, unsigned int length )
+static inline void __write_text( Display* the_dpy, Drawable d, GC the_gc, int x, int y, const char* string, unsigned int length )
 {
     Pixmap pix;
 
@@ -2688,7 +2688,7 @@ static inline void __WriteButtonText( Display* the_dpy, Drawable d, GC the_gc, i
     }
 }
 
-static inline void __CreateButton( int i, int off_x, int off_y, XFontStruct* f_small, XFontStruct* f_med, XFontStruct* f_big )
+static inline void __create_button( int i, int off_x, int off_y, XFontStruct* f_small, XFontStruct* f_med, XFontStruct* f_big )
 {
     int x, y;
     XSetWindowAttributes xswa;
@@ -2956,7 +2956,7 @@ static inline void __CreateButton( int i, int off_x, int off_y, XFontStruct* f_s
     XDrawPoint( dpy, buttons[ i ].down, gc, ( int )( buttons[ i ].w - 3 ), ( int )( buttons[ i ].h - 3 ) );
 }
 
-static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* local_keypad )
+static inline void __create_keypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* local_keypad )
 {
     int i, x, y;
     int wl, wr, ws;
@@ -2973,7 +2973,7 @@ static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, 
      * draw the character labels
      */
     for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
-        __CreateButton( i, offset_x, offset_y, f_small, f_med, f_big );
+        __create_button( i, offset_x, offset_y, f_small, f_med, f_big );
 
         pixel = ( i < HPKEY_MTH ) ? COLOR( DISP_PAD ) : COLOR( PAD );
 
@@ -2989,7 +2989,7 @@ static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, 
                 y = offset_y + buttons[ i ].y + buttons[ i ].h - 2;
             }
 
-            __WriteButtonText( dpy, local_keypad->pixmap, gc, x, y, buttons[ i ].letter, 1 );
+            __write_text( dpy, local_keypad->pixmap, gc, x, y, buttons[ i ].letter, 1 );
         }
 
         /*
@@ -3002,7 +3002,7 @@ static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, 
             x = offset_x + buttons[ i ].x + ( 1 + buttons[ i ].w - SmallTextWidth( buttons[ i ].sub, strlen( buttons[ i ].sub ) ) ) / 2;
             y = offset_y + buttons[ i ].y + buttons[ i ].h + small_ascent + 2;
 
-            __WriteButtonText( dpy, local_keypad->pixmap, gc, x, y, buttons[ i ].sub, strlen( buttons[ i ].sub ) );
+            __write_text( dpy, local_keypad->pixmap, gc, x, y, buttons[ i ].sub, strlen( buttons[ i ].sub ) );
         }
 
         /*
@@ -3033,7 +3033,7 @@ static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, 
                 x = ( pw + 1 - SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) ) ) / 2;
                 y = ( opt_gx ) ? 14 : 9;
 
-                __WriteButtonText( dpy, pix, gc, x, y, buttons[ i ].left, strlen( buttons[ i ].left ) );
+                __write_text( dpy, pix, gc, x, y, buttons[ i ].left, strlen( buttons[ i ].left ) );
 
                 XSetForeground( dpy, gc, pixel );
 
@@ -3072,7 +3072,7 @@ static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, 
 
                 y = offset_y + buttons[ i ].y - small_descent;
 
-                __WriteButtonText( dpy, local_keypad->pixmap, gc, x, y, buttons[ i ].left, strlen( buttons[ i ].left ) );
+                __write_text( dpy, local_keypad->pixmap, gc, x, y, buttons[ i ].left, strlen( buttons[ i ].left ) );
             }
         }
 
@@ -3104,7 +3104,7 @@ static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, 
                 x = ( pw + 1 - SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) ) ) / 2;
                 y = ( opt_gx ) ? 14 : 8;
 
-                __WriteButtonText( dpy, pix, gc, x, y, buttons[ i ].right, strlen( buttons[ i ].right ) );
+                __write_text( dpy, pix, gc, x, y, buttons[ i ].right, strlen( buttons[ i ].right ) );
 
                 XSetForeground( dpy, gc, pixel );
 
@@ -3143,7 +3143,7 @@ static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, 
 
                 y = offset_y + buttons[ i ].y - small_descent;
 
-                __WriteButtonText( dpy, local_keypad->pixmap, gc, x, y, buttons[ i ].right, strlen( buttons[ i ].right ) );
+                __write_text( dpy, local_keypad->pixmap, gc, x, y, buttons[ i ].right, strlen( buttons[ i ].right ) );
             }
         }
     }
@@ -3172,7 +3172,7 @@ static inline void _CreateKeypad( unsigned int offset_y, unsigned int offset_x, 
     }
 }
 
-static inline void _CreateBezel( x11_keypad_t* local_keypad )
+static inline void _draw_bezel_LCD( x11_keypad_t* local_keypad )
 {
     int i;
 
@@ -3254,7 +3254,7 @@ static inline void _CreateBezel( x11_keypad_t* local_keypad )
                ( int )( DISPLAY_OFFSET_X + DISPLAY_WIDTH ), ( int )( DISPLAY_OFFSET_Y + DISPLAY_HEIGHT - 2 ) );
 }
 
-static inline void _DrawMore( unsigned int offset_y, x11_keypad_t* local_keypad )
+static inline void _draw_bezel( unsigned int offset_y, x11_keypad_t* local_keypad )
 {
     Pixmap pix;
     int cut = 0;
@@ -3476,20 +3476,15 @@ static inline void _DrawMore( unsigned int offset_y, x11_keypad_t* local_keypad 
     }
 }
 
-static void DrawKeypad( x11_keypad_t* local_keypad )
+static void draw_keypad( void ) { XCopyArea( dpy, keypad.pixmap, mainW, gc, 0, 0, keypad.width, keypad.height, 0, 0 ); }
+
+static inline void draw_button( int i )
 {
-    XCopyArea( dpy, local_keypad->pixmap, mainW, gc, 0, 0, local_keypad->width, local_keypad->height, 0, 0 );
+    XCopyArea( dpy, ( keyboard[ i ].pressed ) ? buttons[ i ].down : buttons[ i ].map, buttons[ i ].xwin, gc, 0, 0, buttons[ i ].w,
+               buttons[ i ].h, 0, 0 );
 }
 
-static inline void DrawButton( int i )
-{
-    if ( keyboard[ i ].pressed )
-        XCopyArea( dpy, buttons[ i ].down, buttons[ i ].xwin, gc, 0, 0, buttons[ i ].w, buttons[ i ].h, 0, 0 );
-    else
-        XCopyArea( dpy, buttons[ i ].map, buttons[ i ].xwin, gc, 0, 0, buttons[ i ].w, buttons[ i ].h, 0, 0 );
-}
-
-static inline void _CreateIcon( void )
+static inline void _create_icon( void )
 {
     XSetWindowAttributes xswa;
     XWindowAttributes xwa;
@@ -3557,7 +3552,7 @@ static inline void _CreateIcon( void )
     XSetFillStyle( dpy, gc, FillSolid );
 }
 
-static inline void DrawIcon( void ) { XCopyArea( dpy, icon_pix, iconW, gc, 0, 0, hp48_icon_width, hp48_icon_height, 0, 0 ); }
+static inline void draw_icon( void ) { XCopyArea( dpy, icon_pix, iconW, gc, 0, 0, hp48_icon_width, hp48_icon_height, 0, 0 ); }
 
 static void refresh_icon( void )
 {
@@ -3592,7 +3587,7 @@ static void refresh_icon( void )
     }
     XSetFillStyle( dpy, gc, FillSolid );
     if ( iconW )
-        DrawIcon();
+        draw_icon();
 }
 
 int handle_xerror( Display* _the_dpy, XErrorEvent* _eev )
@@ -3602,7 +3597,7 @@ int handle_xerror( Display* _the_dpy, XErrorEvent* _eev )
     return 0;
 }
 
-static inline void _CreateLCDWindow( void )
+static inline void _create_LCD( void )
 {
     XSetWindowAttributes xswa;
     XGCValues val;
@@ -3768,7 +3763,7 @@ shm_error:
     }
 }
 
-static void _DrawSerialDevices( char* wire, char* ir )
+static void _write_serial_devices( char* wire, char* ir )
 {
     char name[ 128 ];
     int x, y, w, h;
@@ -3809,13 +3804,13 @@ static void _DrawSerialDevices( char* wire, char* ir )
     y = conn_top;
     XCopyArea( dpy, pix, keypad.pixmap, gc, 0, 0, w, h, x, y ); /* write pix onto keypad pixmap */
 
-    DrawKeypad( &keypad );
+    draw_keypad();
 
     XFreePixmap( dpy, pix );
     XFreeFont( dpy, finfo );
 }
 
-static inline void _CreateBackground( int width, int height, int w_top, int h_top, x11_keypad_t* local_keypad )
+static inline void _draw_background( int width, int height, int w_top, int h_top, x11_keypad_t* local_keypad )
 {
     XSetBackground( dpy, gc, COLOR( PAD ) );
     XSetForeground( dpy, gc, COLOR( PAD ) );
@@ -3828,7 +3823,7 @@ static inline void _CreateBackground( int width, int height, int w_top, int h_to
     XFillRectangle( dpy, local_keypad->pixmap, gc, 0, 0, width, height );
 }
 
-static bool CreateWindows( int argc, char** argv )
+static bool create_window( int argc, char** argv )
 {
     XSizeHints hint, ih;
     XWMHints wmh;
@@ -3945,7 +3940,7 @@ static bool CreateWindows( int argc, char** argv )
     /*
      * allocate my colors
      */
-    AllocColors();
+    colors_setup();
 
     /*
      * parse -geometry ...
@@ -4067,12 +4062,12 @@ static bool CreateWindows( int argc, char** argv )
     /*
      * create the icon pixmap for desktops
      */
-    _CreateIcon();
+    _create_icon();
 
     /*
      * create the display
      */
-    _CreateLCDWindow();
+    _create_LCD();
 
     /*
      * create the keypad
@@ -4088,15 +4083,15 @@ static bool CreateWindows( int argc, char** argv )
     int cut;
     if ( config.netbook ) {
         cut = buttons[ HPKEY_MTH ].y - ( small_ascent + small_descent + 6 + 4 );
-        _CreateBackground( width / 2, height, width, height, &keypad );
-        _CreateKeypad( -cut, KEYBOARD_OFFSET_X, &keypad );
+        _draw_background( width / 2, height, width, height, &keypad );
+        __create_keypad( -cut, KEYBOARD_OFFSET_X, &keypad );
     } else {
         cut = buttons[ HPKEY_MTH ].y + KEYBOARD_OFFSET_Y - 19;
-        _CreateBackground( width, cut, width, height, &keypad );
-        _CreateKeypad( KEYBOARD_OFFSET_Y, KEYBOARD_OFFSET_X, &keypad );
+        _draw_background( width, cut, width, height, &keypad );
+        __create_keypad( KEYBOARD_OFFSET_Y, KEYBOARD_OFFSET_X, &keypad );
     }
-    _DrawMore( KEYBOARD_OFFSET_Y, &keypad );
-    _CreateBezel( &keypad );
+    _draw_bezel( KEYBOARD_OFFSET_Y, &keypad );
+    _draw_bezel_LCD( &keypad );
 
     /*
      * map the window
@@ -4104,12 +4099,12 @@ static bool CreateWindows( int argc, char** argv )
     XMapWindow( dpy, mainW );
     XMapSubwindows( dpy, mainW );
 
-    // DrawKeypad( &keypad );
+    // draw_keypad();
     for ( int b = FIRST_HPKEY; b <= LAST_HPKEY; b++ )
-        DrawButton( b );
-    DrawIcon();
+        draw_button( b );
+    draw_icon();
 
-    _DrawSerialDevices( wire_name, ir_name );
+    _write_serial_devices( wire_name, ir_name );
 
     if ( shm_flag ) {
         XSetForeground( dpy, lcd.gc, COLOR( PIXEL ) );
@@ -4126,24 +4121,7 @@ static void key_event( int b, XEvent* xev )
     else
         release_key( b );
 
-    DrawButton( b );
-}
-
-static inline void _DrawDisp( void )
-{
-    if ( shm_flag ) {
-        XShmPutImage( dpy, lcd.win, lcd.gc, lcd.disp_image, 2 * display.offset, 0, 5, 20, 262,
-                      ( unsigned int )( ( 2 * display.lines ) + 2 ), 0 );
-        if ( display.lines < 63 )
-            XShmPutImage( dpy, lcd.win, lcd.gc, lcd.menu_image, 0, ( 2 * display.lines ) - 110, 5, 22 + ( 2 * display.lines ), 262,
-                          ( unsigned int )( 126 - ( 2 * display.lines ) ), 0 );
-
-        lcd.display_update = 0;
-    } else
-        x11_update_LCD();
-
-    last_annunc_state = -1;
-    x11_draw_annunc();
+    draw_button( b );
 }
 
 static void decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
@@ -4424,7 +4402,7 @@ static void x11_release_all_keys( void )
 {
     release_all_keys();
     for ( int b = FIRST_HPKEY; b <= LAST_HPKEY; b++ )
-        DrawButton( b );
+        draw_button( b );
 }
 
 static inline void draw_nibble( int c, int r, int val )
@@ -4456,7 +4434,7 @@ static inline void draw_row( long addr, int row )
 }
 
 // Used in init_x11_ui()
-static inline bool InitDisplay( void )
+static inline bool init_display( void )
 {
     /*
      * open the display
@@ -4557,16 +4535,28 @@ void x11_get_event( void )
 
                 case Expose:
                     if ( xev.xexpose.count == 0 ) {
-                        if ( xev.xexpose.window == lcd.win )
-                            _DrawDisp();
-                        else if ( xev.xexpose.window == iconW )
-                            DrawIcon();
+                        if ( xev.xexpose.window == lcd.win ) {
+                            if ( shm_flag ) {
+                                XShmPutImage( dpy, lcd.win, lcd.gc, lcd.disp_image, 2 * display.offset, 0, 5, 20, 262,
+                                              ( unsigned int )( ( 2 * display.lines ) + 2 ), 0 );
+                                if ( display.lines < 63 )
+                                    XShmPutImage( dpy, lcd.win, lcd.gc, lcd.menu_image, 0, ( 2 * display.lines ) - 110, 5,
+                                                  22 + ( 2 * display.lines ), 262, ( unsigned int )( 126 - ( 2 * display.lines ) ), 0 );
+
+                                lcd.display_update = 0;
+                            } else
+                                x11_update_LCD();
+
+                            last_annunc_state = -1;
+                            x11_draw_annunc();
+                        } else if ( xev.xexpose.window == iconW )
+                            draw_icon();
                         else if ( xev.xexpose.window == mainW )
-                            DrawKeypad( &keypad );
+                            draw_keypad();
                         else
                             for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
                                 if ( xev.xexpose.window == buttons[ i ].xwin ) {
-                                    DrawButton( i );
+                                    draw_button( i );
                                     break;
                                 }
                             }
@@ -4947,13 +4937,13 @@ void x11_get_event( void )
                                     if ( keyboard[ i ].pressed ) {
                                         if ( xev.xbutton.button == Button3 ) {
                                             release_key( i );
-                                            DrawButton( i );
+                                            draw_button( i );
                                         }
                                     } else {
                                         last_button = i;
                                         press_key( i );
                                         first_key = 1;
-                                        DrawButton( i );
+                                        draw_button( i );
                                     }
                                     break;
                                 }
@@ -4970,7 +4960,7 @@ void x11_get_event( void )
                     if ( xev.xbutton.button == Button2 ) {
                         if ( last_button >= 0 ) {
                             release_key( last_button );
-                            DrawButton( last_button );
+                            draw_button( last_button );
                         }
                         last_button = -1;
                     }
@@ -5088,7 +5078,7 @@ void x11_adjust_contrast( void )
         colors[ PIXEL ].g = g;
         colors[ PIXEL ].b = b;
 
-        AllocColors();
+        colors_setup();
 
         XSetForeground( dpy, lcd.gc, COLOR( PIXEL ) );
 
@@ -5326,10 +5316,10 @@ void init_x11_ui( int argc, char** argv )
         }
     }
 
-    if ( !InitDisplay() )
+    if ( !init_display() )
         exit( 1 );
 
-    if ( !CreateWindows( saved_argc, saved_argv ) ) {
+    if ( !create_window( saved_argc, saved_argv ) ) {
         fprintf( stderr, "can\'t create window\n" );
         exit( 1 );
     }
