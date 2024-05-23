@@ -4129,28 +4129,6 @@ static void key_event( int b, XEvent* xev )
     DrawButton( b );
 }
 
-static void refresh_display( void )
-{
-    if ( !shm_flag )
-        return;
-
-    if ( lcd.display_update & UPDATE_DISP )
-        XShmPutImage( dpy, lcd.win, lcd.gc, lcd.disp_image, 2 * display.offset, 0, 5, 20, 262,
-                      ( unsigned int )( ( 2 * display.lines ) + 2 ), 0 );
-
-    if ( ( ( 2 * display.lines ) < 126 ) && ( lcd.display_update & UPDATE_MENU ) )
-        XShmPutImage( dpy, lcd.win, lcd.gc, lcd.menu_image, 0, 0, 5, ( int )( ( 2 * display.lines ) + 22 ), 262,
-                      ( unsigned int )( 126 - ( 2 * display.lines ) ), 0 );
-
-    lcd.display_update = 0;
-}
-
-static void redraw_annunc( void )
-{
-    last_annunc_state = -1;
-    x11_draw_annunc();
-}
-
 static inline void _DrawDisp( void )
 {
     if ( shm_flag ) {
@@ -4164,7 +4142,8 @@ static inline void _DrawDisp( void )
     } else
         x11_update_LCD();
 
-    redraw_annunc();
+    last_annunc_state = -1;
+    x11_draw_annunc();
 }
 
 // Used in init_x11_ui()
@@ -4640,7 +4619,8 @@ void x11_get_event( void )
                     if ( !mapped ) {
                         mapped = true;
                         x11_update_LCD();
-                        redraw_annunc();
+                        last_annunc_state = -1;
+                        x11_draw_annunc();
                     }
                     break;
 
@@ -5079,6 +5059,22 @@ void x11_get_event( void )
         first_key++;
 }
 
+static void x11_refresh_LCD( void )
+{
+    if ( !shm_flag )
+        return;
+
+    if ( lcd.display_update & UPDATE_DISP )
+        XShmPutImage( dpy, lcd.win, lcd.gc, lcd.disp_image, 2 * display.offset, 0, 5, 20, 262,
+                      ( unsigned int )( ( 2 * display.lines ) + 2 ), 0 );
+
+    if ( ( ( 2 * display.lines ) < 126 ) && ( lcd.display_update & UPDATE_MENU ) )
+        XShmPutImage( dpy, lcd.win, lcd.gc, lcd.menu_image, 0, 0, 5, ( int )( ( 2 * display.lines ) + 22 ), 262,
+                      ( unsigned int )( 126 - ( 2 * display.lines ) ), 0 );
+
+    lcd.display_update = 0;
+}
+
 void x11_adjust_contrast( void )
 {
     int gray = 0;
@@ -5111,16 +5107,24 @@ void x11_adjust_contrast( void )
             colors[ PIXEL ].xcolor.blue = b << 8;
             break;
     }
+
     if ( direct_color ) {
         colors[ PIXEL ].gray_rgb = gray;
         colors[ PIXEL ].r = r;
         colors[ PIXEL ].g = g;
         colors[ PIXEL ].b = b;
+
         AllocColors();
+
         XSetForeground( dpy, lcd.gc, COLOR( PIXEL ) );
+
         lcd.display_update = UPDATE_DISP | UPDATE_MENU;
-        refresh_display();
-        redraw_annunc();
+
+        x11_refresh_LCD();
+
+        last_annunc_state = -1;
+        x11_draw_annunc();
+
         last_icon_state = -1;
         refresh_icon();
     } else if ( dynamic_color ) {
@@ -5133,19 +5137,18 @@ void x11_adjust_contrast( void )
         } else {
             XFreeColors( dpy, cmap, &old, 1, 0 );
             XSetForeground( dpy, lcd.gc, COLOR( PIXEL ) );
+
             lcd.display_update = UPDATE_DISP | UPDATE_MENU;
-            refresh_display();
-            redraw_annunc();
+
+            x11_refresh_LCD();
+
+            last_annunc_state = -1;
+            x11_draw_annunc();
+
             last_icon_state = -1;
             refresh_icon();
         }
     }
-}
-
-void x11_refresh_LCD( void )
-{
-    if ( lcd.display_update )
-        refresh_display();
 }
 
 void x11_update_LCD( void )
