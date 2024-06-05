@@ -128,40 +128,6 @@ typedef struct device_t {
 
     bool t1_touched;
     bool t2_touched;
-
-    /* bool disp_test_touched;     /\* unused *\/ */
-
-    /* bool crc_touched;           /\* unused *\/ */
-
-    /* bool power_status_touched;  /\* unused *\/ */
-    /* bool power_ctrl_touched;    /\* unused *\/ */
-
-    /* bool mode_touched;          /\* unused *\/ */
-
-    /* bool card_ctrl_touched;     /\* unused *\/ */
-    /* bool card_status_touched;   /\* unused *\/ */
-
-    /* bool tcs_touched;           /\* unused *\/ */
-    /* bool rcs_touched;           /\* unused *\/ */
-
-    /* bool sreq_touched;          /\* unused *\/ */
-
-    /* bool ir_ctrl_touched;       /\* unused *\/ */
-
-    /* bool base_off_touched;      /\* unused *\/ */
-
-    /* bool lcr_touched;           /\* unused *\/ */
-    /* bool lbr_touched;           /\* unused *\/ */
-
-    /* bool scratch_touched;       /\* unused *\/ */
-    /* bool base_nibble_touched;   /\* unused *\/ */
-
-    /* bool unknown_touched;       /\* unused *\/ */
-
-    /* bool t1_ctrl_touched;       /\* unused *\/ */
-    /* bool t2_ctrl_touched;       /\* unused *\/ */
-
-    /* bool unknown2_touched;      /\* unused *\/ */
 } device_t;
 
 typedef struct hpkey_t {
@@ -295,26 +261,21 @@ typedef struct saturn_t {
     unsigned char* port2;
 } saturn_t;
 
-extern bool sigalarm_triggered;
-
-extern char* wire_name;
-extern char* ir_name;
-
-extern display_t display;
-
+/*****************/
+/* emu_emulate.c */
+/*****************/
 extern saturn_t saturn;
-
-extern hpkey_t keyboard[ NB_KEYS ];
-
-extern int annunciators_bits[ NB_ANNUNCIATORS ];
-
+extern bool sigalarm_triggered;
 extern long sched_timer1;
 extern long sched_timer2;
 extern unsigned long t1_i_per_tick;
 extern unsigned long t2_i_per_tick;
 
-extern bool please_exit;
-extern bool save_before_exit;
+/****************/
+/* emu_serial.c */
+/****************/
+extern char* wire_name;
+extern char* ir_name;
 
 /***************/
 /* emu_timer.c */
@@ -324,12 +285,19 @@ extern void reset_timer( int timer );
 /**************/
 /* emu_init.c */
 /**************/
+extern hpkey_t keyboard[ NB_KEYS ];
+extern int annunciators_bits[ NB_ANNUNCIATORS ];
+extern bool please_exit;
+extern bool save_before_exit;
+
 extern void start_emulator( void ); /* used in main.c */
 extern void exit_emulator( void );  /* used in debugger.c; ui_*.c */
 
 /********************/
 /* emu_memory.c */
 /********************/
+extern display_t display;
+
 extern int ( *read_nibble )( long addr ); /* used in debugger.c; ui_*.c */
 
 /******************/
