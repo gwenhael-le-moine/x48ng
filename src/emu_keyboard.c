@@ -13,19 +13,19 @@ void press_key( int hpkey )
 
     int code = keyboard[ hpkey ].code;
     if ( code == 0x8000 ) { /* HPKEY_ON */
-        for ( int i = 0; i < 9; i++ )
-            saturn.keybuf.rows[ i ] |= 0x8000;
+        for ( int i = 0; i < KEYS_BUFFER_SIZE; i++ )
+            saturn.keybuf[ i ] |= 0x8000;
         do_kbd_int();
     } else {
         int r = code >> 4;
         int c = 1 << ( code & 0xf );
-        if ( ( saturn.keybuf.rows[ r ] & c ) == 0 ) {
+        if ( ( saturn.keybuf[ r ] & c ) == 0 ) {
             if ( saturn.kbd_ien )
                 do_kbd_int();
-            if ( ( saturn.keybuf.rows[ r ] & c ) )
+            if ( ( saturn.keybuf[ r ] & c ) )
                 fprintf( stderr, "bug\n" );
 
-            saturn.keybuf.rows[ r ] |= c;
+            saturn.keybuf[ r ] |= c;
         }
     }
 }
@@ -40,12 +40,12 @@ void release_key( int hpkey )
 
     int code = keyboard[ hpkey ].code;
     if ( code == 0x8000 ) {
-        for ( int i = 0; i < 9; i++ )
-            saturn.keybuf.rows[ i ] &= ~0x8000;
+        for ( int i = 0; i < KEYS_BUFFER_SIZE; i++ )
+            saturn.keybuf[ i ] &= ~0x8000;
     } else {
         int r = code >> 4;
         int c = 1 << ( code & 0xf );
-        saturn.keybuf.rows[ r ] &= ~c;
+        saturn.keybuf[ r ] &= ~c;
     }
 }
 

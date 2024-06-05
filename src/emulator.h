@@ -162,9 +162,7 @@ typedef struct device_t {
     /* bool unknown2_touched;      /\* unused *\/ */
 } device_t;
 
-typedef struct keystate_t {
-    short rows[ 9 ];
-} keystate_t;
+#define KEYS_BUFFER_SIZE 9
 
 typedef struct hpkey_t {
     int code;
@@ -220,7 +218,7 @@ typedef struct saturn_t {
     word_20 RSTK[ NB_RSTK ];
     short rstkp;
 
-    keystate_t keybuf;
+    short keybuf[ KEYS_BUFFER_SIZE ];
 
     unsigned char interruptable; /* bool */
     unsigned char int_pending;   /* bool */

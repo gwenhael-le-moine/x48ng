@@ -115,9 +115,9 @@ static inline void do_in( void )
         out |= saturn.OUT[ i ];
     }
 
-    for ( i = 0; i < 9; i++ )
+    for ( i = 0; i < KEYS_BUFFER_SIZE; i++ )
         if ( out & ( 1 << i ) )
-            in |= saturn.keybuf.rows[ i ];
+            in |= saturn.keybuf[ i ];
 
     // PATCH
     // http://svn.berlios.de/wsvn/x48?op=comp&compare[]=/trunk@12&compare[]=/trunk@13
@@ -128,9 +128,9 @@ static inline void do_in( void )
            ( out & 0x40 && in & 0x7 ) ||  // right, left & down
            ( out & 0x80 && in & 0x2 ) ) ) // up arrows
     {
-        for ( i = 0; i < 9; i++ )
+        for ( i = 0; i < KEYS_BUFFER_SIZE; i++ )
             if ( out & ( 1 << i ) )
-                saturn.keybuf.rows[ i ] = 0;
+                saturn.keybuf[ i ] = 0;
         first_press = true;
     } else
         first_press = false;
@@ -246,8 +246,8 @@ static inline void do_reset_interrupt_system( void )
 {
     saturn.kbd_ien = true;
     int gen_intr = 0;
-    for ( int i = 0; i < 9; i++ ) {
-        if ( saturn.keybuf.rows[ i ] != 0 ) {
+    for ( int i = 0; i < KEYS_BUFFER_SIZE; i++ ) {
+        if ( saturn.keybuf[ i ] != 0 ) {
             gen_intr = 1;
             break;
         }

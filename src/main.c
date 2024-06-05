@@ -135,8 +135,8 @@ int main( int argc, char** argv )
                 break;
             }
 
-            for ( int i = 0; i < ( int )( sizeof( saturn.keybuf.rows ) / sizeof( saturn.keybuf.rows[ 0 ] ) ); i++ ) {
-                if ( saturn.keybuf.rows[ i ] || config.throttle ) {
+            for ( int i = 0; i < KEYS_BUFFER_SIZE; i++ )
+                if ( saturn.keybuf[ i ] || config.throttle ) {
                     /* Throttling speed if needed */
                     gettimeofday( &tv, &tz );
                     gettimeofday( &tv2, &tz );

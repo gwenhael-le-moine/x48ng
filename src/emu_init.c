@@ -283,8 +283,8 @@ int read_state_file( FILE* fp )
             return 0;
     if ( !read_16( fp, ( word_16* )&saturn.rstkp ) )
         return 0;
-    for ( i = 0; i < 9; i++ )
-        if ( !read_16( fp, ( word_16* )&saturn.keybuf.rows[ i ] ) )
+    for ( i = 0; i < KEYS_BUFFER_SIZE; i++ )
+        if ( !read_16( fp, ( word_16* )&saturn.keybuf[ i ] ) )
             return 0;
     if ( !read_8( fp, &saturn.interruptable ) )
         return 0;
@@ -816,8 +816,8 @@ int write_state_file( char* filename )
     for ( i = 0; i < NB_RSTK; i++ )
         write_32( fp, &saturn.RSTK[ i ] );
     write_16( fp, ( word_16* )&saturn.rstkp );
-    for ( i = 0; i < 9; i++ )
-        write_16( fp, ( word_16* )&saturn.keybuf.rows[ i ] );
+    for ( i = 0; i < KEYS_BUFFER_SIZE; i++ )
+        write_16( fp, ( word_16* )&saturn.keybuf[ i ] );
     write_8( fp, &saturn.interruptable );
     write_8( fp, &saturn.int_pending );
     write_8( fp, &saturn.kbd_ien );
