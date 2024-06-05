@@ -20,8 +20,9 @@ extern long port2_mask;
 
 extern bool adj_time_pending;
 
-extern int start_fields[ 19 ];
-extern int end_fields[ 19 ];
+#define NB_FIELDS 19
+extern int start_fields[ NB_FIELDS ];
+extern int end_fields[ NB_FIELDS ];
 
 /***************/
 /* emu_timer.c */
