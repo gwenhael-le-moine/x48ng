@@ -86,6 +86,8 @@
 #define LAST_HPKEY HPKEY_PLUS
 #define NB_KEYS ( LAST_HPKEY + 1 )
 
+#define KEYS_BUFFER_SIZE 9
+
 // Annunciators
 #define NB_ANNUNCIATORS 6
 
@@ -161,8 +163,6 @@ typedef struct device_t {
 
     /* bool unknown2_touched;      /\* unused *\/ */
 } device_t;
-
-#define KEYS_BUFFER_SIZE 9
 
 typedef struct hpkey_t {
     int code;
