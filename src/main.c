@@ -109,18 +109,17 @@ int main( int argc, char** argv )
     /************************/
     /* Start emulation loop */
     /************************/
+    struct timeval tv;
+    struct timeval tv2;
+    struct timezone tz;
     do {
-        struct timeval tv;
-        struct timeval tv2;
-        struct timezone tz;
-
         reset_timer( T1_TIMER );
         reset_timer( RUN_TIMER );
         reset_timer( IDLE_TIMER );
 
         set_accesstime();
-        start_timer( T1_TIMER );
 
+        start_timer( T1_TIMER );
         start_timer( RUN_TIMER );
 
         sched_timer1 = t1_i_per_tick = saturn.t1_tick;
@@ -131,7 +130,7 @@ int main( int argc, char** argv )
         do {
             step_instruction();
 
-            if ( ( config.useDebugger ) && ( exec_flags & EXEC_BKPT ) && ( check_breakpoint( BP_EXEC, saturn.PC ) ) ) {
+            if ( config.useDebugger && ( exec_flags & EXEC_BKPT ) && check_breakpoint( BP_EXEC, saturn.PC ) ) {
                 enter_debugger |= BREAKPOINT_HIT;
                 break;
             }
@@ -141,19 +140,16 @@ int main( int argc, char** argv )
                     /* Throttling speed if needed */
                     gettimeofday( &tv, &tz );
                     gettimeofday( &tv2, &tz );
+
                     while ( ( tv.tv_sec == tv2.tv_sec ) && ( ( tv.tv_usec - tv2.tv_usec ) < 2 ) )
                         gettimeofday( &tv, &tz );
 
-                    tv2.tv_usec = tv.tv_usec;
-                    tv2.tv_sec = tv.tv_sec;
                     break;
                 }
-            }
 
-            if ( schedule_event < 0 ) {
-                fprintf( stderr, "bug" );
+            if ( schedule_event < 0 ) // "bug"
                 schedule_event = 0;
-            }
+
             if ( schedule_event-- <= 0 )
                 schedule();
         } while ( !please_exit && !enter_debugger );
