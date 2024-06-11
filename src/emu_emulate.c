@@ -36,10 +36,10 @@
 
 #define NB_SAMPLES 10
 
+extern long nibble_masks[ 16 ];
+
 saturn_t saturn;
 device_t device;
-
-extern long nibble_masks[ 16 ];
 
 bool sigalarm_triggered = false;
 bool device_check = false;
@@ -57,8 +57,6 @@ unsigned long t2_i_per_tick;
 
 static bool interrupt_called = false;
 static bool first_press = true; // PATCH
-
-static short conf_tab[] = { 1, 2, 2, 2, 2, 0 };
 
 static unsigned long instructions = 0;
 
@@ -131,46 +129,7 @@ static inline void do_in( void )
     }
 }
 
-static inline void clear_program_stat( int n ) { saturn.PSTAT[ n ] = 0; }
-
-static inline void set_program_stat( int n ) { saturn.PSTAT[ n ] = 1; }
-
 static inline int get_program_stat( int n ) { return saturn.PSTAT[ n ]; }
-
-static inline void register_to_status( unsigned char* r )
-{
-    for ( int i = 0; i < 12; i++ )
-        saturn.PSTAT[ i ] = ( r[ i / 4 ] >> ( i % 4 ) ) & 1;
-}
-
-static inline void status_to_register( unsigned char* r )
-{
-    for ( int i = 0; i < 12; i++ )
-        if ( saturn.PSTAT[ i ] )
-            r[ i / 4 ] |= 1 << ( i % 4 );
-        else
-            r[ i / 4 ] &= ~( 1 << ( i % 4 ) ) & 0xf;
-}
-
-static inline void swap_register_status( unsigned char* r )
-{
-    int tmp;
-
-    for ( int i = 0; i < 12; i++ ) {
-        tmp = saturn.PSTAT[ i ];
-        saturn.PSTAT[ i ] = ( r[ i / 4 ] >> ( i % 4 ) ) & 1;
-        if ( tmp )
-            r[ i / 4 ] |= 1 << ( i % 4 );
-        else
-            r[ i / 4 ] &= ~( 1 << ( i % 4 ) ) & 0xf;
-    }
-}
-
-static inline void clear_status( void )
-{
-    for ( int i = 0; i < 12; i++ )
-        saturn.PSTAT[ i ] = 0;
-}
 
 static inline void set_register_nibble( unsigned char* reg, int n, unsigned char val ) { reg[ n ] = val; }
 
@@ -181,37 +140,6 @@ static inline void set_register_bit( unsigned char* reg, int n ) { reg[ n / 4 ] 
 static inline void clear_register_bit( unsigned char* reg, int n ) { reg[ n / 4 ] &= ~( 1 << ( n % 4 ) ); }
 
 static inline int get_register_bit( unsigned char* reg, int n ) { return ( ( int )( reg[ n / 4 ] & ( 1 << ( n % 4 ) ) ) > 0 ) ? 1 : 0; }
-
-static inline void do_reset( void )
-{
-    for ( int i = 0; i < 6; i++ ) {
-        saturn.mem_cntl[ i ].unconfigured = conf_tab[ i ];
-
-        saturn.mem_cntl[ i ].config[ 0 ] = 0x0;
-        saturn.mem_cntl[ i ].config[ 1 ] = 0x0;
-    }
-}
-
-static inline void do_inton( void ) { saturn.kbd_ien = true; }
-
-static inline void do_intoff( void ) { saturn.kbd_ien = false; }
-
-static inline void do_return_interupt( void )
-{
-    if ( saturn.int_pending ) {
-        saturn.int_pending = false;
-        saturn.interruptable = false;
-        saturn.PC = 0xf;
-    } else {
-        saturn.PC = pop_return_addr();
-        saturn.interruptable = true;
-
-        if ( adj_time_pending ) {
-            schedule_event = 0;
-            sched_adjtime = 0;
-        }
-    }
-}
 
 void do_interupt( void )
 {
@@ -228,227 +156,6 @@ void do_kbd_int( void )
     do_interupt();
     if ( !saturn.interruptable )
         saturn.int_pending = true;
-}
-
-static inline void do_reset_interrupt_system( void )
-{
-    saturn.kbd_ien = true;
-    int gen_intr = 0;
-    for ( int i = 0; i < KEYS_BUFFER_SIZE; i++ ) {
-        if ( saturn.keybuf[ i ] != 0 ) {
-            gen_intr = 1;
-            break;
-        }
-    }
-    if ( gen_intr )
-        do_kbd_int();
-}
-
-static inline void do_unconfigure( void )
-{
-    int i;
-    unsigned int conf = 0;
-
-    for ( i = 4; i >= 0; i-- ) {
-        conf <<= 4;
-        conf |= saturn.C[ i ];
-    }
-
-    for ( i = 0; i < 6; i++ ) {
-        if ( saturn.mem_cntl[ i ].config[ 0 ] == conf ) {
-            saturn.mem_cntl[ i ].unconfigured = conf_tab[ i ];
-
-            saturn.mem_cntl[ i ].config[ 0 ] = 0x0;
-            saturn.mem_cntl[ i ].config[ 1 ] = 0x0;
-            break;
-        }
-    }
-}
-
-static inline void do_configure( void )
-{
-    int i;
-    unsigned long conf = 0;
-
-    for ( i = 4; i >= 0; i-- ) {
-        conf <<= 4;
-        conf |= saturn.C[ i ];
-    }
-
-    for ( i = 0; i < 6; i++ ) {
-        if ( saturn.mem_cntl[ i ].unconfigured ) {
-            saturn.mem_cntl[ i ].unconfigured--;
-            saturn.mem_cntl[ i ].config[ saturn.mem_cntl[ i ].unconfigured ] = conf;
-            break;
-        }
-    }
-}
-
-static inline void get_identification( void )
-{
-    int i;
-    static int chip_id[] = { 0, 0, 0, 0, 0x05, 0xf6, 0x07, 0xf8, 0x01, 0xf2, 0, 0 };
-
-    for ( i = 0; i < 6; i++ )
-        if ( saturn.mem_cntl[ i ].unconfigured )
-            break;
-
-    int id = ( i < 6 ) ? chip_id[ 2 * i + ( 2 - saturn.mem_cntl[ i ].unconfigured ) ] : 0;
-
-    for ( i = 0; i < 3; i++ ) {
-        saturn.C[ i ] = id & 0x0f;
-        id >>= 4;
-    }
-}
-
-static inline void do_shutdown( void )
-{
-    if ( config.inhibit_shutdown )
-        return;
-
-    /***************************/
-    /* hpemu/src/opcodes.c:367 */
-    /***************************/
-    /* static void op807( byte* opc ) // SHUTDN */
-    /* { */
-    /*     // TODO: Fix SHUTDN */
-    /*     if ( !cpu.in[ 0 ] && !cpu.in[ 1 ] && !cpu.in[ 3 ] ) { */
-    /*         cpu.shutdown = true; */
-    /*     } */
-    /*     cpu.pc += 3; */
-    /*     cpu.cycles += 5; */
-    /* } */
-
-    /***********************************/
-    /* saturn_bertolotti/src/cpu.c:364 */
-    /***********************************/
-    /* static void ExecSHUTDN( void ) */
-    /* { */
-    /*     debug1( DEBUG_C_TRACE, CPU_I_CALLED, "SHUTDN" ); */
-
-    /* #ifdef CPU_SPIN_SHUTDN */
-    /*     /\* If the CPU_SPIN_SHUTDN symbol is defined, the CPU module implements */
-    /*        SHUTDN as a spin loop; the program counter is reset to the starting */
-    /*        nibble of the SHUTDN opcode. */
-    /*     *\/ */
-    /*     cpu_status.PC -= 3; */
-    /* #endif */
-
-    /*     /\* Set shutdown flag *\/ */
-    /*     cpu_status.shutdn = 1; */
-
-    /* #ifndef CPU_SPIN_SHUTDN */
-    /*     /\* If the CPU_SPIN_SHUTDN symbol is not defined, the CPU module implements */
-    /*        SHUTDN signalling the condition CPU_I_SHUTDN */
-    /*     *\/ */
-    /*     ChfCondition CPU_I_SHUTDN, CHF_INFO ChfEnd; */
-    /*     ChfSignal(); */
-    /* #endif */
-    /* } */
-
-    if ( device.display_touched ) {
-        device.display_touched = 0;
-        ui_refresh_LCD();
-    }
-
-    stop_timer( RUN_TIMER );
-    start_timer( IDLE_TIMER );
-
-    if ( is_zero_register( saturn.OUT, OUT_FIELD ) ) {
-        saturn.interruptable = true;
-        saturn.int_pending = false;
-    }
-
-    bool wake = in_debugger;
-    t1_t2_ticks ticks;
-
-    do {
-        pause();
-
-        if ( sigalarm_triggered ) {
-            sigalarm_triggered = false;
-
-            ui_refresh_LCD();
-
-            ticks = get_t1_t2();
-            if ( saturn.t2_ctrl & 0x01 )
-                saturn.timer2 = ticks.t2_ticks;
-
-            saturn.timer1 = set_t1 - ticks.t1_ticks;
-            set_t1 = ticks.t1_ticks;
-
-            interrupt_called = false;
-            ui_get_event();
-            if ( interrupt_called )
-                wake = true;
-
-            if ( saturn.timer2 <= 0 ) {
-                if ( saturn.t2_ctrl & 0x04 )
-                    wake = true;
-
-                if ( saturn.t2_ctrl & 0x02 ) {
-                    wake = true;
-                    saturn.t2_ctrl |= 0x08;
-                    do_interupt();
-                }
-            }
-
-            if ( saturn.timer1 <= 0 ) {
-                saturn.timer1 &= 0x0f;
-                if ( saturn.t1_ctrl & 0x04 )
-                    wake = true;
-
-                if ( saturn.t1_ctrl & 0x03 ) {
-                    wake = true;
-                    saturn.t1_ctrl |= 0x08;
-                    do_interupt();
-                }
-            }
-
-            if ( !wake ) {
-                interrupt_called = false;
-                receive_char();
-                if ( interrupt_called )
-                    wake = true;
-            }
-        }
-
-        if ( enter_debugger )
-            wake = true;
-    } while ( !wake );
-
-    stop_timer( IDLE_TIMER );
-    start_timer( RUN_TIMER );
-}
-
-static inline void clear_hardware_stat( int op )
-{
-    if ( op & 1 )
-        saturn.XM = 0;
-    if ( op & 2 )
-        saturn.SB = 0;
-    if ( op & 4 )
-        saturn.SR = 0;
-    if ( op & 8 )
-        saturn.MP = 0;
-}
-
-static inline int is_zero_hardware_stat( int op )
-{
-    if ( op & 1 )
-        if ( saturn.XM != 0 )
-            return 0;
-    if ( op & 2 )
-        if ( saturn.SB != 0 )
-            return 0;
-    if ( op & 4 )
-        if ( saturn.SR != 0 )
-            return 0;
-    if ( op & 8 )
-        if ( saturn.MP != 0 )
-            return 0;
-
-    return 1;
 }
 
 static inline void load_constant( unsigned char* reg, int n, long addr )
@@ -544,6 +251,8 @@ void load_addr( word_20* dat, long addr, int n )
 void step_instruction( void )
 {
     word_20 jumpmasks[] = { 0xffffffff, 0xfffffff0, 0xffffff00, 0xfffff000, 0xffff0000, 0xfff00000, 0xff000000, 0xf0000000 };
+    short conf_tab[] = { 1, 2, 2, 2, 2, 0 };
+
     bool illegal_instruction = false;
     int op0, op1, op2, op3, op4, op5;
 
@@ -585,19 +294,36 @@ void step_instruction( void )
                     break;
                 case 8: /* CLRST */
                     saturn.PC += 2;
-                    clear_status();
+                    for ( int i = 0; i < 12; i++ )
+                        saturn.PSTAT[ i ] = 0;
                     break;
                 case 9: /* C=ST */
                     saturn.PC += 2;
-                    status_to_register( saturn.C );
+                    for ( int i = 0; i < 12; i++ )
+                        if ( saturn.PSTAT[ i ] )
+                            saturn.C[ i / 4 ] |= 1 << ( i % 4 );
+                        else
+                            saturn.C[ i / 4 ] &= ~( 1 << ( i % 4 ) ) & 0xf;
                     break;
                 case 0xa: /* ST=C */
                     saturn.PC += 2;
-                    register_to_status( saturn.C );
+                    for ( int i = 0; i < 12; i++ )
+                        saturn.PSTAT[ i ] = ( saturn.C[ i / 4 ] >> ( i % 4 ) ) & 1;
                     break;
                 case 0xb: /* CSTEX */
                     saturn.PC += 2;
-                    swap_register_status( saturn.C );
+                    {
+                        int tmp;
+
+                        for ( int i = 0; i < 12; i++ ) {
+                            tmp = saturn.PSTAT[ i ];
+                            saturn.PSTAT[ i ] = ( saturn.C[ i / 4 ] >> ( i % 4 ) ) & 1;
+                            if ( tmp )
+                                saturn.C[ i / 4 ] |= 1 << ( i % 4 );
+                            else
+                                saturn.C[ i / 4 ] &= ~( 1 << ( i % 4 ) ) & 0xf;
+                        }
+                    }
                     break;
                 case 0xc: /* P=P+1 */
                     saturn.PC += 2;
@@ -692,7 +418,19 @@ void step_instruction( void )
                     }
                     break;
                 case 0xf: /* RTI */
-                    do_return_interupt();
+                    if ( saturn.int_pending ) {
+                        saturn.int_pending = false;
+                        saturn.interruptable = false;
+                        saturn.PC = 0xf;
+                    } else {
+                        saturn.PC = pop_return_addr();
+                        saturn.interruptable = true;
+
+                        if ( adj_time_pending ) {
+                            schedule_event = 0;
+                            sched_adjtime = 0;
+                        }
+                    }
                     break;
                 default:
                     illegal_instruction = true;
@@ -1190,31 +928,207 @@ void step_instruction( void )
                             break;
                         case 4: /* UNCNFG */
                             saturn.PC += 3;
-                            do_unconfigure();
+                            {
+                                int i;
+                                unsigned int conf = 0;
+
+                                for ( i = 4; i >= 0; i-- ) {
+                                    conf <<= 4;
+                                    conf |= saturn.C[ i ];
+                                }
+
+                                for ( i = 0; i < 6; i++ ) {
+                                    if ( saturn.mem_cntl[ i ].config[ 0 ] == conf ) {
+                                        saturn.mem_cntl[ i ].unconfigured = conf_tab[ i ];
+
+                                        saturn.mem_cntl[ i ].config[ 0 ] = 0x0;
+                                        saturn.mem_cntl[ i ].config[ 1 ] = 0x0;
+                                        break;
+                                    }
+                                }
+                            }
                             break;
                         case 5: /* CONFIG */
                             saturn.PC += 3;
-                            do_configure();
+                            {
+                                int i;
+                                unsigned long conf = 0;
+
+                                for ( i = 4; i >= 0; i-- ) {
+                                    conf <<= 4;
+                                    conf |= saturn.C[ i ];
+                                }
+
+                                for ( i = 0; i < 6; i++ ) {
+                                    if ( saturn.mem_cntl[ i ].unconfigured ) {
+                                        saturn.mem_cntl[ i ].unconfigured--;
+                                        saturn.mem_cntl[ i ].config[ saturn.mem_cntl[ i ].unconfigured ] = conf;
+                                        break;
+                                    }
+                                }
+                            }
                             break;
                         case 6: /* C=ID */
                             saturn.PC += 3;
-                            get_identification();
+                            {
+                                int i;
+                                static int chip_id[] = { 0, 0, 0, 0, 0x05, 0xf6, 0x07, 0xf8, 0x01, 0xf2, 0, 0 };
+
+                                for ( i = 0; i < 6; i++ )
+                                    if ( saturn.mem_cntl[ i ].unconfigured )
+                                        break;
+
+                                int id = ( i < 6 ) ? chip_id[ 2 * i + ( 2 - saturn.mem_cntl[ i ].unconfigured ) ] : 0;
+
+                                for ( i = 0; i < 3; i++ ) {
+                                    saturn.C[ i ] = id & 0x0f;
+                                    id >>= 4;
+                                }
+                            }
                             break;
                         case 7: /* SHUTDN */
                             saturn.PC += 3;
-                            do_shutdown();
+                            if ( config.inhibit_shutdown )
+                                break;
+
+                            /***************************/
+                            /* hpemu/src/opcodes.c:367 */
+                            /***************************/
+                            /* static void op807( byte* opc ) // SHUTDN */
+                            /* { */
+                            /*     // TODO: Fix SHUTDN */
+                            /*     if ( !cpu.in[ 0 ] && !cpu.in[ 1 ] && !cpu.in[ 3 ] ) { */
+                            /*         cpu.shutdown = true; */
+                            /*     } */
+                            /*     cpu.pc += 3; */
+                            /*     cpu.cycles += 5; */
+                            /* } */
+
+                            /***********************************/
+                            /* saturn_bertolotti/src/cpu.c:364 */
+                            /***********************************/
+                            /* static void ExecSHUTDN( void ) */
+                            /* { */
+                            /*     debug1( DEBUG_C_TRACE, CPU_I_CALLED, "SHUTDN" ); */
+
+                            /* #ifdef CPU_SPIN_SHUTDN */
+                            /*     /\* If the CPU_SPIN_SHUTDN symbol is defined, the CPU module implements */
+                            /*        SHUTDN as a spin loop; the program counter is reset to the starting */
+                            /*        nibble of the SHUTDN opcode. */
+                            /*     *\/ */
+                            /*     cpu_status.PC -= 3; */
+                            /* #endif */
+
+                            /*     /\* Set shutdown flag *\/ */
+                            /*     cpu_status.shutdn = 1; */
+
+                            /* #ifndef CPU_SPIN_SHUTDN */
+                            /*     /\* If the CPU_SPIN_SHUTDN symbol is not defined, the CPU module implements */
+                            /*        SHUTDN signalling the condition CPU_I_SHUTDN */
+                            /*     *\/ */
+                            /*     ChfCondition CPU_I_SHUTDN, CHF_INFO ChfEnd; */
+                            /*     ChfSignal(); */
+                            /* #endif */
+                            /* } */
+
+                            if ( device.display_touched ) {
+                                device.display_touched = 0;
+                                ui_refresh_LCD();
+                            }
+
+                            stop_timer( RUN_TIMER );
+                            start_timer( IDLE_TIMER );
+
+                            if ( is_zero_register( saturn.OUT, OUT_FIELD ) ) {
+                                saturn.interruptable = true;
+                                saturn.int_pending = false;
+                            }
+
+                            {
+                                bool wake = in_debugger;
+                                t1_t2_ticks ticks;
+
+                                do {
+                                    pause();
+
+                                    if ( sigalarm_triggered ) {
+                                        sigalarm_triggered = false;
+
+                                        ui_refresh_LCD();
+
+                                        ticks = get_t1_t2();
+                                        if ( saturn.t2_ctrl & 0x01 )
+                                            saturn.timer2 = ticks.t2_ticks;
+
+                                        saturn.timer1 = set_t1 - ticks.t1_ticks;
+                                        set_t1 = ticks.t1_ticks;
+
+                                        interrupt_called = false;
+                                        ui_get_event();
+                                        if ( interrupt_called )
+                                            wake = true;
+
+                                        if ( saturn.timer2 <= 0 ) {
+                                            if ( saturn.t2_ctrl & 0x04 )
+                                                wake = true;
+
+                                            if ( saturn.t2_ctrl & 0x02 ) {
+                                                wake = true;
+                                                saturn.t2_ctrl |= 0x08;
+                                                do_interupt();
+                                            }
+                                        }
+
+                                        if ( saturn.timer1 <= 0 ) {
+                                            saturn.timer1 &= 0x0f;
+                                            if ( saturn.t1_ctrl & 0x04 )
+                                                wake = true;
+
+                                            if ( saturn.t1_ctrl & 0x03 ) {
+                                                wake = true;
+                                                saturn.t1_ctrl |= 0x08;
+                                                do_interupt();
+                                            }
+                                        }
+
+                                        if ( !wake ) {
+                                            interrupt_called = false;
+                                            receive_char();
+                                            if ( interrupt_called )
+                                                wake = true;
+                                        }
+                                    }
+
+                                    if ( enter_debugger )
+                                        wake = true;
+                                } while ( !wake );
+
+                                stop_timer( IDLE_TIMER );
+                                start_timer( RUN_TIMER );
+                            }
                             break;
                         case 8:
                             op4 = read_nibble( saturn.PC + 3 );
                             switch ( op4 ) {
                                 case 0: /* INTON */
                                     saturn.PC += 4;
-                                    do_inton();
+                                    saturn.kbd_ien = true;
                                     break;
                                 case 1: /* RSI... */
                                     op5 = read_nibble( saturn.PC + 4 );
                                     saturn.PC += 5;
-                                    do_reset_interrupt_system();
+                                    {
+                                        saturn.kbd_ien = true;
+                                        int gen_intr = 0;
+                                        for ( int i = 0; i < KEYS_BUFFER_SIZE; i++ ) {
+                                            if ( saturn.keybuf[ i ] != 0 ) {
+                                                gen_intr = 1;
+                                                break;
+                                            }
+                                        }
+                                        if ( gen_intr )
+                                            do_kbd_int();
+                                    }
                                     break;
                                 case 2: /* LA... */
                                     op5 = read_nibble( saturn.PC + 4 );
@@ -1276,7 +1190,7 @@ void step_instruction( void )
                                     break;
                                 case 0xf: /* INTOFF */
                                     saturn.PC += 4;
-                                    do_intoff();
+                                    saturn.kbd_ien = false;
                                     break;
                                 default:
                                     illegal_instruction = true;
@@ -1288,7 +1202,12 @@ void step_instruction( void )
                             break;
                         case 0xa: /* RESET */
                             saturn.PC += 3;
-                            do_reset();
+                            for ( int i = 0; i < 6; i++ ) {
+                                saturn.mem_cntl[ i ].unconfigured = conf_tab[ i ];
+
+                                saturn.mem_cntl[ i ].config[ 0 ] = 0x0;
+                                saturn.mem_cntl[ i ].config[ 1 ] = 0x0;
+                            }
                             break;
                         case 0xb: /* BUSCC */
                             saturn.PC += 3;
@@ -1647,11 +1566,31 @@ void step_instruction( void )
                 case 2:
                     op2 = read_nibble( saturn.PC + 2 );
                     saturn.PC += 3;
-                    clear_hardware_stat( op2 );
+                    if ( op2 & 1 )
+                        saturn.XM = 0;
+                    if ( op2 & 2 )
+                        saturn.SB = 0;
+                    if ( op2 & 4 )
+                        saturn.SR = 0;
+                    if ( op2 & 8 )
+                        saturn.MP = 0;
                     break;
                 case 3:
                     op2 = read_nibble( saturn.PC + 2 );
-                    saturn.CARRY = is_zero_hardware_stat( op2 );
+                    saturn.CARRY = 1;
+                    if ( op2 & 1 )
+                        if ( saturn.XM != 0 )
+                            saturn.CARRY = 0;
+                    if ( op2 & 2 )
+                        if ( saturn.SB != 0 )
+                            saturn.CARRY = 0;
+                    if ( op2 & 4 )
+                        if ( saturn.SR != 0 )
+                            saturn.CARRY = 0;
+                    if ( op2 & 8 )
+                        if ( saturn.MP != 0 )
+                            saturn.CARRY = 0;
+
                     if ( saturn.CARRY ) {
                         saturn.PC += 3;
                         op3 = read_nibbles( saturn.PC, 2 );
@@ -1667,13 +1606,8 @@ void step_instruction( void )
                 case 4:
                 case 5:
                     op2 = read_nibble( saturn.PC + 2 );
-                    if ( op1 == 4 ) {
-                        saturn.PC += 3;
-                        clear_program_stat( op2 );
-                    } else {
-                        saturn.PC += 3;
-                        set_program_stat( op2 );
-                    }
+                    saturn.PC += 3;
+                    saturn.PSTAT[ op2 ] = ( op1 == 4 ) ? 0 : 1;
                     break;
                 case 6:
                 case 7:
