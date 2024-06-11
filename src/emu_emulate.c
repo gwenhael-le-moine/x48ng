@@ -48,8 +48,6 @@ int conf_bank2 = 0x00000;
 
 short conf_tab[] = { 1, 2, 2, 2, 2, 0 };
 
-static long jumpaddr;
-
 unsigned long instructions = 0;
 unsigned long old_instr = 0;
 
@@ -555,7 +553,7 @@ void load_addr( word_20* dat, long addr, int n )
     }
 }
 
-int decode_group_80( void )
+static inline int _step_instruction_group_80( void )
 {
     int t, op3, op4, op5, op6;
     unsigned char* REG;
@@ -657,27 +655,23 @@ int decode_group_80( void )
                         if ( op6 ) {
                             if ( op6 & 0x80 )
                                 op6 |= jumpmasks[ 2 ];
-                            jumpaddr = ( saturn.PC + op6 ) & 0xfffff;
-                            saturn.PC = jumpaddr;
-                        } else {
+                            saturn.PC = ( saturn.PC + op6 ) & 0xfffff;
+                        } else
                             saturn.PC = pop_return_addr();
-                        }
-                    } else {
+
+                    } else
                         saturn.PC += 7;
-                    }
                     return 0;
                 case 0xc: /* PC=(A) */
                     addr = dat_to_addr( saturn.A );
-                    jumpaddr = read_nibbles( addr, 5 );
-                    saturn.PC = jumpaddr;
+                    saturn.PC = read_nibbles( addr, 5 );
                     return 0;
                 case 0xd: /* BUSCD */
                     saturn.PC += 4;
                     return 0;
                 case 0xe: /* PC=(C) */
                     addr = dat_to_addr( saturn.C );
-                    jumpaddr = read_nibbles( addr, 5 );
-                    saturn.PC = jumpaddr;
+                    saturn.PC = read_nibbles( addr, 5 );
                     return 0;
                 case 0xf: /* INTOFF */
                     saturn.PC += 4;
@@ -724,7 +718,7 @@ int decode_group_80( void )
     }
 }
 
-int decode_group_1( void )
+static inline int _step_instruction_group_1( void )
 {
     int op, op2, op3, op4;
 
@@ -1122,7 +1116,7 @@ int decode_group_1( void )
     }
 }
 
-static inline int decode_8_thru_f( int op1 )
+static inline int _step_instruction_group_8_thru_f( int op1 )
 {
     int op2, op3, op4, op5, op6;
 
@@ -1131,7 +1125,7 @@ static inline int decode_8_thru_f( int op1 )
         case 8:
             switch ( op2 ) {
                 case 0:
-                    return decode_group_80();
+                    return _step_instruction_group_80();
                 case 1:
                     op3 = read_nibble( saturn.PC + 2 );
                     switch ( op3 ) {
@@ -1402,12 +1396,10 @@ static inline int decode_8_thru_f( int op1 )
                             op4 = read_nibble( saturn.PC + 3 );
                             switch ( op4 ) {
                                 case 2: /* PC=A */
-                                    jumpaddr = dat_to_addr( saturn.A );
-                                    saturn.PC = jumpaddr;
+                                    saturn.PC = dat_to_addr( saturn.A );
                                     return 0;
                                 case 3: /* PC=C */
-                                    jumpaddr = dat_to_addr( saturn.C );
-                                    saturn.PC = jumpaddr;
+                                    saturn.PC = dat_to_addr( saturn.C );
                                     return 0;
                                 case 4: /* A=PC */
                                     saturn.PC += 4;
@@ -1419,15 +1411,13 @@ static inline int decode_8_thru_f( int op1 )
                                     return 0;
                                 case 6: /* APCEX */
                                     saturn.PC += 4;
-                                    jumpaddr = dat_to_addr( saturn.A );
                                     addr_to_dat( saturn.PC, saturn.A );
-                                    saturn.PC = jumpaddr;
+                                    saturn.PC = dat_to_addr( saturn.A );
                                     return 0;
                                 case 7: /* CPCEX */
                                     saturn.PC += 4;
-                                    jumpaddr = dat_to_addr( saturn.C );
                                     addr_to_dat( saturn.PC, saturn.C );
-                                    saturn.PC = jumpaddr;
+                                    saturn.PC = dat_to_addr( saturn.C );
                                     return 0;
                                 default:
                                     return 1;
@@ -1465,14 +1455,12 @@ static inline int decode_8_thru_f( int op1 )
                         if ( op4 ) {
                             if ( op4 & 0x80 )
                                 op4 |= jumpmasks[ 2 ];
-                            jumpaddr = ( saturn.PC + op4 ) & 0xfffff;
-                            saturn.PC = jumpaddr;
-                        } else {
+                            saturn.PC = ( saturn.PC + op4 ) & 0xfffff;
+                        } else
                             saturn.PC = pop_return_addr();
-                        }
-                    } else {
+
+                    } else
                         saturn.PC += 5;
-                    }
                     return 0;
                 case 4:
                 case 5:
@@ -1498,14 +1486,11 @@ static inline int decode_8_thru_f( int op1 )
                         if ( op4 ) {
                             if ( op4 & 0x80 )
                                 op4 |= jumpmasks[ 2 ];
-                            jumpaddr = ( saturn.PC + op4 ) & 0xfffff;
-                            saturn.PC = jumpaddr;
-                        } else {
+                            saturn.PC = ( saturn.PC + op4 ) & 0xfffff;
+                        } else
                             saturn.PC = pop_return_addr();
-                        }
-                    } else {
+                    } else
                         saturn.PC += 5;
-                    }
                     return 0;
                 case 8:
                 case 9:
@@ -1520,14 +1505,11 @@ static inline int decode_8_thru_f( int op1 )
                         if ( op4 ) {
                             if ( op4 & 0x80 )
                                 op4 |= jumpmasks[ 2 ];
-                            jumpaddr = ( saturn.PC + op4 ) & 0xfffff;
-                            saturn.PC = jumpaddr;
-                        } else {
+                            saturn.PC = ( saturn.PC + op4 ) & 0xfffff;
+                        } else
                             saturn.PC = pop_return_addr();
-                        }
-                    } else {
+                    } else
                         saturn.PC += 5;
-                    }
                     return 0;
                 case 0xa:
                     op3 = read_nibble( saturn.PC + 2 );
@@ -1589,14 +1571,11 @@ static inline int decode_8_thru_f( int op1 )
                         if ( op4 ) {
                             if ( op4 & 0x80 )
                                 op4 |= jumpmasks[ 2 ];
-                            jumpaddr = ( saturn.PC + op4 ) & 0xfffff;
-                            saturn.PC = jumpaddr;
-                        } else {
+                            saturn.PC = ( saturn.PC + op4 ) & 0xfffff;
+                        } else
                             saturn.PC = pop_return_addr();
-                        }
-                    } else {
+                    } else
                         saturn.PC += 5;
-                    }
                     return 0;
                 case 0xb:
                     op3 = read_nibble( saturn.PC + 2 );
@@ -1658,40 +1637,33 @@ static inline int decode_8_thru_f( int op1 )
                         if ( op4 ) {
                             if ( op4 & 0x80 )
                                 op4 |= jumpmasks[ 2 ];
-                            jumpaddr = ( saturn.PC + op4 ) & 0xfffff;
-                            saturn.PC = jumpaddr;
-                        } else {
+                            saturn.PC = ( saturn.PC + op4 ) & 0xfffff;
+                        } else
                             saturn.PC = pop_return_addr();
-                        }
-                    } else {
+                    } else
                         saturn.PC += 5;
-                    }
                     return 0;
                 case 0xc:
                     op3 = read_nibbles( saturn.PC + 2, 4 );
                     if ( op3 & 0x8000 )
                         op3 |= jumpmasks[ 4 ];
-                    jumpaddr = ( saturn.PC + op3 + 2 ) & 0xfffff;
-                    saturn.PC = jumpaddr;
+                    saturn.PC = ( saturn.PC + op3 + 2 ) & 0xfffff;
                     return 0;
                 case 0xd:
                     op3 = read_nibbles( saturn.PC + 2, 5 );
-                    jumpaddr = op3;
-                    saturn.PC = jumpaddr;
+                    saturn.PC = op3;
                     return 0;
                 case 0xe:
                     op3 = read_nibbles( saturn.PC + 2, 4 );
                     if ( op3 & 0x8000 )
                         op3 |= jumpmasks[ 4 ];
-                    jumpaddr = ( saturn.PC + op3 + 6 ) & 0xfffff;
                     push_return_addr( saturn.PC + 6 );
-                    saturn.PC = jumpaddr;
+                    saturn.PC = ( saturn.PC + op3 + 6 ) & 0xfffff;
                     return 0;
                 case 0xf:
                     op3 = read_nibbles( saturn.PC + 2, 5 );
-                    jumpaddr = op3;
                     push_return_addr( saturn.PC + 7 );
-                    saturn.PC = jumpaddr;
+                    saturn.PC = op3;
                     return 0;
                 default:
                     return 1;
@@ -1812,8 +1784,7 @@ static inline int decode_8_thru_f( int op1 )
                 if ( op4 ) {
                     if ( op4 & 0x80 )
                         op4 |= jumpmasks[ 2 ];
-                    jumpaddr = ( saturn.PC + op4 ) & 0xfffff;
-                    saturn.PC = jumpaddr;
+                    saturn.PC = ( saturn.PC + op4 ) & 0xfffff;
                 } else {
                     saturn.PC = pop_return_addr();
                 }
@@ -2391,8 +2362,6 @@ int step_instruction( void )
     int op0, op1, op2, op3;
     int stop = 0;
 
-    jumpaddr = 0;
-
     op0 = read_nibble( saturn.PC );
     switch ( op0 ) {
         case 0:
@@ -2422,14 +2391,12 @@ int step_instruction( void )
                     saturn.hexmode = DEC;
                     break;
                 case 6: /* RSTK=C */
-                    jumpaddr = dat_to_addr( saturn.C );
-                    push_return_addr( jumpaddr );
+                    push_return_addr( dat_to_addr( saturn.C ) );
                     saturn.PC += 2;
                     break;
                 case 7: /* C=RSTK */
                     saturn.PC += 2;
-                    jumpaddr = pop_return_addr();
-                    addr_to_dat( jumpaddr, saturn.C );
+                    addr_to_dat( pop_return_addr(), saturn.C );
                     break;
                 case 8: /* CLRST */
                     saturn.PC += 2;
@@ -2549,7 +2516,7 @@ int step_instruction( void )
             }
             break;
         case 1:
-            stop = decode_group_1();
+            stop = _step_instruction_group_1();
             break;
         case 2:
             op2 = read_nibble( saturn.PC + 1 );
@@ -2565,17 +2532,17 @@ int step_instruction( void )
             op2 = read_nibbles( saturn.PC + 1, 2 );
             if ( op2 == 0x02 ) {
                 saturn.PC += 3;
-            } else if ( saturn.CARRY != 0 ) {
-                if ( op2 ) {
-                    if ( op2 & 0x80 )
-                        op2 |= jumpmasks[ 2 ];
-                    jumpaddr = ( saturn.PC + op2 + 1 ) & 0xfffff;
-                    saturn.PC = jumpaddr;
-                } else {
-                    saturn.PC = pop_return_addr();
-                }
             } else {
-                saturn.PC += 3;
+                if ( saturn.CARRY != 0 ) {
+                    if ( op2 ) {
+                        if ( op2 & 0x80 )
+                            op2 |= jumpmasks[ 2 ];
+
+                        saturn.PC = ( saturn.PC + op2 + 1 ) & 0xfffff;
+                    } else
+                        saturn.PC = pop_return_addr();
+                } else
+                    saturn.PC += 3;
             }
             break;
         case 5:
@@ -2584,43 +2551,40 @@ int step_instruction( void )
                 if ( op2 ) {
                     if ( op2 & 0x80 )
                         op2 |= jumpmasks[ 2 ];
-                    jumpaddr = ( saturn.PC + op2 + 1 ) & 0xfffff;
-                    saturn.PC = jumpaddr;
-                } else {
+                    saturn.PC = ( saturn.PC + op2 + 1 ) & 0xfffff;
+                } else
                     saturn.PC = pop_return_addr();
-                }
-            } else {
+            } else
                 saturn.PC += 3;
-            }
             break;
         case 6:
             op2 = read_nibbles( saturn.PC + 1, 3 );
-            if ( op2 == 0x003 ) {
+            if ( op2 == 0x003 )
                 saturn.PC += 4;
-            } else if ( op2 == 0x004 ) {
-                op3 = read_nibbles( saturn.PC + 4, 1 );
-                saturn.PC += 5;
-                if ( op3 != 0 ) {
-                    enter_debugger |= TRAP_INSTRUCTION;
-                    return 1;
+            else {
+                if ( op2 == 0x004 ) {
+                    op3 = read_nibbles( saturn.PC + 4, 1 );
+                    saturn.PC += 5;
+                    if ( op3 != 0 ) {
+                        enter_debugger |= TRAP_INSTRUCTION;
+                        return 1;
+                    }
+                } else {
+                    if ( op2 & 0x800 )
+                        op2 |= jumpmasks[ 3 ];
+                    saturn.PC = ( op2 + saturn.PC + 1 ) & 0xfffff;
                 }
-            } else {
-                if ( op2 & 0x800 )
-                    op2 |= jumpmasks[ 3 ];
-                jumpaddr = ( op2 + saturn.PC + 1 ) & 0xfffff;
-                saturn.PC = jumpaddr;
             }
             break;
         case 7:
             op2 = read_nibbles( saturn.PC + 1, 3 );
             if ( op2 & 0x800 )
                 op2 |= jumpmasks[ 3 ];
-            jumpaddr = ( op2 + saturn.PC + 4 ) & 0xfffff;
             push_return_addr( saturn.PC + 4 );
-            saturn.PC = jumpaddr;
+            saturn.PC = ( op2 + saturn.PC + 4 ) & 0xfffff;
             break;
         default:
-            stop = decode_8_thru_f( op0 );
+            stop = _step_instruction_group_8_thru_f( op0 );
             break;
     }
     instructions++;
