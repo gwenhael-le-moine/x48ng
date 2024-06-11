@@ -702,7 +702,6 @@ void step_instruction( void )
                             break;
                         default:
                             stop = true;
-                            break;
                     }
                     break;
                 case 0xf: /* RTI */
@@ -710,7 +709,6 @@ void step_instruction( void )
                     break;
                 default:
                     stop = true;
-                    break;
             }
             break;
         case 1:
@@ -1181,7 +1179,6 @@ void step_instruction( void )
             op1 = read_nibble( saturn.PC + 1 );
             switch ( op1 ) {
                 case 0:
-                    /* stop = _step_instruction_group_80(); */
                     op3 = read_nibble( saturn.PC + 2 );
                     switch ( op3 ) {
                         case 0: /* OUT=CS */
