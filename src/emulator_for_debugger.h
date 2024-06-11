@@ -39,7 +39,7 @@ extern long read_nibbles( long addr, int len ); /* used in debugger.c */
 /* emu_emulate.c */
 /*****************/
 extern void load_addr( word_20* dat, long addr, int n ); /* used in debugger.c */
-extern int step_instruction( void );                     /* used in debugger.c */
+extern void step_instruction( void );                    /* used in debugger.c */
 extern void schedule( void );                            /* used in debugger.c */
 
 #endif /* !_EMULATOR_FOR_DEBUGGER_H */
