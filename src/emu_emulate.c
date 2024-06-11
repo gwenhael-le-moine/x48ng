@@ -293,7 +293,7 @@ static inline void do_configure( void )
     }
 }
 
-static inline int get_identification( void )
+static inline void get_identification( void )
 {
     int i;
     static int chip_id[] = { 0, 0, 0, 0, 0x05, 0xf6, 0x07, 0xf8, 0x01, 0xf2, 0, 0 };
@@ -308,8 +308,6 @@ static inline int get_identification( void )
         saturn.C[ i ] = id & 0x0f;
         id >>= 4;
     }
-
-    return 0;
 }
 
 static inline void do_shutdown( void )
@@ -554,11 +552,8 @@ void load_addr( word_20* dat, long addr, int n )
 
 void step_instruction( void )
 {
-    int op0, op1, op2, op3, op4, op5, op6;
-    bool stop = false;
-    int t, opX;
-    unsigned char* REG;
-    long addr;
+    bool illegal_instruction = false;
+    int op0, op1, op2, op3, op4, op5;
 
     op0 = read_nibble( saturn.PC );
     switch ( op0 ) {
@@ -701,14 +696,14 @@ void step_instruction( void )
                             or_register( saturn.C, saturn.C, saturn.D, op2 );
                             break;
                         default:
-                            stop = true;
+                            illegal_instruction = true;
                     }
                     break;
                 case 0xf: /* RTI */
                     do_return_interupt();
                     break;
                 default:
-                    stop = true;
+                    illegal_instruction = true;
             }
             break;
         case 1:
@@ -764,7 +759,7 @@ void step_instruction( void )
                             copy_register( saturn.R4, saturn.C, W_FIELD );
                             break;
                         default:
-                            stop = true;
+                            illegal_instruction = true;
                     }
                     break;
                 case 1:
@@ -817,7 +812,7 @@ void step_instruction( void )
                             copy_register( saturn.C, saturn.R4, W_FIELD );
                             break;
                         default:
-                            stop = true;
+                            illegal_instruction = true;
                     }
                     break;
                 case 2:
@@ -870,7 +865,7 @@ void step_instruction( void )
                             exchange_register( saturn.C, saturn.R4, W_FIELD );
                             break;
                         default:
-                            stop = true;
+                            illegal_instruction = true;
                     }
                     break;
                 case 3:
@@ -941,47 +936,49 @@ void step_instruction( void )
                             exchange_reg( saturn.C, &saturn.D1, IN_FIELD );
                             break;
                         default:
-                            stop = true;
+                            illegal_instruction = true;
                     }
                     break;
                 case 4:
                     op3 = read_nibble( saturn.PC + 2 );
-                    opX = op3 < 8 ? 0xf : 6;
-                    switch ( op3 & 7 ) {
-                        case 0: /* DAT0=A */
-                            saturn.PC += 3;
-                            store( saturn.D0, saturn.A, opX );
-                            break;
-                        case 1: /* DAT1=A */
-                            saturn.PC += 3;
-                            store( saturn.D1, saturn.A, opX );
-                            break;
-                        case 2: /* A=DAT0 */
-                            saturn.PC += 3;
-                            recall( saturn.A, saturn.D0, opX );
-                            break;
-                        case 3: /* A=DAT1 */
-                            saturn.PC += 3;
-                            recall( saturn.A, saturn.D1, opX );
-                            break;
-                        case 4: /* DAT0=C */
-                            saturn.PC += 3;
-                            store( saturn.D0, saturn.C, opX );
-                            break;
-                        case 5: /* DAT1=C */
-                            saturn.PC += 3;
-                            store( saturn.D1, saturn.C, opX );
-                            break;
-                        case 6: /* C=DAT0 */
-                            saturn.PC += 3;
-                            recall( saturn.C, saturn.D0, opX );
-                            break;
-                        case 7: /* C=DAT1 */
-                            saturn.PC += 3;
-                            recall( saturn.C, saturn.D1, opX );
-                            break;
-                        default:
-                            stop = true;
+                    {
+                        int opX = op3 < 8 ? 0xf : 6;
+                        switch ( op3 & 7 ) {
+                            case 0: /* DAT0=A */
+                                saturn.PC += 3;
+                                store( saturn.D0, saturn.A, opX );
+                                break;
+                            case 1: /* DAT1=A */
+                                saturn.PC += 3;
+                                store( saturn.D1, saturn.A, opX );
+                                break;
+                            case 2: /* A=DAT0 */
+                                saturn.PC += 3;
+                                recall( saturn.A, saturn.D0, opX );
+                                break;
+                            case 3: /* A=DAT1 */
+                                saturn.PC += 3;
+                                recall( saturn.A, saturn.D1, opX );
+                                break;
+                            case 4: /* DAT0=C */
+                                saturn.PC += 3;
+                                store( saturn.D0, saturn.C, opX );
+                                break;
+                            case 5: /* DAT1=C */
+                                saturn.PC += 3;
+                                store( saturn.D1, saturn.C, opX );
+                                break;
+                            case 6: /* C=DAT0 */
+                                saturn.PC += 3;
+                                recall( saturn.C, saturn.D0, opX );
+                                break;
+                            case 7: /* C=DAT1 */
+                                saturn.PC += 3;
+                                recall( saturn.C, saturn.D1, opX );
+                                break;
+                            default:
+                                illegal_instruction = true;
+                        }
                     }
                     break;
                 case 5:
@@ -1022,7 +1019,7 @@ void step_instruction( void )
                                 recall_n( saturn.C, saturn.D1, op4 + 1 );
                                 break;
                             default:
-                                stop = true;
+                                illegal_instruction = true;
                         }
                     } else {
                         switch ( op3 ) {
@@ -1059,7 +1056,7 @@ void step_instruction( void )
                                 recall( saturn.C, saturn.D1, op4 );
                                 break;
                             default:
-                                stop = true;
+                                illegal_instruction = true;
                         }
                     }
                     break;
@@ -1108,7 +1105,7 @@ void step_instruction( void )
                     saturn.PC += 7;
                     break;
                 default:
-                    stop = true;
+                    illegal_instruction = true;
             }
             break;
         case 2:
@@ -1209,7 +1206,7 @@ void step_instruction( void )
                             break;
                         case 6: /* C=ID */
                             saturn.PC += 3;
-                            stop = get_identification();
+                            get_identification();
                             break;
                         case 7: /* SHUTDN */
                             saturn.PC += 3;
@@ -1260,18 +1257,13 @@ void step_instruction( void )
                                 case 0xa: /* ?CBIT=0 */
                                 case 0xb: /* ?CBIT=1 */
                                     op5 = read_nibble( saturn.PC + 4 );
-                                    if ( op4 < 8 )
-                                        REG = saturn.A;
-                                    else
-                                        REG = saturn.C;
-                                    if ( op4 == 6 || op4 == 0xa )
-                                        t = 0;
-                                    else
-                                        t = 1;
-                                    saturn.CARRY = ( get_register_bit( REG, op5 ) == t ) ? 1 : 0;
+                                    saturn.CARRY = ( get_register_bit( ( op4 < 8 ) ? saturn.A : saturn.C, op5 ) ==
+                                                     ( ( op4 == 6 || op4 == 0xa ) ? 0 : 1 ) )
+                                                       ? 1
+                                                       : 0;
                                     if ( saturn.CARRY ) {
                                         saturn.PC += 5;
-                                        op6 = read_nibbles( saturn.PC, 2 );
+                                        int op6 = read_nibbles( saturn.PC, 2 );
                                         if ( op6 ) {
                                             if ( op6 & 0x80 )
                                                 op6 |= jumpmasks[ 2 ];
@@ -1282,22 +1274,20 @@ void step_instruction( void )
                                         saturn.PC += 7;
                                     break;
                                 case 0xc: /* PC=(A) */
-                                    addr = dat_to_addr( saturn.A );
-                                    saturn.PC = read_nibbles( addr, 5 );
+                                    saturn.PC = read_nibbles( dat_to_addr( saturn.A ), 5 );
                                     break;
                                 case 0xd: /* BUSCD */
                                     saturn.PC += 4;
                                     break;
                                 case 0xe: /* PC=(C) */
-                                    addr = dat_to_addr( saturn.C );
-                                    saturn.PC = read_nibbles( addr, 5 );
+                                    saturn.PC = read_nibbles( dat_to_addr( saturn.C ), 5 );
                                     break;
                                 case 0xf: /* INTOFF */
                                     saturn.PC += 4;
                                     do_intoff();
                                     break;
                                 default:
-                                    stop = true;
+                                    illegal_instruction = true;
                             }
                             break;
                         case 9: /* C+P+1 */
@@ -1329,12 +1319,14 @@ void step_instruction( void )
                         case 0xf: /* CPEX n */
                             op4 = read_nibble( saturn.PC + 3 );
                             saturn.PC += 4;
-                            t = get_register_nibble( saturn.C, op4 );
-                            set_register_nibble( saturn.C, op4, saturn.P );
-                            saturn.P = t;
+                            {
+                                int tmp = get_register_nibble( saturn.C, op4 );
+                                set_register_nibble( saturn.C, op4, saturn.P );
+                                saturn.P = tmp;
+                            }
                             break;
                         default:
-                            stop = true;
+                            illegal_instruction = true;
                     }
                     break;
                 case 1:
@@ -1395,7 +1387,7 @@ void step_instruction( void )
                                         add_register_constant( saturn.D, op3, op5 + 1 );
                                         break;
                                     default:
-                                        stop = true;
+                                        illegal_instruction = true;
                                 }
                             } else { /* MINUS */
                                 switch ( op4 & 3 ) {
@@ -1416,7 +1408,7 @@ void step_instruction( void )
                                         sub_register_constant( saturn.D, op3, op5 + 1 );
                                         break;
                                     default:
-                                        stop = true;
+                                        illegal_instruction = true;
                                 }
                             }
                             break;
@@ -1441,7 +1433,7 @@ void step_instruction( void )
                                     shift_right_bit_register( saturn.D, op3 );
                                     break;
                                 default:
-                                    stop = true;
+                                    illegal_instruction = true;
                             }
                             break;
                         case 0xa: /* R = R FIELD, etc. */
@@ -1498,7 +1490,7 @@ void step_instruction( void )
                                             copy_register( saturn.R4, saturn.C, op3 );
                                             break;
                                         default:
-                                            stop = true;
+                                            illegal_instruction = true;
                                     }
                                     break;
                                 case 1:
@@ -1550,7 +1542,7 @@ void step_instruction( void )
                                             copy_register( saturn.C, saturn.R4, op3 );
                                             break;
                                         default:
-                                            stop = true;
+                                            illegal_instruction = true;
                                     }
                                     break;
                                 case 2:
@@ -1602,11 +1594,11 @@ void step_instruction( void )
                                             exchange_register( saturn.C, saturn.R4, op3 );
                                             break;
                                         default:
-                                            stop = true;
+                                            illegal_instruction = true;
                                     }
                                     break;
                                 default:
-                                    stop = true;
+                                    illegal_instruction = true;
                             }
                             break;
                         case 0xb:
@@ -1637,7 +1629,7 @@ void step_instruction( void )
                                     saturn.PC = dat_to_addr( saturn.C );
                                     break;
                                 default:
-                                    stop = true;
+                                    illegal_instruction = true;
                             }
                             break;
                         case 0xc: /* ASRB */
@@ -1657,7 +1649,7 @@ void step_instruction( void )
                             shift_right_bit_register( saturn.D, W_FIELD );
                             break;
                         default:
-                            stop = true;
+                            illegal_instruction = true;
                     }
                     break;
                 case 2:
@@ -1781,7 +1773,7 @@ void step_instruction( void )
                             saturn.CARRY = is_not_zero_register( saturn.D, A_FIELD );
                             break;
                         default:
-                            stop = true;
+                            illegal_instruction = true;
                     }
                     if ( saturn.CARRY ) {
                         saturn.PC += 3;
@@ -1847,7 +1839,7 @@ void step_instruction( void )
                             saturn.CARRY = is_less_or_equal_register( saturn.D, saturn.C, A_FIELD );
                             break;
                         default:
-                            stop = true;
+                            illegal_instruction = true;
                     }
                     if ( saturn.CARRY ) {
                         saturn.PC += 3;
@@ -1884,7 +1876,7 @@ void step_instruction( void )
                     saturn.PC = op2;
                     break;
                 default:
-                    stop = true;
+                    illegal_instruction = true;
             }
             break;
         case 9:
@@ -1941,7 +1933,7 @@ void step_instruction( void )
                         saturn.CARRY = is_not_zero_register( saturn.D, op1 );
                         break;
                     default:
-                        stop = true;
+                        illegal_instruction = true;
                 }
             } else {
                 op1 &= 7;
@@ -1995,7 +1987,7 @@ void step_instruction( void )
                         saturn.CARRY = is_less_or_equal_register( saturn.D, saturn.C, op1 );
                         break;
                     default:
-                        stop = true;
+                        illegal_instruction = true;
                 }
             }
             if ( saturn.CARRY ) {
@@ -2082,7 +2074,7 @@ void step_instruction( void )
                         dec_register( saturn.D, op1 );
                         break;
                     default:
-                        stop = true;
+                        illegal_instruction = true;
                 }
             } else {
                 op1 &= 7;
@@ -2152,7 +2144,7 @@ void step_instruction( void )
                         exchange_register( saturn.C, saturn.D, op1 );
                         break;
                     default:
-                        stop = true;
+                        illegal_instruction = true;
                 }
             }
             break;
@@ -2226,7 +2218,7 @@ void step_instruction( void )
                         sub_register( saturn.D, saturn.C, saturn.D, op1 );
                         break;
                     default:
-                        stop = true;
+                        illegal_instruction = true;
                 }
             } else {
                 op1 &= 7;
@@ -2296,7 +2288,7 @@ void step_instruction( void )
                         complement_1_register( saturn.D, op1 );
                         break;
                     default:
-                        stop = true;
+                        illegal_instruction = true;
                 }
             }
             break;
@@ -2368,7 +2360,7 @@ void step_instruction( void )
                     dec_register( saturn.D, A_FIELD );
                     break;
                 default:
-                    stop = true;
+                    illegal_instruction = true;
             }
             break;
         case 0xd:
@@ -2439,7 +2431,7 @@ void step_instruction( void )
                     exchange_register( saturn.C, saturn.D, A_FIELD );
                     break;
                 default:
-                    stop = true;
+                    illegal_instruction = true;
             }
             break;
         case 0xe:
@@ -2510,7 +2502,7 @@ void step_instruction( void )
                     sub_register( saturn.D, saturn.C, saturn.D, A_FIELD );
                     break;
                 default:
-                    stop = true;
+                    illegal_instruction = true;
             }
             break;
         case 0xf:
@@ -2581,15 +2573,15 @@ void step_instruction( void )
                     complement_1_register( saturn.D, A_FIELD );
                     break;
                 default:
-                    stop = true;
+                    illegal_instruction = true;
             }
             break;
         default:
-            stop = true;
+            illegal_instruction = true;
     }
     instructions++;
 
-    if ( stop )
+    if ( illegal_instruction )
         enter_debugger |= ILLEGAL_INSTRUCTION;
 }
 
