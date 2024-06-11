@@ -51,7 +51,6 @@ short conf_tab[] = { 1, 2, 2, 2, 2, 0 };
 unsigned long instructions = 0;
 unsigned long old_instr = 0;
 
-/* int rece_instr = 0; */
 bool device_check = false;
 
 bool adj_time_pending = false;

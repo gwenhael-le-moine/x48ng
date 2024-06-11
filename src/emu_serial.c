@@ -15,8 +15,6 @@ static int wire_fd;
 static int ir_fd;
 static int ttyp;
 
-/* extern int rece_instr; */
-
 char* wire_name = ( char* )0;
 char* ir_name = ( char* )0;
 
@@ -327,8 +325,6 @@ void receive_char( void )
     int nfd;
     static unsigned char buf[ NB_BUFFER + 1 ];
     static int nrd = 0, bp = 0;
-
-    /* rece_instr = 0; */
 
     if ( saturn.ir_ctrl & 0x04 ) {
         if ( ir_fd == -1 )
