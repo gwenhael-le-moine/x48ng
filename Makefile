@@ -6,7 +6,7 @@ MANDIR = $(PREFIX)/man
 
 VERSION_MAJOR = 0
 VERSION_MINOR = 37
-PATCHLEVEL = 0
+PATCHLEVEL = 99
 
 DOTOS = src/emu_serial.o \
 	src/emu_emulate.o \
