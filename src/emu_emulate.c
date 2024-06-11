@@ -36,53 +36,44 @@
 
 #define NB_SAMPLES 10
 
-static bool interrupt_called = false;
+saturn_t saturn;
+device_t device;
+
 extern long nibble_masks[ 16 ];
 
 bool sigalarm_triggered = false;
-
-bool first_press = true; // PATCH
-
-int conf_bank1 = 0x00000;
-int conf_bank2 = 0x00000;
-
-short conf_tab[] = { 1, 2, 2, 2, 2, 0 };
-
-unsigned long instructions = 0;
-unsigned long old_instr = 0;
-
 bool device_check = false;
-
 bool adj_time_pending = false;
 
 int set_t1;
 
 long schedule_event = 0;
-
-long sched_instr_rollover = SCHED_INSTR_ROLLOVER;
-long sched_receive = SCHED_RECEIVE;
 long sched_adjtime = SCHED_ADJTIME;
 long sched_timer1 = SCHED_TIMER1;
 long sched_timer2 = SCHED_TIMER2;
-long sched_statistics = SCHED_STATISTICS;
-long sched_display = SCHED_NEVER;
 
 unsigned long t1_i_per_tick;
 unsigned long t2_i_per_tick;
-unsigned long s_1;
-unsigned long s_16;
-unsigned long old_s_1;
-unsigned long old_s_16;
-unsigned long delta_t_1;
-unsigned long delta_t_16;
-unsigned long delta_i;
-word_64 run;
 
-static word_20 jumpmasks[] = { 0xffffffff, 0xfffffff0, 0xffffff00, 0xfffff000, 0xffff0000, 0xfff00000, 0xff000000, 0xf0000000 };
+static bool interrupt_called = false;
+static bool first_press = true; // PATCH
 
-saturn_t saturn;
+static short conf_tab[] = { 1, 2, 2, 2, 2, 0 };
 
-device_t device;
+static unsigned long instructions = 0;
+
+static unsigned long s_1 = 0;
+static unsigned long s_16 = 0;
+static unsigned long old_s_1 = 0;
+static unsigned long old_s_16 = 0;
+static unsigned long delta_t_1;
+static unsigned long delta_t_16;
+static unsigned long delta_i;
+
+static long sched_instr_rollover = SCHED_INSTR_ROLLOVER;
+static long sched_receive = SCHED_RECEIVE;
+static long sched_statistics = SCHED_STATISTICS;
+static long sched_display = SCHED_NEVER;
 
 static inline void push_return_addr( long addr )
 {
@@ -552,6 +543,7 @@ void load_addr( word_20* dat, long addr, int n )
 
 void step_instruction( void )
 {
+    word_20 jumpmasks[] = { 0xffffffff, 0xfffffff0, 0xffffff00, 0xfffff000, 0xffff0000, 0xfff00000, 0xff000000, 0xf0000000 };
     bool illegal_instruction = false;
     int op0, op1, op2, op3, op4, op5;
 
@@ -2623,19 +2615,17 @@ inline void schedule( void )
 
         /* check_device() */
         /* UI */
+        // TODO: move this out into ui_*.c
         if ( device.display_touched > 0 && device.display_touched-- == 1 ) {
             device.display_touched = 0;
             ui_update_LCD();
         }
-
         if ( device.display_touched > 0 )
             device_check = true;
-
         if ( device.contrast_touched ) {
             device.contrast_touched = false;
             ui_adjust_contrast();
         }
-
         if ( device.ann_touched ) {
             device.ann_touched = false;
             ui_draw_annunc();
@@ -2745,7 +2735,7 @@ inline void schedule( void )
 
     if ( ( sched_statistics -= steps ) <= 0 ) {
         sched_statistics = SCHED_STATISTICS;
-        run = get_timer( RUN_TIMER );
+        /* run = get_timer( RUN_TIMER ); */
         delta_t_1 = s_1 - old_s_1;
         delta_t_16 = s_16 - old_s_16;
         old_s_1 = s_1;
