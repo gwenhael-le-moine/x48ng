@@ -230,10 +230,10 @@ static inline void ncurses_draw_lcd_fullsize( void )
 
 static inline void ncurses_draw_lcd( void )
 {
-    if ( config.small )
-        ncurses_draw_lcd_small();
-    else if ( config.tiny )
+    if ( config.tiny )
         ncurses_draw_lcd_tiny();
+    else if ( config.small )
+        ncurses_draw_lcd_small();
     else
         ncurses_draw_lcd_fullsize();
 }
