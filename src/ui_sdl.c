@@ -36,13 +36,6 @@
 #define _KEYBOARD_OFFSET_X SIDE_SKIP
 #define _KEYBOARD_OFFSET_Y ( TOP_SKIP + DISPLAY_HEIGHT + DISP_KBD_SKIP )
 
-// Control how the screen update is performed: at regular intervals (delayed)
-// or immediatly Note: this is only for the LCD. The annunciators and the
-// buttons are always immediately updated
-// #define DELAYEDDISPUPDATE
-// Interval in millisecond between screen updates
-#define DISPUPDATEINTERVAL 200
-
 /***********/
 /* typedef */
 /***********/
@@ -50,6 +43,8 @@
 typedef struct sdl_color_t {
     const char* name;
     int r, g, b;
+    int mono_rgb;
+    int gray_rgb;
 } sdl_color_t;
 
 typedef struct sdl_keypad_t {
@@ -97,52 +92,331 @@ typedef struct sdl_ann_struct_t {
 /* variables */
 /*************/
 static sdl_keypad_t keypad;
-static sdl_color_t* sdl_colors;
 
 static sdl_color_t sdl_colors_sx[] = {
-    {.name = "white",        .r = 255, .g = 255, .b = 255},
-    {.name = "left",         .r = 255, .g = 166, .b = 0  },
-    {.name = "right",        .r = 0,   .g = 210, .b = 255},
-    {.name = "but_top",      .r = 109, .g = 93,  .b = 93 },
-    {.name = "button",       .r = 90,  .g = 77,  .b = 77 },
-    {.name = "but_bot",      .r = 76,  .g = 65,  .b = 65 },
-    {.name = "lcd_col",      .r = 202, .g = 221, .b = 92 },
-    {.name = "pix_col",      .r = 0,   .g = 0,   .b = 128},
-    {.name = "pad_top",      .r = 109, .g = 78,  .b = 78 },
-    {.name = "pad",          .r = 90,  .g = 64,  .b = 64 },
-    {.name = "pad_bot",      .r = 76,  .g = 54,  .b = 54 },
-    {.name = "disp_pad_top", .r = 155, .g = 118, .b = 84 },
-    {.name = "disp_pad",     .r = 124, .g = 94,  .b = 67 },
-    {.name = "disp_pad_bot", .r = 100, .g = 75,  .b = 53 },
-    {.name = "logo",         .r = 204, .g = 169, .b = 107},
-    {.name = "logo_back",    .r = 64,  .g = 64,  .b = 64 },
-    {.name = "label",        .r = 202, .g = 184, .b = 144},
-    {.name = "frame",        .r = 0,   .g = 0,   .b = 0  },
-    {.name = "underlay",     .r = 60,  .g = 42,  .b = 42 },
-    {.name = "black",        .r = 0,   .g = 0,   .b = 0  },
+    {
+     .name = "white",
+     .r = 255,
+     .g = 255,
+     .b = 255,
+     .mono_rgb = 255,
+     .gray_rgb = 255,
+     },
+    {
+     .name = "left",
+     .r = 255,
+     .g = 166,
+     .b = 0,
+     .mono_rgb = 255,
+     .gray_rgb = 230,
+     },
+    {
+     .name = "right",
+     .r = 0,
+     .g = 210,
+     .b = 255,
+     .mono_rgb = 255,
+     .gray_rgb = 169,
+     },
+    {
+     .name = "but_top",
+     .r = 109,
+     .g = 93,
+     .b = 93,
+     .mono_rgb = 0,
+     .gray_rgb = 91,
+     },
+    {
+     .name = "button",
+     .r = 90,
+     .g = 77,
+     .b = 77,
+     .mono_rgb = 0,
+     .gray_rgb = 81,
+     },
+    {
+     .name = "but_bot",
+     .r = 76,
+     .g = 65,
+     .b = 65,
+     .mono_rgb = 0,
+     .gray_rgb = 69,
+     },
+    {
+     .name = "lcd_col",
+     .r = 202,
+     .g = 221,
+     .b = 92,
+     .mono_rgb = 255,
+     .gray_rgb = 205,
+     },
+    {
+     .name = "pix_col",
+     .r = 0,
+     .g = 0,
+     .b = 128,
+     .mono_rgb = 0,
+     .gray_rgb = 20,
+     },
+    {
+     .name = "pad_top",
+     .r = 109,
+     .g = 78,
+     .b = 78,
+     .mono_rgb = 0,
+     .gray_rgb = 88,
+     },
+    {
+     .name = "pad",
+     .r = 90,
+     .g = 64,
+     .b = 64,
+     .mono_rgb = 0,
+     .gray_rgb = 73,
+     },
+    {
+     .name = "pad_bot",
+     .r = 76,
+     .g = 54,
+     .b = 54,
+     .mono_rgb = 0,
+     .gray_rgb = 60,
+     },
+    {
+     .name = "disp_pad_top",
+     .r = 155,
+     .g = 118,
+     .b = 84,
+     .mono_rgb = 0,
+     .gray_rgb = 124,
+     },
+    {
+     .name = "disp_pad",
+     .r = 124,
+     .g = 94,
+     .b = 67,
+     .mono_rgb = 0,
+     .gray_rgb = 99,
+     },
+    {
+     .name = "disp_pad_bot",
+     .r = 100,
+     .g = 75,
+     .b = 53,
+     .mono_rgb = 0,
+     .gray_rgb = 79,
+     },
+    {
+     .name = "logo",
+     .r = 204,
+     .g = 169,
+     .b = 107,
+     .mono_rgb = 255,
+     .gray_rgb = 172,
+     },
+    {
+     .name = "logo_back",
+     .r = 64,
+     .g = 64,
+     .b = 64,
+     .mono_rgb = 0,
+     .gray_rgb = 65,
+     },
+    {
+     .name = "label",
+     .r = 202,
+     .g = 184,
+     .b = 144,
+     .mono_rgb = 255,
+     .gray_rgb = 185,
+     },
+    {
+     .name = "frame",
+     .r = 0,
+     .g = 0,
+     .b = 0,
+     .mono_rgb = 255,
+     .gray_rgb = 0,
+     },
+    {
+     .name = "underlay",
+     .r = 60,
+     .g = 42,
+     .b = 42,
+     .mono_rgb = 0,
+     .gray_rgb = 48,
+     },
+    {
+     .name = "black",
+     .r = 0,
+     .g = 0,
+     .b = 0,
+     .mono_rgb = 0,
+     .gray_rgb = 0,
+     },
 };
 
 static sdl_color_t sdl_colors_gx[] = {
-    {.name = "white",        .r = 255, .g = 255, .b = 255},
-    {.name = "left",         .r = 255, .g = 186, .b = 255},
-    {.name = "right",        .r = 0,   .g = 255, .b = 204},
-    {.name = "but_top",      .r = 104, .g = 104, .b = 104},
-    {.name = "button",       .r = 88,  .g = 88,  .b = 88 },
-    {.name = "but_bot",      .r = 74,  .g = 74,  .b = 74 },
-    {.name = "lcd_col",      .r = 202, .g = 221, .b = 92 },
-    {.name = "pix_col",      .r = 0,   .g = 0,   .b = 128},
-    {.name = "pad_top",      .r = 88,  .g = 88,  .b = 88 },
-    {.name = "pad",          .r = 74,  .g = 74,  .b = 74 },
-    {.name = "pad_bot",      .r = 64,  .g = 64,  .b = 64 },
-    {.name = "disp_pad_top", .r = 128, .g = 128, .b = 138},
-    {.name = "disp_pad",     .r = 104, .g = 104, .b = 110},
-    {.name = "disp_pad_bot", .r = 84,  .g = 84,  .b = 90 },
-    {.name = "logo",         .r = 176, .g = 176, .b = 184},
-    {.name = "logo_back",    .r = 104, .g = 104, .b = 110},
-    {.name = "label",        .r = 240, .g = 240, .b = 240},
-    {.name = "frame",        .r = 0,   .g = 0,   .b = 0  },
-    {.name = "underlay",     .r = 104, .g = 104, .b = 110},
-    {.name = "black",        .r = 0,   .g = 0,   .b = 0  },
+    {
+     .name = "white",
+     .r = 255,
+     .g = 255,
+     .b = 255,
+     .mono_rgb = 255,
+     .gray_rgb = 255,
+     },
+    {
+     .name = "left",
+     .r = 255,
+     .g = 186,
+     .b = 255,
+     .mono_rgb = 255,
+     .gray_rgb = 220,
+     },
+    {
+     .name = "right",
+     .r = 0,
+     .g = 255,
+     .b = 204,
+     .mono_rgb = 255,
+     .gray_rgb = 169,
+     },
+    {
+     .name = "but_top",
+     .r = 104,
+     .g = 104,
+     .b = 104,
+     .mono_rgb = 0,
+     .gray_rgb = 104,
+     },
+    {
+     .name = "button",
+     .r = 88,
+     .g = 88,
+     .b = 88,
+     .mono_rgb = 0,
+     .gray_rgb = 88,
+     },
+    {
+     .name = "but_bot",
+     .r = 74,
+     .g = 74,
+     .b = 74,
+     .mono_rgb = 0,
+     .gray_rgb = 74,
+     },
+    {
+     .name = "lcd_col",
+     .r = 202,
+     .g = 221,
+     .b = 92,
+     .mono_rgb = 255,
+     .gray_rgb = 205,
+     },
+    {
+     .name = "pix_col",
+     .r = 0,
+     .g = 0,
+     .b = 128,
+     .mono_rgb = 0,
+     .gray_rgb = 20,
+     },
+    {
+     .name = "pad_top",
+     .r = 88,
+     .g = 88,
+     .b = 88,
+     .mono_rgb = 0,
+     .gray_rgb = 88,
+     },
+    {
+     .name = "pad",
+     .r = 74,
+     .g = 74,
+     .b = 74,
+     .mono_rgb = 0,
+     .gray_rgb = 74,
+     },
+    {
+     .name = "pad_bot",
+     .r = 64,
+     .g = 64,
+     .b = 64,
+     .mono_rgb = 0,
+     .gray_rgb = 64,
+     },
+    {
+     .name = "disp_pad_top",
+     .r = 128,
+     .g = 128,
+     .b = 138,
+     .mono_rgb = 0,
+     .gray_rgb = 128,
+     },
+    {
+     .name = "disp_pad",
+     .r = 104,
+     .g = 104,
+     .b = 110,
+     .mono_rgb = 0,
+     .gray_rgb = 104,
+     },
+    {
+     .name = "disp_pad_bot",
+     .r = 84,
+     .g = 84,
+     .b = 90,
+     .mono_rgb = 0,
+     .gray_rgb = 84,
+     },
+    {
+     .name = "logo",
+     .r = 176,
+     .g = 176,
+     .b = 184,
+     .mono_rgb = 255,
+     .gray_rgb = 176,
+     },
+    {
+     .name = "logo_back",
+     .r = 104,
+     .g = 104,
+     .b = 110,
+     .mono_rgb = 0,
+     .gray_rgb = 104,
+     },
+    {
+     .name = "label",
+     .r = 240,
+     .g = 240,
+     .b = 240,
+     .mono_rgb = 255,
+     .gray_rgb = 240,
+     },
+    {
+     .name = "frame",
+     .r = 0,
+     .g = 0,
+     .b = 0,
+     .mono_rgb = 255,
+     .gray_rgb = 0,
+     },
+    {
+     .name = "underlay",
+     .r = 104,
+     .g = 104,
+     .b = 110,
+     .mono_rgb = 0,
+     .gray_rgb = 104,
+     },
+    {
+     .name = "black",
+     .r = 0,
+     .g = 0,
+     .b = 0,
+     .mono_rgb = 0,
+     .gray_rgb = 0,
+     },
 };
 
 // This will take the value of the defines, but can be run-time modified
@@ -1967,8 +2241,7 @@ static inline unsigned bgra2argb( unsigned color )
 {
     unsigned a = ( color >> 24 ) & 0xff, r = ( color >> 16 ) & 0xff, g = ( color >> 8 ) & 0xff, b = color & 0xff;
 
-    color = a | ( r << 24 ) | ( g << 16 ) | ( b << 8 );
-    return color;
+    return a | ( r << 24 ) | ( g << 16 ) | ( b << 8 );
 }
 
 /*
@@ -1988,6 +2261,7 @@ static SDL_Surface* bitmap_to_surface( unsigned int w, unsigned int h, unsigned 
     unsigned byteperline = w / 8;
     if ( byteperline * 8 != w )
         byteperline++;
+
     for ( y = 0; y < h; y++ ) {
         unsigned int* lineptr = ( unsigned int* )( pixels + y * pitch );
         for ( x = 0; x < w; x++ ) {
@@ -2009,10 +2283,12 @@ static SDL_Surface* bitmap_to_surface( unsigned int w, unsigned int h, unsigned 
 
 static void write_text( int x, int y, const char* string, unsigned int length, unsigned int coloron, unsigned int coloroff )
 {
+    int w, h;
+
     for ( unsigned int i = 0; i < length; i++ ) {
         if ( small_font[ ( int )string[ i ] ].h != 0 ) {
-            int w = small_font[ ( int )string[ i ] ].w;
-            int h = small_font[ ( int )string[ i ] ].h;
+            w = small_font[ ( int )string[ i ] ].w;
+            h = small_font[ ( int )string[ i ] ].h;
 
             SDL_Surface* surf = bitmap_to_surface( w, h, small_font[ ( int )string[ i ] ].bits, coloron, coloroff );
 
@@ -2029,25 +2305,38 @@ static void write_text( int x, int y, const char* string, unsigned int length, u
             SDL_BlitSurface( surf, &srect, sdlwindow, &drect );
             SDL_FreeSurface( surf );
         }
+
         x += SmallTextWidth( &string[ i ], 1 );
     }
 }
 
-static void colors_setup( void )
+static void colors_setup( sdl_color_t* sdl_colors )
 {
-    unsigned i;
-
-    for ( i = WHITE; i < BLACK; i++ )
-        ARGBColors[ i ] = 0xff000000 | ( sdl_colors[ i ].r << 16 ) | ( sdl_colors[ i ].g << 8 ) | sdl_colors[ i ].b;
-
+    int r, g, b;
     // Adjust the LCD color according to the contrast
-    int contrast, r, g, b;
-    contrast = display.contrast;
-
+    int contrast = display.contrast;
     if ( contrast < 0x3 )
         contrast = 0x3;
     if ( contrast > 0x13 )
         contrast = 0x13;
+
+    for ( unsigned i = WHITE; i < BLACK; i++ ) {
+        if ( config.mono ) {
+            r = sdl_colors[ i ].mono_rgb;
+            g = sdl_colors[ i ].mono_rgb;
+            b = sdl_colors[ i ].mono_rgb;
+        } else if ( config.gray ) {
+            r = sdl_colors[ i ].gray_rgb;
+            g = sdl_colors[ i ].gray_rgb;
+            b = sdl_colors[ i ].gray_rgb;
+        } else {
+            r = sdl_colors[ i ].r;
+            g = sdl_colors[ i ].g;
+            b = sdl_colors[ i ].b;
+        }
+
+        ARGBColors[ i ] = 0xff000000 | ( r << 16 ) | ( g << 8 ) | b;
+    }
 
     r = ( 0x13 - contrast ) * ( sdl_colors[ LCD ].r / 0x10 );
     g = ( 0x13 - contrast ) * ( sdl_colors[ LCD ].g / 0x10 );
@@ -3017,7 +3306,7 @@ static void draw_background_LCD( void )
     SDL_FillRect( sdlwindow, &rect, ARGBColors[ LCD ] );
 }
 
-static void SDLDrawAnnunc( char* annunc )
+static void draw_annunciators( char* annunc )
 {
     create_annunc();
 
@@ -3044,7 +3333,7 @@ static void SDLDrawAnnunc( char* annunc )
                     ann_tbl[ 5 ].x + ann_tbl[ 5 ].width - ann_tbl[ 0 ].x, ann_tbl[ 5 ].y + ann_tbl[ 5 ].height - ann_tbl[ 0 ].y );
 }
 
-static void SDLUIHideKey( void )
+static void hide_key( void )
 {
     SDL_Rect drect;
 
@@ -3064,7 +3353,7 @@ static void SDLUIHideKey( void )
 }
 
 // Show the hp key which is being pressed
-static void SDLUIShowKey( int hpkey )
+static void show_key( int hpkey )
 {
     SDL_Rect srect, drect;
     SDL_Surface* ssurf;
@@ -3078,7 +3367,7 @@ static void SDLUIShowKey( int hpkey )
     showkeylastkey = hpkey;
 
     // Starts by hiding last
-    SDLUIHideKey();
+    hide_key();
 
     if ( hpkey == -1 )
         return;
@@ -3125,9 +3414,7 @@ static void SDLUIShowKey( int hpkey )
     SDL_UpdateRect( sdlwindow, x, y, ssurf->w, ssurf->h );
 }
 
-static inline void SDLUIFeedback( void ) {}
-
-static void SDLDrawSerialDevices( void )
+static void draw_serial_devices_path( void )
 {
     char text[ 1024 ] = "";
 
@@ -3152,7 +3439,7 @@ static void SDLDrawSerialDevices( void )
         stringColor( sdlwindow, 10, 240, text, 0xffffffff );
 }
 
-static void SDLDrawNibble( int nx, int ny, int val )
+static void sdl_draw_nibble( int nx, int ny, int val )
 {
     int x, y;
     int xoffset = DISPLAY_OFFSET_X + 5;
@@ -3181,10 +3468,7 @@ static void SDLDrawNibble( int nx, int ny, int val )
     }
     SDL_UnlockSurface( sdlwindow );
 
-#ifndef DELAYEDDISPUPDATE
-    // Either update immediately or with a delay the display
     SDL_UpdateRect( sdlwindow, xoffset + 2 * nx, yoffset + 2 * ny, 8, 2 );
-#endif
 }
 
 static inline void draw_nibble( int col, int row, int val )
@@ -3200,7 +3484,7 @@ static inline void draw_nibble( int col, int row, int val )
     if ( row <= display.lines )
         x -= ( 2 * display.offset );
 
-    SDLDrawNibble( x, y, val );
+    sdl_draw_nibble( x, y, val );
 }
 
 /* Identical in all ui_*.c */
@@ -3222,15 +3506,11 @@ void sdl_get_event( void )
 {
     SDL_Event event;
     int hpkey;
-    int rv;
-    static int lasthpkey = -1;      // last key that was pressed or -1 for none
-    static int lastticks = -1;      // time at which a key was pressed or -1 if timer expired
-    static int lastislongpress = 0; // last key press was a long press
-    static int keyispressed = -1;   // Indicate if a key is being held down by
-                                    // a finger (not set for long presses)
-    static int keyneedshow = 0;     // Indicates if the buttons need to be shown
-
-    rv = 0; // nothing to do
+    static int lasthpkey = -1;           // last key that was pressed or -1 for none
+    static int lastticks = -1;           // time at which a key was pressed or -1 if timer expired
+    static bool lastislongpress = false; // last key press was a long press
+    static int pressed_hpkey = -1;       // Indicate if a key is being held down by
+                                         // a finger (not set for long presses)
 
     // Check whether long pres on key
     if ( lastticks > 0 && ( SDL_GetTicks() - lastticks > 750 ) ) {
@@ -3241,10 +3521,8 @@ void sdl_get_event( void )
         int x, y, state;
         state = SDL_GetMouseState( &x, &y );
 
-        if ( state & SDL_BUTTON( 1 ) && mouse_click_to_hpkey( x, y ) == lasthpkey ) {
-            lastislongpress = 1;
-            SDLUIFeedback();
-        }
+        if ( state & SDL_BUTTON( 1 ) && mouse_click_to_hpkey( x, y ) == lasthpkey )
+            lastislongpress = true;
     }
 
     // Iterate as long as there are events
@@ -3255,146 +3533,98 @@ void sdl_get_event( void )
                 please_exit = true;
                 break;
 
-                /* // Mouse move: react to state changes in the buttons that are
-                 */
-                /* // pressed */
-                /* case SDL_MOUSEMOTION: */
-                /*     hpkey = mouse_click_to_hpkey( event.motion.x,
-                 * event.motion.y ); */
-                /*     if ( event.motion.state & SDL_BUTTON( 1 ) ) { */
-                /*         // Mouse moves on a key different from the last key
-                 */
-                /*         // (state change): */
-                /*         // - release last (if last was pressed) */
-                /*         // - press new (if new is pressed) */
-                /*         if ( hpkey != lasthpkey ) { */
-                /*             keyispressed = hpkey; */
+            // Mouse move: react to state changes in the buttons that are
+            // pressed
+            case SDL_MOUSEMOTION:
+                hpkey = mouse_click_to_hpkey( event.motion.x, event.motion.y );
+                if ( event.motion.state & SDL_BUTTON( 1 ) ) {
+                    // Mouse moves on a key different from the last key
+                    // (state change):
+                    // - release last (if last was pressed)
+                    // - press new (if new is pressed)
+                    if ( hpkey != lasthpkey ) {
+                        pressed_hpkey = hpkey;
 
-                /*             if ( lasthpkey != -1 ) { */
-                /*                 if ( !lastislongpress ) { */
-                /*                     release_all_keys(); */
-                /*                     rv = 1; */
-                /*                     SDLUIFeedback(); */
-                /*                 } */
-                /*                 // Stop timer, clear long key press */
-                /*                 lastticks = -1; */
-                /*                 lastislongpress = 0; */
-                /*             } */
-                /*             if ( hpkey != -1 ) { */
-                /*                 if ( !buttons[ hpkey ] */
-                /*                           .pressed ) // If a key is down, it
-                 */
-                /*                                      // can't be down another
-                 */
-                /*                                      // time */
-                /*                 { */
-                /*                     press_key( hpkey ); */
-                /*                     rv = 1; */
-                /*                     // Start timer */
-                /*                     lastticks = SDL_GetTicks(); */
-                /*                     SDLUIFeedback(); */
-                /*                 } */
-                /*             } */
-                /*         } */
-                /*         lasthpkey = hpkey; */
-                /*     } */
-                /*     if ( hpkey == -1 ) // Needed to avoid pressing and moving
-                 */
-                /*                        // outside of a button releases */
-                /*         lasthpkey = -1; */
+                        if ( lasthpkey != -1 ) {
+                            if ( !lastislongpress ) {
+                                release_all_keys();
+                                /* rv = true; */
+                            }
+                            // Stop timer, clear long key press
+                            lastticks = -1;
+                            lastislongpress = false;
+                        }
+                        if ( hpkey != -1 ) {
+                            if ( !keyboard[ hpkey ].pressed ) // If a key is down, it
+                                                              // can't be down another
+                                                              // time
+                            {
+                                press_key( hpkey );
+                                // Start timer
+                                lastticks = SDL_GetTicks();
+                            }
+                        }
+                    }
+                    lasthpkey = hpkey;
+                }
+                if ( hpkey == -1 ) // Needed to avoid pressing and moving
+                                   // outside of a button releases
+                    lasthpkey = -1;
 
-                /*     break; */
+                break;
 
             case SDL_MOUSEBUTTONDOWN:
+                hpkey = mouse_click_to_hpkey( event.button.x, event.button.y );
+                // React to mouse up/down when click over a button
+                if ( hpkey == -1 || keyboard[ hpkey ].pressed )
+                    break;
+
+                pressed_hpkey = hpkey;
+                press_key( hpkey );
+                lasthpkey = hpkey;
+                // Start timer
+                lastticks = SDL_GetTicks();
+                break;
+
             case SDL_MOUSEBUTTONUP:
                 hpkey = mouse_click_to_hpkey( event.button.x, event.button.y );
-
                 // React to mouse up/down when click over a button
                 if ( hpkey == -1 )
                     break;
-                if ( event.type == SDL_MOUSEBUTTONDOWN ) {
-                    keyispressed = hpkey;
 
-                    if ( !keyboard[ hpkey ].pressed ) // Key can't be pressed
-                                                      // when down
-                    {
-                        press_key( hpkey );
-                        rv = 1;
-                        lasthpkey = hpkey;
-                        // Start timer
-                        lastticks = SDL_GetTicks();
-                        SDLUIFeedback();
-                    }
-                } else {
-                    keyispressed = -1;
-
-                    if ( !lastislongpress ) {
-                        release_all_keys();
-                        rv = 1;
-                        lasthpkey = -1; // No key is pressed anymore
-                        SDLUIFeedback();
-                    }
-
-                    // Stop timer, clear long key press
-                    lastticks = -1;
-                    lastislongpress = 0;
+                pressed_hpkey = -1;
+                if ( !lastislongpress ) {
+                    release_all_keys();
+                    lasthpkey = -1; // No key is pressed anymore
                 }
+
+                // Stop timer, clear long key press
+                lastticks = -1;
+                lastislongpress = false;
                 break;
 
             case SDL_KEYDOWN:
+                hpkey = sdlkey_to_hpkey( event.key.keysym.sym );
+                if ( hpkey == -1 || keyboard[ hpkey ].pressed )
+                    break;
+
+                pressed_hpkey = hpkey;
+                press_key( hpkey );
+                break;
             case SDL_KEYUP:
                 hpkey = sdlkey_to_hpkey( event.key.keysym.sym );
-
                 if ( hpkey == -1 )
                     break;
-                if ( event.type == SDL_KEYDOWN ) {
-                    keyispressed = hpkey;
 
-                    // Avoid pressing if it is already pressed
-                    if ( !keyboard[ hpkey ].pressed ) {
-                        press_key( hpkey );
-                        rv = 1;
-                        SDLUIFeedback();
-                    }
-                } else {
-                    keyispressed = -1;
-
-                    release_key( hpkey );
-                    rv = 1;
-                    SDLUIFeedback();
-                }
+                pressed_hpkey = -1;
+                release_key( hpkey );
                 break;
         }
     }
 
     // Display button being pressed, if any
     if ( !config.hide_chrome )
-        SDLUIShowKey( keyispressed );
-
-    // If we press long, then the button releases makes SDLUIShowKey restore
-    // the old key, but rv does not indicate that we need to update the
-    // buttons. Therefore we save it here
-    if ( rv )
-        keyneedshow = 1;
-
-    // Redraw the keyboard only if there is a button state change and no
-    // button is pressed (otherwise it overwrites the zoomed button)
-    if ( keyneedshow && keyispressed == -1 ) {
-        keyneedshow = 0;
-        draw_buttons();
-    }
-
-#ifdef DELAYEDDISPUPDATE
-    dispupdate_t2 = SDL_GetTicks();
-    if ( dispupdate_t2 - dispupdate_t1 > DISPUPDATEINTERVAL ) {
-        int xoffset = DISPLAY_OFFSET_X + 5;
-        int yoffset = DISPLAY_OFFSET_Y + 20;
-
-        // LCD
-        SDL_UpdateRect( sdlwindow, xoffset, yoffset, 131 * 2, 64 * 2 );
-        dispupdate_t1 = dispupdate_t2;
-    }
-#endif
+        show_key( pressed_hpkey );
 }
 
 void sdl_update_LCD( void )
@@ -3476,12 +3706,12 @@ void sdl_draw_annunc( void )
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
         sdl_annuncstate[ i ] = ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] ) ? 1 : 0;
 
-    SDLDrawAnnunc( sdl_annuncstate );
+    draw_annunciators( sdl_annuncstate );
 }
 
 void sdl_adjust_contrast( void )
 {
-    colors_setup();
+    colors_setup( opt_gx ? sdl_colors_gx : sdl_colors_sx );
     create_annunc();
 
     // redraw LCD
@@ -3566,8 +3796,6 @@ void init_sdl_ui( int argc, char** argv )
     keypad.width = width;
     keypad.height = height;
 
-    sdl_colors = opt_gx ? sdl_colors_gx : sdl_colors_sx;
-
     // we allocate memory for the buttons because we need to modify
     // their coordinates, and we don't want to change the original buttons_gx or
     // buttons_sx
@@ -3578,7 +3806,7 @@ void init_sdl_ui( int argc, char** argv )
     else
         memcpy( buttons, buttons_sx, sizeof( buttons_sx ) );
 
-    colors_setup();
+    colors_setup( opt_gx ? sdl_colors_gx : sdl_colors_sx );
 
     if ( !config.hide_chrome ) {
         int cut = buttons[ HPKEY_MTH ].y + KEYBOARD_OFFSET_Y - 19;
@@ -3589,7 +3817,7 @@ void init_sdl_ui( int argc, char** argv )
         draw_bezel_LCD();
         draw_keypad();
 
-        SDLDrawSerialDevices();
+        draw_serial_devices_path();
     }
 
     draw_background_LCD();
