@@ -48,7 +48,7 @@
 #define COLOR_MODE_GRAY 2
 #define COLOR_MODE_COLOR 3
 
-#define COLOR( c ) ( colors[ ( c ) ].xcolor.pixel )
+#define COLOR( c ) ( x11_colors[ ( c ) ].pixel )
 
 /***********/
 /* bitmaps */
@@ -185,15 +185,6 @@ static unsigned char hp48_green_gx_bitmap[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1c, 0x00, 0x00, 0x00, 0x1c, 0x00, 0x00, 0x00 };
 
-typedef struct x11_color_t {
-    const char* name;
-    int r, g, b;
-
-    int mono_rgb;
-    int gray_rgb;
-    XColor xcolor;
-} x11_color_t;
-
 typedef struct x11_keypad_t {
     unsigned int width;
     unsigned int height;
@@ -255,7 +246,29 @@ typedef struct icon_map_t {
 static bool mapped;
 
 static x11_keypad_t keypad;
-static x11_color_t* colors;
+static XColor x11_colors[ NB_COLORS ] = {
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
+};
+static color_t* colors;
 
 static int CompletionType = -1;
 
@@ -289,178 +302,6 @@ static int icon_color_mode;
 
 static char* res_name;
 static char* res_class;
-
-static x11_color_t colors_sx[] = {
-    {.name = "white",
-     .r = 255,
-     .g = 255,
-     .b = 255,
-     .mono_rgb = 255,
-     .gray_rgb = 255,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                        },
-    {.name = "left",         .r = 255, .g = 166, .b = 0,   .mono_rgb = 255, .gray_rgb = 230, .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    {.name = "right",
-     .r = 0,
-     .g = 210,
-     .b = 255,
-     .mono_rgb = 255,
-     .gray_rgb = 169,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                        },
-    {.name = "but_top",      .r = 109, .g = 93,  .b = 93,  .mono_rgb = 0,   .gray_rgb = 91,  .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    {.name = "button",       .r = 90,  .g = 77,  .b = 77,  .mono_rgb = 0,   .gray_rgb = 81,  .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    {.name = "but_bot",      .r = 76,  .g = 65,  .b = 65,  .mono_rgb = 0,   .gray_rgb = 69,  .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    {.name = "lcd_col",
-     .r = 202,
-     .g = 221,
-     .b = 92,
-     .mono_rgb = 255,
-     .gray_rgb = 205,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                        },
-    {.name = "pix_col",      .r = 0,   .g = 0,   .b = 128, .mono_rgb = 0,   .gray_rgb = 20,  .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    {.name = "pad_top",      .r = 109, .g = 78,  .b = 78,  .mono_rgb = 0,   .gray_rgb = 88,  .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    {.name = "pad",          .r = 90,  .g = 64,  .b = 64,  .mono_rgb = 0,   .gray_rgb = 73,  .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    {.name = "pad_bot",      .r = 76,  .g = 54,  .b = 54,  .mono_rgb = 0,   .gray_rgb = 60,  .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    {.name = "disp_pad_top",
-     .r = 155,
-     .g = 118,
-     .b = 84,
-     .mono_rgb = 0,
-     .gray_rgb = 124,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                        },
-    {.name = "disp_pad",
-     .r = 124,
-     .g = 94,
-     .b = 67,
-     .mono_rgb = 0,
-     .gray_rgb = 99,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                        },
-    {.name = "disp_pad_bot",
-     .r = 100,
-     .g = 75,
-     .b = 53,
-     .mono_rgb = 0,
-     .gray_rgb = 79,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                        },
-    {.name = "logo",
-     .r = 204,
-     .g = 169,
-     .b = 107,
-     .mono_rgb = 255,
-     .gray_rgb = 172,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                        },
-    {.name = "logo_back",
-     .r = 64,
-     .g = 64,
-     .b = 64,
-     .mono_rgb = 0,
-     .gray_rgb = 65,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                        },
-    {.name = "label",
-     .r = 202,
-     .g = 184,
-     .b = 144,
-     .mono_rgb = 255,
-     .gray_rgb = 185,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                        },
-    {.name = "frame",        .r = 0,   .g = 0,   .b = 0,   .mono_rgb = 255, .gray_rgb = 0,   .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    {.name = "underlay",     .r = 60,  .g = 42,  .b = 42,  .mono_rgb = 0,   .gray_rgb = 48,  .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    {.name = "black",        .r = 0,   .g = 0,   .b = 0,   .mono_rgb = 0,   .gray_rgb = 0,   .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-};
-
-static x11_color_t colors_gx[] = {
-    {.name = "white",
-     .r = 255,
-     .g = 255,
-     .b = 255,
-     .mono_rgb = 255,
-     .gray_rgb = 255,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                     },
-    {.name = "left",
-     .r = 255,
-     .g = 186,
-     .b = 255,
-     .mono_rgb = 255,
-     .gray_rgb = 220,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                     },
-    {.name = "right",
-     .r = 0,
-     .g = 255,
-     .b = 204,
-     .mono_rgb = 255,
-     .gray_rgb = 169,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                     },
-    {.name = "but_top",
-     .r = 104,
-     .g = 104,
-     .b = 104,
-     .mono_rgb = 0,
-     .gray_rgb = 104,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                     },
-    {.name = "button",       .r = 88, .g = 88, .b = 88,  .mono_rgb = 0,   .gray_rgb = 88, .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    {.name = "but_bot",      .r = 74, .g = 74, .b = 74,  .mono_rgb = 0,   .gray_rgb = 74, .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    {.name = "lcd_col",
-     .r = 202,
-     .g = 221,
-     .b = 92,
-     .mono_rgb = 255,
-     .gray_rgb = 205,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                     },
-    {.name = "pix_col",      .r = 0,  .g = 0,  .b = 128, .mono_rgb = 0,   .gray_rgb = 20, .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    {.name = "pad_top",      .r = 88, .g = 88, .b = 88,  .mono_rgb = 0,   .gray_rgb = 88, .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    {.name = "pad",          .r = 74, .g = 74, .b = 74,  .mono_rgb = 0,   .gray_rgb = 74, .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    {.name = "pad_bot",      .r = 64, .g = 64, .b = 64,  .mono_rgb = 0,   .gray_rgb = 64, .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    {.name = "disp_pad_top",
-     .r = 128,
-     .g = 128,
-     .b = 138,
-     .mono_rgb = 0,
-     .gray_rgb = 128,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                     },
-    {.name = "disp_pad",
-     .r = 104,
-     .g = 104,
-     .b = 110,
-     .mono_rgb = 0,
-     .gray_rgb = 104,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                     },
-    {.name = "disp_pad_bot",
-     .r = 84,
-     .g = 84,
-     .b = 90,
-     .mono_rgb = 0,
-     .gray_rgb = 84,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                     },
-    {.name = "logo",
-     .r = 176,
-     .g = 176,
-     .b = 184,
-     .mono_rgb = 255,
-     .gray_rgb = 176,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                     },
-    {.name = "logo_back",
-     .r = 104,
-     .g = 104,
-     .b = 110,
-     .mono_rgb = 0,
-     .gray_rgb = 104,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                     },
-    {.name = "label",
-     .r = 240,
-     .g = 240,
-     .b = 240,
-     .mono_rgb = 255,
-     .gray_rgb = 240,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                     },
-    {.name = "frame",        .r = 0,  .g = 0,  .b = 0,   .mono_rgb = 255, .gray_rgb = 0,  .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-    {.name = "underlay",
-     .r = 104,
-     .g = 104,
-     .b = 110,
-     .mono_rgb = 0,
-     .gray_rgb = 104,
-     .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }                                                                                     },
-    {.name = "black",        .r = 0,  .g = 0,  .b = 0,   .mono_rgb = 0,   .gray_rgb = 0,  .xcolor = { 0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0 }},
-};
 
 static x11_button_t* buttons = 0;
 
@@ -2547,52 +2388,52 @@ static inline void colors_setup( void )
         b_shift = 16 - b_shift;
     }
 
-    for ( c = WHITE; c <= BLACK; c++ ) {
+    for ( c = FIRST_COLOR; c <= LAST_COLOR; c++ ) {
         switch ( color_mode ) {
             case COLOR_MODE_MONO:
-                colors[ c ].xcolor.red = colors[ c ].mono_rgb << 8;
-                colors[ c ].xcolor.green = colors[ c ].mono_rgb << 8;
-                colors[ c ].xcolor.blue = colors[ c ].mono_rgb << 8;
+                x11_colors[ c ].red = colors[ c ].mono_rgb << 8;
+                x11_colors[ c ].green = colors[ c ].mono_rgb << 8;
+                x11_colors[ c ].blue = colors[ c ].mono_rgb << 8;
                 break;
             case COLOR_MODE_GRAY:
-                colors[ c ].xcolor.red = colors[ c ].gray_rgb << 8;
-                colors[ c ].xcolor.green = colors[ c ].gray_rgb << 8;
-                colors[ c ].xcolor.blue = colors[ c ].gray_rgb << 8;
+                x11_colors[ c ].red = colors[ c ].gray_rgb << 8;
+                x11_colors[ c ].green = colors[ c ].gray_rgb << 8;
+                x11_colors[ c ].blue = colors[ c ].gray_rgb << 8;
                 break;
             default:
-                colors[ c ].xcolor.red = colors[ c ].r << 8;
-                colors[ c ].xcolor.green = colors[ c ].g << 8;
-                colors[ c ].xcolor.blue = colors[ c ].b << 8;
+                x11_colors[ c ].red = colors[ c ].r << 8;
+                x11_colors[ c ].green = colors[ c ].g << 8;
+                x11_colors[ c ].blue = colors[ c ].b << 8;
                 break;
         }
         if ( direct_color ) {
-            colors[ c ].xcolor.pixel = ( ( colors[ c ].xcolor.red >> r_shift ) & visual->red_mask ) |
-                                       ( ( colors[ c ].xcolor.green >> g_shift ) & visual->green_mask ) |
-                                       ( ( colors[ c ].xcolor.blue >> b_shift ) & visual->blue_mask );
-            XStoreColor( dpy, cmap, &colors[ c ].xcolor );
+            x11_colors[ c ].pixel = ( ( x11_colors[ c ].red >> r_shift ) & visual->red_mask ) |
+                                    ( ( x11_colors[ c ].green >> g_shift ) & visual->green_mask ) |
+                                    ( ( x11_colors[ c ].blue >> b_shift ) & visual->blue_mask );
+            XStoreColor( dpy, cmap, &x11_colors[ c ] );
         } else {
             if ( dynamic_color && c == PIXEL ) {
-                if ( XAllocColorCells( dpy, cmap, True, ( unsigned long* )0, 0, &colors[ c ].xcolor.pixel, 1 ) == 0 ) {
+                if ( XAllocColorCells( dpy, cmap, True, ( unsigned long* )0, 0, &x11_colors[ c ].pixel, 1 ) == 0 ) {
                     dyn = 0;
-                    if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 ) {
+                    if ( XAllocColor( dpy, cmap, &x11_colors[ c ] ) == 0 ) {
                         if ( config.verbose )
                             fprintf( stderr, "XAllocColor failed.\n" );
                         error = c;
                         break;
                     }
-                } else if ( colors[ c ].xcolor.pixel >= ( unsigned long )( visual->map_entries ) ) {
+                } else if ( x11_colors[ c ].pixel >= ( unsigned long )( visual->map_entries ) ) {
                     dyn = 0;
-                    if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 ) {
+                    if ( XAllocColor( dpy, cmap, &x11_colors[ c ] ) == 0 ) {
                         if ( config.verbose )
                             fprintf( stderr, "XAllocColor failed.\n" );
                         error = c;
                         break;
                     }
                 } else {
-                    XStoreColor( dpy, cmap, &colors[ c ].xcolor );
+                    XStoreColor( dpy, cmap, &x11_colors[ c ] );
                 }
             } else {
-                if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 ) {
+                if ( XAllocColor( dpy, cmap, &x11_colors[ c ] ) == 0 ) {
                     if ( config.verbose )
                         fprintf( stderr, "XAllocColor failed.\n" );
                     error = c;
@@ -2611,8 +2452,8 @@ static inline void colors_setup( void )
         /*
          * free colors so far allocated
          */
-        for ( c = WHITE; c < error; c++ )
-            XFreeColors( dpy, cmap, &colors[ c ].xcolor.pixel, 1, 0 );
+        for ( c = FIRST_COLOR; c < error; c++ )
+            XFreeColors( dpy, cmap, &x11_colors[ c ].pixel, 1, 0 );
 
         /*
          * Create my own Colormap
@@ -2630,40 +2471,40 @@ static inline void colors_setup( void )
          * Try to allocate colors again
          */
         dyn = dynamic_color;
-        for ( c = WHITE; c <= BLACK; c++ ) {
+        for ( c = FIRST_COLOR; c <= LAST_COLOR; c++ ) {
             switch ( color_mode ) {
                 case COLOR_MODE_MONO:
-                    colors[ c ].xcolor.red = colors[ c ].mono_rgb << 8;
-                    colors[ c ].xcolor.green = colors[ c ].mono_rgb << 8;
-                    colors[ c ].xcolor.blue = colors[ c ].mono_rgb << 8;
+                    x11_colors[ c ].red = colors[ c ].mono_rgb << 8;
+                    x11_colors[ c ].green = colors[ c ].mono_rgb << 8;
+                    x11_colors[ c ].blue = colors[ c ].mono_rgb << 8;
                     break;
                 case COLOR_MODE_GRAY:
-                    colors[ c ].xcolor.red = colors[ c ].gray_rgb << 8;
-                    colors[ c ].xcolor.green = colors[ c ].gray_rgb << 8;
-                    colors[ c ].xcolor.blue = colors[ c ].gray_rgb << 8;
+                    x11_colors[ c ].red = colors[ c ].gray_rgb << 8;
+                    x11_colors[ c ].green = colors[ c ].gray_rgb << 8;
+                    x11_colors[ c ].blue = colors[ c ].gray_rgb << 8;
                     break;
                 default:
-                    colors[ c ].xcolor.red = colors[ c ].r << 8;
-                    colors[ c ].xcolor.green = colors[ c ].g << 8;
-                    colors[ c ].xcolor.blue = colors[ c ].b << 8;
+                    x11_colors[ c ].red = colors[ c ].r << 8;
+                    x11_colors[ c ].green = colors[ c ].g << 8;
+                    x11_colors[ c ].blue = colors[ c ].b << 8;
                     break;
             }
             if ( dynamic_color && c == PIXEL ) {
-                if ( XAllocColorCells( dpy, cmap, True, ( unsigned long* )0, 0, &colors[ c ].xcolor.pixel, 1 ) == 0 ) {
+                if ( XAllocColorCells( dpy, cmap, True, ( unsigned long* )0, 0, &x11_colors[ c ].pixel, 1 ) == 0 ) {
                     dyn = 0;
-                    if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 )
+                    if ( XAllocColor( dpy, cmap, &x11_colors[ c ] ) == 0 )
                         fatal_exit( "can\'t alloc Color.\n", "" );
 
-                } else if ( colors[ c ].xcolor.pixel >= ( unsigned long )( visual->map_entries ) ) {
+                } else if ( x11_colors[ c ].pixel >= ( unsigned long )( visual->map_entries ) ) {
                     dyn = 0;
-                    if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 )
+                    if ( XAllocColor( dpy, cmap, &x11_colors[ c ] ) == 0 )
                         fatal_exit( "can\'t alloc Color.\n", "" );
 
                 } else {
-                    XStoreColor( dpy, cmap, &colors[ c ].xcolor );
+                    XStoreColor( dpy, cmap, &x11_colors[ c ] );
                 }
             } else {
-                if ( XAllocColor( dpy, cmap, &colors[ c ].xcolor ) == 0 )
+                if ( XAllocColor( dpy, cmap, &x11_colors[ c ] ) == 0 )
                     fatal_exit( "can\'t alloc Color.\n", "" );
             }
         }
@@ -5015,23 +4856,23 @@ void x11_adjust_contrast( void )
     if ( contrast > 0x13 )
         contrast = 0x13;
 
-    old = colors[ PIXEL ].xcolor.pixel;
+    old = x11_colors[ PIXEL ].pixel;
     switch ( color_mode ) {
         case COLOR_MODE_MONO:
             return;
         case COLOR_MODE_GRAY:
             gray = ( 0x13 - contrast ) * ( colors[ LCD ].gray_rgb / 0x10 );
-            colors[ PIXEL ].xcolor.red = gray << 8;
-            colors[ PIXEL ].xcolor.green = gray << 8;
-            colors[ PIXEL ].xcolor.blue = gray << 8;
+            x11_colors[ PIXEL ].red = gray << 8;
+            x11_colors[ PIXEL ].green = gray << 8;
+            x11_colors[ PIXEL ].blue = gray << 8;
             break;
         default:
             r = ( 0x13 - contrast ) * ( colors[ LCD ].r / 0x10 );
             g = ( 0x13 - contrast ) * ( colors[ LCD ].g / 0x10 );
             b = 128 - ( ( 0x13 - contrast ) * ( ( 128 - colors[ LCD ].b ) / 0x10 ) );
-            colors[ PIXEL ].xcolor.red = r << 8;
-            colors[ PIXEL ].xcolor.green = g << 8;
-            colors[ PIXEL ].xcolor.blue = b << 8;
+            x11_colors[ PIXEL ].red = r << 8;
+            x11_colors[ PIXEL ].green = g << 8;
+            x11_colors[ PIXEL ].blue = b << 8;
             break;
     }
 
@@ -5055,10 +4896,10 @@ void x11_adjust_contrast( void )
         last_icon_state = -1;
         refresh_icon();
     } else if ( dynamic_color ) {
-        XStoreColor( dpy, cmap, &colors[ PIXEL ].xcolor );
+        XStoreColor( dpy, cmap, &x11_colors[ PIXEL ] );
     } else {
-        if ( XAllocColor( dpy, cmap, &colors[ PIXEL ].xcolor ) == 0 ) {
-            colors[ PIXEL ].xcolor.pixel = old;
+        if ( XAllocColor( dpy, cmap, &x11_colors[ PIXEL ] ) == 0 ) {
+            x11_colors[ PIXEL ].pixel = old;
             if ( config.verbose )
                 fprintf( stderr, "warning: can\'t alloc new pixel color.\n" );
         } else {

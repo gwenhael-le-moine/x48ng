@@ -40,13 +40,6 @@
 /* typedef */
 /***********/
 
-typedef struct sdl_color_t {
-    const char* name;
-    int r, g, b;
-    int mono_rgb;
-    int gray_rgb;
-} sdl_color_t;
-
 typedef struct sdl_keypad_t {
     unsigned int width;
     unsigned int height;
@@ -92,332 +85,6 @@ typedef struct sdl_ann_struct_t {
 /* variables */
 /*************/
 static sdl_keypad_t keypad;
-
-static sdl_color_t sdl_colors_sx[] = {
-    {
-     .name = "white",
-     .r = 255,
-     .g = 255,
-     .b = 255,
-     .mono_rgb = 255,
-     .gray_rgb = 255,
-     },
-    {
-     .name = "left",
-     .r = 255,
-     .g = 166,
-     .b = 0,
-     .mono_rgb = 255,
-     .gray_rgb = 230,
-     },
-    {
-     .name = "right",
-     .r = 0,
-     .g = 210,
-     .b = 255,
-     .mono_rgb = 255,
-     .gray_rgb = 169,
-     },
-    {
-     .name = "but_top",
-     .r = 109,
-     .g = 93,
-     .b = 93,
-     .mono_rgb = 0,
-     .gray_rgb = 91,
-     },
-    {
-     .name = "button",
-     .r = 90,
-     .g = 77,
-     .b = 77,
-     .mono_rgb = 0,
-     .gray_rgb = 81,
-     },
-    {
-     .name = "but_bot",
-     .r = 76,
-     .g = 65,
-     .b = 65,
-     .mono_rgb = 0,
-     .gray_rgb = 69,
-     },
-    {
-     .name = "lcd_col",
-     .r = 202,
-     .g = 221,
-     .b = 92,
-     .mono_rgb = 255,
-     .gray_rgb = 205,
-     },
-    {
-     .name = "pix_col",
-     .r = 0,
-     .g = 0,
-     .b = 128,
-     .mono_rgb = 0,
-     .gray_rgb = 20,
-     },
-    {
-     .name = "pad_top",
-     .r = 109,
-     .g = 78,
-     .b = 78,
-     .mono_rgb = 0,
-     .gray_rgb = 88,
-     },
-    {
-     .name = "pad",
-     .r = 90,
-     .g = 64,
-     .b = 64,
-     .mono_rgb = 0,
-     .gray_rgb = 73,
-     },
-    {
-     .name = "pad_bot",
-     .r = 76,
-     .g = 54,
-     .b = 54,
-     .mono_rgb = 0,
-     .gray_rgb = 60,
-     },
-    {
-     .name = "disp_pad_top",
-     .r = 155,
-     .g = 118,
-     .b = 84,
-     .mono_rgb = 0,
-     .gray_rgb = 124,
-     },
-    {
-     .name = "disp_pad",
-     .r = 124,
-     .g = 94,
-     .b = 67,
-     .mono_rgb = 0,
-     .gray_rgb = 99,
-     },
-    {
-     .name = "disp_pad_bot",
-     .r = 100,
-     .g = 75,
-     .b = 53,
-     .mono_rgb = 0,
-     .gray_rgb = 79,
-     },
-    {
-     .name = "logo",
-     .r = 204,
-     .g = 169,
-     .b = 107,
-     .mono_rgb = 255,
-     .gray_rgb = 172,
-     },
-    {
-     .name = "logo_back",
-     .r = 64,
-     .g = 64,
-     .b = 64,
-     .mono_rgb = 0,
-     .gray_rgb = 65,
-     },
-    {
-     .name = "label",
-     .r = 202,
-     .g = 184,
-     .b = 144,
-     .mono_rgb = 255,
-     .gray_rgb = 185,
-     },
-    {
-     .name = "frame",
-     .r = 0,
-     .g = 0,
-     .b = 0,
-     .mono_rgb = 255,
-     .gray_rgb = 0,
-     },
-    {
-     .name = "underlay",
-     .r = 60,
-     .g = 42,
-     .b = 42,
-     .mono_rgb = 0,
-     .gray_rgb = 48,
-     },
-    {
-     .name = "black",
-     .r = 0,
-     .g = 0,
-     .b = 0,
-     .mono_rgb = 0,
-     .gray_rgb = 0,
-     },
-};
-
-static sdl_color_t sdl_colors_gx[] = {
-    {
-     .name = "white",
-     .r = 255,
-     .g = 255,
-     .b = 255,
-     .mono_rgb = 255,
-     .gray_rgb = 255,
-     },
-    {
-     .name = "left",
-     .r = 255,
-     .g = 186,
-     .b = 255,
-     .mono_rgb = 255,
-     .gray_rgb = 220,
-     },
-    {
-     .name = "right",
-     .r = 0,
-     .g = 255,
-     .b = 204,
-     .mono_rgb = 255,
-     .gray_rgb = 169,
-     },
-    {
-     .name = "but_top",
-     .r = 104,
-     .g = 104,
-     .b = 104,
-     .mono_rgb = 0,
-     .gray_rgb = 104,
-     },
-    {
-     .name = "button",
-     .r = 88,
-     .g = 88,
-     .b = 88,
-     .mono_rgb = 0,
-     .gray_rgb = 88,
-     },
-    {
-     .name = "but_bot",
-     .r = 74,
-     .g = 74,
-     .b = 74,
-     .mono_rgb = 0,
-     .gray_rgb = 74,
-     },
-    {
-     .name = "lcd_col",
-     .r = 202,
-     .g = 221,
-     .b = 92,
-     .mono_rgb = 255,
-     .gray_rgb = 205,
-     },
-    {
-     .name = "pix_col",
-     .r = 0,
-     .g = 0,
-     .b = 128,
-     .mono_rgb = 0,
-     .gray_rgb = 20,
-     },
-    {
-     .name = "pad_top",
-     .r = 88,
-     .g = 88,
-     .b = 88,
-     .mono_rgb = 0,
-     .gray_rgb = 88,
-     },
-    {
-     .name = "pad",
-     .r = 74,
-     .g = 74,
-     .b = 74,
-     .mono_rgb = 0,
-     .gray_rgb = 74,
-     },
-    {
-     .name = "pad_bot",
-     .r = 64,
-     .g = 64,
-     .b = 64,
-     .mono_rgb = 0,
-     .gray_rgb = 64,
-     },
-    {
-     .name = "disp_pad_top",
-     .r = 128,
-     .g = 128,
-     .b = 138,
-     .mono_rgb = 0,
-     .gray_rgb = 128,
-     },
-    {
-     .name = "disp_pad",
-     .r = 104,
-     .g = 104,
-     .b = 110,
-     .mono_rgb = 0,
-     .gray_rgb = 104,
-     },
-    {
-     .name = "disp_pad_bot",
-     .r = 84,
-     .g = 84,
-     .b = 90,
-     .mono_rgb = 0,
-     .gray_rgb = 84,
-     },
-    {
-     .name = "logo",
-     .r = 176,
-     .g = 176,
-     .b = 184,
-     .mono_rgb = 255,
-     .gray_rgb = 176,
-     },
-    {
-     .name = "logo_back",
-     .r = 104,
-     .g = 104,
-     .b = 110,
-     .mono_rgb = 0,
-     .gray_rgb = 104,
-     },
-    {
-     .name = "label",
-     .r = 240,
-     .g = 240,
-     .b = 240,
-     .mono_rgb = 255,
-     .gray_rgb = 240,
-     },
-    {
-     .name = "frame",
-     .r = 0,
-     .g = 0,
-     .b = 0,
-     .mono_rgb = 255,
-     .gray_rgb = 0,
-     },
-    {
-     .name = "underlay",
-     .r = 104,
-     .g = 104,
-     .b = 110,
-     .mono_rgb = 0,
-     .gray_rgb = 104,
-     },
-    {
-     .name = "black",
-     .r = 0,
-     .g = 0,
-     .b = 0,
-     .mono_rgb = 0,
-     .gray_rgb = 0,
-     },
-};
 
 // This will take the value of the defines, but can be run-time modified
 static unsigned KEYBOARD_HEIGHT, KEYBOARD_WIDTH, TOP_SKIP, SIDE_SKIP, BOTTOM_SKIP, DISP_KBD_SKIP, DISPLAY_WIDTH, DISPLAY_HEIGHT,
@@ -2310,7 +1977,7 @@ static void write_text( int x, int y, const char* string, unsigned int length, u
     }
 }
 
-static void colors_setup( sdl_color_t* sdl_colors )
+static void colors_setup( color_t* colors )
 {
     int r, g, b;
     // Adjust the LCD color according to the contrast
@@ -2320,27 +1987,27 @@ static void colors_setup( sdl_color_t* sdl_colors )
     if ( contrast > 0x13 )
         contrast = 0x13;
 
-    for ( unsigned i = WHITE; i < BLACK; i++ ) {
+    for ( unsigned i = FIRST_COLOR; i < LAST_COLOR; i++ ) {
         if ( config.mono ) {
-            r = sdl_colors[ i ].mono_rgb;
-            g = sdl_colors[ i ].mono_rgb;
-            b = sdl_colors[ i ].mono_rgb;
+            r = colors[ i ].mono_rgb;
+            g = colors[ i ].mono_rgb;
+            b = colors[ i ].mono_rgb;
         } else if ( config.gray ) {
-            r = sdl_colors[ i ].gray_rgb;
-            g = sdl_colors[ i ].gray_rgb;
-            b = sdl_colors[ i ].gray_rgb;
+            r = colors[ i ].gray_rgb;
+            g = colors[ i ].gray_rgb;
+            b = colors[ i ].gray_rgb;
         } else {
-            r = sdl_colors[ i ].r;
-            g = sdl_colors[ i ].g;
-            b = sdl_colors[ i ].b;
+            r = colors[ i ].r;
+            g = colors[ i ].g;
+            b = colors[ i ].b;
         }
 
         ARGBColors[ i ] = 0xff000000 | ( r << 16 ) | ( g << 8 ) | b;
     }
 
-    r = ( 0x13 - contrast ) * ( sdl_colors[ LCD ].r / 0x10 );
-    g = ( 0x13 - contrast ) * ( sdl_colors[ LCD ].g / 0x10 );
-    b = 128 - ( ( 0x13 - contrast ) * ( ( 128 - sdl_colors[ LCD ].b ) / 0x10 ) );
+    r = ( 0x13 - contrast ) * ( colors[ LCD ].r / 0x10 );
+    g = ( 0x13 - contrast ) * ( colors[ LCD ].g / 0x10 );
+    b = 128 - ( ( 0x13 - contrast ) * ( ( 128 - colors[ LCD ].b ) / 0x10 ) );
     ARGBColors[ PIXEL ] = 0xff000000 | ( r << 16 ) | ( g << 8 ) | b;
 }
 
@@ -3711,7 +3378,7 @@ void sdl_draw_annunc( void )
 
 void sdl_adjust_contrast( void )
 {
-    colors_setup( opt_gx ? sdl_colors_gx : sdl_colors_sx );
+    colors_setup( opt_gx ? colors_gx : colors_sx );
     create_annunc();
 
     // redraw LCD
@@ -3806,7 +3473,7 @@ void init_sdl_ui( int argc, char** argv )
     else
         memcpy( buttons, buttons_sx, sizeof( buttons_sx ) );
 
-    colors_setup( opt_gx ? sdl_colors_gx : sdl_colors_sx );
+    colors_setup( opt_gx ? colors_gx : colors_sx );
 
     if ( !config.hide_chrome ) {
         int cut = buttons[ HPKEY_MTH ].y + KEYBOARD_OFFSET_Y - 19;

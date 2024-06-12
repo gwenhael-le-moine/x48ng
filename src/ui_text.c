@@ -14,6 +14,7 @@
 
 #include <curses.h>
 
+#include "romio.h"  /* opt_gx */
 #include "config.h" /* mono, gray, small, tiny, progname */
 #include "ui.h"     /* last_annunc_state, lcd_nibbles_buffer, DISP_ROWS */
 #include "ui_inner.h"
@@ -585,15 +586,16 @@ void init_text_ui( int argc, char** argv )
     noecho();
     nonl(); /* tell curses not to do NL->CR/NL on output */
 
+    color_t* colors = opt_gx ? colors_gx : colors_sx;
     if ( !config.mono && has_colors() ) {
         start_color();
 
         if ( config.gray ) {
-            init_color( LCD_COLOR_BG, 205, 205, 205 );
-            init_color( LCD_COLOR_FG, 20, 20, 20 );
+            init_color( LCD_COLOR_BG, colors[ LCD ].gray_rgb, colors[ LCD ].gray_rgb, colors[ LCD ].gray_rgb );
+            init_color( LCD_COLOR_FG, colors[ PIXEL ].gray_rgb, colors[ PIXEL ].gray_rgb, colors[ PIXEL ].gray_rgb );
         } else {
-            init_color( LCD_COLOR_BG, 202, 221, 92 );
-            init_color( LCD_COLOR_FG, 0, 0, 128 );
+            init_color( LCD_COLOR_BG, colors[ LCD ].r, colors[ LCD ].g, colors[ LCD ].b );
+            init_color( LCD_COLOR_FG, colors[ PIXEL ].r, colors[ PIXEL ].g, colors[ PIXEL ].b );
         }
 
         init_pair( LCD_PIXEL_OFF, LCD_COLOR_BG, LCD_COLOR_BG );

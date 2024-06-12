@@ -25,6 +25,32 @@
 #define UNDERLAY 18
 #define BLACK 19
 
+#define FIRST_COLOR WHITE
+#define LAST_COLOR BLACK
+#define NB_COLORS ( LAST_COLOR + 1 )
+
+/***********/
+/* typedef */
+/***********/
+typedef struct letter_t {
+    unsigned int w, h;
+    unsigned char* bits;
+} letter_t;
+
+typedef struct color_t {
+    const char* name;
+    int r, g, b;
+    int mono_rgb;
+    int gray_rgb;
+} color_t;
+
+/*************/
+/* variables */
+/*************/
+extern letter_t small_font[ 128 ];
+extern color_t colors_sx[ NB_COLORS ];
+extern color_t colors_gx[ NB_COLORS ];
+
 /***********/
 /* bitmaps */
 /***********/
