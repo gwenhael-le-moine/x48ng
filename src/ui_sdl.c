@@ -9,8 +9,8 @@
 #include <sys/utsname.h>
 #include <unistd.h>
 
-#include <SDL/SDL.h>
-#include <SDL/SDL_gfxPrimitives.h> /* lineColor(); pixelColor(); rectangleColor();stringColor(); */
+#include <SDL2/SDL.h>
+#include <SDL2/SDL2_gfxPrimitives.h> /* lineColor(); pixelColor(); rectangleColor();stringColor(); */
 
 #include "romio.h" /* opt_gx */
 #include "config.h"
