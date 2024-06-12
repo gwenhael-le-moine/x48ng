@@ -220,28 +220,7 @@ static bool mapped;
 
 static x11_keypad_t keypad;
 
-static XColor x11_colors[ NB_COLORS ] = {
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-    {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
-};
+static XColor x11_colors[ NB_COLORS ];
 
 static int CompletionType = -1;
 
@@ -276,65 +255,7 @@ static int icon_color_mode;
 static char* res_name;
 static char* res_class;
 
-static x11_button_t x11_buttons[ NB_KEYS ] = {
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-    {.map = 0, .down = 0, .xwin = 0},
-};
+static x11_button_t x11_buttons[ NB_KEYS ];
 
 #define MAX_PASTE 128
 static int paste[ MAX_PASTE * 3 ];
@@ -377,9 +298,7 @@ static unsigned char nibbles[ 16 ][ 2 ] = {
 
 static unsigned char nibble_bitmap[ 16 ];
 
-static Pixmap x11_ann_pixmaps[ NB_ANNUNCIATORS ] = {
-    0, 0, 0, 0, 0, 0,
-};
+static Pixmap x11_ann_pixmaps[ NB_ANNUNCIATORS ];
 
 static icon_map_t icon_maps_sx[] = {
     {.w = hp48_icon_width,   .h = hp48_icon_height,   .c = BLACK,    .bits = hp48_icon_bitmap  },

@@ -52,75 +52,8 @@ static unsigned KEYBOARD_HEIGHT, KEYBOARD_WIDTH, TOP_SKIP, SIDE_SKIP, BOTTOM_SKI
     DISPLAY_OFFSET_X, DISPLAY_OFFSET_Y, DISP_FRAME, KEYBOARD_OFFSET_X, KEYBOARD_OFFSET_Y, KBD_UPLINE;
 
 static unsigned int ARGBColors[ NB_COLORS ];
-
-static sdl_surfaces_on_off_struct_t sdl_buttons[ NB_KEYS ] = {
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-};
-
-static sdl_surfaces_on_off_struct_t sdl_ann_tbl[] = {
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-    {.surfaceon = 0, .surfaceoff = 0},
-};
+static sdl_surfaces_on_off_struct_t sdl_buttons[ NB_KEYS ];
+static sdl_surfaces_on_off_struct_t sdl_ann_tbl[ NB_ANNUNCIATORS ];
 
 // State to displayed zoomed last pressed key
 static SDL_Surface* showkeylastsurf = 0;
