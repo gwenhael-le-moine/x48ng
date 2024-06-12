@@ -67,69 +67,7 @@ static unsigned KEYBOARD_HEIGHT, KEYBOARD_WIDTH, TOP_SKIP, SIDE_SKIP, BOTTOM_SKI
 static unsigned int ARGBColors[ BLACK + 1 ];
 
 static button_t* buttons = 0;
-static sdl_button_t* sdl_buttons = 0;
-
-static sdl_button_t sdl_buttons_sx[] = {
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-    {.surfaceup = 0, .surfacedown = 0},
-};
-
-static sdl_button_t sdl_buttons_gx[] = {
+static sdl_button_t sdl_buttons[ NB_KEYS ] = {
     {.surfaceup = 0, .surfacedown = 0},
     {.surfaceup = 0, .surfacedown = 0},
     {.surfaceup = 0, .surfacedown = 0},
@@ -1768,22 +1706,7 @@ void init_sdl_ui( int argc, char** argv )
         exit( 1 );
     }
 
-    // we allocate memory for the buttons because we need to modify
-    // their coordinates, and we don't want to change the original buttons_gx or
-    // buttons_sx
-    buttons = ( button_t* )malloc( sizeof( buttons_gx ) );
-
-    if ( opt_gx )
-        memcpy( buttons, buttons_gx, sizeof( buttons_gx ) );
-    else
-        memcpy( buttons, buttons_sx, sizeof( buttons_sx ) );
-
-    sdl_buttons = ( sdl_button_t* )malloc( sizeof( sdl_buttons_gx ) );
-
-    if ( opt_gx )
-        memcpy( sdl_buttons, sdl_buttons_gx, sizeof( sdl_buttons_gx ) );
-    else
-        memcpy( sdl_buttons, sdl_buttons_sx, sizeof( sdl_buttons_sx ) );
+    buttons = opt_gx ? buttons_gx : buttons_sx;
 
     colors_setup( opt_gx ? colors_gx : colors_sx );
 
