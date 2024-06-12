@@ -17,24 +17,24 @@
 #include "ui.h"
 #include "ui_inner.h"
 
-#define _KEYBOARD_HEIGHT ( BUTTONS[ LAST_HPKEY ].y + BUTTONS[ LAST_HPKEY ].h )
-#define _KEYBOARD_WIDTH ( BUTTONS[ LAST_HPKEY ].x + BUTTONS[ LAST_HPKEY ].w )
+#define KEYBOARD_HEIGHT ( BUTTONS[ LAST_HPKEY ].y + BUTTONS[ LAST_HPKEY ].h )
+#define KEYBOARD_WIDTH ( BUTTONS[ LAST_HPKEY ].x + BUTTONS[ LAST_HPKEY ].w )
 
-#define _TOP_SKIP 65
-#define _SIDE_SKIP 20
-#define _BOTTOM_SKIP 25
-#define _DISP_KBD_SKIP 65
-#define _KBD_UPLINE 25
+#define TOP_SKIP 65
+#define SIDE_SKIP 20
+#define BOTTOM_SKIP 25
+#define DISP_KBD_SKIP 65
+#define KBD_UPLINE 25
 
-#define _DISPLAY_WIDTH ( 264 + 8 )
-#define _DISPLAY_HEIGHT ( 128 + 16 + 8 )
-#define _DISPLAY_OFFSET_X ( SIDE_SKIP + ( 286 - DISPLAY_WIDTH ) / 2 )
-#define _DISPLAY_OFFSET_Y TOP_SKIP
+#define DISPLAY_WIDTH ( 264 + 8 )
+#define DISPLAY_HEIGHT ( 128 + 16 + 8 )
+#define DISPLAY_OFFSET_X ( SIDE_SKIP + ( 286 - DISPLAY_WIDTH ) / 2 )
+#define DISPLAY_OFFSET_Y TOP_SKIP
 
-#define _DISP_FRAME 8
+#define DISP_FRAME 8
 
-#define _KEYBOARD_OFFSET_X SIDE_SKIP
-#define _KEYBOARD_OFFSET_Y ( TOP_SKIP + DISPLAY_HEIGHT + DISP_KBD_SKIP )
+#define KEYBOARD_OFFSET_X SIDE_SKIP
+#define KEYBOARD_OFFSET_Y ( TOP_SKIP + DISPLAY_HEIGHT + DISP_KBD_SKIP )
 
 /***********/
 /* typedef */
@@ -47,9 +47,7 @@ typedef struct sdl_surfaces_on_off_struct_t {
 /*************/
 /* variables */
 /*************/
-// This will take the value of the defines, but can be run-time modified
-static unsigned KEYBOARD_HEIGHT, KEYBOARD_WIDTH, TOP_SKIP, SIDE_SKIP, BOTTOM_SKIP, DISP_KBD_SKIP, DISPLAY_WIDTH, DISPLAY_HEIGHT,
-    DISPLAY_OFFSET_X, DISPLAY_OFFSET_Y, DISP_FRAME, KEYBOARD_OFFSET_X, KEYBOARD_OFFSET_Y, KBD_UPLINE;
+static int display_offset_x, display_offset_y;
 
 static unsigned int ARGBColors[ NB_COLORS ];
 static sdl_surfaces_on_off_struct_t sdl_buttons[ NB_KEYS ];
@@ -497,9 +495,9 @@ static void _draw_header( void )
     // insert the HP Logo
     surf = bitmap_to_surface( hp_width, hp_height, hp_bitmap, ARGBColors[ LOGO ], ARGBColors[ LOGO_BACK ] );
     if ( opt_gx )
-        x = DISPLAY_OFFSET_X - 6;
+        x = display_offset_x - 6;
     else
-        x = DISPLAY_OFFSET_X;
+        x = display_offset_x;
 
     SDL_Rect srect;
     SDL_Rect drect;
@@ -515,18 +513,18 @@ static void _draw_header( void )
     SDL_FreeSurface( surf );
 
     if ( !opt_gx ) {
-        lineColor( sdlwindow, DISPLAY_OFFSET_X, 9, DISPLAY_OFFSET_X + hp_width - 1, 9, bgra2argb( ARGBColors[ FRAME ] ) );
-        lineColor( sdlwindow, DISPLAY_OFFSET_X - 1, 10, DISPLAY_OFFSET_X - 1, 10 + hp_height - 1, bgra2argb( ARGBColors[ FRAME ] ) );
-        lineColor( sdlwindow, DISPLAY_OFFSET_X, 10 + hp_height, DISPLAY_OFFSET_X + hp_width - 1, 10 + hp_height,
+        lineColor( sdlwindow, display_offset_x, 9, display_offset_x + hp_width - 1, 9, bgra2argb( ARGBColors[ FRAME ] ) );
+        lineColor( sdlwindow, display_offset_x - 1, 10, display_offset_x - 1, 10 + hp_height - 1, bgra2argb( ARGBColors[ FRAME ] ) );
+        lineColor( sdlwindow, display_offset_x, 10 + hp_height, display_offset_x + hp_width - 1, 10 + hp_height,
                    bgra2argb( ARGBColors[ FRAME ] ) );
-        lineColor( sdlwindow, DISPLAY_OFFSET_X + hp_width, 10, DISPLAY_OFFSET_X + hp_width, 10 + hp_height - 1,
+        lineColor( sdlwindow, display_offset_x + hp_width, 10, display_offset_x + hp_width, 10 + hp_height - 1,
                    bgra2argb( ARGBColors[ FRAME ] ) );
     }
 
     // write the name of it
 
     if ( opt_gx ) {
-        x = DISPLAY_OFFSET_X + display_width - gx_128K_ram_width + gx_128K_ram_x_hot + 2;
+        x = display_offset_x + display_width - gx_128K_ram_width + gx_128K_ram_x_hot + 2;
         y = 10 + gx_128K_ram_y_hot;
 
         surf = bitmap_to_surface( gx_128K_ram_width, gx_128K_ram_height, gx_128K_ram_bitmap, ARGBColors[ LABEL ], ARGBColors[ DISP_PAD ] );
@@ -541,7 +539,7 @@ static void _draw_header( void )
         SDL_BlitSurface( surf, &srect, sdlwindow, &drect );
         SDL_FreeSurface( surf );
 
-        x = DISPLAY_OFFSET_X + hp_width;
+        x = display_offset_x + hp_width;
         y = hp_height + 8 - hp48gx_height;
         surf = bitmap_to_surface( hp48gx_width, hp48gx_height, hp48gx_bitmap, ARGBColors[ LOGO ], ARGBColors[ DISP_PAD ] );
         srect.x = 0;
@@ -555,7 +553,7 @@ static void _draw_header( void )
         SDL_BlitSurface( surf, &srect, sdlwindow, &drect );
         SDL_FreeSurface( surf );
 
-        x = DISPLAY_OFFSET_X + DISPLAY_WIDTH - gx_128K_ram_width + gx_silver_x_hot + 2;
+        x = display_offset_x + DISPLAY_WIDTH - gx_128K_ram_width + gx_silver_x_hot + 2;
         y = 10 + gx_silver_y_hot;
         surf = bitmap_to_surface( gx_silver_width, gx_silver_height, gx_silver_bitmap, ARGBColors[ LOGO ],
                                   0 ); // Background transparent: draw only silver line
@@ -570,7 +568,7 @@ static void _draw_header( void )
         SDL_BlitSurface( surf, &srect, sdlwindow, &drect );
         SDL_FreeSurface( surf );
 
-        x = DISPLAY_OFFSET_X + display_width - gx_128K_ram_width + gx_green_x_hot + 2;
+        x = display_offset_x + display_width - gx_128K_ram_width + gx_green_x_hot + 2;
         y = 10 + gx_green_y_hot;
         surf = bitmap_to_surface( gx_green_width, gx_green_height, gx_green_bitmap, ARGBColors[ RIGHT ],
                                   0 ); // Background transparent: draw only green menu
@@ -585,7 +583,7 @@ static void _draw_header( void )
         SDL_BlitSurface( surf, &srect, sdlwindow, &drect );
         SDL_FreeSurface( surf );
     } else {
-        x = DISPLAY_OFFSET_X;
+        x = display_offset_x;
         y = TOP_SKIP - DISP_FRAME - hp48sx_height - 3;
         surf = bitmap_to_surface( hp48sx_width, hp48sx_height, hp48sx_bitmap, ARGBColors[ RIGHT ],
                                   0 ); // Background transparent: draw only green menu
@@ -600,7 +598,7 @@ static void _draw_header( void )
         SDL_BlitSurface( surf, &srect, sdlwindow, &drect );
         SDL_FreeSurface( surf );
 
-        x = DISPLAY_OFFSET_X + display_width - 1 - science_width;
+        x = display_offset_x + display_width - 1 - science_width;
         y = TOP_SKIP - DISP_FRAME - science_height - 4;
         surf = bitmap_to_surface( science_width, science_height, science_bitmap, ARGBColors[ RIGHT ],
                                   0 ); // Background transparent: draw only green menu
@@ -975,68 +973,61 @@ static void _draw_keypad( void )
 
 static void _draw_bezel_LCD( void )
 {
-    unsigned int i;
-    int display_height = DISPLAY_HEIGHT;
-    int display_width = DISPLAY_WIDTH;
+    for ( int i = 0; i < DISP_FRAME; i++ ) {
+        lineColor( sdlwindow, display_offset_x - i, display_offset_y + DISPLAY_HEIGHT + 2 * i, display_offset_x + DISPLAY_WIDTH + i,
+                   display_offset_y + DISPLAY_HEIGHT + 2 * i, bgra2argb( ARGBColors[ DISP_PAD_TOP ] ) );
+        lineColor( sdlwindow, display_offset_x - i, display_offset_y + DISPLAY_HEIGHT + 2 * i + 1, display_offset_x + DISPLAY_WIDTH + i,
+                   display_offset_y + DISPLAY_HEIGHT + 2 * i + 1, bgra2argb( ARGBColors[ DISP_PAD_TOP ] ) );
+        lineColor( sdlwindow, display_offset_x + DISPLAY_WIDTH + i, display_offset_y - i, display_offset_x + DISPLAY_WIDTH + i,
+                   display_offset_y + DISPLAY_HEIGHT + 2 * i, bgra2argb( ARGBColors[ DISP_PAD_TOP ] ) );
 
-    // draw the frame around the display
-    for ( i = 0; i < DISP_FRAME; i++ ) {
-        lineColor( sdlwindow, DISPLAY_OFFSET_X - i, DISPLAY_OFFSET_Y + display_height + 2 * i, DISPLAY_OFFSET_X + display_width + i,
-                   DISPLAY_OFFSET_Y + display_height + 2 * i, bgra2argb( ARGBColors[ DISP_PAD_TOP ] ) );
-        lineColor( sdlwindow, DISPLAY_OFFSET_X - i, DISPLAY_OFFSET_Y + display_height + 2 * i + 1, DISPLAY_OFFSET_X + display_width + i,
-                   DISPLAY_OFFSET_Y + display_height + 2 * i + 1, bgra2argb( ARGBColors[ DISP_PAD_TOP ] ) );
-        lineColor( sdlwindow, DISPLAY_OFFSET_X + display_width + i, DISPLAY_OFFSET_Y - i, DISPLAY_OFFSET_X + display_width + i,
-                   DISPLAY_OFFSET_Y + display_height + 2 * i, bgra2argb( ARGBColors[ DISP_PAD_TOP ] ) );
-    }
-
-    for ( i = 0; i < DISP_FRAME; i++ ) {
-        lineColor( sdlwindow, DISPLAY_OFFSET_X - i - 1, DISPLAY_OFFSET_Y - i - 1, DISPLAY_OFFSET_X + display_width + i - 1,
-                   DISPLAY_OFFSET_Y - i - 1, bgra2argb( ARGBColors[ DISP_PAD_BOT ] ) );
-        lineColor( sdlwindow, DISPLAY_OFFSET_X - i - 1, DISPLAY_OFFSET_Y - i - 1, DISPLAY_OFFSET_X - i - 1,
-                   DISPLAY_OFFSET_Y + display_height + 2 * i - 1, bgra2argb( ARGBColors[ DISP_PAD_BOT ] ) );
+        lineColor( sdlwindow, display_offset_x - i - 1, display_offset_y - i - 1, display_offset_x + DISPLAY_WIDTH + i - 1,
+                   display_offset_y - i - 1, bgra2argb( ARGBColors[ DISP_PAD_BOT ] ) );
+        lineColor( sdlwindow, display_offset_x - i - 1, display_offset_y - i - 1, display_offset_x - i - 1,
+                   display_offset_y + DISPLAY_HEIGHT + 2 * i - 1, bgra2argb( ARGBColors[ DISP_PAD_BOT ] ) );
     }
 
     // round off corners
-    lineColor( sdlwindow, DISPLAY_OFFSET_X - DISP_FRAME, DISPLAY_OFFSET_Y - DISP_FRAME, DISPLAY_OFFSET_X - DISP_FRAME + 3,
-               DISPLAY_OFFSET_Y - DISP_FRAME, bgra2argb( ARGBColors[ DISP_PAD ] ) );
-    lineColor( sdlwindow, DISPLAY_OFFSET_X - DISP_FRAME, DISPLAY_OFFSET_Y - DISP_FRAME, DISPLAY_OFFSET_X - DISP_FRAME,
-               DISPLAY_OFFSET_Y - DISP_FRAME + 3, bgra2argb( ARGBColors[ DISP_PAD ] ) );
-    pixelColor( sdlwindow, DISPLAY_OFFSET_X - DISP_FRAME + 1, DISPLAY_OFFSET_Y - DISP_FRAME + 1, bgra2argb( ARGBColors[ DISP_PAD ] ) );
+    lineColor( sdlwindow, display_offset_x - DISP_FRAME, display_offset_y - DISP_FRAME, display_offset_x - DISP_FRAME + 3,
+               display_offset_y - DISP_FRAME, bgra2argb( ARGBColors[ DISP_PAD ] ) );
+    lineColor( sdlwindow, display_offset_x - DISP_FRAME, display_offset_y - DISP_FRAME, display_offset_x - DISP_FRAME,
+               display_offset_y - DISP_FRAME + 3, bgra2argb( ARGBColors[ DISP_PAD ] ) );
+    pixelColor( sdlwindow, display_offset_x - DISP_FRAME + 1, display_offset_y - DISP_FRAME + 1, bgra2argb( ARGBColors[ DISP_PAD ] ) );
 
-    lineColor( sdlwindow, DISPLAY_OFFSET_X + display_width + DISP_FRAME - 4, DISPLAY_OFFSET_Y - DISP_FRAME,
-               DISPLAY_OFFSET_X + display_width + DISP_FRAME - 1, DISPLAY_OFFSET_Y - DISP_FRAME, bgra2argb( ARGBColors[ DISP_PAD ] ) );
-    lineColor( sdlwindow, DISPLAY_OFFSET_X + display_width + DISP_FRAME - 1, DISPLAY_OFFSET_Y - DISP_FRAME,
-               DISPLAY_OFFSET_X + display_width + DISP_FRAME - 1, DISPLAY_OFFSET_Y - DISP_FRAME + 3, bgra2argb( ARGBColors[ DISP_PAD ] ) );
-    pixelColor( sdlwindow, DISPLAY_OFFSET_X + display_width + DISP_FRAME - 2, DISPLAY_OFFSET_Y - DISP_FRAME + 1,
+    lineColor( sdlwindow, display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 4, display_offset_y - DISP_FRAME,
+               display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y - DISP_FRAME, bgra2argb( ARGBColors[ DISP_PAD ] ) );
+    lineColor( sdlwindow, display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y - DISP_FRAME,
+               display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y - DISP_FRAME + 3, bgra2argb( ARGBColors[ DISP_PAD ] ) );
+    pixelColor( sdlwindow, display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 2, display_offset_y - DISP_FRAME + 1,
                 bgra2argb( ARGBColors[ DISP_PAD ] ) );
 
-    lineColor( sdlwindow, DISPLAY_OFFSET_X - DISP_FRAME, DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 4,
-               DISPLAY_OFFSET_X - DISP_FRAME, DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 1, bgra2argb( ARGBColors[ DISP_PAD ] ) );
-    lineColor( sdlwindow, DISPLAY_OFFSET_X - DISP_FRAME, DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 1,
-               DISPLAY_OFFSET_X - DISP_FRAME + 3, DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 1,
+    lineColor( sdlwindow, display_offset_x - DISP_FRAME, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 4,
+               display_offset_x - DISP_FRAME, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1, bgra2argb( ARGBColors[ DISP_PAD ] ) );
+    lineColor( sdlwindow, display_offset_x - DISP_FRAME, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1,
+               display_offset_x - DISP_FRAME + 3, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1,
                bgra2argb( ARGBColors[ DISP_PAD ] ) );
-    pixelColor( sdlwindow, DISPLAY_OFFSET_X - DISP_FRAME + 1, DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 2,
+    pixelColor( sdlwindow, display_offset_x - DISP_FRAME + 1, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 2,
                 bgra2argb( ARGBColors[ DISP_PAD ] ) );
 
-    lineColor( sdlwindow, DISPLAY_OFFSET_X + display_width + DISP_FRAME - 1, DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 4,
-               DISPLAY_OFFSET_X + display_width + DISP_FRAME - 1, DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 1,
+    lineColor( sdlwindow, display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 4,
+               display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1,
                bgra2argb( ARGBColors[ DISP_PAD ] ) );
-    lineColor( sdlwindow, DISPLAY_OFFSET_X + display_width + DISP_FRAME - 4, DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 1,
-               DISPLAY_OFFSET_X + display_width + DISP_FRAME - 1, DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 1,
+    lineColor( sdlwindow, display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 4, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1,
+               display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1,
                bgra2argb( ARGBColors[ DISP_PAD ] ) );
-    pixelColor( sdlwindow, DISPLAY_OFFSET_X + display_width + DISP_FRAME - 2, DISPLAY_OFFSET_Y + display_height + 2 * DISP_FRAME - 2,
+    pixelColor( sdlwindow, display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 2, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 2,
                 bgra2argb( ARGBColors[ DISP_PAD ] ) );
 
     // simulate rounded lcd corners
 
-    lineColor( sdlwindow, DISPLAY_OFFSET_X - 1, DISPLAY_OFFSET_Y + 1, DISPLAY_OFFSET_X - 1, DISPLAY_OFFSET_Y + display_height - 2,
+    lineColor( sdlwindow, display_offset_x - 1, display_offset_y + 1, display_offset_x - 1, display_offset_y + DISPLAY_HEIGHT - 2,
                bgra2argb( ARGBColors[ LCD ] ) );
-    lineColor( sdlwindow, DISPLAY_OFFSET_X + 1, DISPLAY_OFFSET_Y - 1, DISPLAY_OFFSET_X + display_width - 2, DISPLAY_OFFSET_Y - 1,
+    lineColor( sdlwindow, display_offset_x + 1, display_offset_y - 1, display_offset_x + DISPLAY_WIDTH - 2, display_offset_y - 1,
                bgra2argb( ARGBColors[ LCD ] ) );
-    lineColor( sdlwindow, DISPLAY_OFFSET_X + 1, DISPLAY_OFFSET_Y + display_height, DISPLAY_OFFSET_X + display_width - 2,
-               DISPLAY_OFFSET_Y + display_height, bgra2argb( ARGBColors[ LCD ] ) );
-    lineColor( sdlwindow, DISPLAY_OFFSET_X + display_width, DISPLAY_OFFSET_Y + 1, DISPLAY_OFFSET_X + display_width,
-               DISPLAY_OFFSET_Y + display_height - 2, bgra2argb( ARGBColors[ LCD ] ) );
+    lineColor( sdlwindow, display_offset_x + 1, display_offset_y + DISPLAY_HEIGHT, display_offset_x + DISPLAY_WIDTH - 2,
+               display_offset_y + DISPLAY_HEIGHT, bgra2argb( ARGBColors[ LCD ] ) );
+    lineColor( sdlwindow, display_offset_x + DISPLAY_WIDTH, display_offset_y + 1, display_offset_x + DISPLAY_WIDTH,
+               display_offset_y + DISPLAY_HEIGHT - 2, bgra2argb( ARGBColors[ LCD ] ) );
 }
 
 static void _draw_background( int width, int height, int w_top, int h_top )
@@ -1058,8 +1049,8 @@ static void _draw_background_LCD( void )
 {
     SDL_Rect rect;
 
-    rect.x = DISPLAY_OFFSET_X;
-    rect.y = DISPLAY_OFFSET_Y;
+    rect.x = display_offset_x;
+    rect.y = display_offset_y;
     rect.w = DISPLAY_WIDTH;
     rect.h = DISPLAY_HEIGHT;
     SDL_FillRect( sdlwindow, &rect, ARGBColors[ LCD ] );
@@ -1166,8 +1157,8 @@ static void _draw_serial_devices_path( void )
 static void sdl_draw_nibble( int nx, int ny, int val )
 {
     int x, y;
-    int xoffset = DISPLAY_OFFSET_X + 5;
-    int yoffset = DISPLAY_OFFSET_Y + 20;
+    int xoffset = display_offset_x + 5;
+    int yoffset = display_offset_y + 20;
 
     SDL_LockSurface( sdlwindow );
     unsigned char* buffer = ( unsigned char* )sdlwindow->pixels;
@@ -1396,8 +1387,8 @@ void sdl_draw_annunc( void )
         srect.y = 0;
         srect.w = ann_tbl[ i ].width;
         srect.h = ann_tbl[ i ].height;
-        drect.x = DISPLAY_OFFSET_X + ann_tbl[ i ].x;
-        drect.y = DISPLAY_OFFSET_Y + ann_tbl[ i ].y;
+        drect.x = display_offset_x + ann_tbl[ i ].x;
+        drect.y = display_offset_y + ann_tbl[ i ].y;
         drect.w = ann_tbl[ i ].width;
         drect.h = ann_tbl[ i ].height;
 
@@ -1405,7 +1396,7 @@ void sdl_draw_annunc( void )
     }
 
     // Always immediately update annunciators
-    SDL_UpdateRect( sdlwindow, DISPLAY_OFFSET_X + ann_tbl[ 0 ].x, DISPLAY_OFFSET_Y + ann_tbl[ 0 ].y,
+    SDL_UpdateRect( sdlwindow, display_offset_x + ann_tbl[ 0 ].x, display_offset_y + ann_tbl[ 0 ].y,
                     ann_tbl[ 5 ].x + ann_tbl[ 5 ].width - ann_tbl[ 0 ].x, ann_tbl[ 5 ].y + ann_tbl[ 5 ].height - ann_tbl[ 0 ].y );
 }
 
@@ -1452,31 +1443,17 @@ void init_sdl_ui( int argc, char** argv )
     // On exit: clean SDL
     atexit( SDL_Quit );
 
-    // Initialize the geometric values
-    KEYBOARD_HEIGHT = _KEYBOARD_HEIGHT;
-    KEYBOARD_WIDTH = _KEYBOARD_WIDTH;
-    TOP_SKIP = _TOP_SKIP;
-    SIDE_SKIP = _SIDE_SKIP;
-    BOTTOM_SKIP = _BOTTOM_SKIP;
-    DISP_KBD_SKIP = _DISP_KBD_SKIP;
-    DISPLAY_WIDTH = _DISPLAY_WIDTH;
-    DISPLAY_HEIGHT = _DISPLAY_HEIGHT;
-    DISPLAY_OFFSET_X = _DISPLAY_OFFSET_X;
-    DISPLAY_OFFSET_Y = _DISPLAY_OFFSET_Y;
-    DISP_FRAME = _DISP_FRAME;
-    KEYBOARD_OFFSET_X = _KEYBOARD_OFFSET_X;
-    KEYBOARD_OFFSET_Y = _KEYBOARD_OFFSET_Y;
-    KBD_UPLINE = _KBD_UPLINE;
-
     unsigned int width, height;
+    display_offset_x = DISPLAY_OFFSET_X;
+    display_offset_y = DISPLAY_OFFSET_Y;
+    width = ( BUTTONS[ LAST_HPKEY ].x + BUTTONS[ LAST_HPKEY ].w ) + 2 * SIDE_SKIP;
+    height = display_offset_y + DISPLAY_HEIGHT + DISP_KBD_SKIP + BUTTONS[ LAST_HPKEY ].y + BUTTONS[ LAST_HPKEY ].h + BOTTOM_SKIP;
+
     if ( config.hide_chrome ) {
         width = DISPLAY_WIDTH;
         height = DISPLAY_HEIGHT;
-        DISPLAY_OFFSET_X = 0;
-        DISPLAY_OFFSET_Y = 0;
-    } else {
-        width = ( BUTTONS[ LAST_HPKEY ].x + BUTTONS[ LAST_HPKEY ].w ) + 2 * SIDE_SKIP;
-        height = DISPLAY_OFFSET_Y + DISPLAY_HEIGHT + DISP_KBD_SKIP + BUTTONS[ LAST_HPKEY ].y + BUTTONS[ LAST_HPKEY ].h + BOTTOM_SKIP;
+        display_offset_x = 0;
+        display_offset_y = 0;
     }
 
     uint32_t sdl_window_flags = SDL_SWSURFACE | SDL_RESIZABLE;
@@ -1489,8 +1466,6 @@ void init_sdl_ui( int argc, char** argv )
         printf( "Couldn't set video mode: %s\n", SDL_GetError() );
         exit( 1 );
     }
-
-    /* BUTTONS = opt_gx ? BUTTONS_gx : BUTTONS_sx; */
 
     colors_setup();
 

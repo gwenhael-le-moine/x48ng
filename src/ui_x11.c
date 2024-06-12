@@ -2899,7 +2899,6 @@ void x11_get_event( void )
                         if ( cm->data.l[ 0 ] == ( long )wm_delete_window )
                             please_exit = true;
                         if ( cm->data.l[ 0 ] == ( long )wm_save_yourself ) {
-                            /* save_command_line(); */
                             int wm_argc = 0;
                             char** wm_argv = ( char** )malloc( ( saved_argc + 5 ) * sizeof( char* ) );
 
