@@ -79,9 +79,11 @@ extern letter_t small_font[ 128 ];
 
 extern color_t colors_sx[ NB_COLORS ];
 extern color_t colors_gx[ NB_COLORS ];
+#define COLORS ( opt_gx ? colors_gx : colors_sx )
 
 extern button_t buttons_sx[ NB_KEYS ];
 extern button_t buttons_gx[ NB_KEYS ];
+#define BUTTONS ( opt_gx ? buttons_gx : buttons_sx )
 
 extern ann_struct_t ann_tbl[ NB_ANNUNCIATORS ];
 

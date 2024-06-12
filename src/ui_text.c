@@ -586,16 +586,15 @@ void init_text_ui( int argc, char** argv )
     noecho();
     nonl(); /* tell curses not to do NL->CR/NL on output */
 
-    color_t* colors = opt_gx ? colors_gx : colors_sx;
     if ( !config.mono && has_colors() ) {
         start_color();
 
         if ( config.gray ) {
-            init_color( LCD_COLOR_BG, colors[ LCD ].gray_rgb, colors[ LCD ].gray_rgb, colors[ LCD ].gray_rgb );
-            init_color( LCD_COLOR_FG, colors[ PIXEL ].gray_rgb, colors[ PIXEL ].gray_rgb, colors[ PIXEL ].gray_rgb );
+            init_color( LCD_COLOR_BG, COLORS[ LCD ].gray_rgb, COLORS[ LCD ].gray_rgb, COLORS[ LCD ].gray_rgb );
+            init_color( LCD_COLOR_FG, COLORS[ PIXEL ].gray_rgb, COLORS[ PIXEL ].gray_rgb, COLORS[ PIXEL ].gray_rgb );
         } else {
-            init_color( LCD_COLOR_BG, colors[ LCD ].r, colors[ LCD ].g, colors[ LCD ].b );
-            init_color( LCD_COLOR_FG, colors[ PIXEL ].r, colors[ PIXEL ].g, colors[ PIXEL ].b );
+            init_color( LCD_COLOR_BG, COLORS[ LCD ].r, COLORS[ LCD ].g, COLORS[ LCD ].b );
+            init_color( LCD_COLOR_FG, COLORS[ PIXEL ].r, COLORS[ PIXEL ].g, COLORS[ PIXEL ].b );
         }
 
         init_pair( LCD_PIXEL_OFF, LCD_COLOR_BG, LCD_COLOR_BG );

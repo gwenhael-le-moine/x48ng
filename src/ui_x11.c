@@ -26,8 +26,8 @@
 #define UPDATE_MENU 1
 #define UPDATE_DISP 2
 
-#define KEYBOARD_HEIGHT ( buttons[ LAST_HPKEY ].y + buttons[ LAST_HPKEY ].h )
-#define KEYBOARD_WIDTH ( buttons[ LAST_HPKEY ].x + buttons[ LAST_HPKEY ].w )
+#define KEYBOARD_HEIGHT ( BUTTONS[ LAST_HPKEY ].y + BUTTONS[ LAST_HPKEY ].h )
+#define KEYBOARD_WIDTH ( BUTTONS[ LAST_HPKEY ].x + BUTTONS[ LAST_HPKEY ].w )
 
 #define TOP_SKIP 65
 #define SIDE_SKIP 20
@@ -242,7 +242,6 @@ static XColor x11_colors[ NB_COLORS ] = {
     {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
     {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
 };
-static color_t* colors;
 
 static int CompletionType = -1;
 
@@ -277,7 +276,6 @@ static int icon_color_mode;
 static char* res_name;
 static char* res_class;
 
-static button_t* buttons = 0;
 static x11_button_t x11_buttons[ NB_KEYS ] = {
     {.map = 0, .down = 0, .xwin = 0},
     {.map = 0, .down = 0, .xwin = 0},
@@ -571,19 +569,19 @@ static inline void colors_setup( void )
     for ( c = FIRST_COLOR; c <= LAST_COLOR; c++ ) {
         switch ( color_mode ) {
             case COLOR_MODE_MONO:
-                x11_colors[ c ].red = colors[ c ].mono_rgb << 8;
-                x11_colors[ c ].green = colors[ c ].mono_rgb << 8;
-                x11_colors[ c ].blue = colors[ c ].mono_rgb << 8;
+                x11_colors[ c ].red = COLORS[ c ].mono_rgb << 8;
+                x11_colors[ c ].green = COLORS[ c ].mono_rgb << 8;
+                x11_colors[ c ].blue = COLORS[ c ].mono_rgb << 8;
                 break;
             case COLOR_MODE_GRAY:
-                x11_colors[ c ].red = colors[ c ].gray_rgb << 8;
-                x11_colors[ c ].green = colors[ c ].gray_rgb << 8;
-                x11_colors[ c ].blue = colors[ c ].gray_rgb << 8;
+                x11_colors[ c ].red = COLORS[ c ].gray_rgb << 8;
+                x11_colors[ c ].green = COLORS[ c ].gray_rgb << 8;
+                x11_colors[ c ].blue = COLORS[ c ].gray_rgb << 8;
                 break;
             default:
-                x11_colors[ c ].red = colors[ c ].r << 8;
-                x11_colors[ c ].green = colors[ c ].g << 8;
-                x11_colors[ c ].blue = colors[ c ].b << 8;
+                x11_colors[ c ].red = COLORS[ c ].r << 8;
+                x11_colors[ c ].green = COLORS[ c ].g << 8;
+                x11_colors[ c ].blue = COLORS[ c ].b << 8;
                 break;
         }
         if ( direct_color ) {
@@ -654,19 +652,19 @@ static inline void colors_setup( void )
         for ( c = FIRST_COLOR; c <= LAST_COLOR; c++ ) {
             switch ( color_mode ) {
                 case COLOR_MODE_MONO:
-                    x11_colors[ c ].red = colors[ c ].mono_rgb << 8;
-                    x11_colors[ c ].green = colors[ c ].mono_rgb << 8;
-                    x11_colors[ c ].blue = colors[ c ].mono_rgb << 8;
+                    x11_colors[ c ].red = COLORS[ c ].mono_rgb << 8;
+                    x11_colors[ c ].green = COLORS[ c ].mono_rgb << 8;
+                    x11_colors[ c ].blue = COLORS[ c ].mono_rgb << 8;
                     break;
                 case COLOR_MODE_GRAY:
-                    x11_colors[ c ].red = colors[ c ].gray_rgb << 8;
-                    x11_colors[ c ].green = colors[ c ].gray_rgb << 8;
-                    x11_colors[ c ].blue = colors[ c ].gray_rgb << 8;
+                    x11_colors[ c ].red = COLORS[ c ].gray_rgb << 8;
+                    x11_colors[ c ].green = COLORS[ c ].gray_rgb << 8;
+                    x11_colors[ c ].blue = COLORS[ c ].gray_rgb << 8;
                     break;
                 default:
-                    x11_colors[ c ].red = colors[ c ].r << 8;
-                    x11_colors[ c ].green = colors[ c ].g << 8;
-                    x11_colors[ c ].blue = colors[ c ].b << 8;
+                    x11_colors[ c ].red = COLORS[ c ].r << 8;
+                    x11_colors[ c ].green = COLORS[ c ].g << 8;
+                    x11_colors[ c ].blue = COLORS[ c ].b << 8;
                     break;
             }
             if ( dynamic_color && c == PIXEL ) {
@@ -724,7 +722,7 @@ static inline void __create_button( int i, int off_x, int off_y, XFontStruct* f_
     if ( i < HPKEY_MTH )
         pixel = COLOR( DISP_PAD );
     else {
-        if ( opt_gx && buttons[ i ].is_menu )
+        if ( opt_gx && BUTTONS[ i ].is_menu )
             pixel = COLOR( UNDERLAY );
         else
             pixel = COLOR( PAD );
@@ -733,7 +731,7 @@ static inline void __create_button( int i, int off_x, int off_y, XFontStruct* f_
     /*
      * create the buttons subwindows
      */
-    x11_buttons[ i ].xwin = XCreateSimpleWindow( dpy, mainW, off_x + buttons[ i ].x, off_y + buttons[ i ].y, buttons[ i ].w, buttons[ i ].h,
+    x11_buttons[ i ].xwin = XCreateSimpleWindow( dpy, mainW, off_x + BUTTONS[ i ].x, off_y + BUTTONS[ i ].y, BUTTONS[ i ].w, BUTTONS[ i ].h,
                                                  0, COLOR( BLACK ), pixel );
 
     XDefineCursor( dpy, x11_buttons[ i ].xwin, XCreateFontCursor( dpy, XC_hand1 ) );
@@ -746,19 +744,19 @@ static inline void __create_button( int i, int off_x, int off_y, XFontStruct* f_
     /*
      * draw the released button
      */
-    x11_buttons[ i ].map = XCreatePixmap( dpy, x11_buttons[ i ].xwin, buttons[ i ].w, buttons[ i ].h, depth );
+    x11_buttons[ i ].map = XCreatePixmap( dpy, x11_buttons[ i ].xwin, BUTTONS[ i ].w, BUTTONS[ i ].h, depth );
 
     XSetForeground( dpy, gc, pixel );
-    XFillRectangle( dpy, x11_buttons[ i ].map, gc, 0, 0, buttons[ i ].w, buttons[ i ].h );
+    XFillRectangle( dpy, x11_buttons[ i ].map, gc, 0, 0, BUTTONS[ i ].w, BUTTONS[ i ].h );
 
     XSetForeground( dpy, gc, COLOR( BUTTON ) );
-    XFillRectangle( dpy, x11_buttons[ i ].map, gc, 1, 1, buttons[ i ].w - 2, buttons[ i ].h - 2 );
+    XFillRectangle( dpy, x11_buttons[ i ].map, gc, 1, 1, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2 );
 
-    if ( buttons[ i ].label != ( char* )0 ) {
+    if ( BUTTONS[ i ].label != ( char* )0 ) {
         /*
          * set font size in gc
          */
-        switch ( buttons[ i ].font_size ) {
+        switch ( BUTTONS[ i ].font_size ) {
             case 0:
                 finfo = f_small;
                 break;
@@ -780,28 +778,28 @@ static inline void __create_button( int i, int off_x, int off_y, XFontStruct* f_
          * draw string centered in button
          */
         XSetBackground( dpy, gc, COLOR( BUTTON ) );
-        XSetForeground( dpy, gc, COLOR( buttons[ i ].lc ) );
+        XSetForeground( dpy, gc, COLOR( BUTTONS[ i ].lc ) );
 
-        XTextExtents( finfo, buttons[ i ].label, ( int )strlen( buttons[ i ].label ), &dir, &fa, &fd, &xchar );
-        x = ( buttons[ i ].w - xchar.width ) / 2;
-        y = ( 1 + buttons[ i ].h - ( xchar.ascent + xchar.descent ) ) / 2 + xchar.ascent + 1;
-        XDrawImageString( dpy, x11_buttons[ i ].map, gc, x, y, buttons[ i ].label, ( int )strlen( buttons[ i ].label ) );
+        XTextExtents( finfo, BUTTONS[ i ].label, ( int )strlen( BUTTONS[ i ].label ), &dir, &fa, &fd, &xchar );
+        x = ( BUTTONS[ i ].w - xchar.width ) / 2;
+        y = ( 1 + BUTTONS[ i ].h - ( xchar.ascent + xchar.descent ) ) / 2 + xchar.ascent + 1;
+        XDrawImageString( dpy, x11_buttons[ i ].map, gc, x, y, BUTTONS[ i ].label, ( int )strlen( BUTTONS[ i ].label ) );
 
         XSetBackground( dpy, gc, COLOR( BLACK ) );
 
-    } else if ( buttons[ i ].lw != 0 ) {
+    } else if ( BUTTONS[ i ].lw != 0 ) {
         /*
          * draw pixmap centered in button
          */
         XSetBackground( dpy, gc, COLOR( BUTTON ) );
-        XSetForeground( dpy, gc, COLOR( buttons[ i ].lc ) );
+        XSetForeground( dpy, gc, COLOR( BUTTONS[ i ].lc ) );
 
-        pix = XCreateBitmapFromData( dpy, x11_buttons[ i ].xwin, ( char* )buttons[ i ].lb, buttons[ i ].lw, buttons[ i ].lh );
+        pix = XCreateBitmapFromData( dpy, x11_buttons[ i ].xwin, ( char* )BUTTONS[ i ].lb, BUTTONS[ i ].lw, BUTTONS[ i ].lh );
 
-        x = ( 1 + buttons[ i ].w - buttons[ i ].lw ) / 2;
-        y = ( 1 + buttons[ i ].h - buttons[ i ].lh ) / 2 + 1;
+        x = ( 1 + BUTTONS[ i ].w - BUTTONS[ i ].lw ) / 2;
+        y = ( 1 + BUTTONS[ i ].h - BUTTONS[ i ].lh ) / 2 + 1;
 
-        XCopyPlane( dpy, pix, x11_buttons[ i ].map, gc, 0, 0, buttons[ i ].lw, buttons[ i ].lh, x, y, 1 );
+        XCopyPlane( dpy, pix, x11_buttons[ i ].map, gc, 0, 0, BUTTONS[ i ].lw, BUTTONS[ i ].lh, x, y, 1 );
 
         XFreePixmap( dpy, pix );
 
@@ -813,72 +811,72 @@ static inline void __create_button( int i, int off_x, int off_y, XFontStruct* f_
      */
     XSetForeground( dpy, gc, COLOR( BUT_TOP ) );
 
-    XDrawLine( dpy, x11_buttons[ i ].map, gc, 1, ( int )( buttons[ i ].h - 2 ), 1, 1 );
-    XDrawLine( dpy, x11_buttons[ i ].map, gc, 2, ( int )( buttons[ i ].h - 3 ), 2, 2 );
-    XDrawLine( dpy, x11_buttons[ i ].map, gc, 3, ( int )( buttons[ i ].h - 4 ), 3, 3 );
+    XDrawLine( dpy, x11_buttons[ i ].map, gc, 1, ( int )( BUTTONS[ i ].h - 2 ), 1, 1 );
+    XDrawLine( dpy, x11_buttons[ i ].map, gc, 2, ( int )( BUTTONS[ i ].h - 3 ), 2, 2 );
+    XDrawLine( dpy, x11_buttons[ i ].map, gc, 3, ( int )( BUTTONS[ i ].h - 4 ), 3, 3 );
 
-    XDrawLine( dpy, x11_buttons[ i ].map, gc, 1, 1, ( int )( buttons[ i ].w - 2 ), 1 );
-    XDrawLine( dpy, x11_buttons[ i ].map, gc, 2, 2, ( int )( buttons[ i ].w - 3 ), 2 );
-    XDrawLine( dpy, x11_buttons[ i ].map, gc, 3, 3, ( int )( buttons[ i ].w - 4 ), 3 );
-    XDrawLine( dpy, x11_buttons[ i ].map, gc, 4, 4, ( int )( buttons[ i ].w - 5 ), 4 );
+    XDrawLine( dpy, x11_buttons[ i ].map, gc, 1, 1, ( int )( BUTTONS[ i ].w - 2 ), 1 );
+    XDrawLine( dpy, x11_buttons[ i ].map, gc, 2, 2, ( int )( BUTTONS[ i ].w - 3 ), 2 );
+    XDrawLine( dpy, x11_buttons[ i ].map, gc, 3, 3, ( int )( BUTTONS[ i ].w - 4 ), 3 );
+    XDrawLine( dpy, x11_buttons[ i ].map, gc, 4, 4, ( int )( BUTTONS[ i ].w - 5 ), 4 );
 
     XDrawPoint( dpy, x11_buttons[ i ].map, gc, 4, 5 );
 
     XSetForeground( dpy, gc, COLOR( BUT_BOT ) );
 
-    XDrawLine( dpy, x11_buttons[ i ].map, gc, 3, ( int )( buttons[ i ].h - 2 ), ( int )( buttons[ i ].w - 2 ),
-               ( int )( buttons[ i ].h - 2 ) );
-    XDrawLine( dpy, x11_buttons[ i ].map, gc, 4, ( int )( buttons[ i ].h - 3 ), ( int )( buttons[ i ].w - 3 ),
-               ( int )( buttons[ i ].h - 3 ) );
+    XDrawLine( dpy, x11_buttons[ i ].map, gc, 3, ( int )( BUTTONS[ i ].h - 2 ), ( int )( BUTTONS[ i ].w - 2 ),
+               ( int )( BUTTONS[ i ].h - 2 ) );
+    XDrawLine( dpy, x11_buttons[ i ].map, gc, 4, ( int )( BUTTONS[ i ].h - 3 ), ( int )( BUTTONS[ i ].w - 3 ),
+               ( int )( BUTTONS[ i ].h - 3 ) );
 
-    XDrawLine( dpy, x11_buttons[ i ].map, gc, ( int )( buttons[ i ].w - 2 ), ( int )( buttons[ i ].h - 2 ), ( int )( buttons[ i ].w - 2 ),
+    XDrawLine( dpy, x11_buttons[ i ].map, gc, ( int )( BUTTONS[ i ].w - 2 ), ( int )( BUTTONS[ i ].h - 2 ), ( int )( BUTTONS[ i ].w - 2 ),
                3 );
-    XDrawLine( dpy, x11_buttons[ i ].map, gc, ( int )( buttons[ i ].w - 3 ), ( int )( buttons[ i ].h - 3 ), ( int )( buttons[ i ].w - 3 ),
+    XDrawLine( dpy, x11_buttons[ i ].map, gc, ( int )( BUTTONS[ i ].w - 3 ), ( int )( BUTTONS[ i ].h - 3 ), ( int )( BUTTONS[ i ].w - 3 ),
                4 );
-    XDrawLine( dpy, x11_buttons[ i ].map, gc, ( int )( buttons[ i ].w - 4 ), ( int )( buttons[ i ].h - 4 ), ( int )( buttons[ i ].w - 4 ),
+    XDrawLine( dpy, x11_buttons[ i ].map, gc, ( int )( BUTTONS[ i ].w - 4 ), ( int )( BUTTONS[ i ].h - 4 ), ( int )( BUTTONS[ i ].w - 4 ),
                5 );
 
-    XDrawPoint( dpy, x11_buttons[ i ].map, gc, ( int )( buttons[ i ].w - 5 ), ( int )( buttons[ i ].h - 4 ) );
+    XDrawPoint( dpy, x11_buttons[ i ].map, gc, ( int )( BUTTONS[ i ].w - 5 ), ( int )( BUTTONS[ i ].h - 4 ) );
 
     /*
      * draw frame around button
      */
     XSetForeground( dpy, gc, COLOR( FRAME ) );
 
-    XDrawLine( dpy, x11_buttons[ i ].map, gc, 0, ( int )( buttons[ i ].h - 3 ), 0, 2 );
-    XDrawLine( dpy, x11_buttons[ i ].map, gc, 2, 0, ( int )( buttons[ i ].w - 3 ), 0 );
-    XDrawLine( dpy, x11_buttons[ i ].map, gc, 2, ( int )( buttons[ i ].h - 1 ), ( int )( buttons[ i ].w - 3 ),
-               ( int )( buttons[ i ].h - 1 ) );
-    XDrawLine( dpy, x11_buttons[ i ].map, gc, ( int )( buttons[ i ].w - 1 ), ( int )( buttons[ i ].h - 3 ), ( int )( buttons[ i ].w - 1 ),
+    XDrawLine( dpy, x11_buttons[ i ].map, gc, 0, ( int )( BUTTONS[ i ].h - 3 ), 0, 2 );
+    XDrawLine( dpy, x11_buttons[ i ].map, gc, 2, 0, ( int )( BUTTONS[ i ].w - 3 ), 0 );
+    XDrawLine( dpy, x11_buttons[ i ].map, gc, 2, ( int )( BUTTONS[ i ].h - 1 ), ( int )( BUTTONS[ i ].w - 3 ),
+               ( int )( BUTTONS[ i ].h - 1 ) );
+    XDrawLine( dpy, x11_buttons[ i ].map, gc, ( int )( BUTTONS[ i ].w - 1 ), ( int )( BUTTONS[ i ].h - 3 ), ( int )( BUTTONS[ i ].w - 1 ),
                2 );
 
     if ( i == HPKEY_ON ) {
-        XDrawLine( dpy, x11_buttons[ i ].map, gc, 1, 1, ( int )( buttons[ i ].w - 2 ), 1 );
+        XDrawLine( dpy, x11_buttons[ i ].map, gc, 1, 1, ( int )( BUTTONS[ i ].w - 2 ), 1 );
         XDrawPoint( dpy, x11_buttons[ i ].map, gc, 1, 2 );
-        XDrawPoint( dpy, x11_buttons[ i ].map, gc, ( int )( buttons[ i ].w - 2 ), 2 );
+        XDrawPoint( dpy, x11_buttons[ i ].map, gc, ( int )( BUTTONS[ i ].w - 2 ), 2 );
     } else {
         XDrawPoint( dpy, x11_buttons[ i ].map, gc, 1, 1 );
-        XDrawPoint( dpy, x11_buttons[ i ].map, gc, ( int )( buttons[ i ].w - 2 ), 1 );
+        XDrawPoint( dpy, x11_buttons[ i ].map, gc, ( int )( BUTTONS[ i ].w - 2 ), 1 );
     }
-    XDrawPoint( dpy, x11_buttons[ i ].map, gc, 1, ( int )( buttons[ i ].h - 2 ) );
-    XDrawPoint( dpy, x11_buttons[ i ].map, gc, ( int )( buttons[ i ].w - 2 ), ( int )( buttons[ i ].h - 2 ) );
+    XDrawPoint( dpy, x11_buttons[ i ].map, gc, 1, ( int )( BUTTONS[ i ].h - 2 ) );
+    XDrawPoint( dpy, x11_buttons[ i ].map, gc, ( int )( BUTTONS[ i ].w - 2 ), ( int )( BUTTONS[ i ].h - 2 ) );
 
     /*
      * draw the depressed button
      */
-    x11_buttons[ i ].down = XCreatePixmap( dpy, x11_buttons[ i ].xwin, buttons[ i ].w, buttons[ i ].h, depth );
+    x11_buttons[ i ].down = XCreatePixmap( dpy, x11_buttons[ i ].xwin, BUTTONS[ i ].w, BUTTONS[ i ].h, depth );
 
     XSetForeground( dpy, gc, pixel );
-    XFillRectangle( dpy, x11_buttons[ i ].down, gc, 0, 0, buttons[ i ].w, buttons[ i ].h );
+    XFillRectangle( dpy, x11_buttons[ i ].down, gc, 0, 0, BUTTONS[ i ].w, BUTTONS[ i ].h );
 
     XSetForeground( dpy, gc, COLOR( BUTTON ) );
-    XFillRectangle( dpy, x11_buttons[ i ].down, gc, 1, 1, buttons[ i ].w - 2, buttons[ i ].h - 2 );
+    XFillRectangle( dpy, x11_buttons[ i ].down, gc, 1, 1, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2 );
 
-    if ( buttons[ i ].label != ( char* )0 ) {
+    if ( BUTTONS[ i ].label != ( char* )0 ) {
         /*
          * set small or big font in gc
          */
-        switch ( buttons[ i ].font_size ) {
+        switch ( BUTTONS[ i ].font_size ) {
             case 0:
                 finfo = f_small;
                 break;
@@ -900,12 +898,12 @@ static inline void __create_button( int i, int off_x, int off_y, XFontStruct* f_
          * draw string centered in button
          */
         XSetBackground( dpy, gc, COLOR( BUTTON ) );
-        XSetForeground( dpy, gc, COLOR( buttons[ i ].lc ) );
+        XSetForeground( dpy, gc, COLOR( BUTTONS[ i ].lc ) );
 
-        XTextExtents( finfo, buttons[ i ].label, ( int )strlen( buttons[ i ].label ), &dir, &fa, &fd, &xchar );
-        x = ( buttons[ i ].w - xchar.width ) / 2;
-        y = ( 1 + buttons[ i ].h - ( xchar.ascent + xchar.descent ) ) / 2 + xchar.ascent;
-        XDrawImageString( dpy, x11_buttons[ i ].down, gc, x, y, buttons[ i ].label, ( int )strlen( buttons[ i ].label ) );
+        XTextExtents( finfo, BUTTONS[ i ].label, ( int )strlen( BUTTONS[ i ].label ), &dir, &fa, &fd, &xchar );
+        x = ( BUTTONS[ i ].w - xchar.width ) / 2;
+        y = ( 1 + BUTTONS[ i ].h - ( xchar.ascent + xchar.descent ) ) / 2 + xchar.ascent;
+        XDrawImageString( dpy, x11_buttons[ i ].down, gc, x, y, BUTTONS[ i ].label, ( int )strlen( BUTTONS[ i ].label ) );
 
         XSetBackground( dpy, gc, COLOR( BLACK ) );
     } else {
@@ -913,14 +911,14 @@ static inline void __create_button( int i, int off_x, int off_y, XFontStruct* f_
          * draw pixmap centered in button
          */
         XSetBackground( dpy, gc, COLOR( BUTTON ) );
-        XSetForeground( dpy, gc, COLOR( buttons[ i ].lc ) );
+        XSetForeground( dpy, gc, COLOR( BUTTONS[ i ].lc ) );
 
-        pix = XCreateBitmapFromData( dpy, x11_buttons[ i ].xwin, ( char* )buttons[ i ].lb, buttons[ i ].lw, buttons[ i ].lh );
+        pix = XCreateBitmapFromData( dpy, x11_buttons[ i ].xwin, ( char* )BUTTONS[ i ].lb, BUTTONS[ i ].lw, BUTTONS[ i ].lh );
 
-        x = ( 1 + buttons[ i ].w - buttons[ i ].lw ) / 2;
-        y = ( 1 + buttons[ i ].h - buttons[ i ].lh ) / 2;
+        x = ( 1 + BUTTONS[ i ].w - BUTTONS[ i ].lw ) / 2;
+        y = ( 1 + BUTTONS[ i ].h - BUTTONS[ i ].lh ) / 2;
 
-        XCopyPlane( dpy, pix, x11_buttons[ i ].down, gc, 0, 0, buttons[ i ].lw, buttons[ i ].lh, x, y, 1 );
+        XCopyPlane( dpy, pix, x11_buttons[ i ].down, gc, 0, 0, BUTTONS[ i ].lw, BUTTONS[ i ].lh, x, y, 1 );
 
         XFreePixmap( dpy, pix );
 
@@ -932,62 +930,62 @@ static inline void __create_button( int i, int off_x, int off_y, XFontStruct* f_
      */
     XSetForeground( dpy, gc, COLOR( BUT_TOP ) );
 
-    XDrawLine( dpy, x11_buttons[ i ].down, gc, 2, ( int )( buttons[ i ].h - 4 ), 2, 2 );
-    XDrawLine( dpy, x11_buttons[ i ].down, gc, 3, ( int )( buttons[ i ].h - 5 ), 3, 3 );
+    XDrawLine( dpy, x11_buttons[ i ].down, gc, 2, ( int )( BUTTONS[ i ].h - 4 ), 2, 2 );
+    XDrawLine( dpy, x11_buttons[ i ].down, gc, 3, ( int )( BUTTONS[ i ].h - 5 ), 3, 3 );
 
-    XDrawLine( dpy, x11_buttons[ i ].down, gc, 2, 2, ( int )( buttons[ i ].w - 4 ), 2 );
-    XDrawLine( dpy, x11_buttons[ i ].down, gc, 3, 3, ( int )( buttons[ i ].w - 5 ), 3 );
+    XDrawLine( dpy, x11_buttons[ i ].down, gc, 2, 2, ( int )( BUTTONS[ i ].w - 4 ), 2 );
+    XDrawLine( dpy, x11_buttons[ i ].down, gc, 3, 3, ( int )( BUTTONS[ i ].w - 5 ), 3 );
 
     XDrawPoint( dpy, x11_buttons[ i ].down, gc, 4, 4 );
 
     XSetForeground( dpy, gc, COLOR( BUT_BOT ) );
 
-    XDrawLine( dpy, x11_buttons[ i ].down, gc, 3, ( int )( buttons[ i ].h - 3 ), ( int )( buttons[ i ].w - 3 ),
-               ( int )( buttons[ i ].h - 3 ) );
-    XDrawLine( dpy, x11_buttons[ i ].down, gc, 4, ( int )( buttons[ i ].h - 4 ), ( int )( buttons[ i ].w - 4 ),
-               ( int )( buttons[ i ].h - 4 ) );
+    XDrawLine( dpy, x11_buttons[ i ].down, gc, 3, ( int )( BUTTONS[ i ].h - 3 ), ( int )( BUTTONS[ i ].w - 3 ),
+               ( int )( BUTTONS[ i ].h - 3 ) );
+    XDrawLine( dpy, x11_buttons[ i ].down, gc, 4, ( int )( BUTTONS[ i ].h - 4 ), ( int )( BUTTONS[ i ].w - 4 ),
+               ( int )( BUTTONS[ i ].h - 4 ) );
 
-    XDrawLine( dpy, x11_buttons[ i ].down, gc, ( int )( buttons[ i ].w - 3 ), ( int )( buttons[ i ].h - 3 ), ( int )( buttons[ i ].w - 3 ),
+    XDrawLine( dpy, x11_buttons[ i ].down, gc, ( int )( BUTTONS[ i ].w - 3 ), ( int )( BUTTONS[ i ].h - 3 ), ( int )( BUTTONS[ i ].w - 3 ),
                3 );
-    XDrawLine( dpy, x11_buttons[ i ].down, gc, ( int )( buttons[ i ].w - 4 ), ( int )( buttons[ i ].h - 4 ), ( int )( buttons[ i ].w - 4 ),
+    XDrawLine( dpy, x11_buttons[ i ].down, gc, ( int )( BUTTONS[ i ].w - 4 ), ( int )( BUTTONS[ i ].h - 4 ), ( int )( BUTTONS[ i ].w - 4 ),
                4 );
 
-    XDrawPoint( dpy, x11_buttons[ i ].down, gc, ( int )( buttons[ i ].w - 5 ), ( int )( buttons[ i ].h - 5 ) );
+    XDrawPoint( dpy, x11_buttons[ i ].down, gc, ( int )( BUTTONS[ i ].w - 5 ), ( int )( BUTTONS[ i ].h - 5 ) );
 
     /*
      * draw frame around button
      */
     XSetForeground( dpy, gc, COLOR( FRAME ) );
 
-    XDrawLine( dpy, x11_buttons[ i ].down, gc, 0, ( int )( buttons[ i ].h - 3 ), 0, 2 );
-    XDrawLine( dpy, x11_buttons[ i ].down, gc, 2, 0, ( int )( buttons[ i ].w - 3 ), 0 );
-    XDrawLine( dpy, x11_buttons[ i ].down, gc, 2, ( int )( buttons[ i ].h - 1 ), ( int )( buttons[ i ].w - 3 ),
-               ( int )( buttons[ i ].h - 1 ) );
-    XDrawLine( dpy, x11_buttons[ i ].down, gc, ( int )( buttons[ i ].w - 1 ), ( int )( buttons[ i ].h - 3 ), ( int )( buttons[ i ].w - 1 ),
+    XDrawLine( dpy, x11_buttons[ i ].down, gc, 0, ( int )( BUTTONS[ i ].h - 3 ), 0, 2 );
+    XDrawLine( dpy, x11_buttons[ i ].down, gc, 2, 0, ( int )( BUTTONS[ i ].w - 3 ), 0 );
+    XDrawLine( dpy, x11_buttons[ i ].down, gc, 2, ( int )( BUTTONS[ i ].h - 1 ), ( int )( BUTTONS[ i ].w - 3 ),
+               ( int )( BUTTONS[ i ].h - 1 ) );
+    XDrawLine( dpy, x11_buttons[ i ].down, gc, ( int )( BUTTONS[ i ].w - 1 ), ( int )( BUTTONS[ i ].h - 3 ), ( int )( BUTTONS[ i ].w - 1 ),
                2 );
 
     if ( i == HPKEY_ON ) {
-        XDrawLine( dpy, x11_buttons[ i ].down, gc, 1, 1, ( int )( buttons[ i ].w - 2 ), 1 );
+        XDrawLine( dpy, x11_buttons[ i ].down, gc, 1, 1, ( int )( BUTTONS[ i ].w - 2 ), 1 );
         XDrawPoint( dpy, x11_buttons[ i ].down, gc, 1, 2 );
-        XDrawPoint( dpy, x11_buttons[ i ].down, gc, ( int )( buttons[ i ].w - 2 ), 2 );
+        XDrawPoint( dpy, x11_buttons[ i ].down, gc, ( int )( BUTTONS[ i ].w - 2 ), 2 );
     } else {
         XDrawPoint( dpy, x11_buttons[ i ].down, gc, 1, 1 );
-        XDrawPoint( dpy, x11_buttons[ i ].down, gc, ( int )( buttons[ i ].w - 2 ), 1 );
+        XDrawPoint( dpy, x11_buttons[ i ].down, gc, ( int )( BUTTONS[ i ].w - 2 ), 1 );
     }
-    XDrawPoint( dpy, x11_buttons[ i ].down, gc, 1, ( int )( buttons[ i ].h - 2 ) );
-    XDrawPoint( dpy, x11_buttons[ i ].down, gc, ( int )( buttons[ i ].w - 2 ), ( int )( buttons[ i ].h - 2 ) );
+    XDrawPoint( dpy, x11_buttons[ i ].down, gc, 1, ( int )( BUTTONS[ i ].h - 2 ) );
+    XDrawPoint( dpy, x11_buttons[ i ].down, gc, ( int )( BUTTONS[ i ].w - 2 ), ( int )( BUTTONS[ i ].h - 2 ) );
 
     if ( i == HPKEY_ON ) {
-        XDrawRectangle( dpy, x11_buttons[ i ].down, gc, 1, 2, buttons[ i ].w - 3, buttons[ i ].h - 4 );
+        XDrawRectangle( dpy, x11_buttons[ i ].down, gc, 1, 2, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 4 );
         XDrawPoint( dpy, x11_buttons[ i ].down, gc, 2, 3 );
-        XDrawPoint( dpy, x11_buttons[ i ].down, gc, ( int )( buttons[ i ].w - 3 ), 3 );
+        XDrawPoint( dpy, x11_buttons[ i ].down, gc, ( int )( BUTTONS[ i ].w - 3 ), 3 );
     } else {
-        XDrawRectangle( dpy, x11_buttons[ i ].down, gc, 1, 1, buttons[ i ].w - 3, buttons[ i ].h - 3 );
+        XDrawRectangle( dpy, x11_buttons[ i ].down, gc, 1, 1, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3 );
         XDrawPoint( dpy, x11_buttons[ i ].down, gc, 2, 2 );
-        XDrawPoint( dpy, x11_buttons[ i ].down, gc, ( int )( buttons[ i ].w - 3 ), 2 );
+        XDrawPoint( dpy, x11_buttons[ i ].down, gc, ( int )( BUTTONS[ i ].w - 3 ), 2 );
     }
-    XDrawPoint( dpy, x11_buttons[ i ].down, gc, 2, ( int )( buttons[ i ].h - 3 ) );
-    XDrawPoint( dpy, x11_buttons[ i ].down, gc, ( int )( buttons[ i ].w - 3 ), ( int )( buttons[ i ].h - 3 ) );
+    XDrawPoint( dpy, x11_buttons[ i ].down, gc, 2, ( int )( BUTTONS[ i ].h - 3 ) );
+    XDrawPoint( dpy, x11_buttons[ i ].down, gc, ( int )( BUTTONS[ i ].w - 3 ), ( int )( BUTTONS[ i ].h - 3 ) );
 }
 
 static inline void __create_keypad( unsigned int offset_y, unsigned int offset_x, x11_keypad_t* local_keypad )
@@ -1011,39 +1009,39 @@ static inline void __create_keypad( unsigned int offset_y, unsigned int offset_x
 
         pixel = ( i < HPKEY_MTH ) ? COLOR( DISP_PAD ) : COLOR( PAD );
 
-        if ( buttons[ i ].letter != ( char* )0 ) {
+        if ( BUTTONS[ i ].letter != ( char* )0 ) {
             XSetBackground( dpy, gc, pixel );
             XSetForeground( dpy, gc, COLOR( WHITE ) );
 
             if ( opt_gx ) {
-                x = offset_x + buttons[ i ].x + buttons[ i ].w + 3;
-                y = offset_y + buttons[ i ].y + buttons[ i ].h + 1;
+                x = offset_x + BUTTONS[ i ].x + BUTTONS[ i ].w + 3;
+                y = offset_y + BUTTONS[ i ].y + BUTTONS[ i ].h + 1;
             } else {
-                x = offset_x + buttons[ i ].x + buttons[ i ].w - SmallTextWidth( buttons[ i ].letter, 1 ) / 2 + 5;
-                y = offset_y + buttons[ i ].y + buttons[ i ].h - 2;
+                x = offset_x + BUTTONS[ i ].x + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].letter, 1 ) / 2 + 5;
+                y = offset_y + BUTTONS[ i ].y + BUTTONS[ i ].h - 2;
             }
 
-            __write_text( dpy, local_keypad->pixmap, gc, x, y, buttons[ i ].letter, 1 );
+            __write_text( dpy, local_keypad->pixmap, gc, x, y, BUTTONS[ i ].letter, 1 );
         }
 
         /*
          * draw the bottom labels
          */
-        if ( buttons[ i ].sub != ( char* )0 ) {
+        if ( BUTTONS[ i ].sub != ( char* )0 ) {
             XSetBackground( dpy, gc, pixel );
             XSetForeground( dpy, gc, COLOR( WHITE ) );
 
-            x = offset_x + buttons[ i ].x + ( 1 + buttons[ i ].w - SmallTextWidth( buttons[ i ].sub, strlen( buttons[ i ].sub ) ) ) / 2;
-            y = offset_y + buttons[ i ].y + buttons[ i ].h + small_ascent + 2;
+            x = offset_x + BUTTONS[ i ].x + ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].sub, strlen( BUTTONS[ i ].sub ) ) ) / 2;
+            y = offset_y + BUTTONS[ i ].y + BUTTONS[ i ].h + small_ascent + 2;
 
-            __write_text( dpy, local_keypad->pixmap, gc, x, y, buttons[ i ].sub, strlen( buttons[ i ].sub ) );
+            __write_text( dpy, local_keypad->pixmap, gc, x, y, BUTTONS[ i ].sub, strlen( BUTTONS[ i ].sub ) );
         }
 
         /*
          * draw the left labels
          */
-        if ( buttons[ i ].left != ( char* )0 ) {
-            if ( buttons[ i ].is_menu ) {
+        if ( BUTTONS[ i ].left != ( char* )0 ) {
+            if ( BUTTONS[ i ].is_menu ) {
                 /*
                  * draw the dark shade under the label
                  */
@@ -1064,10 +1062,10 @@ static inline void __create_keypad( unsigned int offset_y, unsigned int offset_x
                 XSetBackground( dpy, gc, COLOR( UNDERLAY ) );
                 XSetForeground( dpy, gc, COLOR( LEFT ) );
 
-                x = ( pw + 1 - SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) ) ) / 2;
+                x = ( pw + 1 - SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) ) ) / 2;
                 y = ( opt_gx ) ? 14 : 9;
 
-                __write_text( dpy, pix, gc, x, y, buttons[ i ].left, strlen( buttons[ i ].left ) );
+                __write_text( dpy, pix, gc, x, y, BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) );
 
                 XSetForeground( dpy, gc, pixel );
 
@@ -1079,11 +1077,11 @@ static inline void __create_keypad( unsigned int offset_y, unsigned int offset_x
                 }
 
                 if ( opt_gx ) {
-                    x = offset_x + buttons[ i ].x - 6;
-                    y = offset_y + buttons[ i ].y - small_ascent - small_descent - 6;
+                    x = offset_x + BUTTONS[ i ].x - 6;
+                    y = offset_y + BUTTONS[ i ].y - small_ascent - small_descent - 6;
                 } else {
-                    x = offset_x + buttons[ i ].x + ( buttons[ i ].w - pw ) / 2;
-                    y = offset_y + buttons[ i ].y - small_ascent - small_descent;
+                    x = offset_x + BUTTONS[ i ].x + ( BUTTONS[ i ].w - pw ) / 2;
+                    y = offset_y + BUTTONS[ i ].y - small_ascent - small_descent;
                 }
 
                 XCopyArea( dpy, pix, local_keypad->pixmap, gc, 0, 0, pw, ph, x, y );
@@ -1093,28 +1091,28 @@ static inline void __create_keypad( unsigned int offset_y, unsigned int offset_x
                 XSetBackground( dpy, gc, pixel );
                 XSetForeground( dpy, gc, COLOR( LEFT ) );
 
-                if ( buttons[ i ].right == ( char* )0 ) /* centered label */
-                    x = offset_x + buttons[ i ].x +
-                        ( 1 + buttons[ i ].w - SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) ) ) / 2;
+                if ( BUTTONS[ i ].right == ( char* )0 ) /* centered label */
+                    x = offset_x + BUTTONS[ i ].x +
+                        ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) ) ) / 2;
                 else { /* label to the left */
-                    wl = SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) );
-                    wr = SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) );
+                    wl = SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) );
+                    wr = SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) );
                     ws = SmallTextWidth( " ", 1 );
 
-                    x = offset_x + buttons[ i ].x + ( 1 + buttons[ i ].w - ( wl + wr + ws ) ) / 2;
+                    x = offset_x + BUTTONS[ i ].x + ( 1 + BUTTONS[ i ].w - ( wl + wr + ws ) ) / 2;
                 }
 
-                y = offset_y + buttons[ i ].y - small_descent;
+                y = offset_y + BUTTONS[ i ].y - small_descent;
 
-                __write_text( dpy, local_keypad->pixmap, gc, x, y, buttons[ i ].left, strlen( buttons[ i ].left ) );
+                __write_text( dpy, local_keypad->pixmap, gc, x, y, BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) );
             }
         }
 
         /*
          * draw the right labels
          */
-        if ( buttons[ i ].right != ( char* )0 ) {
-            if ( buttons[ i ].is_menu ) {
+        if ( BUTTONS[ i ].right != ( char* )0 ) {
+            if ( BUTTONS[ i ].is_menu ) {
                 /*
                  * draw the dark shade under the label
                  */
@@ -1135,10 +1133,10 @@ static inline void __create_keypad( unsigned int offset_y, unsigned int offset_x
                 XSetBackground( dpy, gc, COLOR( UNDERLAY ) );
                 XSetForeground( dpy, gc, COLOR( RIGHT ) );
 
-                x = ( pw + 1 - SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) ) ) / 2;
+                x = ( pw + 1 - SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) ) ) / 2;
                 y = ( opt_gx ) ? 14 : 8;
 
-                __write_text( dpy, pix, gc, x, y, buttons[ i ].right, strlen( buttons[ i ].right ) );
+                __write_text( dpy, pix, gc, x, y, BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) );
 
                 XSetForeground( dpy, gc, pixel );
 
@@ -1150,11 +1148,11 @@ static inline void __create_keypad( unsigned int offset_y, unsigned int offset_x
                 }
 
                 if ( opt_gx ) {
-                    x = offset_x + buttons[ i ].x - 6;
-                    y = offset_y + buttons[ i ].y - small_ascent - small_descent - 6;
+                    x = offset_x + BUTTONS[ i ].x - 6;
+                    y = offset_y + BUTTONS[ i ].y - small_ascent - small_descent - 6;
                 } else {
-                    x = offset_x + buttons[ i ].x + ( buttons[ i ].w - pw ) / 2;
-                    y = offset_y + buttons[ i ].y - small_ascent - small_descent;
+                    x = offset_x + BUTTONS[ i ].x + ( BUTTONS[ i ].w - pw ) / 2;
+                    y = offset_y + BUTTONS[ i ].y - small_ascent - small_descent;
                 }
 
                 XCopyArea( dpy, pix, local_keypad->pixmap, gc, 0, 0, pw, ph, x, y );
@@ -1164,20 +1162,20 @@ static inline void __create_keypad( unsigned int offset_y, unsigned int offset_x
                 XSetBackground( dpy, gc, pixel );
                 XSetForeground( dpy, gc, COLOR( RIGHT ) );
 
-                if ( buttons[ i ].left == ( char* )0 ) /* centered label */
-                    x = offset_x + buttons[ i ].x +
-                        ( 1 + buttons[ i ].w - SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) ) ) / 2;
+                if ( BUTTONS[ i ].left == ( char* )0 ) /* centered label */
+                    x = offset_x + BUTTONS[ i ].x +
+                        ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) ) ) / 2;
                 else { /* label to the right */
-                    wl = SmallTextWidth( buttons[ i ].left, strlen( buttons[ i ].left ) );
-                    wr = SmallTextWidth( buttons[ i ].right, strlen( buttons[ i ].right ) );
+                    wl = SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) );
+                    wr = SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) );
                     ws = SmallTextWidth( " ", 1 );
 
-                    x = offset_x + buttons[ i ].x + ( 1 + buttons[ i ].w - ( wl + wr + ws ) ) / 2 + wl + ws;
+                    x = offset_x + BUTTONS[ i ].x + ( 1 + BUTTONS[ i ].w - ( wl + wr + ws ) ) / 2 + wl + ws;
                 }
 
-                y = offset_y + buttons[ i ].y - small_descent;
+                y = offset_y + BUTTONS[ i ].y - small_descent;
 
-                __write_text( dpy, local_keypad->pixmap, gc, x, y, buttons[ i ].right, strlen( buttons[ i ].right ) );
+                __write_text( dpy, local_keypad->pixmap, gc, x, y, BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) );
             }
         }
     }
@@ -1196,9 +1194,9 @@ static inline void __create_keypad( unsigned int offset_y, unsigned int offset_x
 
         pix = XCreateBitmapFromData( dpy, local_keypad->pixmap, ( char* )last_bitmap, last_width, last_height );
 
-        x = offset_x + buttons[ HPKEY_1 ].x + buttons[ HPKEY_1 ].w +
-            ( buttons[ HPKEY_2 ].x - buttons[ HPKEY_1 ].x - buttons[ HPKEY_1 ].w ) / 2;
-        y = offset_y + buttons[ HPKEY_5 ].y + buttons[ HPKEY_5 ].h + 2;
+        x = offset_x + BUTTONS[ HPKEY_1 ].x + BUTTONS[ HPKEY_1 ].w +
+            ( BUTTONS[ HPKEY_2 ].x - BUTTONS[ HPKEY_1 ].x - BUTTONS[ HPKEY_1 ].w ) / 2;
+        y = offset_y + BUTTONS[ HPKEY_5 ].y + BUTTONS[ HPKEY_5 ].h + 2;
 
         XCopyPlane( dpy, pix, local_keypad->pixmap, gc, 0, 0, last_width, last_height, x, y, 1 );
 
@@ -1334,7 +1332,7 @@ static inline void _draw_bezel( unsigned int offset_y, x11_keypad_t* local_keypa
     XDrawLine( dpy, local_keypad->pixmap, gc, 1, ( int )( local_keypad->height - 3 ), 1, cut );
 
     /*
-     * lower the menu buttons
+     * lower the menu BUTTONS
      */
     XSetForeground( dpy, gc, COLOR( PAD_TOP ) );
 
@@ -1515,7 +1513,7 @@ static void draw_keypad( void ) { XCopyArea( dpy, keypad.pixmap, mainW, gc, 0, 0
 static inline void draw_button( int i )
 {
     XCopyArea( dpy, ( keyboard[ i ].pressed ) ? x11_buttons[ i ].down : x11_buttons[ i ].map, x11_buttons[ i ].xwin, gc, 0, 0,
-               buttons[ i ].w, buttons[ i ].h, 0, 0 );
+               BUTTONS[ i ].w, BUTTONS[ i ].h, 0, 0 );
 }
 
 static inline void _create_icon( void )
@@ -2185,25 +2183,17 @@ static bool create_window( int argc, char** argv )
     int info, x, y, w, h;
     unsigned int width, height;
 
-    if ( opt_gx ) {
-        buttons = buttons_gx;
-        colors = colors_gx;
-        icon_maps = icon_maps_gx;
-    } else {
-        buttons = buttons_sx;
-        colors = colors_sx;
-        icon_maps = icon_maps_sx;
-    }
+    icon_maps = opt_gx ? icon_maps_gx : icon_maps_sx;
 
     if ( config.netbook ) {
         int i;
         for ( i = 0; i < 6; i++ ) {
-            buttons[ i ].x -= 3;
-            buttons[ i ].y += 300;
+            BUTTONS[ i ].x -= 3;
+            BUTTONS[ i ].y += 300;
         }
         for ( ; i <= LAST_HPKEY; i++ ) {
-            buttons[ i ].x += 317;
-            buttons[ i ].y -= 3;
+            BUTTONS[ i ].x += 317;
+            BUTTONS[ i ].y -= 3;
         }
     }
 
@@ -2419,7 +2409,7 @@ static bool create_window( int argc, char** argv )
      * create the keypad
      */
     /*
-     * draw the nice labels around the buttons
+     * draw the nice labels around the BUTTONS
      */
     keypad.width = width;
     keypad.height = height;
@@ -2428,11 +2418,11 @@ static bool create_window( int argc, char** argv )
 
     int cut;
     if ( config.netbook ) {
-        cut = buttons[ HPKEY_MTH ].y - ( small_ascent + small_descent + 6 + 4 );
+        cut = BUTTONS[ HPKEY_MTH ].y - ( small_ascent + small_descent + 6 + 4 );
         _draw_background( width / 2, height, width, height, &keypad );
         __create_keypad( -cut, KEYBOARD_OFFSET_X, &keypad );
     } else {
-        cut = buttons[ HPKEY_MTH ].y + KEYBOARD_OFFSET_Y - 19;
+        cut = BUTTONS[ HPKEY_MTH ].y + KEYBOARD_OFFSET_Y - 19;
         _draw_background( width, cut, width, height, &keypad );
         __create_keypad( KEYBOARD_OFFSET_Y, KEYBOARD_OFFSET_X, &keypad );
     }
@@ -3053,15 +3043,15 @@ void x11_adjust_contrast( void )
         case COLOR_MODE_MONO:
             return;
         case COLOR_MODE_GRAY:
-            gray = ( 0x13 - contrast ) * ( colors[ LCD ].gray_rgb / 0x10 );
+            gray = ( 0x13 - contrast ) * ( COLORS[ LCD ].gray_rgb / 0x10 );
             x11_colors[ PIXEL ].red = gray << 8;
             x11_colors[ PIXEL ].green = gray << 8;
             x11_colors[ PIXEL ].blue = gray << 8;
             break;
         default:
-            r = ( 0x13 - contrast ) * ( colors[ LCD ].r / 0x10 );
-            g = ( 0x13 - contrast ) * ( colors[ LCD ].g / 0x10 );
-            b = 128 - ( ( 0x13 - contrast ) * ( ( 128 - colors[ LCD ].b ) / 0x10 ) );
+            r = ( 0x13 - contrast ) * ( COLORS[ LCD ].r / 0x10 );
+            g = ( 0x13 - contrast ) * ( COLORS[ LCD ].g / 0x10 );
+            b = 128 - ( ( 0x13 - contrast ) * ( ( 128 - COLORS[ LCD ].b ) / 0x10 ) );
             x11_colors[ PIXEL ].red = r << 8;
             x11_colors[ PIXEL ].green = g << 8;
             x11_colors[ PIXEL ].blue = b << 8;
@@ -3069,10 +3059,10 @@ void x11_adjust_contrast( void )
     }
 
     if ( direct_color ) {
-        colors[ PIXEL ].gray_rgb = gray;
-        colors[ PIXEL ].r = r;
-        colors[ PIXEL ].g = g;
-        colors[ PIXEL ].b = b;
+        COLORS[ PIXEL ].gray_rgb = gray;
+        COLORS[ PIXEL ].r = r;
+        COLORS[ PIXEL ].g = g;
+        COLORS[ PIXEL ].b = b;
 
         colors_setup();
 
