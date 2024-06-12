@@ -231,7 +231,7 @@ static int mouse_click_to_hpkey( unsigned int x, unsigned int y )
 
 // Map the keyboard keys to the HP keys
 // Returns -1 if there is no mapping
-static int sdlkey_to_hpkey( SDLKey k )
+static int sdlkey_to_hpkey( SDL_Keycode k )
 {
     switch ( k ) {
         case SDLK_0:
@@ -254,25 +254,25 @@ static int sdlkey_to_hpkey( SDLKey k )
             return HPKEY_8;
         case SDLK_9:
             return HPKEY_9;
-        case SDLK_KP0:
+        case SDLK_KP_0:
             return HPKEY_0;
-        case SDLK_KP1:
+        case SDLK_KP_1:
             return HPKEY_1;
-        case SDLK_KP2:
+        case SDLK_KP_2:
             return HPKEY_2;
-        case SDLK_KP3:
+        case SDLK_KP_3:
             return HPKEY_3;
-        case SDLK_KP4:
+        case SDLK_KP_4:
             return HPKEY_4;
-        case SDLK_KP5:
+        case SDLK_KP_5:
             return HPKEY_5;
-        case SDLK_KP6:
+        case SDLK_KP_6:
             return HPKEY_6;
-        case SDLK_KP7:
+        case SDLK_KP_7:
             return HPKEY_7;
-        case SDLK_KP8:
+        case SDLK_KP_8:
             return HPKEY_8;
-        case SDLK_KP9:
+        case SDLK_KP_9:
             return HPKEY_9;
         case SDLK_a:
             return HPKEY_A;
