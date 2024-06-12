@@ -198,16 +198,6 @@ typedef struct x11_button_t {
     Window xwin;
 } x11_button_t;
 
-typedef struct x11_ann_struct_t {
-    int x;
-    int y;
-    unsigned int width;
-    unsigned int height;
-    unsigned char* bits;
-
-    Pixmap pixmap;
-} x11_ann_struct_t;
-
 typedef struct x11_lcd_t {
     Window win;
     GC gc;
@@ -229,6 +219,7 @@ typedef struct icon_map_t {
 static bool mapped;
 
 static x11_keypad_t keypad;
+
 static XColor x11_colors[ NB_COLORS ] = {
     {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
     {0, 0, 0, 0, DoRed | DoGreen | DoBlue, 0},
@@ -388,13 +379,8 @@ static unsigned char nibbles[ 16 ][ 2 ] = {
 
 static unsigned char nibble_bitmap[ 16 ];
 
-static x11_ann_struct_t ann_tbl[] = {
-    {.x = 16,  .y = 4, .width = ann_left_width,    .height = ann_left_height,    .bits = ann_left_bitmap,    .pixmap = 0},
-    {.x = 61,  .y = 4, .width = ann_right_width,   .height = ann_right_height,   .bits = ann_right_bitmap,   .pixmap = 0},
-    {.x = 106, .y = 4, .width = ann_alpha_width,   .height = ann_alpha_height,   .bits = ann_alpha_bitmap,   .pixmap = 0},
-    {.x = 151, .y = 4, .width = ann_battery_width, .height = ann_battery_height, .bits = ann_battery_bitmap, .pixmap = 0},
-    {.x = 196, .y = 4, .width = ann_busy_width,    .height = ann_busy_height,    .bits = ann_busy_bitmap,    .pixmap = 0},
-    {.x = 241, .y = 4, .width = ann_io_width,      .height = ann_io_height,      .bits = ann_io_bitmap,      .pixmap = 0},
+static Pixmap x11_ann_pixmaps[ NB_ANNUNCIATORS ] = {
+    0, 0, 0, 0, 0, 0,
 };
 
 static icon_map_t icon_maps_sx[] = {
@@ -3283,7 +3269,7 @@ void x11_draw_annunc( void )
 
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
         if ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] )
-            XCopyPlane( dpy, ann_tbl[ i ].pixmap, lcd.win, lcd.gc, 0, 0, ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].x,
+            XCopyPlane( dpy, x11_ann_pixmaps[ i ], lcd.win, lcd.gc, 0, 0, ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].x,
                         ann_tbl[ i ].y, 1 );
         else
             XClearArea( dpy, lcd.win, ann_tbl[ i ].x, ann_tbl[ i ].y, ann_tbl[ i ].width, ann_tbl[ i ].height, False );
@@ -3363,7 +3349,7 @@ void init_x11_ui( int argc, char** argv )
     }
 
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
-        ann_tbl[ i ].pixmap = XCreateBitmapFromData( dpy, lcd.win, ( char* )ann_tbl[ i ].bits, ann_tbl[ i ].width, ann_tbl[ i ].height );
+        x11_ann_pixmaps[ i ] = XCreateBitmapFromData( dpy, lcd.win, ( char* )ann_tbl[ i ].bits, ann_tbl[ i ].width, ann_tbl[ i ].height );
 
     /* init nibble_maps */
     for ( int i = 0; i < 16; i++ )

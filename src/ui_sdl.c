@@ -44,15 +44,7 @@ typedef struct sdl_button_t {
     SDL_Surface* surfacedown;
 } sdl_button_t;
 
-// This mimicks the structure formerly lcd.c, except with SDL surfaces instead
-// of Pixmaps.
 typedef struct sdl_ann_struct_t {
-    int x;
-    int y;
-    unsigned int width;
-    unsigned int height;
-    unsigned char* bits;
-
     SDL_Surface* surfaceon;
     SDL_Surface* surfaceoff;
 } sdl_ann_struct_t;
@@ -127,19 +119,13 @@ static sdl_button_t sdl_buttons[ NB_KEYS ] = {
     {.surfaceup = 0, .surfacedown = 0},
 };
 
-static sdl_ann_struct_t ann_tbl[] = {
-    {.x = 16,  .y = 4, .width = ann_left_width,  .height = ann_left_height,  .bits = ann_left_bitmap,  .surfaceon = 0, .surfaceoff = 0},
-    {.x = 61,  .y = 4, .width = ann_right_width, .height = ann_right_height, .bits = ann_right_bitmap, .surfaceon = 0, .surfaceoff = 0},
-    {.x = 106, .y = 4, .width = ann_alpha_width, .height = ann_alpha_height, .bits = ann_alpha_bitmap, .surfaceon = 0, .surfaceoff = 0},
-    {.x = 151,
-     .y = 4,
-     .width = ann_battery_width,
-     .height = ann_battery_height,
-     .bits = ann_battery_bitmap,
-     .surfaceon = 0,
-     .surfaceoff = 0                                                                                                                  },
-    {.x = 196, .y = 4, .width = ann_busy_width,  .height = ann_busy_height,  .bits = ann_busy_bitmap,  .surfaceon = 0, .surfaceoff = 0},
-    {.x = 241, .y = 4, .width = ann_io_width,    .height = ann_io_height,    .bits = ann_io_bitmap,    .surfaceon = 0, .surfaceoff = 0},
+static sdl_ann_struct_t sdl_ann_tbl[] = {
+    {.surfaceon = 0, .surfaceoff = 0},
+    {.surfaceon = 0, .surfaceoff = 0},
+    {.surfaceon = 0, .surfaceoff = 0},
+    {.surfaceon = 0, .surfaceoff = 0},
+    {.surfaceon = 0, .surfaceoff = 0},
+    {.surfaceon = 0, .surfaceoff = 0},
 };
 
 // State to displayed zoomed last pressed key
@@ -264,20 +250,20 @@ static void create_annunc( void )
 {
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
         // If the SDL surface does not exist yet, we create it on the fly
-        if ( ann_tbl[ i ].surfaceon ) {
-            SDL_FreeSurface( ann_tbl[ i ].surfaceon );
-            ann_tbl[ i ].surfaceon = 0;
+        if ( sdl_ann_tbl[ i ].surfaceon ) {
+            SDL_FreeSurface( sdl_ann_tbl[ i ].surfaceon );
+            sdl_ann_tbl[ i ].surfaceon = 0;
         }
 
-        ann_tbl[ i ].surfaceon =
+        sdl_ann_tbl[ i ].surfaceon =
             bitmap_to_surface( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, ARGBColors[ PIXEL ], ARGBColors[ LCD ] );
 
-        if ( ann_tbl[ i ].surfaceoff ) {
-            SDL_FreeSurface( ann_tbl[ i ].surfaceoff );
-            ann_tbl[ i ].surfaceoff = 0;
+        if ( sdl_ann_tbl[ i ].surfaceoff ) {
+            SDL_FreeSurface( sdl_ann_tbl[ i ].surfaceoff );
+            sdl_ann_tbl[ i ].surfaceoff = 0;
         }
 
-        ann_tbl[ i ].surfaceoff =
+        sdl_ann_tbl[ i ].surfaceoff =
             bitmap_to_surface( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, ARGBColors[ LCD ], ARGBColors[ LCD ] );
     }
 }
@@ -1237,9 +1223,9 @@ static void draw_annunciators( char* annunc )
         drect.w = ann_tbl[ i ].width;
         drect.h = ann_tbl[ i ].height;
         if ( annunc[ i ] )
-            SDL_BlitSurface( ann_tbl[ i ].surfaceon, &srect, sdlwindow, &drect );
+            SDL_BlitSurface( sdl_ann_tbl[ i ].surfaceon, &srect, sdlwindow, &drect );
         else
-            SDL_BlitSurface( ann_tbl[ i ].surfaceoff, &srect, sdlwindow, &drect );
+            SDL_BlitSurface( sdl_ann_tbl[ i ].surfaceoff, &srect, sdlwindow, &drect );
     }
 
     // Always immediately update annunciators

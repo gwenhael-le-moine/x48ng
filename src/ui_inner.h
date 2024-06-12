@@ -64,6 +64,14 @@ typedef struct button_t {
     const char* sub;
 } button_t;
 
+typedef struct ann_struct_t {
+    int x;
+    int y;
+    unsigned int width;
+    unsigned int height;
+    unsigned char* bits;
+} ann_struct_t;
+
 /*************/
 /* variables */
 /*************/
@@ -74,6 +82,8 @@ extern color_t colors_gx[ NB_COLORS ];
 
 extern button_t buttons_sx[ NB_KEYS ];
 extern button_t buttons_gx[ NB_KEYS ];
+
+extern ann_struct_t ann_tbl[ NB_ANNUNCIATORS ];
 
 /***********/
 /* bitmaps */

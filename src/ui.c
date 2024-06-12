@@ -2057,6 +2057,15 @@ button_t buttons_gx[ NB_KEYS ] = {
      .sub = 0       },
 };
 
+ann_struct_t ann_tbl[ NB_ANNUNCIATORS ] = {
+    {.x = 16,  .y = 4, .width = ann_left_width,    .height = ann_left_height,    .bits = ann_left_bitmap   },
+    {.x = 61,  .y = 4, .width = ann_right_width,   .height = ann_right_height,   .bits = ann_right_bitmap  },
+    {.x = 106, .y = 4, .width = ann_alpha_width,   .height = ann_alpha_height,   .bits = ann_alpha_bitmap  },
+    {.x = 151, .y = 4, .width = ann_battery_width, .height = ann_battery_height, .bits = ann_battery_bitmap},
+    {.x = 196, .y = 4, .width = ann_busy_width,    .height = ann_busy_height,    .bits = ann_busy_bitmap   },
+    {.x = 241, .y = 4, .width = ann_io_width,      .height = ann_io_height,      .bits = ann_io_bitmap     },
+};
+
 void ( *ui_disp_draw_nibble )( word_20 addr, word_4 val );
 void ( *ui_menu_draw_nibble )( word_20 addr, word_4 val );
 void ( *ui_get_event )( void );
