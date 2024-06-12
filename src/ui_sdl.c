@@ -39,12 +39,6 @@
 /***********/
 /* typedef */
 /***********/
-
-typedef struct sdl_keypad_t {
-    unsigned int width;
-    unsigned int height;
-} sdl_keypad_t;
-
 typedef struct sdl_button_t {
     const char* name;
 
@@ -84,8 +78,6 @@ typedef struct sdl_ann_struct_t {
 /*************/
 /* variables */
 /*************/
-static sdl_keypad_t keypad;
-
 // This will take the value of the defines, but can be run-time modified
 static unsigned KEYBOARD_HEIGHT, KEYBOARD_WIDTH, TOP_SKIP, SIDE_SKIP, BOTTOM_SKIP, DISP_KBD_SKIP, DISPLAY_WIDTH, DISPLAY_HEIGHT,
     DISPLAY_OFFSET_X, DISPLAY_OFFSET_Y, DISP_FRAME, KEYBOARD_OFFSET_X, KEYBOARD_OFFSET_Y, KBD_UPLINE;
@@ -3459,10 +3451,6 @@ void init_sdl_ui( int argc, char** argv )
         exit( 1 );
     }
 
-    // SDLCreateHP();
-    keypad.width = width;
-    keypad.height = height;
-
     // we allocate memory for the buttons because we need to modify
     // their coordinates, and we don't want to change the original buttons_gx or
     // buttons_sx
@@ -3479,7 +3467,7 @@ void init_sdl_ui( int argc, char** argv )
         int cut = buttons[ HPKEY_MTH ].y + KEYBOARD_OFFSET_Y - 19;
 
         draw_background( width, cut, width, height );
-        draw_bezel( cut, KEYBOARD_OFFSET_Y, keypad.width, keypad.height );
+        draw_bezel( cut, KEYBOARD_OFFSET_Y, width, height );
         draw_header();
         draw_bezel_LCD();
         draw_keypad();
