@@ -471,7 +471,7 @@ static int sdlkey_to_hpkey( SDLKey k )
     return -1;
 }
 
-static void draw_bezel( unsigned int cut, unsigned int offset_y, int keypad_width, int keypad_height )
+static void _draw_bezel( unsigned int cut, unsigned int offset_y, int keypad_width, int keypad_height )
 {
     // bottom lines
     lineColor( sdlwindow, 1, keypad_height - 1, keypad_width - 1, keypad_height - 1, bgra2argb( ARGBColors[ PAD_TOP ] ) );
@@ -560,7 +560,7 @@ static void draw_bezel( unsigned int cut, unsigned int offset_y, int keypad_widt
     lineColor( sdlwindow, 7, keypad_height - 9, 7, keypad_height - 11, bgra2argb( ARGBColors[ PAD_BOT ] ) );
 }
 
-static void draw_header( void )
+static void _draw_header( void )
 {
     int x, y;
     SDL_Surface* surf;
@@ -690,7 +690,7 @@ static void draw_header( void )
     }
 }
 
-static void _create_buttons( void )
+static void __create_buttons( void )
 {
     unsigned i, x, y;
     unsigned pixel;
@@ -855,7 +855,7 @@ static void _create_buttons( void )
     }
 }
 
-static void draw_buttons( void )
+static void __draw_buttons( void )
 {
     SDL_Rect srect, drect;
 
@@ -881,7 +881,7 @@ static void draw_buttons( void )
                     buttons[ LAST_HPKEY ].y + buttons[ LAST_HPKEY ].h - buttons[ 0 ].y );
 }
 
-static void draw_keypad( void )
+static void _draw_keypad( void )
 {
     int i, x, y;
     int offset_y = KEYBOARD_OFFSET_Y;
@@ -892,7 +892,7 @@ static void draw_keypad( void )
     unsigned colorbg, colorfg;
     int wl, wr, ws;
 
-    _create_buttons();
+    __create_buttons();
 
     // SDLDrawKeyMenu();
     for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
@@ -1043,10 +1043,10 @@ static void draw_keypad( void )
         }
     }
 
-    draw_buttons();
+    __draw_buttons();
 }
 
-static void draw_bezel_LCD( void )
+static void _draw_bezel_LCD( void )
 {
     unsigned int i;
     int display_height = DISPLAY_HEIGHT;
@@ -1112,7 +1112,7 @@ static void draw_bezel_LCD( void )
                DISPLAY_OFFSET_Y + display_height - 2, bgra2argb( ARGBColors[ LCD ] ) );
 }
 
-static void draw_background( int width, int height, int w_top, int h_top )
+static void _draw_background( int width, int height, int w_top, int h_top )
 {
     SDL_Rect rect;
 
@@ -1127,7 +1127,7 @@ static void draw_background( int width, int height, int w_top, int h_top )
     SDL_FillRect( sdlwindow, &rect, ARGBColors[ DISP_PAD ] );
 }
 
-static void draw_background_LCD( void )
+static void _draw_background_LCD( void )
 {
     SDL_Rect rect;
 
@@ -1138,54 +1138,8 @@ static void draw_background_LCD( void )
     SDL_FillRect( sdlwindow, &rect, ARGBColors[ LCD ] );
 }
 
-static void draw_annunciators( char* annunc )
-{
-    create_annunc();
-
-    // Print the annunciator
-    for ( int i = 0; i < 6; i++ ) {
-        SDL_Rect srect;
-        SDL_Rect drect;
-        srect.x = 0;
-        srect.y = 0;
-        srect.w = ann_tbl[ i ].width;
-        srect.h = ann_tbl[ i ].height;
-        drect.x = DISPLAY_OFFSET_X + ann_tbl[ i ].x;
-        drect.y = DISPLAY_OFFSET_Y + ann_tbl[ i ].y;
-        drect.w = ann_tbl[ i ].width;
-        drect.h = ann_tbl[ i ].height;
-        if ( annunc[ i ] )
-            SDL_BlitSurface( sdl_ann_tbl[ i ].surfaceon, &srect, sdlwindow, &drect );
-        else
-            SDL_BlitSurface( sdl_ann_tbl[ i ].surfaceoff, &srect, sdlwindow, &drect );
-    }
-
-    // Always immediately update annunciators
-    SDL_UpdateRect( sdlwindow, DISPLAY_OFFSET_X + ann_tbl[ 0 ].x, DISPLAY_OFFSET_Y + ann_tbl[ 0 ].y,
-                    ann_tbl[ 5 ].x + ann_tbl[ 5 ].width - ann_tbl[ 0 ].x, ann_tbl[ 5 ].y + ann_tbl[ 5 ].height - ann_tbl[ 0 ].y );
-}
-
-static void hide_key( void )
-{
-    SDL_Rect drect;
-
-    if ( showkeylastsurf == 0 )
-        return;
-
-    drect.x = showkeylastx;
-    drect.y = showkeylasty;
-    SDL_BlitSurface( showkeylastsurf, 0, sdlwindow, &drect );
-
-    // Update
-    SDL_UpdateRect( sdlwindow, showkeylastx, showkeylasty, showkeylastsurf->w, showkeylastsurf->h );
-
-    // Free
-    SDL_FreeSurface( showkeylastsurf );
-    showkeylastsurf = 0;
-}
-
 // Show the hp key which is being pressed
-static void show_key( int hpkey )
+static void _show_key( int hpkey )
 {
     SDL_Rect srect, drect;
     SDL_Surface* ssurf;
@@ -1199,7 +1153,18 @@ static void show_key( int hpkey )
     showkeylastkey = hpkey;
 
     // Starts by hiding last
-    hide_key();
+    if ( showkeylastsurf != 0 ) {
+        drect.x = showkeylastx;
+        drect.y = showkeylasty;
+        SDL_BlitSurface( showkeylastsurf, 0, sdlwindow, &drect );
+
+        // Update
+        SDL_UpdateRect( sdlwindow, showkeylastx, showkeylasty, showkeylastsurf->w, showkeylastsurf->h );
+
+        // Free
+        SDL_FreeSurface( showkeylastsurf );
+        showkeylastsurf = 0;
+    }
 
     if ( hpkey == -1 )
         return;
@@ -1246,7 +1211,7 @@ static void show_key( int hpkey )
     SDL_UpdateRect( sdlwindow, x, y, ssurf->w, ssurf->h );
 }
 
-static void draw_serial_devices_path( void )
+static void _draw_serial_devices_path( void )
 {
     char text[ 1024 ] = "";
 
@@ -1456,7 +1421,7 @@ void sdl_get_event( void )
 
     // Display button being pressed, if any
     if ( !config.hide_chrome )
-        show_key( pressed_hpkey );
+        _show_key( pressed_hpkey );
 }
 
 void sdl_update_LCD( void )
@@ -1534,11 +1499,29 @@ void sdl_draw_annunc( void )
 
     last_annunc_state = val;
 
-    char sdl_annuncstate[ 6 ];
-    for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
-        sdl_annuncstate[ i ] = ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] ) ? 1 : 0;
+    create_annunc();
 
-    draw_annunciators( sdl_annuncstate );
+    bool annunc_state;
+    for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
+        annunc_state = ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] );
+
+        SDL_Rect srect;
+        SDL_Rect drect;
+        srect.x = 0;
+        srect.y = 0;
+        srect.w = ann_tbl[ i ].width;
+        srect.h = ann_tbl[ i ].height;
+        drect.x = DISPLAY_OFFSET_X + ann_tbl[ i ].x;
+        drect.y = DISPLAY_OFFSET_Y + ann_tbl[ i ].y;
+        drect.w = ann_tbl[ i ].width;
+        drect.h = ann_tbl[ i ].height;
+
+        SDL_BlitSurface( ( annunc_state ) ? sdl_ann_tbl[ i ].surfaceon : sdl_ann_tbl[ i ].surfaceoff, &srect, sdlwindow, &drect );
+    }
+
+    // Always immediately update annunciators
+    SDL_UpdateRect( sdlwindow, DISPLAY_OFFSET_X + ann_tbl[ 0 ].x, DISPLAY_OFFSET_Y + ann_tbl[ 0 ].y,
+                    ann_tbl[ 5 ].x + ann_tbl[ 5 ].width - ann_tbl[ 0 ].x, ann_tbl[ 5 ].y + ann_tbl[ 5 ].height - ann_tbl[ 0 ].y );
 }
 
 void sdl_adjust_contrast( void )
@@ -1575,9 +1558,6 @@ void init_sdl_ui( int argc, char** argv )
     ui_adjust_contrast = sdl_adjust_contrast;
     ui_draw_annunc = sdl_draw_annunc;
 
-    // SDLInit();
-    unsigned int width, height;
-
     // Initialize SDL
     if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
         printf( "Couldn't initialize SDL: %s\n", SDL_GetError() );
@@ -1603,6 +1583,7 @@ void init_sdl_ui( int argc, char** argv )
     KEYBOARD_OFFSET_Y = _KEYBOARD_OFFSET_Y;
     KBD_UPLINE = _KBD_UPLINE;
 
+    unsigned int width, height;
     if ( config.hide_chrome ) {
         width = DISPLAY_WIDTH;
         height = DISPLAY_HEIGHT;
@@ -1631,16 +1612,16 @@ void init_sdl_ui( int argc, char** argv )
     if ( !config.hide_chrome ) {
         int cut = buttons[ HPKEY_MTH ].y + KEYBOARD_OFFSET_Y - 19;
 
-        draw_background( width, cut, width, height );
-        draw_bezel( cut, KEYBOARD_OFFSET_Y, width, height );
-        draw_header();
-        draw_bezel_LCD();
-        draw_keypad();
+        _draw_background( width, cut, width, height );
+        _draw_bezel( cut, KEYBOARD_OFFSET_Y, width, height );
+        _draw_header();
+        _draw_bezel_LCD();
+        _draw_keypad();
 
-        draw_serial_devices_path();
+        _draw_serial_devices_path();
     }
 
-    draw_background_LCD();
+    _draw_background_LCD();
 
     SDL_UpdateRect( sdlwindow, 0, 0, 0, 0 );
 }

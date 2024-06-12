@@ -2445,7 +2445,6 @@ static bool create_window( int argc, char** argv )
     XMapWindow( dpy, mainW );
     XMapSubwindows( dpy, mainW );
 
-    // draw_keypad();
     for ( int b = FIRST_HPKEY; b <= LAST_HPKEY; b++ )
         draw_button( b );
     draw_icon();
