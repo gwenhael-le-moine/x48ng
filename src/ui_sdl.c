@@ -137,7 +137,7 @@ static void write_text( int x, int y, const char* string, unsigned int length, u
     }
 }
 
-static void colors_setup( color_t* colors )
+static void colors_setup( void )
 {
     int r, g, b;
     // Adjust the LCD color according to the contrast
@@ -149,25 +149,25 @@ static void colors_setup( color_t* colors )
 
     for ( unsigned i = FIRST_COLOR; i < LAST_COLOR; i++ ) {
         if ( config.mono ) {
-            r = colors[ i ].mono_rgb;
-            g = colors[ i ].mono_rgb;
-            b = colors[ i ].mono_rgb;
+            r = COLORS[ i ].mono_rgb;
+            g = COLORS[ i ].mono_rgb;
+            b = COLORS[ i ].mono_rgb;
         } else if ( config.gray ) {
-            r = colors[ i ].gray_rgb;
-            g = colors[ i ].gray_rgb;
-            b = colors[ i ].gray_rgb;
+            r = COLORS[ i ].gray_rgb;
+            g = COLORS[ i ].gray_rgb;
+            b = COLORS[ i ].gray_rgb;
         } else {
-            r = colors[ i ].r;
-            g = colors[ i ].g;
-            b = colors[ i ].b;
+            r = COLORS[ i ].r;
+            g = COLORS[ i ].g;
+            b = COLORS[ i ].b;
         }
 
         ARGBColors[ i ] = 0xff000000 | ( r << 16 ) | ( g << 8 ) | b;
     }
 
-    r = ( 0x13 - contrast ) * ( colors[ LCD ].r / 0x10 );
-    g = ( 0x13 - contrast ) * ( colors[ LCD ].g / 0x10 );
-    b = 128 - ( ( 0x13 - contrast ) * ( ( 128 - colors[ LCD ].b ) / 0x10 ) );
+    r = ( 0x13 - contrast ) * ( COLORS[ LCD ].r / 0x10 );
+    g = ( 0x13 - contrast ) * ( COLORS[ LCD ].g / 0x10 );
+    b = 128 - ( ( 0x13 - contrast ) * ( ( 128 - COLORS[ LCD ].b ) / 0x10 ) );
     ARGBColors[ PIXEL ] = 0xff000000 | ( r << 16 ) | ( g << 8 ) | b;
 }
 
@@ -1355,11 +1355,10 @@ void sdl_update_LCD( void )
 {
     if ( display.on ) {
         int i;
-        long addr;
+        long addr = display.disp_start;
         static int old_offset = -1;
         static int old_lines = -1;
 
-        addr = display.disp_start;
         if ( display.offset != old_offset ) {
             memset( lcd_nibbles_buffer, 0xf0, ( size_t )( ( display.lines + 1 ) * NIBS_PER_BUFFER_ROW ) );
             old_offset = display.offset;
@@ -1453,7 +1452,7 @@ void sdl_draw_annunc( void )
 
 void sdl_adjust_contrast( void )
 {
-    colors_setup( opt_gx ? colors_gx : colors_sx );
+    colors_setup();
     create_annunc();
 
     // redraw LCD
@@ -1534,7 +1533,7 @@ void init_sdl_ui( int argc, char** argv )
 
     /* BUTTONS = opt_gx ? BUTTONS_gx : BUTTONS_sx; */
 
-    colors_setup( COLORS );
+    colors_setup();
 
     if ( !config.hide_chrome ) {
         int cut = BUTTONS[ HPKEY_MTH ].y + KEYBOARD_OFFSET_Y - 19;
