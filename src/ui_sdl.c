@@ -1229,7 +1229,8 @@ static inline void draw_row( long addr, int row )
 void sdl_get_event( void )
 {
     SDL_Event event;
-    int hpkey;
+
+    int hpkey = -1;
     static int lasthpkey = -1;           // last key that was pressed or -1 for none
     static int lastticks = -1;           // time at which a key was pressed or -1 if timer expired
     static bool lastislongpress = false; // last key press was a long press
@@ -1242,59 +1243,18 @@ void sdl_get_event( void )
         lastticks = -1;
 
         // Check that the mouse is still on the same last key
-        int x, y, state;
-        state = SDL_GetMouseState( &x, &y );
+        int x, y;
+        int state = SDL_GetMouseState( &x, &y );
 
         if ( state & SDL_BUTTON( 1 ) && mouse_click_to_hpkey( x, y ) == lasthpkey )
             lastislongpress = true;
     }
 
     // Iterate as long as there are events
-    // while( SDL_PollEvent( &event ) )
-    if ( SDL_PollEvent( &event ) ) {
+    while ( SDL_PollEvent( &event ) ) {
         switch ( event.type ) {
             case SDL_QUIT:
                 please_exit = true;
-                break;
-
-            // Mouse move: react to state changes in the BUTTONS that are
-            // pressed
-            case SDL_MOUSEMOTION:
-                hpkey = mouse_click_to_hpkey( event.motion.x, event.motion.y );
-                if ( event.motion.state & SDL_BUTTON( 1 ) ) {
-                    // Mouse moves on a key different from the last key
-                    // (state change):
-                    // - release last (if last was pressed)
-                    // - press new (if new is pressed)
-                    if ( hpkey != lasthpkey ) {
-                        pressed_hpkey = hpkey;
-
-                        if ( lasthpkey != -1 ) {
-                            if ( !lastislongpress ) {
-                                release_all_keys();
-                                /* rv = true; */
-                            }
-                            // Stop timer, clear long key press
-                            lastticks = -1;
-                            lastislongpress = false;
-                        }
-                        if ( hpkey != -1 ) {
-                            if ( !keyboard[ hpkey ].pressed ) // If a key is down, it
-                                                              // can't be down another
-                                                              // time
-                            {
-                                press_key( hpkey );
-                                // Start timer
-                                lastticks = SDL_GetTicks();
-                            }
-                        }
-                    }
-                    lasthpkey = hpkey;
-                }
-                if ( hpkey == -1 ) // Needed to avoid pressing and moving
-                                   // outside of a button releases
-                    lasthpkey = -1;
-
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
@@ -1309,7 +1269,6 @@ void sdl_get_event( void )
                 // Start timer
                 lastticks = SDL_GetTicks();
                 break;
-
             case SDL_MOUSEBUTTONUP:
                 hpkey = mouse_click_to_hpkey( event.button.x, event.button.y );
                 // React to mouse up/down when click over a button
