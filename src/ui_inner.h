@@ -44,12 +44,36 @@ typedef struct color_t {
     int gray_rgb;
 } color_t;
 
+typedef struct button_t {
+    const char* name;
+
+    int x, y;
+    unsigned int w, h;
+
+    int lc;
+    const char* label;
+    short font_size;
+    unsigned int lw, lh;
+    unsigned char* lb;
+
+    const char* letter;
+
+    const char* left;
+    short is_menu;
+    const char* right;
+    const char* sub;
+} button_t;
+
 /*************/
 /* variables */
 /*************/
 extern letter_t small_font[ 128 ];
+
 extern color_t colors_sx[ NB_COLORS ];
 extern color_t colors_gx[ NB_COLORS ];
+
+extern button_t buttons_sx[ NB_KEYS ];
+extern button_t buttons_gx[ NB_KEYS ];
 
 /***********/
 /* bitmaps */
