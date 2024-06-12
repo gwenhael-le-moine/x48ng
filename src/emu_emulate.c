@@ -2511,7 +2511,7 @@ void step_instruction( void )
         enter_debugger |= ILLEGAL_INSTRUCTION;
 }
 
-inline void schedule( void )
+void schedule( void )
 {
     t1_t2_ticks ticks;
     unsigned long steps;
