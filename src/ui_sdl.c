@@ -1334,33 +1334,28 @@ void sdl_refresh_LCD( void ) {}
 
 void sdl_disp_draw_nibble( word_20 addr, word_4 val )
 {
-    long offset;
-    int x, y;
+    long offset = ( addr - display.disp_start );
+    int x = offset % display.nibs_per_line;
 
-    offset = ( addr - display.disp_start );
-    x = offset % display.nibs_per_line;
     if ( x < 0 || x > 35 )
         return;
 
     if ( display.nibs_per_line != 0 ) {
-        y = offset / display.nibs_per_line;
+        int y = offset / display.nibs_per_line;
         if ( y < 0 || y > 63 )
             return;
 
         draw_nibble( x, y, val );
     } else
-        for ( y = 0; y < display.lines; y++ )
+        for ( int y = 0; y < display.lines; y++ )
             draw_nibble( x, y, val );
 }
 
 void sdl_menu_draw_nibble( word_20 addr, word_4 val )
 {
-    long offset;
-    int x, y;
-
-    offset = ( addr - display.menu_start );
-    x = offset % NIBBLES_PER_ROW;
-    y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
+    long offset = ( addr - display.menu_start );
+    int x = offset % NIBBLES_PER_ROW;
+    int y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
 
     draw_nibble( x, y, val );
 }

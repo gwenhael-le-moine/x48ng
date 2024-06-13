@@ -3109,22 +3109,19 @@ void x11_update_LCD( void )
 
 void x11_disp_draw_nibble( word_20 addr, word_4 val )
 {
-    long offset;
-    int shm_addr;
-    int x, y;
+    long offset = ( addr - display.disp_start );
+    int x = offset % display.nibs_per_line;
 
-    offset = ( addr - display.disp_start );
-    x = offset % display.nibs_per_line;
     if ( x < 0 || x > 35 )
         return;
 
     if ( display.nibs_per_line != 0 ) {
-        y = offset / display.nibs_per_line;
+        int y = offset / display.nibs_per_line;
         if ( y < 0 || y > 63 )
             return;
 
         if ( shm_flag ) {
-            shm_addr = ( 2 * y * lcd.disp_image->bytes_per_line ) + x;
+            int shm_addr = ( 2 * y * lcd.disp_image->bytes_per_line ) + x;
             lcd.disp_image->data[ shm_addr ] = nibble_bitmap[ val ];
             lcd.disp_image->data[ shm_addr + lcd.disp_image->bytes_per_line ] = nibble_bitmap[ val ];
             lcd.display_update |= UPDATE_DISP;
@@ -3132,8 +3129,8 @@ void x11_disp_draw_nibble( word_20 addr, word_4 val )
             draw_nibble( x, y, val );
     } else {
         if ( shm_flag ) {
-            shm_addr = x;
-            for ( y = 0; y < display.lines; y++ ) {
+            int shm_addr = x;
+            for ( int y = 0; y < display.lines; y++ ) {
                 lcd.disp_image->data[ shm_addr ] = nibble_bitmap[ val ];
                 shm_addr += lcd.disp_image->bytes_per_line;
                 lcd.disp_image->data[ shm_addr ] = nibble_bitmap[ val ];
@@ -3141,26 +3138,22 @@ void x11_disp_draw_nibble( word_20 addr, word_4 val )
             }
             lcd.display_update |= UPDATE_DISP;
         } else
-            for ( y = 0; y < display.lines; y++ )
+            for ( int y = 0; y < display.lines; y++ )
                 draw_nibble( x, y, val );
     }
 }
 
 void x11_menu_draw_nibble( word_20 addr, word_4 val )
 {
-    long offset;
-    int shm_addr;
-    int x, y;
-
-    offset = ( addr - display.menu_start );
+    long offset = ( addr - display.menu_start );
     if ( shm_flag ) {
-        shm_addr = 2 * ( offset / NIBBLES_PER_ROW ) * lcd.menu_image->bytes_per_line + ( offset % NIBBLES_PER_ROW );
+        int shm_addr = 2 * ( offset / NIBBLES_PER_ROW ) * lcd.menu_image->bytes_per_line + ( offset % NIBBLES_PER_ROW );
         lcd.menu_image->data[ shm_addr ] = nibble_bitmap[ val ];
         lcd.menu_image->data[ shm_addr + lcd.menu_image->bytes_per_line ] = nibble_bitmap[ val ];
         lcd.display_update |= UPDATE_MENU;
     } else {
-        x = offset % NIBBLES_PER_ROW;
-        y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
+        int x = offset % NIBBLES_PER_ROW;
+        int y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
 
         draw_nibble( x, y, val );
     }
