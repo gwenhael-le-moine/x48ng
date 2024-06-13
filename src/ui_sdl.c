@@ -158,13 +158,14 @@ static void colors_setup( void )
             b = COLORS[ i ].b;
         }
 
+        if ( !config.mono && i == PIXEL ) {
+            r = ( 0x13 - contrast ) * ( COLORS[ LCD ].r / 0x10 );
+            g = ( 0x13 - contrast ) * ( COLORS[ LCD ].g / 0x10 );
+            b = 128 - ( ( 0x13 - contrast ) * ( ( 128 - COLORS[ LCD ].b ) / 0x10 ) );
+        }
+
         ARGBColors[ i ] = 0xff000000 | ( r << 16 ) | ( g << 8 ) | b;
     }
-
-    r = ( 0x13 - contrast ) * ( COLORS[ LCD ].r / 0x10 );
-    g = ( 0x13 - contrast ) * ( COLORS[ LCD ].g / 0x10 );
-    b = 128 - ( ( 0x13 - contrast ) * ( ( 128 - COLORS[ LCD ].b ) / 0x10 ) );
-    ARGBColors[ PIXEL ] = 0xff000000 | ( r << 16 ) | ( g << 8 ) | b;
 }
 
 // This should be called once to setup the surfaces. Calling it multiple
