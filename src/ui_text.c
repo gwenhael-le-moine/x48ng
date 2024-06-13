@@ -349,15 +349,15 @@ void text_menu_draw_nibble( word_20 addr, word_4 val )
 void text_draw_annunc( void )
 {
     const wchar_t* annunciators_icons[ 6 ] = { L"↰", L"↱", L"α", L"🪫", L"⌛", L"⇄" };
-    int val = saturn.annunc;
 
-    if ( val == last_annunc_state )
+    if ( saturn.annunc == last_annunc_state )
         return;
 
-    last_annunc_state = val;
+    last_annunc_state = saturn.annunc;
 
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
-        mvaddwstr( 0, 4 + ( i * 4 ), ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] ) ? annunciators_icons[ i ] : L" " );
+        mvaddwstr( 0, 4 + ( i * 4 ),
+                   ( ( annunciators_bits[ i ] & saturn.annunc ) == annunciators_bits[ i ] ) ? annunciators_icons[ i ] : L" " );
 }
 
 void text_adjust_contrast( void ) { text_update_LCD(); }

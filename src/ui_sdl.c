@@ -95,7 +95,7 @@ static SDL_Surface* bitmap_to_surface( unsigned int w, unsigned int h, unsigned 
             // Look for the bit in that byte
             char b = c & ( 1 << ( x & 7 ) );
 
-            lineptr[ x ] = (b) ? coloron : coloroff;
+            lineptr[ x ] = ( b ) ? coloron : coloroff;
         }
     }
 
@@ -169,7 +169,7 @@ static void colors_setup( void )
 
 // This should be called once to setup the surfaces. Calling it multiple
 // times is fine, it won't do anything on subsequent calls.
-static void create_annunc( void )
+static void create_annunciators_surfaces( void )
 {
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
         // If the SDL surface does not exist yet, we create it on the fly
@@ -1367,17 +1367,16 @@ void sdl_menu_draw_nibble( word_20 addr, word_4 val )
 
 void sdl_draw_annunc( void )
 {
-    int val = saturn.annunc;
-    if ( val == last_annunc_state )
+    if ( saturn.annunc == last_annunc_state )
         return;
 
-    last_annunc_state = val;
+    last_annunc_state = saturn.annunc;
 
-    create_annunc();
+    create_annunciators_surfaces();
 
     bool annunc_state;
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
-        annunc_state = ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] );
+        annunc_state = ( ( annunciators_bits[ i ] & saturn.annunc ) == annunciators_bits[ i ] );
 
         SDL_Rect srect;
         SDL_Rect drect;
@@ -1390,7 +1389,8 @@ void sdl_draw_annunc( void )
         drect.w = ann_tbl[ i ].width;
         drect.h = ann_tbl[ i ].height;
 
-        SDL_BlitSurface( ( annunc_state ) ? annunciators_surfaces[ i ].surfaceon : annunciators_surfaces[ i ].surfaceoff, &srect, sdlwindow, &drect );
+        SDL_BlitSurface( ( annunc_state ) ? annunciators_surfaces[ i ].surfaceon : annunciators_surfaces[ i ].surfaceoff, &srect, sdlwindow,
+                         &drect );
     }
 
     // Always immediately update annunciators
@@ -1401,7 +1401,7 @@ void sdl_draw_annunc( void )
 void sdl_adjust_contrast( void )
 {
     colors_setup();
-    create_annunc();
+    create_annunciators_surfaces();
 
     // redraw LCD
     ui_init_LCD();

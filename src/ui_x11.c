@@ -3168,14 +3168,13 @@ void x11_menu_draw_nibble( word_20 addr, word_4 val )
 
 void x11_draw_annunc( void )
 {
-    int val = saturn.annunc;
-    if ( val == last_annunc_state )
+    if ( saturn.annunc == last_annunc_state )
         return;
 
-    last_annunc_state = val;
+    last_annunc_state = saturn.annunc;
 
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
-        if ( ( annunciators_bits[ i ] & val ) == annunciators_bits[ i ] )
+        if ( ( annunciators_bits[ i ] & saturn.annunc ) == annunciators_bits[ i ] )
             XCopyPlane( dpy, x11_ann_pixmaps[ i ], lcd.win, lcd.gc, 0, 0, ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].x,
                         ann_tbl[ i ].y, 1 );
         else
