@@ -50,8 +50,8 @@ typedef struct sdl_surfaces_on_off_struct_t {
 static int display_offset_x, display_offset_y;
 
 static unsigned int ARGBColors[ NB_COLORS ];
-static sdl_surfaces_on_off_struct_t sdl_buttons[ NB_KEYS ];
-static sdl_surfaces_on_off_struct_t sdl_ann_tbl[ NB_ANNUNCIATORS ];
+static sdl_surfaces_on_off_struct_t buttons_surfaces[ NB_KEYS ];
+static sdl_surfaces_on_off_struct_t annunciators_surfaces[ NB_ANNUNCIATORS ];
 
 // State to displayed zoomed last pressed key
 static SDL_Surface* showkeylastsurf = 0;
@@ -94,10 +94,8 @@ static SDL_Surface* bitmap_to_surface( unsigned int w, unsigned int h, unsigned 
             char c = data[ y * byteperline + ( x >> 3 ) ];
             // Look for the bit in that byte
             char b = c & ( 1 << ( x & 7 ) );
-            if ( b )
-                lineptr[ x ] = coloron;
-            else
-                lineptr[ x ] = coloroff;
+
+            lineptr[ x ] = (b) ? coloron : coloroff;
         }
     }
 
@@ -175,20 +173,20 @@ static void create_annunc( void )
 {
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
         // If the SDL surface does not exist yet, we create it on the fly
-        if ( sdl_ann_tbl[ i ].surfaceon ) {
-            SDL_FreeSurface( sdl_ann_tbl[ i ].surfaceon );
-            sdl_ann_tbl[ i ].surfaceon = 0;
+        if ( annunciators_surfaces[ i ].surfaceon ) {
+            SDL_FreeSurface( annunciators_surfaces[ i ].surfaceon );
+            annunciators_surfaces[ i ].surfaceon = 0;
         }
 
-        sdl_ann_tbl[ i ].surfaceon =
+        annunciators_surfaces[ i ].surfaceon =
             bitmap_to_surface( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, ARGBColors[ PIXEL ], ARGBColors[ LCD ] );
 
-        if ( sdl_ann_tbl[ i ].surfaceoff ) {
-            SDL_FreeSurface( sdl_ann_tbl[ i ].surfaceoff );
-            sdl_ann_tbl[ i ].surfaceoff = 0;
+        if ( annunciators_surfaces[ i ].surfaceoff ) {
+            SDL_FreeSurface( annunciators_surfaces[ i ].surfaceoff );
+            annunciators_surfaces[ i ].surfaceoff = 0;
         }
 
-        sdl_ann_tbl[ i ].surfaceoff =
+        annunciators_surfaces[ i ].surfaceoff =
             bitmap_to_surface( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, ARGBColors[ LCD ], ARGBColors[ LCD ] );
     }
 }
@@ -622,12 +620,12 @@ static void __create_buttons( void )
 
     for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
         // Create surfaces for each button
-        if ( !sdl_buttons[ i ].surfaceon )
-            sdl_buttons[ i ].surfaceon =
+        if ( !buttons_surfaces[ i ].surfaceon )
+            buttons_surfaces[ i ].surfaceon =
                 SDL_CreateRGBSurface( SDL_SWSURFACE, BUTTONS[ i ].w, BUTTONS[ i ].h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 );
 
-        if ( !sdl_buttons[ i ].surfaceoff )
-            sdl_buttons[ i ].surfaceoff =
+        if ( !buttons_surfaces[ i ].surfaceoff )
+            buttons_surfaces[ i ].surfaceoff =
                 SDL_CreateRGBSurface( SDL_SWSURFACE, BUTTONS[ i ].w, BUTTONS[ i ].h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 );
 
         // Use alpha channel
@@ -635,112 +633,112 @@ static void __create_buttons( void )
         // pixel = 0xffff0000;
 
         // Fill the button and outline
-        SDL_FillRect( sdl_buttons[ i ].surfaceon, 0, pixel );
-        SDL_FillRect( sdl_buttons[ i ].surfaceoff, 0, pixel );
+        SDL_FillRect( buttons_surfaces[ i ].surfaceon, 0, pixel );
+        SDL_FillRect( buttons_surfaces[ i ].surfaceoff, 0, pixel );
 
         SDL_Rect rect;
         rect.x = 1;
         rect.y = 1;
         rect.w = BUTTONS[ i ].w - 2;
         rect.h = BUTTONS[ i ].h - 2;
-        SDL_FillRect( sdl_buttons[ i ].surfaceon, &rect, ARGBColors[ BUTTON ] );
-        SDL_FillRect( sdl_buttons[ i ].surfaceoff, &rect, ARGBColors[ BUTTON ] );
+        SDL_FillRect( buttons_surfaces[ i ].surfaceon, &rect, ARGBColors[ BUTTON ] );
+        SDL_FillRect( buttons_surfaces[ i ].surfaceoff, &rect, ARGBColors[ BUTTON ] );
 
         // draw the released button
         // draw edge of button
-        lineColor( sdl_buttons[ i ].surfaceon, 1, BUTTONS[ i ].h - 2, 1, 1, bgra2argb( ARGBColors[ BUT_TOP ] ) );
-        lineColor( sdl_buttons[ i ].surfaceon, 2, BUTTONS[ i ].h - 3, 2, 2, bgra2argb( ARGBColors[ BUT_TOP ] ) );
-        lineColor( sdl_buttons[ i ].surfaceon, 3, BUTTONS[ i ].h - 4, 3, 3, bgra2argb( ARGBColors[ BUT_TOP ] ) );
+        lineColor( buttons_surfaces[ i ].surfaceon, 1, BUTTONS[ i ].h - 2, 1, 1, bgra2argb( ARGBColors[ BUT_TOP ] ) );
+        lineColor( buttons_surfaces[ i ].surfaceon, 2, BUTTONS[ i ].h - 3, 2, 2, bgra2argb( ARGBColors[ BUT_TOP ] ) );
+        lineColor( buttons_surfaces[ i ].surfaceon, 3, BUTTONS[ i ].h - 4, 3, 3, bgra2argb( ARGBColors[ BUT_TOP ] ) );
 
-        lineColor( sdl_buttons[ i ].surfaceon, 1, 1, BUTTONS[ i ].w - 2, 1, bgra2argb( ARGBColors[ BUT_TOP ] ) );
-        lineColor( sdl_buttons[ i ].surfaceon, 2, 2, BUTTONS[ i ].w - 3, 2, bgra2argb( ARGBColors[ BUT_TOP ] ) );
-        lineColor( sdl_buttons[ i ].surfaceon, 3, 3, BUTTONS[ i ].w - 4, 3, bgra2argb( ARGBColors[ BUT_TOP ] ) );
-        lineColor( sdl_buttons[ i ].surfaceon, 4, 4, BUTTONS[ i ].w - 5, 4, bgra2argb( ARGBColors[ BUT_TOP ] ) );
+        lineColor( buttons_surfaces[ i ].surfaceon, 1, 1, BUTTONS[ i ].w - 2, 1, bgra2argb( ARGBColors[ BUT_TOP ] ) );
+        lineColor( buttons_surfaces[ i ].surfaceon, 2, 2, BUTTONS[ i ].w - 3, 2, bgra2argb( ARGBColors[ BUT_TOP ] ) );
+        lineColor( buttons_surfaces[ i ].surfaceon, 3, 3, BUTTONS[ i ].w - 4, 3, bgra2argb( ARGBColors[ BUT_TOP ] ) );
+        lineColor( buttons_surfaces[ i ].surfaceon, 4, 4, BUTTONS[ i ].w - 5, 4, bgra2argb( ARGBColors[ BUT_TOP ] ) );
 
-        pixelColor( sdl_buttons[ i ].surfaceon, 4, 5, bgra2argb( ARGBColors[ BUT_TOP ] ) );
+        pixelColor( buttons_surfaces[ i ].surfaceon, 4, 5, bgra2argb( ARGBColors[ BUT_TOP ] ) );
 
-        lineColor( sdl_buttons[ i ].surfaceon, 3, BUTTONS[ i ].h - 2, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2,
+        lineColor( buttons_surfaces[ i ].surfaceon, 3, BUTTONS[ i ].h - 2, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2,
                    bgra2argb( ARGBColors[ BUT_BOT ] ) );
-        lineColor( sdl_buttons[ i ].surfaceon, 4, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3,
+        lineColor( buttons_surfaces[ i ].surfaceon, 4, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3,
                    bgra2argb( ARGBColors[ BUT_BOT ] ) );
 
-        lineColor( sdl_buttons[ i ].surfaceon, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUTTONS[ i ].w - 2, 3,
+        lineColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUTTONS[ i ].w - 2, 3,
                    bgra2argb( ARGBColors[ BUT_BOT ] ) );
-        lineColor( sdl_buttons[ i ].surfaceon, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, 4,
+        lineColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, 4,
                    bgra2argb( ARGBColors[ BUT_BOT ] ) );
-        lineColor( sdl_buttons[ i ].surfaceon, BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, 5,
+        lineColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, 5,
                    bgra2argb( ARGBColors[ BUT_BOT ] ) );
-        pixelColor( sdl_buttons[ i ].surfaceon, BUTTONS[ i ].w - 5, BUTTONS[ i ].h - 4, bgra2argb( ARGBColors[ BUT_BOT ] ) );
+        pixelColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 5, BUTTONS[ i ].h - 4, bgra2argb( ARGBColors[ BUT_BOT ] ) );
 
         // draw frame around button
 
-        lineColor( sdl_buttons[ i ].surfaceon, 0, BUTTONS[ i ].h - 3, 0, 2, bgra2argb( ARGBColors[ FRAME ] ) );
-        lineColor( sdl_buttons[ i ].surfaceon, 2, 0, BUTTONS[ i ].w - 3, 0, bgra2argb( ARGBColors[ FRAME ] ) );
-        lineColor( sdl_buttons[ i ].surfaceon, 2, BUTTONS[ i ].h - 1, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 1,
+        lineColor( buttons_surfaces[ i ].surfaceon, 0, BUTTONS[ i ].h - 3, 0, 2, bgra2argb( ARGBColors[ FRAME ] ) );
+        lineColor( buttons_surfaces[ i ].surfaceon, 2, 0, BUTTONS[ i ].w - 3, 0, bgra2argb( ARGBColors[ FRAME ] ) );
+        lineColor( buttons_surfaces[ i ].surfaceon, 2, BUTTONS[ i ].h - 1, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 1,
                    bgra2argb( ARGBColors[ FRAME ] ) );
-        lineColor( sdl_buttons[ i ].surfaceon, BUTTONS[ i ].w - 1, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 1, 2,
+        lineColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 1, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 1, 2,
                    bgra2argb( ARGBColors[ FRAME ] ) );
         if ( i == HPKEY_ON ) {
-            lineColor( sdl_buttons[ i ].surfaceon, 1, 1, BUTTONS[ 1 ].w - 2, 1, bgra2argb( ARGBColors[ FRAME ] ) );
-            pixelColor( sdl_buttons[ i ].surfaceon, 1, 2, bgra2argb( ARGBColors[ FRAME ] ) );
-            pixelColor( sdl_buttons[ i ].surfaceon, BUTTONS[ i ].w - 2, 2, bgra2argb( ARGBColors[ FRAME ] ) );
+            lineColor( buttons_surfaces[ i ].surfaceon, 1, 1, BUTTONS[ 1 ].w - 2, 1, bgra2argb( ARGBColors[ FRAME ] ) );
+            pixelColor( buttons_surfaces[ i ].surfaceon, 1, 2, bgra2argb( ARGBColors[ FRAME ] ) );
+            pixelColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 2, 2, bgra2argb( ARGBColors[ FRAME ] ) );
         } else {
-            pixelColor( sdl_buttons[ i ].surfaceon, 1, 1, bgra2argb( ARGBColors[ FRAME ] ) );
-            pixelColor( sdl_buttons[ i ].surfaceon, BUTTONS[ i ].w - 2, 1, bgra2argb( ARGBColors[ FRAME ] ) );
+            pixelColor( buttons_surfaces[ i ].surfaceon, 1, 1, bgra2argb( ARGBColors[ FRAME ] ) );
+            pixelColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 2, 1, bgra2argb( ARGBColors[ FRAME ] ) );
         }
-        pixelColor( sdl_buttons[ i ].surfaceon, 1, BUTTONS[ i ].h - 2, bgra2argb( ARGBColors[ FRAME ] ) );
-        pixelColor( sdl_buttons[ i ].surfaceon, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, bgra2argb( ARGBColors[ FRAME ] ) );
+        pixelColor( buttons_surfaces[ i ].surfaceon, 1, BUTTONS[ i ].h - 2, bgra2argb( ARGBColors[ FRAME ] ) );
+        pixelColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, bgra2argb( ARGBColors[ FRAME ] ) );
 
         // draw the depressed button
 
         // draw edge of button
-        lineColor( sdl_buttons[ i ].surfaceoff, 2, BUTTONS[ i ].h - 4, 2, 2, bgra2argb( ARGBColors[ BUT_TOP ] ) );
-        lineColor( sdl_buttons[ i ].surfaceoff, 3, BUTTONS[ i ].h - 5, 3, 3, bgra2argb( ARGBColors[ BUT_TOP ] ) );
-        lineColor( sdl_buttons[ i ].surfaceoff, 2, 2, BUTTONS[ i ].w - 4, 2, bgra2argb( ARGBColors[ BUT_TOP ] ) );
-        lineColor( sdl_buttons[ i ].surfaceoff, 3, 3, BUTTONS[ i ].w - 5, 3, bgra2argb( ARGBColors[ BUT_TOP ] ) );
-        pixelColor( sdl_buttons[ i ].surfaceoff, 4, 4, bgra2argb( ARGBColors[ BUT_TOP ] ) );
+        lineColor( buttons_surfaces[ i ].surfaceoff, 2, BUTTONS[ i ].h - 4, 2, 2, bgra2argb( ARGBColors[ BUT_TOP ] ) );
+        lineColor( buttons_surfaces[ i ].surfaceoff, 3, BUTTONS[ i ].h - 5, 3, 3, bgra2argb( ARGBColors[ BUT_TOP ] ) );
+        lineColor( buttons_surfaces[ i ].surfaceoff, 2, 2, BUTTONS[ i ].w - 4, 2, bgra2argb( ARGBColors[ BUT_TOP ] ) );
+        lineColor( buttons_surfaces[ i ].surfaceoff, 3, 3, BUTTONS[ i ].w - 5, 3, bgra2argb( ARGBColors[ BUT_TOP ] ) );
+        pixelColor( buttons_surfaces[ i ].surfaceoff, 4, 4, bgra2argb( ARGBColors[ BUT_TOP ] ) );
 
-        lineColor( sdl_buttons[ i ].surfaceoff, 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3,
+        lineColor( buttons_surfaces[ i ].surfaceoff, 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3,
                    bgra2argb( ARGBColors[ BUT_BOT ] ) );
-        lineColor( sdl_buttons[ i ].surfaceoff, 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4,
+        lineColor( buttons_surfaces[ i ].surfaceoff, 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4,
                    bgra2argb( ARGBColors[ BUT_BOT ] ) );
-        lineColor( sdl_buttons[ i ].surfaceoff, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, 3,
+        lineColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, 3,
                    bgra2argb( ARGBColors[ BUT_BOT ] ) );
-        lineColor( sdl_buttons[ i ].surfaceoff, BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, 4,
+        lineColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, 4,
                    bgra2argb( ARGBColors[ BUT_BOT ] ) );
-        pixelColor( sdl_buttons[ i ].surfaceoff, BUTTONS[ i ].w - 5, BUTTONS[ i ].h - 5, bgra2argb( ARGBColors[ BUT_BOT ] ) );
+        pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 5, BUTTONS[ i ].h - 5, bgra2argb( ARGBColors[ BUT_BOT ] ) );
 
         // draw frame around button
-        lineColor( sdl_buttons[ i ].surfaceoff, 0, BUTTONS[ i ].h - 3, 0, 2, bgra2argb( ARGBColors[ FRAME ] ) );
-        lineColor( sdl_buttons[ i ].surfaceoff, 2, 0, BUTTONS[ i ].w - 3, 0, bgra2argb( ARGBColors[ FRAME ] ) );
-        lineColor( sdl_buttons[ i ].surfaceoff, 2, BUTTONS[ i ].h - 1, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 1,
+        lineColor( buttons_surfaces[ i ].surfaceoff, 0, BUTTONS[ i ].h - 3, 0, 2, bgra2argb( ARGBColors[ FRAME ] ) );
+        lineColor( buttons_surfaces[ i ].surfaceoff, 2, 0, BUTTONS[ i ].w - 3, 0, bgra2argb( ARGBColors[ FRAME ] ) );
+        lineColor( buttons_surfaces[ i ].surfaceoff, 2, BUTTONS[ i ].h - 1, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 1,
                    bgra2argb( ARGBColors[ FRAME ] ) );
-        lineColor( sdl_buttons[ i ].surfaceoff, BUTTONS[ i ].w - 1, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 1, 2,
+        lineColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 1, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 1, 2,
                    bgra2argb( ARGBColors[ FRAME ] ) );
 
         if ( i == HPKEY_ON ) {
-            lineColor( sdl_buttons[ i ].surfaceoff, 1, 1, BUTTONS[ i ].w - 2, 1, bgra2argb( ARGBColors[ FRAME ] ) );
-            pixelColor( sdl_buttons[ i ].surfaceoff, 1, 2, bgra2argb( ARGBColors[ FRAME ] ) );
-            pixelColor( sdl_buttons[ i ].surfaceoff, BUTTONS[ i ].w - 2, 2, bgra2argb( ARGBColors[ FRAME ] ) );
+            lineColor( buttons_surfaces[ i ].surfaceoff, 1, 1, BUTTONS[ i ].w - 2, 1, bgra2argb( ARGBColors[ FRAME ] ) );
+            pixelColor( buttons_surfaces[ i ].surfaceoff, 1, 2, bgra2argb( ARGBColors[ FRAME ] ) );
+            pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 2, 2, bgra2argb( ARGBColors[ FRAME ] ) );
         } else {
-            pixelColor( sdl_buttons[ i ].surfaceoff, 1, 1, bgra2argb( ARGBColors[ FRAME ] ) );
-            pixelColor( sdl_buttons[ i ].surfaceoff, BUTTONS[ i ].w - 2, 1, bgra2argb( ARGBColors[ FRAME ] ) );
+            pixelColor( buttons_surfaces[ i ].surfaceoff, 1, 1, bgra2argb( ARGBColors[ FRAME ] ) );
+            pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 2, 1, bgra2argb( ARGBColors[ FRAME ] ) );
         }
-        pixelColor( sdl_buttons[ i ].surfaceoff, 1, BUTTONS[ i ].h - 2, bgra2argb( ARGBColors[ FRAME ] ) );
-        pixelColor( sdl_buttons[ i ].surfaceoff, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, bgra2argb( ARGBColors[ FRAME ] ) );
+        pixelColor( buttons_surfaces[ i ].surfaceoff, 1, BUTTONS[ i ].h - 2, bgra2argb( ARGBColors[ FRAME ] ) );
+        pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, bgra2argb( ARGBColors[ FRAME ] ) );
         if ( i == HPKEY_ON ) {
-            rectangleColor( sdl_buttons[ i ].surfaceoff, 1, 2, 1 + BUTTONS[ i ].w - 3, 2 + BUTTONS[ i ].h - 4,
+            rectangleColor( buttons_surfaces[ i ].surfaceoff, 1, 2, 1 + BUTTONS[ i ].w - 3, 2 + BUTTONS[ i ].h - 4,
                             bgra2argb( ARGBColors[ FRAME ] ) );
-            pixelColor( sdl_buttons[ i ].surfaceoff, 2, 3, bgra2argb( ARGBColors[ FRAME ] ) );
-            pixelColor( sdl_buttons[ i ].surfaceoff, BUTTONS[ i ].w - 3, 3, bgra2argb( ARGBColors[ FRAME ] ) );
+            pixelColor( buttons_surfaces[ i ].surfaceoff, 2, 3, bgra2argb( ARGBColors[ FRAME ] ) );
+            pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 3, 3, bgra2argb( ARGBColors[ FRAME ] ) );
         } else {
-            rectangleColor( sdl_buttons[ i ].surfaceoff, 1, 1, 1 + BUTTONS[ i ].w - 3, 1 + BUTTONS[ i ].h - 3,
+            rectangleColor( buttons_surfaces[ i ].surfaceoff, 1, 1, 1 + BUTTONS[ i ].w - 3, 1 + BUTTONS[ i ].h - 3,
                             bgra2argb( ARGBColors[ FRAME ] ) );
-            pixelColor( sdl_buttons[ i ].surfaceoff, 2, 2, bgra2argb( ARGBColors[ FRAME ] ) );
-            pixelColor( sdl_buttons[ i ].surfaceoff, BUTTONS[ i ].w - 3, 2, bgra2argb( ARGBColors[ FRAME ] ) );
+            pixelColor( buttons_surfaces[ i ].surfaceoff, 2, 2, bgra2argb( ARGBColors[ FRAME ] ) );
+            pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 3, 2, bgra2argb( ARGBColors[ FRAME ] ) );
         }
-        pixelColor( sdl_buttons[ i ].surfaceoff, 2, BUTTONS[ i ].h - 3, bgra2argb( ARGBColors[ FRAME ] ) );
-        pixelColor( sdl_buttons[ i ].surfaceoff, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, bgra2argb( ARGBColors[ FRAME ] ) );
+        pixelColor( buttons_surfaces[ i ].surfaceoff, 2, BUTTONS[ i ].h - 3, bgra2argb( ARGBColors[ FRAME ] ) );
+        pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, bgra2argb( ARGBColors[ FRAME ] ) );
 
         if ( BUTTONS[ i ].label != ( char* )0 ) {
             // Todo: use SDL_ttf to print "nice" fonts
@@ -748,8 +746,8 @@ static void __create_buttons( void )
             // for the time being use SDL_gfxPrimitives' font
             x = ( BUTTONS[ i ].w - strlen( BUTTONS[ i ].label ) * 8 ) / 2;
             y = ( BUTTONS[ i ].h + 1 ) / 2 - 4;
-            stringColor( sdl_buttons[ i ].surfaceon, x, y, BUTTONS[ i ].label, 0xffffffff );
-            stringColor( sdl_buttons[ i ].surfaceoff, x, y, BUTTONS[ i ].label, 0xffffffff );
+            stringColor( buttons_surfaces[ i ].surfaceon, x, y, BUTTONS[ i ].label, 0xffffffff );
+            stringColor( buttons_surfaces[ i ].surfaceoff, x, y, BUTTONS[ i ].label, 0xffffffff );
         }
         // Pixmap centered in button
         if ( BUTTONS[ i ].lw != 0 ) {
@@ -773,8 +771,8 @@ static void __create_buttons( void )
             drect.y = y;
             drect.w = BUTTONS[ i ].lw;
             drect.h = BUTTONS[ i ].lh;
-            SDL_BlitSurface( surf, &srect, sdl_buttons[ i ].surfaceoff, &drect );
-            SDL_BlitSurface( surf, &srect, sdl_buttons[ i ].surfaceon, &drect );
+            SDL_BlitSurface( surf, &srect, buttons_surfaces[ i ].surfaceoff, &drect );
+            SDL_BlitSurface( surf, &srect, buttons_surfaces[ i ].surfaceon, &drect );
             SDL_FreeSurface( surf );
         }
     }
@@ -795,9 +793,9 @@ static void __draw_buttons( void )
         drect.w = BUTTONS[ i ].w;
         drect.h = BUTTONS[ i ].h;
         if ( keyboard[ i ].pressed )
-            SDL_BlitSurface( sdl_buttons[ i ].surfaceoff, &srect, sdlwindow, &drect );
+            SDL_BlitSurface( buttons_surfaces[ i ].surfaceoff, &srect, sdlwindow, &drect );
         else
-            SDL_BlitSurface( sdl_buttons[ i ].surfaceon, &srect, sdlwindow, &drect );
+            SDL_BlitSurface( buttons_surfaces[ i ].surfaceon, &srect, sdlwindow, &drect );
     }
 
     // Always update immediately BUTTONS
@@ -1088,7 +1086,7 @@ static void _show_key( int hpkey )
         return;
 
     // Which surface to show
-    ssurf = ( keyboard[ hpkey ].pressed ) ? sdl_buttons[ hpkey ].surfaceoff : sdl_buttons[ hpkey ].surfaceon;
+    ssurf = ( keyboard[ hpkey ].pressed ) ? buttons_surfaces[ hpkey ].surfaceoff : buttons_surfaces[ hpkey ].surfaceon;
 
     // Background backup
     showkeylastsurf = SDL_CreateRGBSurface( SDL_SWSURFACE, ssurf->w, ssurf->h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 );
@@ -1392,7 +1390,7 @@ void sdl_draw_annunc( void )
         drect.w = ann_tbl[ i ].width;
         drect.h = ann_tbl[ i ].height;
 
-        SDL_BlitSurface( ( annunc_state ) ? sdl_ann_tbl[ i ].surfaceon : sdl_ann_tbl[ i ].surfaceoff, &srect, sdlwindow, &drect );
+        SDL_BlitSurface( ( annunc_state ) ? annunciators_surfaces[ i ].surfaceon : annunciators_surfaces[ i ].surfaceoff, &srect, sdlwindow, &drect );
     }
 
     // Always immediately update annunciators
