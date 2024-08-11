@@ -3,7 +3,7 @@
 get-roms: sxrom-a sxrom-b sxrom-c sxrom-d sxrom-e sxrom-j gxrom-l gxrom-m gxrom-p gxrom-r
 
 mrproper:
-	-rm sxrom-a sxrom-b sxrom-c sxrom-d sxrom-e sxrom-j gxrom-l gxrom-m gxrom-p gxrom-r
+	-rm ./sxrom-a ./sxrom-b ./sxrom-c ./sxrom-d ./sxrom-e ./sxrom-j ./gxrom-l ./gxrom-m ./gxrom-p ./gxrom-r
 
 sxrom-a:
 	curl "https://www.hpcalc.org/hp48/pc/emulators/sxrom-a.zip" --output - | funzip > "sxrom-a"

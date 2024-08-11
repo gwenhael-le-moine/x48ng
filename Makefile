@@ -151,6 +151,7 @@ clean:
 
 mrproper: clean
 	rm -f dist/mkcard dist/checkrom dist/dump2rom dist/x48ng
+	make -C dist/ROMs mrproper
 
 clean-all: mrproper
 
@@ -165,7 +166,7 @@ get-roms:
 dist/config.lua: dist/x48ng
 	$^ --print-config > $@
 
-install: all get-roms dist/config.lua
+install: all dist/config.lua
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/bin
 	install -c -m 755 dist/x48ng $(DESTDIR)$(PREFIX)/bin/x48ng
 
