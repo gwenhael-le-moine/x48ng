@@ -12,6 +12,9 @@ x48ng --print-config > "${CONFIG_FILE}"
 cp -r @PREFIX@/share/x48ng/ROMs/ "${DOTX48NG}"/
 
 cd "${DOTX48NG}"/ROMs/ || exit 1
+echo "The next step will download all available HP 48 ROMs from https://hpcalc.org where \"HP graciously began allowing this to be downloaded in mid-2000.\""
+echo "You can hit Ctrl-C now if you do not wish to download them."
+read -r
 make get-roms
 
 cd "${DOTX48NG}" || exit 1
