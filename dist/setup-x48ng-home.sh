@@ -17,7 +17,7 @@ make get-roms
 
 cd ~/"${DOTX48NG}" || exit 1
 [ -e rom ] && mv rom rom.orig
-cp "$ROM" rom
+ln -s "$ROM" rom
 
 PORT1_SIZE=128K
 PORT2_SIZE=4M
