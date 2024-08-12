@@ -135,7 +135,7 @@ dist/x48ng: $(DOTOS)
 
 # Binaries
 $(TARGETS):
-	$(CC) $^ -o $@ $(CPPFLAGS) $(CFLAGS) $(LIBS)
+	$(CC) $^ -o $@ $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 # Cleaning
 clean:
