@@ -1,8 +1,19 @@
 # Makefile to build x48ng without autotools
+#
+# The cc-option function and the C{,PP}FLAGS logic were copied from the
+# fsverity-utils project.
+# https://git.kernel.org/pub/scm/fs/fsverity/fsverity-utils.git/
+# The governing license can be found in the LICENSE file or at
+# https://opensource.org/license/MIT.
 
 PREFIX = /usr
 DOCDIR = $(PREFIX)/doc/x48ng
 MANDIR = $(PREFIX)/man
+
+CFLAGS ?= -g -O2
+FULL_WARNINGS = no
+WITH_X11 ?= yes
+WITH_SDL ?= yes
 
 VERSION_MAJOR = 0
 VERSION_MINOR = 37
@@ -24,82 +35,66 @@ DOTOS = src/emu_serial.o \
 
 MAKEFLAGS +=-j$(NUM_CORES) -l$(NUM_CORES)
 
-WITH_X11 ?= yes
-WITH_SDL ?= yes
+cc-option = $(shell if $(CC) $(1) -c -x c /dev/null -o /dev/null > /dev/null 2>&1; \
+	      then echo $(1); fi)
 
-OPTIM ?= 2
+ifeq ($(FULL_WARNINGS), no)
+EXTRA_WARNING_FLAGS := -Wno-unused-function \
+	-Wno-redundant-decls \
+	$(call cc-option,-Wno-maybe-uninitialized) \
+	$(call cc-option,-Wno-discarded-qualifiers) \
+	$(call cc-option,-Wno-uninitialized) \
+	$(call cc-option,-Wno-ignored-qualifiers)
+endif
 
-CFLAGS += -std=c11 -g -O$(OPTIM) -I./src/ -D_GNU_SOURCE=1 -DVERSION_MAJOR=$(VERSION_MAJOR) -DVERSION_MINOR=$(VERSION_MINOR) -DPATCHLEVEL=$(PATCHLEVEL)
+ifeq ($(FULL_WARNINGS), yes)
+EXTRA_WARNING_FLAGS := -Wunused-function \
+	-Wredundant-decls \
+	-fsanitize-trap \
+	$(call cc-option,-Wunused-variable)
+endif
+
+override CFLAGS := -std=c11 \
+	-I./src/ -D_GNU_SOURCE=1 \
+	-DVERSION_MAJOR=$(VERSION_MAJOR) \
+	-DVERSION_MINOR=$(VERSION_MINOR) \
+	-DPATCHLEVEL=$(PATCHLEVEL) \
+	-Wall -Wextra -Wpedantic \
+	-Wformat=2 -Wshadow \
+	-Wwrite-strings -Wstrict-prototypes -Wold-style-definition \
+	-Wnested-externs -Wmissing-include-dirs \
+	-Wdouble-promotion \
+	-Wno-sign-conversion \
+	-Wno-unused-variable \
+	-Wno-unused-parameter \
+	-Wno-conversion \
+	-Wno-format-nonliteral \
+	$(call cc-option,-Wjump-misses-init) \
+	$(call cc-option,-Wlogical-op) \
+	$(call cc-option,-Wno-unknown-warning-option) \
+	$(EXTRA_WARNING_FLAGS) \
+	$(CFLAGS)
+
 LIBS = -lm
 
 ### lua
-CFLAGS += $(shell pkg-config --cflags lua)
+override CFLAGS += $(shell pkg-config --cflags lua)
 LIBS += $(shell pkg-config --libs lua)
 
 ### debugger
-CFLAGS += $(shell pkg-config --cflags readline)
+override CFLAGS += $(shell pkg-config --cflags readline)
 LIBS += $(shell pkg-config --libs readline)
 
 ### Text UI
-CFLAGS += $(shell pkg-config --cflags ncursesw) -DNCURSES_WIDECHAR=1
+override CFLAGS += $(shell pkg-config --cflags ncursesw) -DNCURSES_WIDECHAR=1
 LIBS += $(shell pkg-config --libs ncursesw)
-
-# Warnings
-FULL_WARNINGS = no
-
-# Useful warnings
-CFLAGS += -Wall -Wextra -Wpedantic \
-	  -Wformat=2 -Wshadow \
-	  -Wwrite-strings -Wstrict-prototypes -Wold-style-definition \
-	  -Wnested-externs -Wmissing-include-dirs \
-	  -Wdouble-promotion
-# GCC warnings that Clang doesn't provide:
-ifeq ($(CC),gcc)
-	CFLAGS += -Wjump-misses-init -Wlogical-op
-endif
-ifeq ($(CC),clang)
-	CFLAGS += -Wno-unknown-warning-option
-endif
-
-# Ok we still disable some warnings for (hopefully) good reasons
-# Not useful warnings
-CFLAGS += -Wno-sign-conversion
-CFLAGS += -Wno-unused-variable
-CFLAGS += -Wno-unused-parameter
-CFLAGS += -Wno-conversion
-# 1. The debugger uses Xprintf format strings declared as char*, triggering this warning
-CFLAGS += -Wno-format-nonliteral
-
-ifeq ($(FULL_WARNINGS), no)
-	CFLAGS += -Wno-unused-function
-	CFLAGS += -Wno-redundant-decls
-	ifeq ($(CC),gcc)
-		CFLAGS += -Wno-maybe-uninitialized
-		CFLAGS += -Wno-discarded-qualifiers
-	endif
-	ifeq ($(CC),clang)
-		CFLAGS += -Wno-uninitialized
-		CFLAGS += -Wno-ignored-qualifiers
-	endif
-else
-	# CFLAGS += -Wunused-variable
-	# CFLAGS += -Wunused-parameter
-	CFLAGS += -Wunused-function
-	CFLAGS += -Wredundant-decls
-	# CFLAGS += -Wconversion
-	# CFLAGS += -fsanitize=undefined # this breaks build
-	CFLAGS += -fsanitize-trap
-	ifeq ($(CC),clang)
-		CFLAGS += -Wunused-variable
-	endif
-endif
 
 ### X11 UI
 ifeq ($(WITH_X11), yes)
 	X11CFLAGS = $(shell pkg-config --cflags x11 xext) -D_GNU_SOURCE=1
 	X11LIBS = $(shell pkg-config --libs x11 xext)
 
-	CFLAGS += $(X11CFLAGS) -DHAS_X11=1
+	override CFLAGS += $(X11CFLAGS) -DHAS_X11=1
 	LIBS += $(X11LIBS)
 	DOTOS += src/ui_x11.o
 endif
@@ -109,7 +104,7 @@ ifeq ($(WITH_SDL), yes)
 	SDLCFLAGS = $(shell pkg-config --cflags SDL_gfx sdl12_compat)
 	SDLLIBS = $(shell pkg-config --libs SDL_gfx sdl12_compat)
 
-	CFLAGS += $(SDLCFLAGS) -DHAS_SDL=1
+	override CFLAGS += $(SDLCFLAGS) -DHAS_SDL=1
 	LIBS += $(SDLLIBS)
 	DOTOS += src/ui_sdl.o
 endif
