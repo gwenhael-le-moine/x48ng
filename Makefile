@@ -5,6 +5,7 @@
 # https://git.kernel.org/pub/scm/fs/fsverity/fsverity-utils.git/
 # The governing license can be found in the LICENSE file or at
 # https://opensource.org/license/MIT.
+TARGETS = dist/mkcard dist/checkrom dist/dump2rom dist/x48ng
 
 PREFIX = /usr
 DOCDIR = $(PREFIX)/doc/x48ng
@@ -55,10 +56,6 @@ EXTRA_WARNING_FLAGS := -Wunused-function \
 endif
 
 override CFLAGS := -std=c11 \
-	-I./src/ -D_GNU_SOURCE=1 \
-	-DVERSION_MAJOR=$(VERSION_MAJOR) \
-	-DVERSION_MINOR=$(VERSION_MINOR) \
-	-DPATCHLEVEL=$(PATCHLEVEL) \
 	-Wall -Wextra -Wpedantic \
 	-Wformat=2 -Wshadow \
 	-Wwrite-strings -Wstrict-prototypes -Wold-style-definition \
@@ -74,6 +71,12 @@ override CFLAGS := -std=c11 \
 	$(call cc-option,-Wno-unknown-warning-option) \
 	$(EXTRA_WARNING_FLAGS) \
 	$(CFLAGS)
+
+override CPPFLAGS := -I./src/ -D_GNU_SOURCE=1 \
+	-DVERSION_MAJOR=$(VERSION_MAJOR) \
+	-DVERSION_MINOR=$(VERSION_MINOR) \
+	-DPATCHLEVEL=$(PATCHLEVEL) \
+	$(CPPFLAGS)
 
 LIBS = -lm
 
@@ -123,27 +126,23 @@ endif
 
 .PHONY: all clean clean-all pretty-code install mrproper
 
-all: dist/mkcard dist/checkrom dist/dump2rom dist/x48ng
-
-# Binaries
-dist/mkcard: src/tools/mkcard.o
-	$(CC) $^ -o $@ $(CFLAGS) $(LIBS)
+all: $(TARGETS)
 
 dist/dump2rom: src/tools/dump2rom.o
-	$(CC) $^ -o $@ $(CFLAGS) $(LIBS)
-
+dist/mkcard: src/tools/mkcard.o
 dist/checkrom: src/tools/checkrom.o src/romio.o
-	$(CC) $^ -o $@ $(CFLAGS) $(LIBS)
-
 dist/x48ng: $(DOTOS)
-	$(CC) $^ -o $@ $(CFLAGS) $(LIBS)
+
+# Binaries
+$(TARGETS):
+	$(CC) $^ -o $@ $(CPPFLAGS) $(CFLAGS) $(LIBS)
 
 # Cleaning
 clean:
 	rm -f src/*.o src/tools/*.o src/*.dep.mk src/tools/*.dep.mk
 
 mrproper: clean
-	rm -f dist/mkcard dist/checkrom dist/dump2rom dist/x48ng
+	rm -f $(TARGETS)
 	make -C dist/ROMs mrproper
 
 clean-all: mrproper
