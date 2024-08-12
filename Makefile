@@ -13,6 +13,7 @@ MANDIR = $(PREFIX)/man
 
 CFLAGS ?= -g -O2
 FULL_WARNINGS = no
+PKG_CONFIG ?= pkg-config
 WITH_X11 ?= yes
 WITH_SDL ?= yes
 
@@ -81,21 +82,21 @@ override CPPFLAGS := -I./src/ -D_GNU_SOURCE=1 \
 LIBS = -lm
 
 ### lua
-override CFLAGS += $(shell pkg-config --cflags lua)
-LIBS += $(shell pkg-config --libs lua)
+override CFLAGS += $(shell "$(PKG_CONFIG)" --cflags lua)
+LIBS += $(shell "$(PKG_CONFIG)" --libs lua)
 
 ### debugger
-override CFLAGS += $(shell pkg-config --cflags readline)
-LIBS += $(shell pkg-config --libs readline)
+override CFLAGS += $(shell "$(PKG_CONFIG)" --cflags readline)
+LIBS += $(shell "$(PKG_CONFIG)" --libs readline)
 
 ### Text UI
-override CFLAGS += $(shell pkg-config --cflags ncursesw) -DNCURSES_WIDECHAR=1
-LIBS += $(shell pkg-config --libs ncursesw)
+override CFLAGS += $(shell "$(PKG_CONFIG)" --cflags ncursesw) -DNCURSES_WIDECHAR=1
+LIBS += $(shell "$(PKG_CONFIG)" --libs ncursesw)
 
 ### X11 UI
 ifeq ($(WITH_X11), yes)
-	X11CFLAGS = $(shell pkg-config --cflags x11 xext) -D_GNU_SOURCE=1
-	X11LIBS = $(shell pkg-config --libs x11 xext)
+	X11CFLAGS = $(shell "$(PKG_CONFIG)" --cflags x11 xext) -D_GNU_SOURCE=1
+	X11LIBS = $(shell "$(PKG_CONFIG)" --libs x11 xext)
 
 	override CFLAGS += $(X11CFLAGS) -DHAS_X11=1
 	LIBS += $(X11LIBS)
@@ -104,8 +105,8 @@ endif
 
 ### SDL UI
 ifeq ($(WITH_SDL), yes)
-	SDLCFLAGS = $(shell pkg-config --cflags SDL_gfx sdl12_compat)
-	SDLLIBS = $(shell pkg-config --libs SDL_gfx sdl12_compat)
+	SDLCFLAGS = $(shell "$(PKG_CONFIG)" --cflags SDL_gfx sdl12_compat)
+	SDLLIBS = $(shell "$(PKG_CONFIG)" --libs SDL_gfx sdl12_compat)
 
 	override CFLAGS += $(SDLCFLAGS) -DHAS_SDL=1
 	LIBS += $(SDLLIBS)
