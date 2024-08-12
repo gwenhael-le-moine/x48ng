@@ -24,8 +24,6 @@ DOTOS = src/emu_serial.o \
 
 MAKEFLAGS +=-j$(NUM_CORES) -l$(NUM_CORES)
 
-CC ?= gcc
-
 WITH_X11 ?= yes
 WITH_SDL ?= yes
 
