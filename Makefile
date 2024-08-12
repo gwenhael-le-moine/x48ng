@@ -174,7 +174,6 @@ install: all dist/config.lua
 
 	install -m 755 -d -- $(DESTDIR)$(MANDIR)/man1
 	sed "s|@VERSION@|$(VERSION_MAJOR).$(VERSION_MINOR).$(PATCHLEVEL)|g" dist/x48ng.man.1 > $(DESTDIR)$(MANDIR)/man1/x48ng.1
-	gzip -9  $(DESTDIR)$(MANDIR)/man1/x48ng.1
 
 	install -m 755 -d -- $(DESTDIR)$(DOCDIR)
 	cp -R AUTHORS LICENSE README* doc* romdump/ $(DESTDIR)$(DOCDIR)
