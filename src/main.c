@@ -152,17 +152,13 @@ int main( int argc, char** argv )
 
             if ( schedule_event-- <= 0 )
                 schedule();
-
-            /* if ( please_exit ) */
-            /*     fprintf( stderr, "Should exit\n" ); */
-            /* else */
-            /*     fprintf( stderr, "Should continue\n" ); */
         } while ( /* !please_exit && */ !enter_debugger );
 
         if ( enter_debugger )
             debug();
     } while ( true /* !please_exit */ );
 
+    /* Never reached when not using please_exit */
     ui_stop();
     exit_emulator();
 
