@@ -386,8 +386,9 @@ static int sdlkey_to_hpkey( SDLKey k )
             return HPKEY_ALPHA;
         case SDLK_F7:
         case SDLK_F10:
-            please_exit = true;
-            break;
+            // please_exit = true;
+            close_and_exit();
+            return -1;
         default:
             return -1;
     }
@@ -1244,7 +1245,8 @@ void sdl_get_event( void )
     while ( SDL_PollEvent( &event ) ) {
         switch ( event.type ) {
             case SDL_QUIT:
-                please_exit = true;
+                // please_exit = true;
+                close_and_exit();
                 break;
 
             case SDL_MOUSEBUTTONDOWN:

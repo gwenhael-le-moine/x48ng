@@ -18,7 +18,7 @@
 #define RAM_SIZE_SX 0x10000
 #define RAM_SIZE_GX 0x40000
 
-bool please_exit = false;
+// bool please_exit = false;
 bool save_before_exit = true;
 
 bool rom_is_new = true;
@@ -1001,7 +1001,7 @@ void init_display( void )
 
 void start_emulator( void )
 {
-    please_exit = false;
+    // please_exit = false;
     save_before_exit = true;
 
     /* If files are successfully read => return and let's go */

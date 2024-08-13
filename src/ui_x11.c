@@ -2051,7 +2051,8 @@ static void decode_key( XEvent* xev, KeySym sym, char* buf, int buflen )
             break;
         case XK_F7:
         case XK_F10:
-            please_exit = true;
+            close_and_exit();
+            // please_exit = true;
             break;
         default:
             break;
@@ -2419,6 +2420,10 @@ void x11_get_event( void )
 
                     i = XLookupString( &xev.xkey, buf, bufs, &sym, NULL );
                     decode_key( &xev, sym, buf, i );
+
+                    /* if ( please_exit ) */
+                    /*     return; */
+
                     first_key = 1;
                     break;
 
@@ -2896,8 +2901,11 @@ void x11_get_event( void )
                     cm = ( XClientMessageEvent* )&xev;
 
                     if ( cm->message_type == wm_protocols ) {
-                        if ( cm->data.l[ 0 ] == ( long )wm_delete_window )
-                            please_exit = true;
+                        if ( cm->data.l[ 0 ] == ( long )wm_delete_window ) {
+                            close_and_exit();
+                            // please_exit = true;
+                            // return;
+                        }
                         if ( cm->data.l[ 0 ] == ( long )wm_save_yourself ) {
                             int wm_argc = 0;
                             char** wm_argv = ( char** )malloc( ( saved_argc + 5 ) * sizeof( char* ) );

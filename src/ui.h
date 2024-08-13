@@ -55,7 +55,8 @@ extern void ( *ui_refresh_LCD )( void );
 /* used in: main.c */
 /*******************/
 extern void ui_stop( void );
-
 extern void start_UI( int argc, char** argv );
+
+extern void close_and_exit( void );
 
 #endif /* !_UI_H */

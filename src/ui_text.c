@@ -542,7 +542,8 @@ void text_get_event( void )
             case '|':      /* Shift+\ */
             case KEY_SEND: /* Shift+End */
             case KEY_F( 10 ):
-                please_exit = true;
+                // please_exit = true;
+                close_and_exit();
                 break;
         }
 

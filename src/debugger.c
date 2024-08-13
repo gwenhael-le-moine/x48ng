@@ -3571,7 +3571,8 @@ static void cmd_exit( int argc, char** argv )
         printf( "Exit.\n" );
 
         save_before_exit = false;
-        please_exit = true;
+        // please_exit = true;
+        close_and_exit();
     }
 }
 
@@ -3581,7 +3582,8 @@ static void cmd_quit( int argc, char** argv )
         printf( "Exit.\n" );
 
         save_before_exit = true;
-        please_exit = true;
+        // please_exit = true;
+        close_and_exit();
     }
 }
 
@@ -4072,7 +4074,7 @@ int debug( void )
             if ( config.verbose )
                 printf( "usnterrupt (SIGINT) ignored\n" );
 
-        please_exit = true;
+        // please_exit = true;
 
         if ( enter_debugger & BREAKPOINT_HIT )
             if ( config.verbose )
@@ -4183,7 +4185,7 @@ int debug( void )
         }
         in_debugger = false;
 
-    } while ( !continue_flag && !please_exit );
+    } while ( !continue_flag /* && !please_exit */ );
 
     /*
      * adjust the hp48's timers

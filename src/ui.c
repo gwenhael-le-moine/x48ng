@@ -2124,8 +2124,6 @@ void start_UI( int argc, char** argv )
 
 void ui_stop( void )
 {
-    ui_init_LCD();
-
     switch ( config.frontend_type ) {
 #if defined( HAS_X11 )
         case FRONTEND_X11:
@@ -2150,4 +2148,12 @@ void ui_stop( void )
             text_ui_stop();
             break;
     }
+}
+
+void close_and_exit( void )
+{
+    ui_stop();
+    exit_emulator();
+
+    exit( 0 );
 }

@@ -287,7 +287,7 @@ extern void reset_timer( int timer );
 /**************/
 extern hpkey_t keyboard[ NB_KEYS ];
 extern int annunciators_bits[ NB_ANNUNCIATORS ];
-extern bool please_exit;
+// extern bool please_exit;
 extern bool save_before_exit;
 
 extern void start_emulator( void ); /* used in main.c */
