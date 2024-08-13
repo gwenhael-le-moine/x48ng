@@ -18,8 +18,8 @@ WITH_X11 ?= yes
 WITH_SDL ?= yes
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 37
-PATCHLEVEL = 99
+VERSION_MINOR = 38
+PATCHLEVEL = 0
 
 DOTOS = src/emu_serial.o \
 	src/emu_emulate.o \
