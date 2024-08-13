@@ -353,7 +353,7 @@ static inline void fatal_exit( const char* error, const char* advice )
     exit( 1 );
 }
 
-inline Visual* pick_visual_of_class( Display* local_dpy, int visual_class, unsigned int* local_depth )
+Visual* pick_visual_of_class( Display* local_dpy, int visual_class, unsigned int* local_depth )
 {
     XVisualInfo vi_in, *vi_out;
     int out_count;
@@ -377,7 +377,7 @@ inline Visual* pick_visual_of_class( Display* local_dpy, int visual_class, unsig
     }
 }
 
-inline Visual* id_to_visual( Display* local_dpy, int id, unsigned int* local_depth )
+Visual* id_to_visual( Display* local_dpy, int id, unsigned int* local_depth )
 {
     XVisualInfo vi_in, *vi_out;
     int out_count;
