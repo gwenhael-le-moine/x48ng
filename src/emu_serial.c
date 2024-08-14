@@ -7,9 +7,8 @@
 #include <termios.h>
 #include <unistd.h>
 
-#include "emulator.h"
-#include "emulator_inner.h"
-#include "config.h"
+#include "emulator_inner.h" /* saturn, do_interupt() */
+#include "config.h"         /* config.verbose, config.useTerminal, config.useSerial */
 
 static int wire_fd;
 static int ir_fd;
