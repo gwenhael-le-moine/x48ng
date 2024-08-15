@@ -1,8 +1,6 @@
 # x48ng -- HP 48 emulator
 
-(I'm not very good at writing, see ./README_0.6.4 for the original README)
-
-This is my fork of x48-0.6.4 where I deviate from the original code and do my own thing.
+This is my fork of x48-0.6.4 where I deviate from the original code and do my own thing. (See ./README_0.6.4 for the original README)
 
 ## Usage
 
