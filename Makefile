@@ -13,6 +13,7 @@ MANDIR = $(PREFIX)/man
 
 CFLAGS ?= -g -O2
 FULL_WARNINGS = no
+LUA_VERSION ?= lua
 PKG_CONFIG ?= pkg-config
 WITH_X11 ?= yes
 WITH_SDL ?= yes
@@ -82,8 +83,8 @@ override CPPFLAGS := -I./src/ -D_GNU_SOURCE=1 \
 LIBS = -lm
 
 ### lua
-override CFLAGS += $(shell "$(PKG_CONFIG)" --cflags lua)
-LIBS += $(shell "$(PKG_CONFIG)" --libs lua)
+override CFLAGS += $(shell "$(PKG_CONFIG)" --cflags $(LUA_VERSION))
+LIBS += $(shell "$(PKG_CONFIG)" --libs $(LUA_VERSION))
 
 ### debugger
 override CFLAGS += $(shell "$(PKG_CONFIG)" --cflags readline)

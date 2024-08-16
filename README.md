@@ -86,6 +86,7 @@ Ncurses front-end is always built-in.
 
 ### Dependencies (see .github/workflows/c-cpp.yml for debian packages names)
 
+- Lua
 - readline
 
 for SDL version:
