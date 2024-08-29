@@ -5,7 +5,7 @@
 # https://git.kernel.org/pub/scm/fs/fsverity/fsverity-utils.git/
 # The governing license can be found in the LICENSE file or at
 # https://opensource.org/license/MIT.
-TARGETS = dist/mkcard dist/checkrom dist/dump2rom dist/x48ng
+TARGETS = dist/x48ng dist/x48ng-mkcard dist/x48ng-checkrom dist/x48ng-dump2rom
 
 PREFIX = /usr
 DOCDIR = $(PREFIX)/doc/x48ng
@@ -130,9 +130,9 @@ endif
 
 all: $(TARGETS)
 
-dist/dump2rom: src/tools/dump2rom.o
-dist/mkcard: src/tools/mkcard.o
-dist/checkrom: src/tools/checkrom.o src/romio.o
+dist/x48ng-dump2rom: src/legacy_tools/dump2rom.o
+dist/x48ng-mkcard: src/legacy_tools/mkcard.o
+dist/x48ng-checkrom: src/legacy_tools/checkrom.o src/romio.o
 dist/x48ng: $(DOTOS)
 
 # Binaries
@@ -141,7 +141,7 @@ $(TARGETS):
 
 # Cleaning
 clean:
-	rm -f src/*.o src/tools/*.o src/*.dep.mk src/tools/*.dep.mk
+	rm -f src/*.o src/legacy_tools/*.o src/*.dep.mk src/legacy_tools/*.dep.mk
 
 mrproper: clean
 	rm -f $(TARGETS)
@@ -151,7 +151,7 @@ clean-all: mrproper
 
 # Formatting
 pretty-code:
-	clang-format -i src/*.c src/*.h src/tools/*.c
+	clang-format -i src/*.c src/*.h src/legacy_tools/*.c
 
 # Installing
 get-roms:
@@ -165,13 +165,15 @@ install: all dist/config.lua
 	install -c -m 755 dist/x48ng $(DESTDIR)$(PREFIX)/bin/x48ng
 
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/share/x48ng
-	install -c -m 755 dist/mkcard $(DESTDIR)$(PREFIX)/share/x48ng/mkcard
-	install -c -m 755 dist/dump2rom $(DESTDIR)$(PREFIX)/share/x48ng/dump2rom
-	install -c -m 755 dist/checkrom $(DESTDIR)$(PREFIX)/share/x48ng/checkrom
 	install -c -m 644 dist/hplogo.png $(DESTDIR)$(PREFIX)/share/x48ng/hplogo.png
 	cp -R dist/ROMs/ $(DESTDIR)$(PREFIX)/share/x48ng/
 	install -c -m 755 dist/setup-x48ng-home.sh $(DESTDIR)$(PREFIX)/share/x48ng/setup-x48ng-home.sh
 	chmod 755 $(DESTDIR)$(PREFIX)/share/x48ng/setup-x48ng-home.sh
+
+	install -m 755 -d -- $(DESTDIR)$(PREFIX)/libexec
+	install -c -m 755 dist/x48ng-mkcard $(DESTDIR)$(PREFIX)/libexec/x48ng-mkcard
+	install -c -m 755 dist/x48ng-dump2rom $(DESTDIR)$(PREFIX)/libexec/x48ng-dump2rom
+	install -c -m 755 dist/x48ng-checkrom $(DESTDIR)$(PREFIX)/libexec/x48ng-checkrom
 
 	install -m 755 -d -- $(DESTDIR)$(MANDIR)/man1
 	sed "s|@VERSION@|$(VERSION_MAJOR).$(VERSION_MINOR).$(PATCHLEVEL)|g" dist/x48ng.man.1 > $(DESTDIR)$(MANDIR)/man1/x48ng.1
