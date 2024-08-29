@@ -5,7 +5,8 @@
 # https://git.kernel.org/pub/scm/fs/fsverity/fsverity-utils.git/
 # The governing license can be found in the LICENSE file or at
 # https://opensource.org/license/MIT.
-TARGETS = dist/x48ng dist/x48ng-mkcard dist/x48ng-checkrom dist/x48ng-dump2rom
+
+TARGETS = dist/x48ng dist/x48ng-checkrom dist/x48ng-dump2rom
 
 PREFIX = /usr
 DOCDIR = $(PREFIX)/doc/x48ng
@@ -131,7 +132,6 @@ endif
 all: $(TARGETS)
 
 dist/x48ng-dump2rom: src/legacy_tools/dump2rom.o
-dist/x48ng-mkcard: src/legacy_tools/mkcard.o
 dist/x48ng-checkrom: src/legacy_tools/checkrom.o src/romio.o
 dist/x48ng: $(DOTOS)
 
@@ -171,7 +171,6 @@ install: all dist/config.lua
 	chmod 755 $(DESTDIR)$(PREFIX)/share/x48ng/setup-x48ng-home.sh
 
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/libexec
-	install -c -m 755 dist/x48ng-mkcard $(DESTDIR)$(PREFIX)/libexec/x48ng-mkcard
 	install -c -m 755 dist/x48ng-dump2rom $(DESTDIR)$(PREFIX)/libexec/x48ng-dump2rom
 	install -c -m 755 dist/x48ng-checkrom $(DESTDIR)$(PREFIX)/libexec/x48ng-checkrom
 
