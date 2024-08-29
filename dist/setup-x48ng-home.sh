@@ -1,18 +1,19 @@
 #!/usr/bin/env sh
 
 cd "$(dirname "$0")" || exit 1
+CWD=$(pwd)
 
 CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 DOTX48NG=${DOTX48NG:-$CONFIG_HOME/x48ng}
 CONFIG_FILE="${DOTX48NG}"/config.lua
-ROM=${ROM:-./ROMs/gxrom-r}
+ROM=${ROM:-$CWD/ROMs/gxrom-r}
 
 mkdir -p "${DOTX48NG}"
 
 [ -e "${CONFIG_FILE}" ] && mv "${CONFIG_FILE}" "${CONFIG_FILE}".orig
 x48ng --print-config > "${CONFIG_FILE}"
 
-cp -r ./ROMs/ "${DOTX48NG}"/
+cp -r "$CWD"/ROMs/ "${DOTX48NG}"/
 
 cd "${DOTX48NG}"/ROMs/ || exit 1
 echo "The next step will download all available HP 48 ROMs from https://hpcalc.org where \"HP graciously began allowing this to be downloaded in mid-2000.\""
