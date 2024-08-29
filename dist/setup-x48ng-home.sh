@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-cd "$(dirname "$0")" ; CWD=$(pwd)
+cd "$(dirname "$0")" || exit 1
 
 CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 DOTX48NG=${DOTX48NG:-$CONFIG_HOME/x48ng}
