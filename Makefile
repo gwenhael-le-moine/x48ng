@@ -17,7 +17,8 @@ FULL_WARNINGS = no
 LUA_VERSION ?= lua
 PKG_CONFIG ?= pkg-config
 WITH_X11 ?= yes
-WITH_SDL ?= yes
+WITH_SDL2 ?= yes
+WITH_SDL ?= no
 
 VERSION_MAJOR = 0
 VERSION_MINOR = 38
