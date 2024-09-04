@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 
+#define FRONTEND_SDL2 3
 #define FRONTEND_SDL 0
 #define FRONTEND_X11 1
 #define FRONTEND_TEXT 2

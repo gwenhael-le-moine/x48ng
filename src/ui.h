@@ -21,6 +21,11 @@ extern void init_x11_ui( int argc, char** argv );
 extern void x11_ui_stop( void );
 #endif
 
+#ifdef HAS_SDL2
+extern void init_sdl2_ui( int argc, char** argv );
+extern void sdl2_ui_stop( void );
+#endif
+
 #ifdef HAS_SDL
 extern void init_sdl_ui( int argc, char** argv );
 extern void sdl_ui_stop( void );

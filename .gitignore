@@ -1,4 +1,4 @@
 src/*.o
-src/tools/*.o
+src/legacy_tools/*.o
 
 dist/x48ng*

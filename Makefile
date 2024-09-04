@@ -105,6 +105,17 @@ ifeq ($(WITH_X11), yes)
 	DOTOS += src/ui_x11.o
 endif
 
+### SDL2 UI
+ifeq ($(WITH_SDL2), yes)
+	WITH_SDL = no
+	SDLCFLAGS = $(shell "$(PKG_CONFIG)" --cflags sdl2)
+	SDLLIBS = $(shell "$(PKG_CONFIG)" --libs sdl2)
+
+	override CFLAGS += $(SDLCFLAGS) -DHAS_SDL2=1
+	LIBS += $(SDLLIBS)
+	DOTOS += src/ui_sdl2.o
+endif
+
 ### SDL UI
 ifeq ($(WITH_SDL), yes)
 	SDLCFLAGS = $(shell "$(PKG_CONFIG)" --cflags SDL_gfx sdl12_compat)

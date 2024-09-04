@@ -2104,6 +2104,15 @@ void start_UI( int argc, char** argv )
             break;
 #endif
 
+#if defined( HAS_SDL2 )
+        case FRONTEND_SDL2:
+#  if !defined( HAS_X11 )
+        default:
+#  endif
+            init_sdl2_ui( argc, argv );
+            break;
+#endif
+
 #if defined( HAS_SDL )
         case FRONTEND_SDL:
 #  if !defined( HAS_X11 )
@@ -2114,7 +2123,7 @@ void start_UI( int argc, char** argv )
 #endif
 
         case FRONTEND_TEXT:
-#if ( !defined( HAS_X11 ) && !defined( HAS_SDL ) )
+#if ( !defined( HAS_X11 ) && !defined( HAS_SDL2 ) && !defined( HAS_SDL ) )
         default:
 #endif
             init_text_ui( argc, argv );
@@ -2132,6 +2141,15 @@ void ui_stop( void )
             break;
 #endif
 
+#if defined( HAS_SDL2 )
+        case FRONTEND_SDL2:
+#  if !defined( HAS_X11 )
+        default:
+#  endif
+            sdl2_ui_stop();
+            break;
+#endif
+
 #if defined( HAS_SDL )
         case FRONTEND_SDL:
 #  if !defined( HAS_X11 )
@@ -2142,7 +2160,7 @@ void ui_stop( void )
 #endif
 
         case FRONTEND_TEXT:
-#if ( !defined( HAS_X11 ) && !defined( HAS_SDL ) )
+#if ( !defined( HAS_X11 ) && !defined( HAS_SDL2 ) && !defined( HAS_SDL ) )
         default:
 #endif
             text_ui_stop();
