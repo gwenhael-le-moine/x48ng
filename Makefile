@@ -108,8 +108,8 @@ endif
 ### SDL2 UI
 ifeq ($(WITH_SDL2), yes)
 	WITH_SDL = no
-	SDLCFLAGS = $(shell "$(PKG_CONFIG)" --cflags sdl2)
-	SDLLIBS = $(shell "$(PKG_CONFIG)" --libs sdl2)
+	SDLCFLAGS = $(shell "$(PKG_CONFIG)" --cflags sdl2 SDL2_gfx)
+	SDLLIBS = $(shell "$(PKG_CONFIG)" --libs sdl2 SDL2_gfx)
 
 	override CFLAGS += $(SDLCFLAGS) -DHAS_SDL2=1
 	LIBS += $(SDLLIBS)
