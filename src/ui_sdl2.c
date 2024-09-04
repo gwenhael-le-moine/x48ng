@@ -402,86 +402,86 @@ static int sdlkey_to_hpkey( SDL_Keycode k )
 static void _draw_bezel( unsigned int cut, unsigned int offset_y, int keypad_width, int keypad_height )
 {
     // bottom lines
-    lineColor( renderer, 1, keypad_height - 1, keypad_width - 1, keypad_height - 1, color2argb( PAD_TOP ) );
-    lineColor( renderer, 2, keypad_height - 2, keypad_width - 2, keypad_height - 2, color2argb( PAD_TOP ) );
+    lineColor( renderer, 1, keypad_height - 1, keypad_width - 1, keypad_height - 1, color2bgra( PAD_TOP ) );
+    lineColor( renderer, 2, keypad_height - 2, keypad_width - 2, keypad_height - 2, color2bgra( PAD_TOP ) );
 
     // right lines
-    lineColor( renderer, keypad_width - 1, keypad_height - 1, keypad_width - 1, cut, color2argb( PAD_TOP ) );
-    lineColor( renderer, keypad_width - 2, keypad_height - 2, keypad_width - 2, cut, color2argb( PAD_TOP ) );
+    lineColor( renderer, keypad_width - 1, keypad_height - 1, keypad_width - 1, cut, color2bgra( PAD_TOP ) );
+    lineColor( renderer, keypad_width - 2, keypad_height - 2, keypad_width - 2, cut, color2bgra( PAD_TOP ) );
 
     // right lines
-    lineColor( renderer, keypad_width - 1, cut - 1, keypad_width - 1, 1, color2argb( DISP_PAD_TOP ) );
-    lineColor( renderer, keypad_width - 2, cut - 1, keypad_width - 2, 2, color2argb( DISP_PAD_TOP ) );
+    lineColor( renderer, keypad_width - 1, cut - 1, keypad_width - 1, 1, color2bgra( DISP_PAD_TOP ) );
+    lineColor( renderer, keypad_width - 2, cut - 1, keypad_width - 2, 2, color2bgra( DISP_PAD_TOP ) );
 
     // top lines
-    lineColor( renderer, 0, 0, keypad_width - 2, 0, color2argb( DISP_PAD_BOT ) );
-    lineColor( renderer, 1, 1, keypad_width - 3, 1, color2argb( DISP_PAD_BOT ) );
+    lineColor( renderer, 0, 0, keypad_width - 2, 0, color2bgra( DISP_PAD_BOT ) );
+    lineColor( renderer, 1, 1, keypad_width - 3, 1, color2bgra( DISP_PAD_BOT ) );
 
     // left lines
-    lineColor( renderer, 0, cut - 1, 0, 0, color2argb( DISP_PAD_BOT ) );
-    lineColor( renderer, 1, cut - 1, 1, 1, color2argb( DISP_PAD_BOT ) );
+    lineColor( renderer, 0, cut - 1, 0, 0, color2bgra( DISP_PAD_BOT ) );
+    lineColor( renderer, 1, cut - 1, 1, 1, color2bgra( DISP_PAD_BOT ) );
 
     // left lines
-    lineColor( renderer, 0, keypad_height - 2, 0, cut, color2argb( PAD_BOT ) );
-    lineColor( renderer, 1, keypad_height - 3, 1, cut, color2argb( PAD_BOT ) );
+    lineColor( renderer, 0, keypad_height - 2, 0, cut, color2bgra( PAD_BOT ) );
+    lineColor( renderer, 1, keypad_height - 3, 1, cut, color2bgra( PAD_BOT ) );
 
     // lower the menu BUTTONS
 
     // bottom lines
-    lineColor( renderer, 3, keypad_height - 3, keypad_width - 3, keypad_height - 3, color2argb( PAD_TOP ) );
-    lineColor( renderer, 4, keypad_height - 4, keypad_width - 4, keypad_height - 4, color2argb( PAD_TOP ) );
+    lineColor( renderer, 3, keypad_height - 3, keypad_width - 3, keypad_height - 3, color2bgra( PAD_TOP ) );
+    lineColor( renderer, 4, keypad_height - 4, keypad_width - 4, keypad_height - 4, color2bgra( PAD_TOP ) );
 
     // right lines
-    lineColor( renderer, keypad_width - 3, keypad_height - 3, keypad_width - 3, cut, color2argb( PAD_TOP ) );
-    lineColor( renderer, keypad_width - 4, keypad_height - 4, keypad_width - 4, cut, color2argb( PAD_TOP ) );
+    lineColor( renderer, keypad_width - 3, keypad_height - 3, keypad_width - 3, cut, color2bgra( PAD_TOP ) );
+    lineColor( renderer, keypad_width - 4, keypad_height - 4, keypad_width - 4, cut, color2bgra( PAD_TOP ) );
 
     // right lines
-    lineColor( renderer, keypad_width - 3, cut - 1, keypad_width - 3, offset_y - ( KBD_UPLINE - 1 ), color2argb( DISP_PAD_TOP ) );
-    lineColor( renderer, keypad_width - 4, cut - 1, keypad_width - 4, offset_y - ( KBD_UPLINE - 2 ), color2argb( DISP_PAD_TOP ) );
+    lineColor( renderer, keypad_width - 3, cut - 1, keypad_width - 3, offset_y - ( KBD_UPLINE - 1 ), color2bgra( DISP_PAD_TOP ) );
+    lineColor( renderer, keypad_width - 4, cut - 1, keypad_width - 4, offset_y - ( KBD_UPLINE - 2 ), color2bgra( DISP_PAD_TOP ) );
 
     // top lines
-    lineColor( renderer, 2, offset_y - ( KBD_UPLINE - 0 ), keypad_width - 4, offset_y - ( KBD_UPLINE - 0 ), color2argb( DISP_PAD_BOT ) );
-    lineColor( renderer, 3, offset_y - ( KBD_UPLINE - 1 ), keypad_width - 5, offset_y - ( KBD_UPLINE - 1 ), color2argb( DISP_PAD_BOT ) );
+    lineColor( renderer, 2, offset_y - ( KBD_UPLINE - 0 ), keypad_width - 4, offset_y - ( KBD_UPLINE - 0 ), color2bgra( DISP_PAD_BOT ) );
+    lineColor( renderer, 3, offset_y - ( KBD_UPLINE - 1 ), keypad_width - 5, offset_y - ( KBD_UPLINE - 1 ), color2bgra( DISP_PAD_BOT ) );
 
     // left lines
-    lineColor( renderer, 2, cut - 1, 2, offset_y - ( KBD_UPLINE - 1 ), color2argb( DISP_PAD_BOT ) );
-    lineColor( renderer, 3, cut - 1, 3, offset_y - ( KBD_UPLINE - 2 ), color2argb( DISP_PAD_BOT ) );
+    lineColor( renderer, 2, cut - 1, 2, offset_y - ( KBD_UPLINE - 1 ), color2bgra( DISP_PAD_BOT ) );
+    lineColor( renderer, 3, cut - 1, 3, offset_y - ( KBD_UPLINE - 2 ), color2bgra( DISP_PAD_BOT ) );
 
     // left lines
-    lineColor( renderer, 2, keypad_height - 4, 2, cut, color2argb( PAD_BOT ) );
-    lineColor( renderer, 3, keypad_height - 5, 3, cut, color2argb( PAD_BOT ) );
+    lineColor( renderer, 2, keypad_height - 4, 2, cut, color2bgra( PAD_BOT ) );
+    lineColor( renderer, 3, keypad_height - 5, 3, cut, color2bgra( PAD_BOT ) );
 
     // lower the keyboard
 
     // bottom lines
-    lineColor( renderer, 5, keypad_height - 5, keypad_width - 3, keypad_height - 5, color2argb( PAD_TOP ) );
-    lineColor( renderer, 6, keypad_height - 6, keypad_width - 4, keypad_height - 6, color2argb( PAD_TOP ) );
+    lineColor( renderer, 5, keypad_height - 5, keypad_width - 3, keypad_height - 5, color2bgra( PAD_TOP ) );
+    lineColor( renderer, 6, keypad_height - 6, keypad_width - 4, keypad_height - 6, color2bgra( PAD_TOP ) );
 
     // right lines
-    lineColor( renderer, keypad_width - 5, keypad_height - 5, keypad_width - 5, cut + 1, color2argb( PAD_TOP ) );
-    lineColor( renderer, keypad_width - 6, keypad_height - 6, keypad_width - 6, cut + 2, color2argb( PAD_TOP ) );
+    lineColor( renderer, keypad_width - 5, keypad_height - 5, keypad_width - 5, cut + 1, color2bgra( PAD_TOP ) );
+    lineColor( renderer, keypad_width - 6, keypad_height - 6, keypad_width - 6, cut + 2, color2bgra( PAD_TOP ) );
 
     // top lines
-    lineColor( renderer, 4, cut, keypad_width - 6, cut, color2argb( DISP_PAD_BOT ) );
-    lineColor( renderer, 5, cut + 1, keypad_width - 7, cut + 1, color2argb( DISP_PAD_BOT ) );
+    lineColor( renderer, 4, cut, keypad_width - 6, cut, color2bgra( DISP_PAD_BOT ) );
+    lineColor( renderer, 5, cut + 1, keypad_width - 7, cut + 1, color2bgra( DISP_PAD_BOT ) );
 
     // left lines
-    lineColor( renderer, 4, keypad_height - 6, 4, cut + 1, color2argb( PAD_BOT ) );
-    lineColor( renderer, 5, keypad_height - 7, 5, cut + 2, color2argb( PAD_BOT ) );
+    lineColor( renderer, 4, keypad_height - 6, 4, cut + 1, color2bgra( PAD_BOT ) );
+    lineColor( renderer, 5, keypad_height - 7, 5, cut + 2, color2bgra( PAD_BOT ) );
 
     // round off the bottom edge
 
-    lineColor( renderer, keypad_width - 7, keypad_height - 7, keypad_width - 7, keypad_height - 14, color2argb( PAD_TOP ) );
-    lineColor( renderer, keypad_width - 8, keypad_height - 8, keypad_width - 8, keypad_height - 11, color2argb( PAD_TOP ) );
-    lineColor( renderer, keypad_width - 7, keypad_height - 7, keypad_width - 14, keypad_height - 7, color2argb( PAD_TOP ) );
-    lineColor( renderer, keypad_width - 7, keypad_height - 8, keypad_width - 11, keypad_height - 8, color2argb( PAD_TOP ) );
-    pixelColor( renderer, keypad_width - 9, keypad_height - 9, color2argb( PAD_TOP ) );
+    lineColor( renderer, keypad_width - 7, keypad_height - 7, keypad_width - 7, keypad_height - 14, color2bgra( PAD_TOP ) );
+    lineColor( renderer, keypad_width - 8, keypad_height - 8, keypad_width - 8, keypad_height - 11, color2bgra( PAD_TOP ) );
+    lineColor( renderer, keypad_width - 7, keypad_height - 7, keypad_width - 14, keypad_height - 7, color2bgra( PAD_TOP ) );
+    lineColor( renderer, keypad_width - 7, keypad_height - 8, keypad_width - 11, keypad_height - 8, color2bgra( PAD_TOP ) );
+    pixelColor( renderer, keypad_width - 9, keypad_height - 9, color2bgra( PAD_TOP ) );
 
-    lineColor( renderer, 7, keypad_height - 7, 13, keypad_height - 7, color2argb( PAD_TOP ) );
-    lineColor( renderer, 8, keypad_height - 8, 10, keypad_height - 8, color2argb( PAD_TOP ) );
+    lineColor( renderer, 7, keypad_height - 7, 13, keypad_height - 7, color2bgra( PAD_TOP ) );
+    lineColor( renderer, 8, keypad_height - 8, 10, keypad_height - 8, color2bgra( PAD_TOP ) );
 
-    lineColor( renderer, 6, keypad_height - 8, 6, keypad_height - 14, color2argb( PAD_BOT ) );
-    lineColor( renderer, 7, keypad_height - 9, 7, keypad_height - 11, color2argb( PAD_BOT ) );
+    lineColor( renderer, 6, keypad_height - 8, 6, keypad_height - 14, color2bgra( PAD_BOT ) );
+    lineColor( renderer, 7, keypad_height - 9, 7, keypad_height - 11, color2bgra( PAD_BOT ) );
 }
 
 static void _draw_header( void )
@@ -976,57 +976,57 @@ static void _draw_bezel_LCD( void )
 {
     for ( int i = 0; i < DISP_FRAME; i++ ) {
         lineColor( renderer, display_offset_x - i, display_offset_y + DISPLAY_HEIGHT + 2 * i, display_offset_x + DISPLAY_WIDTH + i,
-                   display_offset_y + DISPLAY_HEIGHT + 2 * i, color2argb( DISP_PAD_TOP ) );
+                   display_offset_y + DISPLAY_HEIGHT + 2 * i, color2bgra( DISP_PAD_TOP ) );
         lineColor( renderer, display_offset_x - i, display_offset_y + DISPLAY_HEIGHT + 2 * i + 1, display_offset_x + DISPLAY_WIDTH + i,
-                   display_offset_y + DISPLAY_HEIGHT + 2 * i + 1, color2argb( DISP_PAD_TOP ) );
+                   display_offset_y + DISPLAY_HEIGHT + 2 * i + 1, color2bgra( DISP_PAD_TOP ) );
         lineColor( renderer, display_offset_x + DISPLAY_WIDTH + i, display_offset_y - i, display_offset_x + DISPLAY_WIDTH + i,
-                   display_offset_y + DISPLAY_HEIGHT + 2 * i, color2argb( DISP_PAD_TOP ) );
+                   display_offset_y + DISPLAY_HEIGHT + 2 * i, color2bgra( DISP_PAD_TOP ) );
 
         lineColor( renderer, display_offset_x - i - 1, display_offset_y - i - 1, display_offset_x + DISPLAY_WIDTH + i - 1,
-                   display_offset_y - i - 1, color2argb( DISP_PAD_BOT ) );
+                   display_offset_y - i - 1, color2bgra( DISP_PAD_BOT ) );
         lineColor( renderer, display_offset_x - i - 1, display_offset_y - i - 1, display_offset_x - i - 1,
-                   display_offset_y + DISPLAY_HEIGHT + 2 * i - 1, color2argb( DISP_PAD_BOT ) );
+                   display_offset_y + DISPLAY_HEIGHT + 2 * i - 1, color2bgra( DISP_PAD_BOT ) );
     }
 
     // round off corners
     lineColor( renderer, display_offset_x - DISP_FRAME, display_offset_y - DISP_FRAME, display_offset_x - DISP_FRAME + 3,
-               display_offset_y - DISP_FRAME, color2argb( DISP_PAD ) );
+               display_offset_y - DISP_FRAME, color2bgra( DISP_PAD ) );
     lineColor( renderer, display_offset_x - DISP_FRAME, display_offset_y - DISP_FRAME, display_offset_x - DISP_FRAME,
-               display_offset_y - DISP_FRAME + 3, color2argb( DISP_PAD ) );
-    pixelColor( renderer, display_offset_x - DISP_FRAME + 1, display_offset_y - DISP_FRAME + 1, color2argb( DISP_PAD ) );
+               display_offset_y - DISP_FRAME + 3, color2bgra( DISP_PAD ) );
+    pixelColor( renderer, display_offset_x - DISP_FRAME + 1, display_offset_y - DISP_FRAME + 1, color2bgra( DISP_PAD ) );
 
     lineColor( renderer, display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 4, display_offset_y - DISP_FRAME,
-               display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y - DISP_FRAME, color2argb( DISP_PAD ) );
+               display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y - DISP_FRAME, color2bgra( DISP_PAD ) );
     lineColor( renderer, display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y - DISP_FRAME,
-               display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y - DISP_FRAME + 3, color2argb( DISP_PAD ) );
-    pixelColor( renderer, display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 2, display_offset_y - DISP_FRAME + 1, color2argb( DISP_PAD ) );
+               display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y - DISP_FRAME + 3, color2bgra( DISP_PAD ) );
+    pixelColor( renderer, display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 2, display_offset_y - DISP_FRAME + 1, color2bgra( DISP_PAD ) );
 
     lineColor( renderer, display_offset_x - DISP_FRAME, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 4,
-               display_offset_x - DISP_FRAME, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1, color2argb( DISP_PAD ) );
+               display_offset_x - DISP_FRAME, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1, color2bgra( DISP_PAD ) );
     lineColor( renderer, display_offset_x - DISP_FRAME, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1,
-               display_offset_x - DISP_FRAME + 3, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1, color2argb( DISP_PAD ) );
+               display_offset_x - DISP_FRAME + 3, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1, color2bgra( DISP_PAD ) );
     pixelColor( renderer, display_offset_x - DISP_FRAME + 1, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 2,
-                color2argb( DISP_PAD ) );
+                color2bgra( DISP_PAD ) );
 
     lineColor( renderer, display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 4,
                display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1,
-               color2argb( DISP_PAD ) );
+               color2bgra( DISP_PAD ) );
     lineColor( renderer, display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 4, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1,
                display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1,
-               color2argb( DISP_PAD ) );
+               color2bgra( DISP_PAD ) );
     pixelColor( renderer, display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 2, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 2,
-                color2argb( DISP_PAD ) );
+                color2bgra( DISP_PAD ) );
 
     // simulate rounded lcd corners
 
     lineColor( renderer, display_offset_x - 1, display_offset_y + 1, display_offset_x - 1, display_offset_y + DISPLAY_HEIGHT - 2,
-               color2argb( LCD ) );
+               color2bgra( LCD ) );
     lineColor( renderer, display_offset_x + 1, display_offset_y - 1, display_offset_x + DISPLAY_WIDTH - 2, display_offset_y - 1,
-               color2argb( LCD ) );
+               color2bgra( LCD ) );
     lineColor( renderer, display_offset_x + 1, display_offset_y + DISPLAY_HEIGHT, display_offset_x + DISPLAY_WIDTH - 2,
-               display_offset_y + DISPLAY_HEIGHT, color2argb( LCD ) );
+               display_offset_y + DISPLAY_HEIGHT, color2bgra( LCD ) );
     lineColor( renderer, display_offset_x + DISPLAY_WIDTH, display_offset_y + 1, display_offset_x + DISPLAY_WIDTH,
-               display_offset_y + DISPLAY_HEIGHT - 2, color2argb( LCD ) );
+               display_offset_y + DISPLAY_HEIGHT - 2, color2bgra( LCD ) );
 }
 
 static void _draw_background( int width, int height, int w_top, int h_top )
