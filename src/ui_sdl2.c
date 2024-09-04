@@ -49,7 +49,7 @@
 /*************/
 static int display_offset_x, display_offset_y;
 
-static unsigned int ARGBColors[ NB_COLORS ];
+color_t colors[ NB_COLORS ];
 /* static sdl_surfaces_on_off_struct_t buttons_surfaces[ NB_KEYS ]; */
 /* static sdl_surfaces_on_off_struct_t annunciators_surfaces[ NB_ANNUNCIATORS ]; */
 
@@ -138,7 +138,6 @@ static SDL_Texture* main_texture;
 
 static void colors_setup( void )
 {
-    int r, g, b;
     // Adjust the LCD color according to the contrast
     int contrast = display.contrast;
     if ( contrast < 0x3 )
@@ -147,27 +146,22 @@ static void colors_setup( void )
         contrast = 0x13;
 
     for ( unsigned i = FIRST_COLOR; i < LAST_COLOR; i++ ) {
+        colors[ i ] = COLORS[ i ];
         if ( config.mono ) {
-            r = COLORS[ i ].mono_rgb;
-            g = COLORS[ i ].mono_rgb;
-            b = COLORS[ i ].mono_rgb;
+            colors[ i ].r = colors[ i ].mono_rgb;
+            colors[ i ].g = colors[ i ].mono_rgb;
+            colors[ i ].b = colors[ i ].mono_rgb;
         } else if ( config.gray ) {
-            r = COLORS[ i ].gray_rgb;
-            g = COLORS[ i ].gray_rgb;
-            b = COLORS[ i ].gray_rgb;
-        } else {
-            r = COLORS[ i ].r;
-            g = COLORS[ i ].g;
-            b = COLORS[ i ].b;
+            colors[ i ].r = colors[ i ].gray_rgb;
+            colors[ i ].g = colors[ i ].gray_rgb;
+            colors[ i ].b = colors[ i ].gray_rgb;
         }
 
         if ( !config.mono && i == PIXEL ) {
-            r = ( 0x13 - contrast ) * ( COLORS[ LCD ].r / 0x10 );
-            g = ( 0x13 - contrast ) * ( COLORS[ LCD ].g / 0x10 );
-            b = 128 - ( ( 0x13 - contrast ) * ( ( 128 - COLORS[ LCD ].b ) / 0x10 ) );
+            colors[ i ].r = ( 0x13 - contrast ) * ( colors[ LCD ].r / 0x10 );
+            colors[ i ].g = ( 0x13 - contrast ) * ( colors[ LCD ].g / 0x10 );
+            colors[ i ].b = 128 - ( ( 0x13 - contrast ) * ( ( 128 - colors[ LCD ].b ) / 0x10 ) );
         }
-
-        ARGBColors[ i ] = 0xff000000 | ( r << 16 ) | ( g << 8 ) | b;
     }
 }
 
@@ -1070,7 +1064,7 @@ static void _draw_background_LCD( void )
     rect.w = DISPLAY_WIDTH;
     rect.h = DISPLAY_HEIGHT;
 
-    SDL_SetRenderDrawColor( renderer, COLORS[ LCD ].r, COLORS[ LCD ].g, COLORS[ LCD ].b, 255 );
+    SDL_SetRenderDrawColor( renderer, colors[ LCD ].r, colors[ LCD ].g, colors[ LCD ].b, 255 );
     SDL_RenderFillRect( renderer, &rect );
 }
 
@@ -1180,14 +1174,6 @@ static void sdl_draw_nibble( int nx, int ny, int val )
     int color = LCD;
     SDL_Rect rect;
 
-    /* SDL_LockSurface( window ); */
-    /* unsigned char* buffer = ( unsigned char* )window->pixels; */
-    /* unsigned int pitch = window->pitch; */
-
-    /* for ( y = 0; y < 2; y++ ) { */
-    /* unsigned int* lineptr; */
-    /* lineptr = ( unsigned int* )( buffer + pitch * ( yoffset + 2 * ny + y ) ); */
-
     SDL_SetRenderTarget( renderer, main_texture );
 
     for ( x = 0; x < 4; x++ ) {
@@ -1200,22 +1186,15 @@ static void sdl_draw_nibble( int nx, int ny, int val )
         char b = c & ( 1 << ( x & 3 ) );
 
         color = b ? PIXEL : LCD;
-        SDL_SetRenderDrawColor( renderer, COLORS[ color ].r, COLORS[ color ].g, COLORS[ color ].b, 255 );
-        // SDL_RenderDrawPoint( renderer, display_offset_x + nx + x, display_offset_y + ny );
+        SDL_SetRenderDrawColor( renderer, colors[ color ].r, colors[ color ].g, colors[ color ].b, 255 );
+
         rect.x = xoffset + ( 2 * ( nx + x ) );
         rect.y = yoffset + ( 2 * ny );
         rect.w = 2;
         rect.h = 2;
 
         SDL_RenderFillRect( renderer, &rect );
-
-        /* lineptr[ xoffset + 2 * ( nx + x ) ] = ARGBColors[ b ? PIXEL : LCD ]; */
-        /* lineptr[ xoffset + 2 * ( nx + x ) + 1 ] = ARGBColors[ b ? PIXEL : LCD ]; */
     }
-    /* } */
-    /* SDL_UnlockSurface( window ); */
-
-    /* SDL_UpdateRect( window, xoffset + 2 * nx, yoffset + 2 * ny, 8, 2 ); */
 
     SDL_SetRenderTarget( renderer, NULL );
     SDL_RenderCopy( renderer, main_texture, NULL, NULL );
@@ -1450,7 +1429,9 @@ void sdl_adjust_contrast( void )
 
 void sdl2_ui_stop( void )
 {
-    // nop;
+    SDL_DestroyTexture( main_texture );
+    SDL_DestroyRenderer( renderer );
+    SDL_DestroyWindow( window );
 }
 
 void init_sdl2_ui( int argc, char** argv )
@@ -1489,11 +1470,13 @@ void init_sdl2_ui( int argc, char** argv )
         height = DISPLAY_HEIGHT;
     }
 
-    /* uint32_t sdl_window_flags = SDL_SWSURFACE | SDL_RESIZABLE; */
-    /* if ( config.show_ui_fullscreen ) */
-    /*     sdl_window_flags |= SDL_FULLSCREEN; */
+    uint32_t window_flags = SDL_WINDOW_ALLOW_HIGHDPI;
+    if ( config.show_ui_fullscreen )
+        window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    else
+        window_flags |= SDL_WINDOW_RESIZABLE;
 
-    window = SDL_CreateWindow( config.progname, 0, 0, width, height, 0 );
+    window = SDL_CreateWindow( config.progname, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, window_flags );
     if ( window == NULL ) {
         printf( "Couldn't create window: %s\n", SDL_GetError() );
         exit( 1 );
