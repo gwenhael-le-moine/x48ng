@@ -1040,20 +1040,22 @@ static int sdlkey_to_hpkey( SDL_Keycode k )
 /*                display_offset_y + DISPLAY_HEIGHT - 2, bgra2argb( ARGBColors[ LCD ] ) ); */
 /* } */
 
-/* static void _draw_background( int width, int height, int w_top, int h_top ) */
-/* { */
-/*     SDL_Rect rect; */
+static void _draw_background( int width, int height, int w_top, int h_top )
+{
+    SDL_Rect rect;
 
-/*     rect.x = 0; */
-/*     rect.y = 0; */
-/*     rect.w = w_top; */
-/*     rect.h = h_top; */
-/*     SDL_FillRect( window, &rect, ARGBColors[ PAD ] ); */
+    rect.x = 0;
+    rect.y = 0;
+    rect.w = w_top;
+    rect.h = h_top;
+    SDL_SetRenderDrawColor( renderer, colors[ PAD ].r, colors[ PAD ].g, colors[ PAD ].b, 255 );
+    SDL_RenderFillRect( renderer, &rect );
 
-/*     rect.w = width; */
-/*     rect.h = height; */
-/*     SDL_FillRect( window, &rect, ARGBColors[ DISP_PAD ] ); */
-/* } */
+    rect.w = width;
+    rect.h = height;
+    SDL_SetRenderDrawColor( renderer, colors[ DISP_PAD ].r, colors[ DISP_PAD ].g, colors[ DISP_PAD ].b, 255 );
+    SDL_RenderFillRect( renderer, &rect );
+}
 
 static void _draw_background_LCD( void )
 {
@@ -1492,17 +1494,17 @@ void init_sdl2_ui( int argc, char** argv )
 
     colors_setup();
 
-    /* if ( !config.hide_chrome ) { */
-    /*     int cut = BUTTONS[ HPKEY_MTH ].y + KEYBOARD_OFFSET_Y - 19; */
+    if ( !config.hide_chrome ) {
+        int cut = BUTTONS[ HPKEY_MTH ].y + KEYBOARD_OFFSET_Y - 19;
 
-    /*     _draw_background( width, cut, width, height ); */
-    /*     _draw_bezel( cut, KEYBOARD_OFFSET_Y, width, height ); */
-    /*     _draw_header(); */
-    /*     _draw_bezel_LCD(); */
-    /*     _draw_keypad(); */
+        _draw_background( width, cut, width, height );
+        /* _draw_bezel( cut, KEYBOARD_OFFSET_Y, width, height ); */
+        /* _draw_header(); */
+        /* _draw_bezel_LCD(); */
+        /* _draw_keypad(); */
 
-    /*     _draw_serial_devices_path(); */
-    /* } */
+        /* _draw_serial_devices_path(); */
+    }
 
     _draw_background_LCD();
 
