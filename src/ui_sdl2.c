@@ -39,10 +39,12 @@
 /***********/
 /* typedef */
 /***********/
-/* typedef struct sdl_surfaces_on_off_struct_t { */
-/*     SDL_Surface* surfaceon; */
-/*     SDL_Surface* surfaceoff; */
-/* } sdl_surfaces_on_off_struct_t; */
+typedef struct sdl_surfaces_textures_on_off_struct_t {
+    SDL_Texture* textureon;
+    SDL_Surface* surfaceon;
+    SDL_Texture* textureoff;
+    SDL_Surface* surfaceoff;
+} sdl_surfaces_textures_on_off_struct_t;
 
 /*************/
 /* variables */
@@ -51,7 +53,7 @@ static int display_offset_x, display_offset_y;
 
 color_t colors[ NB_COLORS ];
 /* static sdl_surfaces_on_off_struct_t buttons_surfaces[ NB_KEYS ]; */
-/* static sdl_surfaces_on_off_struct_t annunciators_surfaces[ NB_ANNUNCIATORS ]; */
+static sdl_surfaces_textures_on_off_struct_t annunciators_surfaces_textures[ NB_ANNUNCIATORS ];
 
 // State to displayed zoomed last pressed key
 /* static SDL_Surface* showkeylastsurf = 0; */
@@ -70,42 +72,45 @@ static inline unsigned color2argb( int color )
 
     return a | ( colors[ color ].r << 24 ) | ( colors[ color ].g << 16 ) | ( colors[ color ].b << 8 );
 }
+static inline unsigned color2bgra( int color )
+{
+    return 0xff000000 | ( colors[ color ].r << 16 ) | ( colors[ color ].g << 8 ) | colors[ color ].b;
+}
 
-/* /\* */
-/*         Create a surface from binary bitmap data */
-/* *\/ */
-/* static SDL_Surface* bitmap_to_surface( unsigned int w, unsigned int h, unsigned char* data, unsigned int coloron, unsigned int coloroff )
- */
-/* { */
-/*     unsigned int x, y; */
-/*     SDL_Surface* surf; */
+/*
+        Create a surface from binary bitmap data
+*/
+static SDL_Surface* bitmap_to_surface( unsigned int w, unsigned int h, unsigned char* data, unsigned int coloron, unsigned int coloroff )
+{
+    unsigned int x, y;
+    SDL_Surface* surf;
 
-/*     surf = SDL_CreateRGBSurface( SDL_SWSURFACE, w, h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 ); */
+    surf = SDL_CreateRGBSurface( SDL_SWSURFACE, w, h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 );
 
-/*     SDL_LockSurface( surf ); */
+    SDL_LockSurface( surf );
 
-/*     unsigned char* pixels = ( unsigned char* )surf->pixels; */
-/*     unsigned int pitch = surf->pitch; */
-/*     unsigned byteperline = w / 8; */
-/*     if ( byteperline * 8 != w ) */
-/*         byteperline++; */
+    unsigned char* pixels = ( unsigned char* )surf->pixels;
+    unsigned int pitch = surf->pitch;
+    unsigned byteperline = w / 8;
+    if ( byteperline * 8 != w )
+        byteperline++;
 
-/*     for ( y = 0; y < h; y++ ) { */
-/*         unsigned int* lineptr = ( unsigned int* )( pixels + y * pitch ); */
-/*         for ( x = 0; x < w; x++ ) { */
-/*             // Address the correct byte */
-/*             char c = data[ y * byteperline + ( x >> 3 ) ]; */
-/*             // Look for the bit in that byte */
-/*             char b = c & ( 1 << ( x & 7 ) ); */
+    for ( y = 0; y < h; y++ ) {
+        unsigned int* lineptr = ( unsigned int* )( pixels + y * pitch );
+        for ( x = 0; x < w; x++ ) {
+            // Address the correct byte
+            char c = data[ y * byteperline + ( x >> 3 ) ];
+            // Look for the bit in that byte
+            char b = c & ( 1 << ( x & 7 ) );
 
-/*             lineptr[ x ] = ( b ) ? coloron : coloroff; */
-/*         } */
-/*     } */
+            lineptr[ x ] = ( b ) ? coloron : coloroff;
+        }
+    }
 
-/*     SDL_UnlockSurface( surf ); */
+    SDL_UnlockSurface( surf );
 
-/*     return surf; */
-/* } */
+    return surf;
+}
 
 /* static void write_text( int x, int y, const char* string, unsigned int length, unsigned int coloron, unsigned int coloroff ) */
 /* { */
@@ -165,29 +170,29 @@ static void colors_setup( void )
     }
 }
 
-/* // This should be called once to setup the surfaces. Calling it multiple */
-/* // times is fine, it won't do anything on subsequent calls. */
-/* static void create_annunciators_surfaces( void ) */
-/* { */
-/*     for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) { */
-/*         // If the SDL surface does not exist yet, we create it on the fly */
-/*         if ( annunciators_surfaces[ i ].surfaceon ) { */
-/*             SDL_FreeSurface( annunciators_surfaces[ i ].surfaceon ); */
-/*             annunciators_surfaces[ i ].surfaceon = 0; */
-/*         } */
+// This should be called once to setup the surfaces. Calling it multiple
+// times is fine, it won't do anything on subsequent calls.
+static void create_annunciators_surfaces_textures( void )
+{
+    for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
+        // If the SDL surface does not exist yet, we create it on the fly
+        if ( annunciators_surfaces_textures[ i ].surfaceon ) {
+            SDL_FreeSurface( annunciators_surfaces_textures[ i ].surfaceon );
+            annunciators_surfaces_textures[ i ].surfaceon = 0;
+        }
 
-/*         annunciators_surfaces[ i ].surfaceon = */
-/*             bitmap_to_surface( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, ARGBColors[ PIXEL ], ARGBColors[ LCD ] ); */
+        annunciators_surfaces_textures[ i ].surfaceon =
+            bitmap_to_surface( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, color2bgra( PIXEL ), color2bgra( LCD ) );
 
-/*         if ( annunciators_surfaces[ i ].surfaceoff ) { */
-/*             SDL_FreeSurface( annunciators_surfaces[ i ].surfaceoff ); */
-/*             annunciators_surfaces[ i ].surfaceoff = 0; */
-/*         } */
+        if ( annunciators_surfaces_textures[ i ].surfaceoff ) {
+            SDL_FreeSurface( annunciators_surfaces_textures[ i ].surfaceoff );
+            annunciators_surfaces_textures[ i ].surfaceoff = 0;
+        }
 
-/*         annunciators_surfaces[ i ].surfaceoff = */
-/*             bitmap_to_surface( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, ARGBColors[ LCD ], ARGBColors[ LCD ] ); */
-/*     } */
-/* } */
+        annunciators_surfaces_textures[ i ].surfaceoff =
+            bitmap_to_surface( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, color2bgra( LCD ), color2bgra( LCD ) );
+    }
+}
 
 // Find which key is pressed, if any.
 // Returns -1 is no key is pressed
@@ -1367,42 +1372,51 @@ void sdl_menu_draw_nibble( word_20 addr, word_4 val )
 
 void sdl_draw_annunc( void )
 {
-    /* if ( saturn.annunc == last_annunc_state ) */
-    /*     return; */
+    if ( saturn.annunc == last_annunc_state )
+        return;
 
-    /* last_annunc_state = saturn.annunc; */
+    last_annunc_state = saturn.annunc;
 
-    /* create_annunciators_surfaces(); */
+    create_annunciators_surfaces_textures();
 
-    /* bool annunc_state; */
-    /* for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) { */
-    /*     annunc_state = ( ( annunciators_bits[ i ] & saturn.annunc ) == annunciators_bits[ i ] ); */
+    bool annunc_state;
 
-    /*     SDL_Rect srect; */
-    /*     SDL_Rect drect; */
-    /*     srect.x = 0; */
-    /*     srect.y = 0; */
-    /*     srect.w = ann_tbl[ i ].width; */
-    /*     srect.h = ann_tbl[ i ].height; */
-    /*     drect.x = display_offset_x + ann_tbl[ i ].x; */
-    /*     drect.y = display_offset_y + ann_tbl[ i ].y; */
-    /*     drect.w = ann_tbl[ i ].width; */
-    /*     drect.h = ann_tbl[ i ].height; */
+    SDL_SetRenderTarget( renderer, main_texture );
+    for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
+        annunc_state = ( ( annunciators_bits[ i ] & saturn.annunc ) == annunciators_bits[ i ] );
 
-    /*     SDL_BlitSurface( ( annunc_state ) ? annunciators_surfaces[ i ].surfaceon : annunciators_surfaces[ i ].surfaceoff, &srect,
-     * window, */
-    /*                      &drect ); */
-    /* } */
+        /* SDL_Rect srect; */
+        SDL_Rect drect;
+        /* srect.x = 0; */
+        /* srect.y = 0; */
+        /* srect.w = ann_tbl[ i ].width; */
+        /* srect.h = ann_tbl[ i ].height; */
+        drect.x = display_offset_x + ann_tbl[ i ].x;
+        drect.y = display_offset_y + ann_tbl[ i ].y;
+        drect.w = ann_tbl[ i ].width;
+        drect.h = ann_tbl[ i ].height;
 
-    /* // Always immediately update annunciators */
+        /*     SDL_BlitSurface( ( annunc_state ) ? annunciators_surfaces[ i ].surfaceon : annunciators_surfaces[ i ].surfaceoff, &srect, */
+        /* window, */
+        /*                      &drect ); */
+        SDL_RenderCopy( renderer,
+                        ( annunc_state ) ? annunciators_surfaces_textures[ i ].textureon : annunciators_surfaces_textures[ i ].textureoff,
+                        NULL, &drect );
+    }
+
+    // Always immediately update annunciators
     /* SDL_UpdateRect( window, display_offset_x + ann_tbl[ 0 ].x, display_offset_y + ann_tbl[ 0 ].y, */
     /*                 ann_tbl[ 5 ].x + ann_tbl[ 5 ].width - ann_tbl[ 0 ].x, ann_tbl[ 5 ].y + ann_tbl[ 5 ].height - ann_tbl[ 0 ].y ); */
+
+    SDL_SetRenderTarget( renderer, NULL );
+    SDL_RenderCopy( renderer, main_texture, NULL, NULL );
+    SDL_RenderPresent( renderer );
 }
 
 void sdl_adjust_contrast( void )
 {
     colors_setup();
-    /* create_annunciators_surfaces(); */
+    /* create_annunciators_surfaces_textures(); */
 
     // redraw LCD
     ui_init_LCD();
