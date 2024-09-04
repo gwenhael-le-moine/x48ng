@@ -9,8 +9,8 @@
 #include <sys/utsname.h>
 #include <unistd.h>
 
-#include <SDL.h>
-#include <SDL2_gfxPrimitives.h> /* lineColor(); pixelColor(); rectangleColor();stringColor(); */
+#include <SDL2/SDL.h>
+#include <SDL2/SDL2_gfxPrimitives.h> /* lineColor(); pixelColor(); rectangleColor();stringColor(); */
 
 #include "romio.h" /* opt_gx */
 #include "config.h"
@@ -68,9 +68,7 @@ static SDL_Texture* main_texture;
 /****************************/
 static inline unsigned color2argb( int color )
 {
-    unsigned a = 255;
-
-    return a | ( colors[ color ].r << 24 ) | ( colors[ color ].g << 16 ) | ( colors[ color ].b << 8 );
+    return 0x000000ff | ( colors[ color ].r << 24 ) | ( colors[ color ].g << 16 ) | ( colors[ color ].b << 8 );
 }
 static inline unsigned color2bgra( int color )
 {
@@ -82,7 +80,6 @@ static inline unsigned color2bgra( int color )
 */
 static SDL_Surface* bitmap_to_surface( unsigned int w, unsigned int h, unsigned char* data, unsigned int coloron, unsigned int coloroff )
 {
-    unsigned int x, y;
     SDL_Surface* surf;
 
     surf = SDL_CreateRGBSurface( SDL_SWSURFACE, w, h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 );
@@ -95,9 +92,9 @@ static SDL_Surface* bitmap_to_surface( unsigned int w, unsigned int h, unsigned 
     if ( byteperline * 8 != w )
         byteperline++;
 
-    for ( y = 0; y < h; y++ ) {
+    for ( unsigned int y = 0; y < h; y++ ) {
         unsigned int* lineptr = ( unsigned int* )( pixels + y * pitch );
-        for ( x = 0; x < w; x++ ) {
+        for ( unsigned int x = 0; x < w; x++ ) {
             // Address the correct byte
             char c = data[ y * byteperline + ( x >> 3 ) ];
             // Look for the bit in that byte
@@ -183,6 +180,8 @@ static void create_annunciators_surfaces_textures( void )
 
         annunciators_surfaces_textures[ i ].surfaceon =
             bitmap_to_surface( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, color2bgra( PIXEL ), color2bgra( LCD ) );
+        annunciators_surfaces_textures[ i ].textureon =
+            SDL_CreateTextureFromSurface( renderer, annunciators_surfaces_textures[ i ].surfaceon );
 
         if ( annunciators_surfaces_textures[ i ].surfaceoff ) {
             SDL_FreeSurface( annunciators_surfaces_textures[ i ].surfaceoff );
@@ -191,6 +190,8 @@ static void create_annunciators_surfaces_textures( void )
 
         annunciators_surfaces_textures[ i ].surfaceoff =
             bitmap_to_surface( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, color2bgra( LCD ), color2bgra( LCD ) );
+        annunciators_surfaces_textures[ i ].textureoff =
+            SDL_CreateTextureFromSurface( renderer, annunciators_surfaces_textures[ i ].surfaceoff );
     }
 }
 
@@ -483,136 +484,134 @@ static void _draw_bezel( unsigned int cut, unsigned int offset_y, int keypad_wid
     lineColor( renderer, 7, keypad_height - 9, 7, keypad_height - 11, color2argb( PAD_BOT ) );
 }
 
-/* static void _draw_header( void ) */
-/* { */
-/*     int x, y; */
-/*     SDL_Surface* surf; */
+static void _draw_header( void )
+{
+    /* int x, y; */
+    /* SDL_Surface* surf; */
 
-/*     int display_width = DISPLAY_WIDTH; */
+    /* int display_width = DISPLAY_WIDTH; */
 
-/*     // insert the HP Logo */
-/*     surf = bitmap_to_surface( hp_width, hp_height, hp_bitmap, ARGBColors[ LOGO ], ARGBColors[ LOGO_BACK ] ); */
-/*     if ( opt_gx ) */
-/*         x = display_offset_x - 6; */
-/*     else */
-/*         x = display_offset_x; */
+    /* // insert the HP Logo */
+    /* surf = bitmap_to_surface( hp_width, hp_height, hp_bitmap, ARGBColors[ LOGO ], ARGBColors[ LOGO_BACK ] ); */
+    /* if ( opt_gx ) */
+    /*     x = display_offset_x - 6; */
+    /* else */
+    /*     x = display_offset_x; */
 
-/*     SDL_Rect srect; */
-/*     SDL_Rect drect; */
-/*     srect.x = 0; */
-/*     srect.y = 0; */
-/*     srect.w = hp_width; */
-/*     srect.h = hp_height; */
-/*     drect.x = x; */
-/*     drect.y = 10; */
-/*     drect.w = hp_width; */
-/*     drect.h = hp_height; */
-/*     SDL_BlitSurface( surf, &srect, window, &drect ); */
-/*     SDL_FreeSurface( surf ); */
+    /* SDL_Rect srect; */
+    /* SDL_Rect drect; */
+    /* srect.x = 0; */
+    /* srect.y = 0; */
+    /* srect.w = hp_width; */
+    /* srect.h = hp_height; */
+    /* drect.x = x; */
+    /* drect.y = 10; */
+    /* drect.w = hp_width; */
+    /* drect.h = hp_height; */
+    /* SDL_BlitSurface( surf, &srect, window, &drect ); */
+    /* SDL_FreeSurface( surf ); */
 
-/*     if ( !opt_gx ) { */
-/*         lineColor( renderer, display_offset_x, 9, display_offset_x + hp_width - 1, 9, color2argb( FRAME ) ); */
-/*         lineColor( renderer, display_offset_x - 1, 10, display_offset_x - 1, 10 + hp_height - 1, color2argb( FRAME ) ); */
-/*         lineColor( renderer, display_offset_x, 10 + hp_height, display_offset_x + hp_width - 1, 10 + hp_height, */
-/*                    color2argb( FRAME ) ); */
-/*         lineColor( renderer, display_offset_x + hp_width, 10, display_offset_x + hp_width, 10 + hp_height - 1, */
-/*                    color2argb( FRAME ) ); */
-/*     } */
+    if ( !opt_gx ) {
+        lineColor( renderer, display_offset_x, 9, display_offset_x + hp_width - 1, 9, color2argb( FRAME ) );
+        lineColor( renderer, display_offset_x - 1, 10, display_offset_x - 1, 10 + hp_height - 1, color2argb( FRAME ) );
+        lineColor( renderer, display_offset_x, 10 + hp_height, display_offset_x + hp_width - 1, 10 + hp_height, color2argb( FRAME ) );
+        lineColor( renderer, display_offset_x + hp_width, 10, display_offset_x + hp_width, 10 + hp_height - 1, color2argb( FRAME ) );
+    }
 
-/*     // write the name of it */
+    // write the name of it
+    /*     if ( opt_gx ) { */
+    /*         x = display_offset_x + display_width - gx_128K_ram_width + gx_128K_ram_x_hot + 2; */
+    /*         y = 10 + gx_128K_ram_y_hot; */
 
-/*     if ( opt_gx ) { */
-/*         x = display_offset_x + display_width - gx_128K_ram_width + gx_128K_ram_x_hot + 2; */
-/*         y = 10 + gx_128K_ram_y_hot; */
+    /*         surf = bitmap_to_surface( gx_128K_ram_width, gx_128K_ram_height, gx_128K_ram_bitmap, ARGBColors[ LABEL ], ARGBColors[
+     * DISP_PAD ] */
+    /* ); */
+    /*         srect.x = 0; */
+    /*         srect.y = 0; */
+    /*         srect.w = gx_128K_ram_width; */
+    /*         srect.h = gx_128K_ram_height; */
+    /*         drect.x = x; */
+    /*         drect.y = y; */
+    /*         drect.w = gx_128K_ram_width; */
+    /*         drect.h = gx_128K_ram_height; */
+    /*         SDL_BlitSurface( surf, &srect, window, &drect ); */
+    /*         SDL_FreeSurface( surf ); */
 
-/*         surf = bitmap_to_surface( gx_128K_ram_width, gx_128K_ram_height, gx_128K_ram_bitmap, ARGBColors[ LABEL ], ARGBColors[ DISP_PAD ]
- * ); */
-/*         srect.x = 0; */
-/*         srect.y = 0; */
-/*         srect.w = gx_128K_ram_width; */
-/*         srect.h = gx_128K_ram_height; */
-/*         drect.x = x; */
-/*         drect.y = y; */
-/*         drect.w = gx_128K_ram_width; */
-/*         drect.h = gx_128K_ram_height; */
-/*         SDL_BlitSurface( surf, &srect, window, &drect ); */
-/*         SDL_FreeSurface( surf ); */
+    /*         x = display_offset_x + hp_width; */
+    /*         y = hp_height + 8 - hp48gx_height; */
+    /*         surf = bitmap_to_surface( hp48gx_width, hp48gx_height, hp48gx_bitmap, ARGBColors[ LOGO ], ARGBColors[ DISP_PAD ] ); */
+    /*         srect.x = 0; */
+    /*         srect.y = 0; */
+    /*         srect.w = hp48gx_width; */
+    /*         srect.h = hp48gx_height; */
+    /*         drect.x = x; */
+    /*         drect.y = y; */
+    /*         drect.w = hp48gx_width; */
+    /*         drect.h = hp48gx_height; */
+    /*         SDL_BlitSurface( surf, &srect, window, &drect ); */
+    /*         SDL_FreeSurface( surf ); */
 
-/*         x = display_offset_x + hp_width; */
-/*         y = hp_height + 8 - hp48gx_height; */
-/*         surf = bitmap_to_surface( hp48gx_width, hp48gx_height, hp48gx_bitmap, ARGBColors[ LOGO ], ARGBColors[ DISP_PAD ] ); */
-/*         srect.x = 0; */
-/*         srect.y = 0; */
-/*         srect.w = hp48gx_width; */
-/*         srect.h = hp48gx_height; */
-/*         drect.x = x; */
-/*         drect.y = y; */
-/*         drect.w = hp48gx_width; */
-/*         drect.h = hp48gx_height; */
-/*         SDL_BlitSurface( surf, &srect, window, &drect ); */
-/*         SDL_FreeSurface( surf ); */
+    /*         x = display_offset_x + DISPLAY_WIDTH - gx_128K_ram_width + gx_silver_x_hot + 2; */
+    /*         y = 10 + gx_silver_y_hot; */
+    /*         surf = bitmap_to_surface( gx_silver_width, gx_silver_height, gx_silver_bitmap, ARGBColors[ LOGO ], */
+    /*                                   0 ); // Background transparent: draw only silver line */
+    /*         srect.x = 0; */
+    /*         srect.y = 0; */
+    /*         srect.w = gx_silver_width; */
+    /*         srect.h = gx_silver_height; */
+    /*         drect.x = x; */
+    /*         drect.y = y; */
+    /*         drect.w = gx_silver_width; */
+    /*         drect.h = gx_silver_height; */
+    /*         SDL_BlitSurface( surf, &srect, window, &drect ); */
+    /*         SDL_FreeSurface( surf ); */
 
-/*         x = display_offset_x + DISPLAY_WIDTH - gx_128K_ram_width + gx_silver_x_hot + 2; */
-/*         y = 10 + gx_silver_y_hot; */
-/*         surf = bitmap_to_surface( gx_silver_width, gx_silver_height, gx_silver_bitmap, ARGBColors[ LOGO ], */
-/*                                   0 ); // Background transparent: draw only silver line */
-/*         srect.x = 0; */
-/*         srect.y = 0; */
-/*         srect.w = gx_silver_width; */
-/*         srect.h = gx_silver_height; */
-/*         drect.x = x; */
-/*         drect.y = y; */
-/*         drect.w = gx_silver_width; */
-/*         drect.h = gx_silver_height; */
-/*         SDL_BlitSurface( surf, &srect, window, &drect ); */
-/*         SDL_FreeSurface( surf ); */
+    /*         x = display_offset_x + display_width - gx_128K_ram_width + gx_green_x_hot + 2; */
+    /*         y = 10 + gx_green_y_hot; */
+    /*         surf = bitmap_to_surface( gx_green_width, gx_green_height, gx_green_bitmap, ARGBColors[ RIGHT ], */
+    /*                                   0 ); // Background transparent: draw only green menu */
+    /*         srect.x = 0; */
+    /*         srect.y = 0; */
+    /*         srect.w = gx_green_width; */
+    /*         srect.h = gx_green_height; */
+    /*         drect.x = x; */
+    /*         drect.y = y; */
+    /*         drect.w = gx_green_width; */
+    /*         drect.h = gx_green_height; */
+    /*         SDL_BlitSurface( surf, &srect, window, &drect ); */
+    /*         SDL_FreeSurface( surf ); */
+    /*     } else { */
+    /*         x = display_offset_x; */
+    /*         y = TOP_SKIP - DISP_FRAME - hp48sx_height - 3; */
+    /*         surf = bitmap_to_surface( hp48sx_width, hp48sx_height, hp48sx_bitmap, ARGBColors[ RIGHT ], */
+    /*                                   0 ); // Background transparent: draw only green menu */
+    /*         srect.x = 0; */
+    /*         srect.y = 0; */
+    /*         srect.w = hp48sx_width; */
+    /*         srect.h = hp48sx_height; */
+    /*         drect.x = x; */
+    /*         drect.y = y; */
+    /*         drect.w = hp48sx_width; */
+    /*         drect.h = hp48sx_height; */
+    /*         SDL_BlitSurface( surf, &srect, window, &drect ); */
+    /*         SDL_FreeSurface( surf ); */
 
-/*         x = display_offset_x + display_width - gx_128K_ram_width + gx_green_x_hot + 2; */
-/*         y = 10 + gx_green_y_hot; */
-/*         surf = bitmap_to_surface( gx_green_width, gx_green_height, gx_green_bitmap, ARGBColors[ RIGHT ], */
-/*                                   0 ); // Background transparent: draw only green menu */
-/*         srect.x = 0; */
-/*         srect.y = 0; */
-/*         srect.w = gx_green_width; */
-/*         srect.h = gx_green_height; */
-/*         drect.x = x; */
-/*         drect.y = y; */
-/*         drect.w = gx_green_width; */
-/*         drect.h = gx_green_height; */
-/*         SDL_BlitSurface( surf, &srect, window, &drect ); */
-/*         SDL_FreeSurface( surf ); */
-/*     } else { */
-/*         x = display_offset_x; */
-/*         y = TOP_SKIP - DISP_FRAME - hp48sx_height - 3; */
-/*         surf = bitmap_to_surface( hp48sx_width, hp48sx_height, hp48sx_bitmap, ARGBColors[ RIGHT ], */
-/*                                   0 ); // Background transparent: draw only green menu */
-/*         srect.x = 0; */
-/*         srect.y = 0; */
-/*         srect.w = hp48sx_width; */
-/*         srect.h = hp48sx_height; */
-/*         drect.x = x; */
-/*         drect.y = y; */
-/*         drect.w = hp48sx_width; */
-/*         drect.h = hp48sx_height; */
-/*         SDL_BlitSurface( surf, &srect, window, &drect ); */
-/*         SDL_FreeSurface( surf ); */
-
-/*         x = display_offset_x + display_width - 1 - science_width; */
-/*         y = TOP_SKIP - DISP_FRAME - science_height - 4; */
-/*         surf = bitmap_to_surface( science_width, science_height, science_bitmap, ARGBColors[ RIGHT ], */
-/*                                   0 ); // Background transparent: draw only green menu */
-/*         srect.x = 0; */
-/*         srect.y = 0; */
-/*         srect.w = science_width; */
-/*         srect.h = science_height; */
-/*         drect.x = x; */
-/*         drect.y = y; */
-/*         drect.w = science_width; */
-/*         drect.h = science_height; */
-/*         SDL_BlitSurface( surf, &srect, window, &drect ); */
-/*         SDL_FreeSurface( surf ); */
-/*     } */
-/* } */
+    /*         x = display_offset_x + display_width - 1 - science_width; */
+    /*         y = TOP_SKIP - DISP_FRAME - science_height - 4; */
+    /*         surf = bitmap_to_surface( science_width, science_height, science_bitmap, ARGBColors[ RIGHT ], */
+    /*                                   0 ); // Background transparent: draw only green menu */
+    /*         srect.x = 0; */
+    /*         srect.y = 0; */
+    /*         srect.w = science_width; */
+    /*         srect.h = science_height; */
+    /*         drect.x = x; */
+    /*         drect.y = y; */
+    /*         drect.w = science_width; */
+    /*         drect.h = science_height; */
+    /*         SDL_BlitSurface( surf, &srect, window, &drect ); */
+    /*         SDL_FreeSurface( surf ); */
+    /*     } */
+}
 
 /* static void __create_buttons( void ) */
 /* { */
@@ -1498,7 +1497,7 @@ void init_sdl2_ui( int argc, char** argv )
 
         _draw_background( width, cut, width, height );
         _draw_bezel( cut, KEYBOARD_OFFSET_Y, width, height );
-        /* _draw_header(); */
+        _draw_header();
         _draw_bezel_LCD();
         /* _draw_keypad(); */
 
