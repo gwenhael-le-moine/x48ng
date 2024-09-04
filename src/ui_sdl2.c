@@ -40,8 +40,8 @@
 /* typedef */
 /***********/
 typedef struct on_off_sdl_textures_struct_t {
-    SDL_Texture* textureon;
-    SDL_Texture* textureoff;
+    SDL_Texture* on;
+    SDL_Texture* off;
 } on_off_sdl_textures_struct_t;
 
 /*************/
@@ -74,9 +74,9 @@ static inline unsigned color2bgra( int color )
 }
 
 /*
-        Create a surface from binary bitmap data
+        Create a SDL_Texture from binary bitmap data
 */
-static SDL_Texture* bitmap_to_texture( unsigned int w, unsigned int h, unsigned char* data, unsigned int coloron, unsigned int coloroff )
+static SDL_Texture* bitmap_to_texture( unsigned int w, unsigned int h, unsigned char* data, int color_fg, int color_bg )
 {
     SDL_Surface* surf = SDL_CreateRGBSurface( SDL_SWSURFACE, w, h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 );
 
@@ -96,7 +96,7 @@ static SDL_Texture* bitmap_to_texture( unsigned int w, unsigned int h, unsigned 
             // Look for the bit in that byte
             char b = c & ( 1 << ( x & 7 ) );
 
-            lineptr[ x ] = ( b ) ? coloron : coloroff;
+            lineptr[ x ] = color2bgra( b ? color_fg : color_bg );
         }
     }
 
@@ -121,7 +121,7 @@ static void __draw_texture( int x, int y, unsigned int w, unsigned int h, SDL_Te
 
 static void __draw_bitmap( int x, int y, unsigned int w, unsigned int h, unsigned char* data, int color_fg, int color_bg )
 {
-    __draw_texture( x, y, w, h, bitmap_to_texture( w, h, data, color2bgra( color_fg ), color2bgra( color_bg ) ) );
+    __draw_texture( x, y, w, h, bitmap_to_texture( w, h, data, color_fg, color_bg ) );
 }
 
 static void write_text( int x, int y, const char* string, unsigned int length, int color_fg, int color_bg )
@@ -175,11 +175,8 @@ static void colors_setup( void )
 static void create_annunciators_textures( void )
 {
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
-        annunciators_textures[ i ].textureon =
-            bitmap_to_texture( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, color2bgra( PIXEL ), color2bgra( LCD ) );
-
-        annunciators_textures[ i ].textureoff =
-            bitmap_to_texture( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, color2bgra( LCD ), color2bgra( LCD ) );
+        annunciators_textures[ i ].on = bitmap_to_texture( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, PIXEL, LCD );
+        annunciators_textures[ i ].off = bitmap_to_texture( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, LCD, LCD );
     }
 }
 
@@ -1295,7 +1292,7 @@ void sdl_draw_annunc( void )
         annunc_state = ( ( annunciators_bits[ i ] & saturn.annunc ) == annunciators_bits[ i ] );
 
         __draw_texture( display_offset_x + ann_tbl[ i ].x, display_offset_y + ann_tbl[ i ].y, ann_tbl[ i ].width, ann_tbl[ i ].height,
-                        ( annunc_state ) ? annunciators_textures[ i ].textureon : annunciators_textures[ i ].textureoff );
+                        ( annunc_state ) ? annunciators_textures[ i ].on : annunciators_textures[ i ].off );
     }
 
     // Always immediately update annunciators
