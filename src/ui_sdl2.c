@@ -52,7 +52,7 @@ typedef struct sdl_surfaces_textures_on_off_struct_t {
 static int display_offset_x, display_offset_y;
 
 color_t colors[ NB_COLORS ];
-/* static sdl_surfaces_on_off_struct_t buttons_surfaces[ NB_KEYS ]; */
+static sdl_surfaces_textures_on_off_struct_t buttons_surfaces_textures[ NB_KEYS ];
 static sdl_surfaces_textures_on_off_struct_t annunciators_surfaces_textures[ NB_ANNUNCIATORS ];
 
 // State to displayed zoomed last pressed key
@@ -66,10 +66,10 @@ static SDL_Texture* main_texture;
 /****************************/
 /* functions implementation */
 /****************************/
-static inline unsigned color2argb( int color )
-{
-    return 0x000000ff | ( colors[ color ].r << 24 ) | ( colors[ color ].g << 16 ) | ( colors[ color ].b << 8 );
-}
+/* static inline unsigned color2argb( int color ) */
+/* { */
+/*     return 0x000000ff | ( colors[ color ].r << 24 ) | ( colors[ color ].g << 16 ) | ( colors[ color ].b << 8 ); */
+/* } */
 static inline unsigned color2bgra( int color )
 {
     return 0xff000000 | ( colors[ color ].r << 16 ) | ( colors[ color ].g << 8 ) | colors[ color ].b;
@@ -109,34 +109,45 @@ static SDL_Surface* bitmap_to_surface( unsigned int w, unsigned int h, unsigned 
     return surf;
 }
 
-/* static void write_text( int x, int y, const char* string, unsigned int length, unsigned int coloron, unsigned int coloroff ) */
-/* { */
-/*     int w, h; */
+static void __draw_texture( int x, int y, unsigned int w, unsigned int h, SDL_Texture* texture )
+{
+    SDL_Rect drect;
+    drect.x = x;
+    drect.y = y;
+    drect.w = w;
+    drect.h = h;
 
-/*     for ( unsigned int i = 0; i < length; i++ ) { */
-/*         if ( small_font[ ( int )string[ i ] ].h != 0 ) { */
-/*             w = small_font[ ( int )string[ i ] ].w; */
-/*             h = small_font[ ( int )string[ i ] ].h; */
+    SDL_RenderCopy( renderer, texture, NULL, &drect );
+}
 
-/*             SDL_Surface* surf = bitmap_to_surface( w, h, small_font[ ( int )string[ i ] ].bits, coloron, coloroff ); */
+static void __draw_bitmap( int x, int y, unsigned int w, unsigned int h, unsigned char* data, int color_fg, int color_bg )
+{
+    SDL_Surface* surf;
+    SDL_Texture* tex;
 
-/*             SDL_Rect srect; */
-/*             SDL_Rect drect; */
-/*             srect.x = 0; */
-/*             srect.y = 0; */
-/*             srect.w = w; */
-/*             srect.h = h; */
-/*             drect.x = x; */
-/*             drect.y = ( int )( y - small_font[ ( int )string[ i ] ].h ); */
-/*             drect.w = w; */
-/*             drect.h = h; */
-/*             SDL_BlitSurface( surf, &srect, window, &drect ); */
-/*             SDL_FreeSurface( surf ); */
-/*         } */
+    surf = bitmap_to_surface( w, h, data, color2bgra( color_fg ), color2bgra( color_bg ) );
+    tex = SDL_CreateTextureFromSurface( renderer, surf );
+    SDL_FreeSurface( surf );
 
-/*         x += SmallTextWidth( &string[ i ], 1 ); */
-/*     } */
-/* } */
+    __draw_texture( x, y, w, h, tex );
+}
+
+static void write_text( int x, int y, const char* string, unsigned int length, int color_fg, int color_bg )
+{
+    int w, h;
+
+    for ( unsigned int i = 0; i < length; i++ ) {
+        if ( small_font[ ( int )string[ i ] ].h != 0 ) {
+            w = small_font[ ( int )string[ i ] ].w;
+            h = small_font[ ( int )string[ i ] ].h;
+
+            __draw_bitmap( x, ( int )( y - small_font[ ( int )string[ i ] ].h ), w, h, small_font[ ( int )string[ i ] ].bits, color_fg,
+                           color_bg );
+        }
+
+        x += SmallTextWidth( &string[ i ], 1 );
+    }
+}
 
 static void colors_setup( void )
 {
@@ -470,7 +481,6 @@ static void _draw_bezel( unsigned int cut, unsigned int offset_y, int keypad_wid
     lineColor( renderer, 5, keypad_height - 7, 5, cut + 2, color2bgra( PAD_BOT ) );
 
     // round off the bottom edge
-
     lineColor( renderer, keypad_width - 7, keypad_height - 7, keypad_width - 7, keypad_height - 14, color2bgra( PAD_TOP ) );
     lineColor( renderer, keypad_width - 8, keypad_height - 8, keypad_width - 8, keypad_height - 11, color2bgra( PAD_TOP ) );
     lineColor( renderer, keypad_width - 7, keypad_height - 7, keypad_width - 14, keypad_height - 7, color2bgra( PAD_TOP ) );
@@ -486,131 +496,54 @@ static void _draw_bezel( unsigned int cut, unsigned int offset_y, int keypad_wid
 
 static void _draw_header( void )
 {
-    /* int x, y; */
-    /* SDL_Surface* surf; */
+    int x, y;
 
-    /* int display_width = DISPLAY_WIDTH; */
+    int display_width = DISPLAY_WIDTH;
 
-    /* // insert the HP Logo */
-    /* surf = bitmap_to_surface( hp_width, hp_height, hp_bitmap, ARGBColors[ LOGO ], ARGBColors[ LOGO_BACK ] ); */
-    /* if ( opt_gx ) */
-    /*     x = display_offset_x - 6; */
-    /* else */
-    /*     x = display_offset_x; */
-
-    /* SDL_Rect srect; */
-    /* SDL_Rect drect; */
-    /* srect.x = 0; */
-    /* srect.y = 0; */
-    /* srect.w = hp_width; */
-    /* srect.h = hp_height; */
-    /* drect.x = x; */
-    /* drect.y = 10; */
-    /* drect.w = hp_width; */
-    /* drect.h = hp_height; */
-    /* SDL_BlitSurface( surf, &srect, window, &drect ); */
-    /* SDL_FreeSurface( surf ); */
+    // insert the HP Logo
+    if ( opt_gx )
+        x = display_offset_x - 6;
+    else
+        x = display_offset_x;
+    __draw_bitmap( x, 10, hp_width, hp_height, hp_bitmap, LOGO, LOGO_BACK );
 
     if ( !opt_gx ) {
-        lineColor( renderer, display_offset_x, 9, display_offset_x + hp_width - 1, 9, color2argb( FRAME ) );
-        lineColor( renderer, display_offset_x - 1, 10, display_offset_x - 1, 10 + hp_height - 1, color2argb( FRAME ) );
-        lineColor( renderer, display_offset_x, 10 + hp_height, display_offset_x + hp_width - 1, 10 + hp_height, color2argb( FRAME ) );
-        lineColor( renderer, display_offset_x + hp_width, 10, display_offset_x + hp_width, 10 + hp_height - 1, color2argb( FRAME ) );
+        lineColor( renderer, display_offset_x, 9, display_offset_x + hp_width - 1, 9, color2bgra( FRAME ) );
+        lineColor( renderer, display_offset_x - 1, 10, display_offset_x - 1, 10 + hp_height - 1, color2bgra( FRAME ) );
+        lineColor( renderer, display_offset_x, 10 + hp_height, display_offset_x + hp_width - 1, 10 + hp_height, color2bgra( FRAME ) );
+        lineColor( renderer, display_offset_x + hp_width, 10, display_offset_x + hp_width, 10 + hp_height - 1, color2bgra( FRAME ) );
     }
 
     // write the name of it
-    /*     if ( opt_gx ) { */
-    /*         x = display_offset_x + display_width - gx_128K_ram_width + gx_128K_ram_x_hot + 2; */
-    /*         y = 10 + gx_128K_ram_y_hot; */
+    if ( opt_gx ) {
+        x = display_offset_x + display_width - gx_128K_ram_width + gx_128K_ram_x_hot + 2;
+        y = 10 + gx_128K_ram_y_hot;
+        __draw_bitmap( x, y, gx_128K_ram_width, gx_128K_ram_height, gx_128K_ram_bitmap, LABEL, DISP_PAD );
 
-    /*         surf = bitmap_to_surface( gx_128K_ram_width, gx_128K_ram_height, gx_128K_ram_bitmap, ARGBColors[ LABEL ], ARGBColors[
-     * DISP_PAD ] */
-    /* ); */
-    /*         srect.x = 0; */
-    /*         srect.y = 0; */
-    /*         srect.w = gx_128K_ram_width; */
-    /*         srect.h = gx_128K_ram_height; */
-    /*         drect.x = x; */
-    /*         drect.y = y; */
-    /*         drect.w = gx_128K_ram_width; */
-    /*         drect.h = gx_128K_ram_height; */
-    /*         SDL_BlitSurface( surf, &srect, window, &drect ); */
-    /*         SDL_FreeSurface( surf ); */
+        x = display_offset_x + hp_width;
+        y = hp_height + 8 - hp48gx_height;
+        __draw_bitmap( x, y, hp48gx_width, hp48gx_height, hp48gx_bitmap, LOGO, DISP_PAD );
 
-    /*         x = display_offset_x + hp_width; */
-    /*         y = hp_height + 8 - hp48gx_height; */
-    /*         surf = bitmap_to_surface( hp48gx_width, hp48gx_height, hp48gx_bitmap, ARGBColors[ LOGO ], ARGBColors[ DISP_PAD ] ); */
-    /*         srect.x = 0; */
-    /*         srect.y = 0; */
-    /*         srect.w = hp48gx_width; */
-    /*         srect.h = hp48gx_height; */
-    /*         drect.x = x; */
-    /*         drect.y = y; */
-    /*         drect.w = hp48gx_width; */
-    /*         drect.h = hp48gx_height; */
-    /*         SDL_BlitSurface( surf, &srect, window, &drect ); */
-    /*         SDL_FreeSurface( surf ); */
+        x = display_offset_x + DISPLAY_WIDTH - gx_128K_ram_width + gx_silver_x_hot + 2;
+        y = 10 + gx_silver_y_hot;
+        __draw_bitmap( x, y, gx_silver_width, gx_silver_height, gx_silver_bitmap, LOGO,
+                       0 ); // Background transparent: draw only silver line
 
-    /*         x = display_offset_x + DISPLAY_WIDTH - gx_128K_ram_width + gx_silver_x_hot + 2; */
-    /*         y = 10 + gx_silver_y_hot; */
-    /*         surf = bitmap_to_surface( gx_silver_width, gx_silver_height, gx_silver_bitmap, ARGBColors[ LOGO ], */
-    /*                                   0 ); // Background transparent: draw only silver line */
-    /*         srect.x = 0; */
-    /*         srect.y = 0; */
-    /*         srect.w = gx_silver_width; */
-    /*         srect.h = gx_silver_height; */
-    /*         drect.x = x; */
-    /*         drect.y = y; */
-    /*         drect.w = gx_silver_width; */
-    /*         drect.h = gx_silver_height; */
-    /*         SDL_BlitSurface( surf, &srect, window, &drect ); */
-    /*         SDL_FreeSurface( surf ); */
+        x = display_offset_x + display_width - gx_128K_ram_width + gx_green_x_hot + 2;
+        y = 10 + gx_green_y_hot;
+        __draw_bitmap( x, y, gx_green_width, gx_green_height, gx_green_bitmap, RIGHT,
+                       0 ); // Background transparent: draw only green menu
+    } else {
+        x = display_offset_x;
+        y = TOP_SKIP - DISP_FRAME - hp48sx_height - 3;
+        __draw_bitmap( x, y, hp48sx_width, hp48sx_height, hp48sx_bitmap, RIGHT,
+                       0 ); // Background transparent: draw only green menu
 
-    /*         x = display_offset_x + display_width - gx_128K_ram_width + gx_green_x_hot + 2; */
-    /*         y = 10 + gx_green_y_hot; */
-    /*         surf = bitmap_to_surface( gx_green_width, gx_green_height, gx_green_bitmap, ARGBColors[ RIGHT ], */
-    /*                                   0 ); // Background transparent: draw only green menu */
-    /*         srect.x = 0; */
-    /*         srect.y = 0; */
-    /*         srect.w = gx_green_width; */
-    /*         srect.h = gx_green_height; */
-    /*         drect.x = x; */
-    /*         drect.y = y; */
-    /*         drect.w = gx_green_width; */
-    /*         drect.h = gx_green_height; */
-    /*         SDL_BlitSurface( surf, &srect, window, &drect ); */
-    /*         SDL_FreeSurface( surf ); */
-    /*     } else { */
-    /*         x = display_offset_x; */
-    /*         y = TOP_SKIP - DISP_FRAME - hp48sx_height - 3; */
-    /*         surf = bitmap_to_surface( hp48sx_width, hp48sx_height, hp48sx_bitmap, ARGBColors[ RIGHT ], */
-    /*                                   0 ); // Background transparent: draw only green menu */
-    /*         srect.x = 0; */
-    /*         srect.y = 0; */
-    /*         srect.w = hp48sx_width; */
-    /*         srect.h = hp48sx_height; */
-    /*         drect.x = x; */
-    /*         drect.y = y; */
-    /*         drect.w = hp48sx_width; */
-    /*         drect.h = hp48sx_height; */
-    /*         SDL_BlitSurface( surf, &srect, window, &drect ); */
-    /*         SDL_FreeSurface( surf ); */
-
-    /*         x = display_offset_x + display_width - 1 - science_width; */
-    /*         y = TOP_SKIP - DISP_FRAME - science_height - 4; */
-    /*         surf = bitmap_to_surface( science_width, science_height, science_bitmap, ARGBColors[ RIGHT ], */
-    /*                                   0 ); // Background transparent: draw only green menu */
-    /*         srect.x = 0; */
-    /*         srect.y = 0; */
-    /*         srect.w = science_width; */
-    /*         srect.h = science_height; */
-    /*         drect.x = x; */
-    /*         drect.y = y; */
-    /*         drect.w = science_width; */
-    /*         drect.h = science_height; */
-    /*         SDL_BlitSurface( surf, &srect, window, &drect ); */
-    /*         SDL_FreeSurface( surf ); */
-    /*     } */
+        x = display_offset_x + display_width - 1 - science_width;
+        y = TOP_SKIP - DISP_FRAME - science_height - 4;
+        __draw_bitmap( x, y, science_width, science_height, science_bitmap, RIGHT,
+                       0 ); // Background transparent: draw only green menu
+    }
 }
 
 /* static void __create_buttons( void ) */
@@ -643,104 +576,104 @@ static void _draw_header( void )
 /*         rect.y = 1; */
 /*         rect.w = BUTTONS[ i ].w - 2; */
 /*         rect.h = BUTTONS[ i ].h - 2; */
-/*         SDL_FillRect( buttons_surfaces[ i ].surfaceon, &rect, ARGBColors[ BUTTON ] ); */
-/*         SDL_FillRect( buttons_surfaces[ i ].surfaceoff, &rect, ARGBColors[ BUTTON ] ); */
+/*         SDL_FillRect( buttons_surfaces[ i ].surfaceon, &rect, BUTTON ); */
+/*         SDL_FillRect( buttons_surfaces[ i ].surfaceoff, &rect, BUTTON ); */
 
 /*         // draw the released button */
 /*         // draw edge of button */
-/*         lineColor( buttons_surfaces[ i ].surfaceon, 1, BUTTONS[ i ].h - 2, 1, 1, color2argb( BUT_TOP ) ); */
-/*         lineColor( buttons_surfaces[ i ].surfaceon, 2, BUTTONS[ i ].h - 3, 2, 2, color2argb( BUT_TOP ) ); */
-/*         lineColor( buttons_surfaces[ i ].surfaceon, 3, BUTTONS[ i ].h - 4, 3, 3, color2argb( BUT_TOP ) ); */
+/*         lineColor( buttons_surfaces[ i ].surfaceon, 1, BUTTONS[ i ].h - 2, 1, 1, color2bgra( BUT_TOP ) ); */
+/*         lineColor( buttons_surfaces[ i ].surfaceon, 2, BUTTONS[ i ].h - 3, 2, 2, color2bgra( BUT_TOP ) ); */
+/*         lineColor( buttons_surfaces[ i ].surfaceon, 3, BUTTONS[ i ].h - 4, 3, 3, color2bgra( BUT_TOP ) ); */
 
-/*         lineColor( buttons_surfaces[ i ].surfaceon, 1, 1, BUTTONS[ i ].w - 2, 1, color2argb( BUT_TOP ) ); */
-/*         lineColor( buttons_surfaces[ i ].surfaceon, 2, 2, BUTTONS[ i ].w - 3, 2, color2argb( BUT_TOP ) ); */
-/*         lineColor( buttons_surfaces[ i ].surfaceon, 3, 3, BUTTONS[ i ].w - 4, 3, color2argb( BUT_TOP ) ); */
-/*         lineColor( buttons_surfaces[ i ].surfaceon, 4, 4, BUTTONS[ i ].w - 5, 4, color2argb( BUT_TOP ) ); */
+/*         lineColor( buttons_surfaces[ i ].surfaceon, 1, 1, BUTTONS[ i ].w - 2, 1, color2bgra( BUT_TOP ) ); */
+/*         lineColor( buttons_surfaces[ i ].surfaceon, 2, 2, BUTTONS[ i ].w - 3, 2, color2bgra( BUT_TOP ) ); */
+/*         lineColor( buttons_surfaces[ i ].surfaceon, 3, 3, BUTTONS[ i ].w - 4, 3, color2bgra( BUT_TOP ) ); */
+/*         lineColor( buttons_surfaces[ i ].surfaceon, 4, 4, BUTTONS[ i ].w - 5, 4, color2bgra( BUT_TOP ) ); */
 
-/*         pixelColor( buttons_surfaces[ i ].surfaceon, 4, 5, color2argb( BUT_TOP ) ); */
+/*         pixelColor( buttons_surfaces[ i ].surfaceon, 4, 5, color2bgra( BUT_TOP ) ); */
 
 /*         lineColor( buttons_surfaces[ i ].surfaceon, 3, BUTTONS[ i ].h - 2, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, */
-/*                    color2argb( BUT_BOT ) ); */
+/*                    color2bgra( BUT_BOT ) ); */
 /*         lineColor( buttons_surfaces[ i ].surfaceon, 4, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, */
-/*                    color2argb( BUT_BOT ) ); */
+/*                    color2bgra( BUT_BOT ) ); */
 
 /*         lineColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUTTONS[ i ].w - 2, 3, */
-/*                    color2argb( BUT_BOT ) ); */
+/*                    color2bgra( BUT_BOT ) ); */
 /*         lineColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, 4, */
-/*                    color2argb( BUT_BOT ) ); */
+/*                    color2bgra( BUT_BOT ) ); */
 /*         lineColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, 5, */
-/*                    color2argb( BUT_BOT ) ); */
-/*         pixelColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 5, BUTTONS[ i ].h - 4, color2argb( BUT_BOT ) ); */
+/*                    color2bgra( BUT_BOT ) ); */
+/*         pixelColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 5, BUTTONS[ i ].h - 4, color2bgra( BUT_BOT ) ); */
 
 /*         // draw frame around button */
 
-/*         lineColor( buttons_surfaces[ i ].surfaceon, 0, BUTTONS[ i ].h - 3, 0, 2, color2argb( FRAME ) ); */
-/*         lineColor( buttons_surfaces[ i ].surfaceon, 2, 0, BUTTONS[ i ].w - 3, 0, color2argb( FRAME ) ); */
+/*         lineColor( buttons_surfaces[ i ].surfaceon, 0, BUTTONS[ i ].h - 3, 0, 2, color2bgra( FRAME ) ); */
+/*         lineColor( buttons_surfaces[ i ].surfaceon, 2, 0, BUTTONS[ i ].w - 3, 0, color2bgra( FRAME ) ); */
 /*         lineColor( buttons_surfaces[ i ].surfaceon, 2, BUTTONS[ i ].h - 1, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 1, */
-/*                    color2argb( FRAME ) ); */
+/*                    color2bgra( FRAME ) ); */
 /*         lineColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 1, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 1, 2, */
-/*                    color2argb( FRAME ) ); */
+/*                    color2bgra( FRAME ) ); */
 /*         if ( i == HPKEY_ON ) { */
-/*             lineColor( buttons_surfaces[ i ].surfaceon, 1, 1, BUTTONS[ 1 ].w - 2, 1, color2argb( FRAME ) ); */
-/*             pixelColor( buttons_surfaces[ i ].surfaceon, 1, 2, color2argb( FRAME ) ); */
-/*             pixelColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 2, 2, color2argb( FRAME ) ); */
+/*             lineColor( buttons_surfaces[ i ].surfaceon, 1, 1, BUTTONS[ 1 ].w - 2, 1, color2bgra( FRAME ) ); */
+/*             pixelColor( buttons_surfaces[ i ].surfaceon, 1, 2, color2bgra( FRAME ) ); */
+/*             pixelColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 2, 2, color2bgra( FRAME ) ); */
 /*         } else { */
-/*             pixelColor( buttons_surfaces[ i ].surfaceon, 1, 1, color2argb( FRAME ) ); */
-/*             pixelColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 2, 1, color2argb( FRAME ) ); */
+/*             pixelColor( buttons_surfaces[ i ].surfaceon, 1, 1, color2bgra( FRAME ) ); */
+/*             pixelColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 2, 1, color2bgra( FRAME ) ); */
 /*         } */
-/*         pixelColor( buttons_surfaces[ i ].surfaceon, 1, BUTTONS[ i ].h - 2, color2argb( FRAME ) ); */
-/*         pixelColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, color2argb( FRAME ) ); */
+/*         pixelColor( buttons_surfaces[ i ].surfaceon, 1, BUTTONS[ i ].h - 2, color2bgra( FRAME ) ); */
+/*         pixelColor( buttons_surfaces[ i ].surfaceon, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, color2bgra( FRAME ) ); */
 
 /*         // draw the depressed button */
 
 /*         // draw edge of button */
-/*         lineColor( buttons_surfaces[ i ].surfaceoff, 2, BUTTONS[ i ].h - 4, 2, 2, color2argb( BUT_TOP ) ); */
-/*         lineColor( buttons_surfaces[ i ].surfaceoff, 3, BUTTONS[ i ].h - 5, 3, 3, color2argb( BUT_TOP ) ); */
-/*         lineColor( buttons_surfaces[ i ].surfaceoff, 2, 2, BUTTONS[ i ].w - 4, 2, color2argb( BUT_TOP ) ); */
-/*         lineColor( buttons_surfaces[ i ].surfaceoff, 3, 3, BUTTONS[ i ].w - 5, 3, color2argb( BUT_TOP ) ); */
-/*         pixelColor( buttons_surfaces[ i ].surfaceoff, 4, 4, color2argb( BUT_TOP ) ); */
+/*         lineColor( buttons_surfaces[ i ].surfaceoff, 2, BUTTONS[ i ].h - 4, 2, 2, color2bgra( BUT_TOP ) ); */
+/*         lineColor( buttons_surfaces[ i ].surfaceoff, 3, BUTTONS[ i ].h - 5, 3, 3, color2bgra( BUT_TOP ) ); */
+/*         lineColor( buttons_surfaces[ i ].surfaceoff, 2, 2, BUTTONS[ i ].w - 4, 2, color2bgra( BUT_TOP ) ); */
+/*         lineColor( buttons_surfaces[ i ].surfaceoff, 3, 3, BUTTONS[ i ].w - 5, 3, color2bgra( BUT_TOP ) ); */
+/*         pixelColor( buttons_surfaces[ i ].surfaceoff, 4, 4, color2bgra( BUT_TOP ) ); */
 
 /*         lineColor( buttons_surfaces[ i ].surfaceoff, 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, */
-/*                    color2argb( BUT_BOT ) ); */
+/*                    color2bgra( BUT_BOT ) ); */
 /*         lineColor( buttons_surfaces[ i ].surfaceoff, 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, */
-/*                    color2argb( BUT_BOT ) ); */
+/*                    color2bgra( BUT_BOT ) ); */
 /*         lineColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, 3, */
-/*                    color2argb( BUT_BOT ) ); */
+/*                    color2bgra( BUT_BOT ) ); */
 /*         lineColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, 4, */
-/*                    color2argb( BUT_BOT ) ); */
-/*         pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 5, BUTTONS[ i ].h - 5, color2argb( BUT_BOT ) ); */
+/*                    color2bgra( BUT_BOT ) ); */
+/*         pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 5, BUTTONS[ i ].h - 5, color2bgra( BUT_BOT ) ); */
 
 /*         // draw frame around button */
-/*         lineColor( buttons_surfaces[ i ].surfaceoff, 0, BUTTONS[ i ].h - 3, 0, 2, color2argb( FRAME ) ); */
-/*         lineColor( buttons_surfaces[ i ].surfaceoff, 2, 0, BUTTONS[ i ].w - 3, 0, color2argb( FRAME ) ); */
+/*         lineColor( buttons_surfaces[ i ].surfaceoff, 0, BUTTONS[ i ].h - 3, 0, 2, color2bgra( FRAME ) ); */
+/*         lineColor( buttons_surfaces[ i ].surfaceoff, 2, 0, BUTTONS[ i ].w - 3, 0, color2bgra( FRAME ) ); */
 /*         lineColor( buttons_surfaces[ i ].surfaceoff, 2, BUTTONS[ i ].h - 1, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 1, */
-/*                    color2argb( FRAME ) ); */
+/*                    color2bgra( FRAME ) ); */
 /*         lineColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 1, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 1, 2, */
-/*                    color2argb( FRAME ) ); */
+/*                    color2bgra( FRAME ) ); */
 
 /*         if ( i == HPKEY_ON ) { */
-/*             lineColor( buttons_surfaces[ i ].surfaceoff, 1, 1, BUTTONS[ i ].w - 2, 1, color2argb( FRAME ) ); */
-/*             pixelColor( buttons_surfaces[ i ].surfaceoff, 1, 2, color2argb( FRAME ) ); */
-/*             pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 2, 2, color2argb( FRAME ) ); */
+/*             lineColor( buttons_surfaces[ i ].surfaceoff, 1, 1, BUTTONS[ i ].w - 2, 1, color2bgra( FRAME ) ); */
+/*             pixelColor( buttons_surfaces[ i ].surfaceoff, 1, 2, color2bgra( FRAME ) ); */
+/*             pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 2, 2, color2bgra( FRAME ) ); */
 /*         } else { */
-/*             pixelColor( buttons_surfaces[ i ].surfaceoff, 1, 1, color2argb( FRAME ) ); */
-/*             pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 2, 1, color2argb( FRAME ) ); */
+/*             pixelColor( buttons_surfaces[ i ].surfaceoff, 1, 1, color2bgra( FRAME ) ); */
+/*             pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 2, 1, color2bgra( FRAME ) ); */
 /*         } */
-/*         pixelColor( buttons_surfaces[ i ].surfaceoff, 1, BUTTONS[ i ].h - 2, color2argb( FRAME ) ); */
-/*         pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, color2argb( FRAME ) ); */
+/*         pixelColor( buttons_surfaces[ i ].surfaceoff, 1, BUTTONS[ i ].h - 2, color2bgra( FRAME ) ); */
+/*         pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, color2bgra( FRAME ) ); */
 /*         if ( i == HPKEY_ON ) { */
 /*             rectangleColor( buttons_surfaces[ i ].surfaceoff, 1, 2, 1 + BUTTONS[ i ].w - 3, 2 + BUTTONS[ i ].h - 4, */
-/*                             color2argb( FRAME ) ); */
-/*             pixelColor( buttons_surfaces[ i ].surfaceoff, 2, 3, color2argb( FRAME ) ); */
-/*             pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 3, 3, color2argb( FRAME ) ); */
+/*                             color2bgra( FRAME ) ); */
+/*             pixelColor( buttons_surfaces[ i ].surfaceoff, 2, 3, color2bgra( FRAME ) ); */
+/*             pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 3, 3, color2bgra( FRAME ) ); */
 /*         } else { */
 /*             rectangleColor( buttons_surfaces[ i ].surfaceoff, 1, 1, 1 + BUTTONS[ i ].w - 3, 1 + BUTTONS[ i ].h - 3, */
-/*                             color2argb( FRAME ) ); */
-/*             pixelColor( buttons_surfaces[ i ].surfaceoff, 2, 2, color2argb( FRAME ) ); */
-/*             pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 3, 2, color2argb( FRAME ) ); */
+/*                             color2bgra( FRAME ) ); */
+/*             pixelColor( buttons_surfaces[ i ].surfaceoff, 2, 2, color2bgra( FRAME ) ); */
+/*             pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 3, 2, color2bgra( FRAME ) ); */
 /*         } */
-/*         pixelColor( buttons_surfaces[ i ].surfaceoff, 2, BUTTONS[ i ].h - 3, color2argb( FRAME ) ); */
-/*         pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, color2argb( FRAME ) ); */
+/*         pixelColor( buttons_surfaces[ i ].surfaceoff, 2, BUTTONS[ i ].h - 3, color2bgra( FRAME ) ); */
+/*         pixelColor( buttons_surfaces[ i ].surfaceoff, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, color2bgra( FRAME ) ); */
 
 /*         if ( BUTTONS[ i ].label != ( char* )0 ) { */
 /*             // Todo: use SDL_ttf to print "nice" fonts */
@@ -754,8 +687,8 @@ static void _draw_header( void )
 /*         // Pixmap centered in button */
 /*         if ( BUTTONS[ i ].lw != 0 ) { */
 /*             // If there's a bitmap, try to plot this */
-/*             unsigned colorbg = ARGBColors[ BUTTON ]; */
-/*             unsigned colorfg = ARGBColors[ BUTTONS[ i ].lc ]; */
+/*             unsigned colorbg = BUTTON; */
+/*             unsigned colorfg = BUTTONS[ i ].lc; */
 
 /*             // Blit the label surface to the button */
 /*             SDL_Surface* surf; */
@@ -826,7 +759,7 @@ static void _draw_header( void )
 /*             pw = opt_gx ? 58 : 44; */
 /*             ph = opt_gx ? 48 : 9; */
 
-/*             color = ARGBColors[ UNDERLAY ]; */
+/*             color = UNDERLAY; */
 
 /*             // Set the coordinates to absolute */
 /*             if ( opt_gx ) { */
@@ -846,9 +779,9 @@ static void _draw_header( void )
 
 /*         // SDLDrawKeysLetters(); */
 /*         if ( i < HPKEY_MTH ) */
-/*             colorbg = ARGBColors[ DISP_PAD ]; */
+/*             colorbg = DISP_PAD; */
 /*         else */
-/*             colorbg = ARGBColors[ PAD ]; */
+/*             colorbg = PAD; */
 
 /*         // Letter ( small character bottom right of key) */
 /*         if ( BUTTONS[ i ].letter != ( char* )0 ) { */
@@ -866,7 +799,7 @@ static void _draw_header( void )
 /*         // SDLDrawKeysLabelsBottom(); */
 /*         // Bottom label: the only one is the cancel button */
 /*         if ( BUTTONS[ i ].sub != ( char* )0 ) { */
-/*             colorfg = ARGBColors[ WHITE ]; */
+/*             colorfg = WHITE; */
 
 /*             x = offset_x + BUTTONS[ i ].x + ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].sub, strlen( BUTTONS[ i ].sub ) ) ) / 2;
  */
@@ -881,8 +814,8 @@ static void _draw_header( void )
 /*                 // draw the dark shade under the label */
 /*                 pw = opt_gx ? 58 : 46; */
 
-/*                 colorbg = ARGBColors[ UNDERLAY ]; */
-/*                 colorfg = ARGBColors[ LEFT ]; */
+/*                 colorbg = UNDERLAY; */
+/*                 colorfg = LEFT; */
 
 /*                 x = ( pw + 1 - SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) ) ) / 2; */
 /*                 y = opt_gx ? 14 : 9; */
@@ -899,8 +832,8 @@ static void _draw_header( void )
 /*                 write_text( x, y, BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ), colorfg, colorbg ); */
 /*             } else // is_menu */
 /*             { */
-/*                 colorbg = ARGBColors[ BLACK ]; */
-/*                 colorfg = ARGBColors[ LEFT ]; */
+/*                 colorbg = BLACK; */
+/*                 colorfg = LEFT; */
 
 /*                 if ( BUTTONS[ i ].right == ( char* )0 ) { */
 /*                     // centered label */
@@ -928,8 +861,8 @@ static void _draw_header( void )
 /*                 // draw the dark shade under the label */
 /*                 pw = opt_gx ? 58 : 44; */
 
-/*                 colorbg = ARGBColors[ UNDERLAY ]; */
-/*                 colorfg = ARGBColors[ RIGHT ]; */
+/*                 colorbg = UNDERLAY; */
+/*                 colorfg = RIGHT; */
 
 /*                 x = ( pw + 1 - SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) ) ) / 2; */
 /*                 y = opt_gx ? 14 : 8; */
@@ -946,8 +879,8 @@ static void _draw_header( void )
 /*                 write_text( x, y, BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ), colorfg, colorbg ); */
 /*             } // BUTTONS[i].is_menu */
 /*             else { */
-/*                 colorbg = ARGBColors[ BLACK ]; */
-/*                 colorfg = ARGBColors[ RIGHT ]; */
+/*                 colorbg = BLACK; */
+/*                 colorfg = RIGHT; */
 
 /*                 if ( BUTTONS[ i ].left == ( char* )0 ) { */
 /*                     // centered label */
@@ -1018,7 +951,6 @@ static void _draw_bezel_LCD( void )
                 color2bgra( DISP_PAD ) );
 
     // simulate rounded lcd corners
-
     lineColor( renderer, display_offset_x - 1, display_offset_y + 1, display_offset_x - 1, display_offset_y + DISPLAY_HEIGHT - 2,
                color2bgra( LCD ) );
     lineColor( renderer, display_offset_x + 1, display_offset_y - 1, display_offset_x + DISPLAY_WIDTH - 2, display_offset_y - 1,
@@ -1381,32 +1313,15 @@ void sdl_draw_annunc( void )
     bool annunc_state;
 
     SDL_SetRenderTarget( renderer, main_texture );
+
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
         annunc_state = ( ( annunciators_bits[ i ] & saturn.annunc ) == annunciators_bits[ i ] );
 
-        /* SDL_Rect srect; */
-        SDL_Rect drect;
-        /* srect.x = 0; */
-        /* srect.y = 0; */
-        /* srect.w = ann_tbl[ i ].width; */
-        /* srect.h = ann_tbl[ i ].height; */
-        drect.x = display_offset_x + ann_tbl[ i ].x;
-        drect.y = display_offset_y + ann_tbl[ i ].y;
-        drect.w = ann_tbl[ i ].width;
-        drect.h = ann_tbl[ i ].height;
-
-        /*     SDL_BlitSurface( ( annunc_state ) ? annunciators_surfaces[ i ].surfaceon : annunciators_surfaces[ i ].surfaceoff, &srect, */
-        /* window, */
-        /*                      &drect ); */
-        SDL_RenderCopy( renderer,
-                        ( annunc_state ) ? annunciators_surfaces_textures[ i ].textureon : annunciators_surfaces_textures[ i ].textureoff,
-                        NULL, &drect );
+        __draw_texture( display_offset_x + ann_tbl[ i ].x, display_offset_y + ann_tbl[ i ].y, ann_tbl[ i ].width, ann_tbl[ i ].height,
+                        ( annunc_state ) ? annunciators_surfaces_textures[ i ].textureon : annunciators_surfaces_textures[ i ].textureoff );
     }
 
     // Always immediately update annunciators
-    /* SDL_UpdateRect( window, display_offset_x + ann_tbl[ 0 ].x, display_offset_y + ann_tbl[ 0 ].y, */
-    /*                 ann_tbl[ 5 ].x + ann_tbl[ 5 ].width - ann_tbl[ 0 ].x, ann_tbl[ 5 ].y + ann_tbl[ 5 ].height - ann_tbl[ 0 ].y ); */
-
     SDL_SetRenderTarget( renderer, NULL );
     SDL_RenderCopy( renderer, main_texture, NULL, NULL );
     SDL_RenderPresent( renderer );
@@ -1505,8 +1420,6 @@ void init_sdl2_ui( int argc, char** argv )
     }
 
     _draw_background_LCD();
-
-    // SDL_UpdateRect( window, 0, 0, 0, 0 );
 
     SDL_SetRenderTarget( renderer, NULL );
     SDL_RenderCopy( renderer, main_texture, NULL, NULL );
