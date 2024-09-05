@@ -24,9 +24,10 @@
 #define FRAME 17
 #define UNDERLAY 18
 #define BLACK 19
+#define TRANSPARENT 20
 
 #define FIRST_COLOR WHITE
-#define LAST_COLOR BLACK
+#define LAST_COLOR TRANSPARENT
 #define NB_COLORS ( LAST_COLOR + 1 )
 
 /***********/
@@ -39,7 +40,7 @@ typedef struct letter_t {
 
 typedef struct color_t {
     const char* name;
-    int r, g, b;
+    int r, g, b, a;
     int mono_rgb;
     int gray_rgb;
 } color_t;

@@ -110,13 +110,13 @@ static SDL_Texture* bitmap_to_texture( unsigned int w, unsigned int h, unsigned 
 
 static void __draw_pixel( int x, int y, int color )
 {
-    SDL_SetRenderDrawColor( renderer, colors[ color ].r, colors[ color ].g, colors[ color ].b, 255 );
+    SDL_SetRenderDrawColor( renderer, colors[ color ].r, colors[ color ].g, colors[ color ].b, colors[ color ].a );
     SDL_RenderDrawPoint( renderer, x, y );
 }
 
 static void __draw_line( int x1, int y1, int x2, int y2, int color )
 {
-    SDL_SetRenderDrawColor( renderer, colors[ color ].r, colors[ color ].g, colors[ color ].b, 255 );
+    SDL_SetRenderDrawColor( renderer, colors[ color ].r, colors[ color ].g, colors[ color ].b, colors[ color ].a );
     SDL_RenderDrawLine( renderer, x1, y1, x2, y2 );
 }
 
@@ -128,7 +128,7 @@ static void __draw_rect( int x, int y, int w, int h, int color )
     rect.w = w;
     rect.h = h;
 
-    SDL_SetRenderDrawColor( renderer, colors[ color ].r, colors[ color ].g, colors[ color ].b, 255 );
+    SDL_SetRenderDrawColor( renderer, colors[ color ].r, colors[ color ].g, colors[ color ].b, colors[ color ].a );
     SDL_RenderFillRect( renderer, &rect );
 }
 
