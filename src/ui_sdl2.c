@@ -542,17 +542,16 @@ static void create_buttons_textures( void )
 
     for ( int i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
         // Create surfaces for each button
-        if ( !buttons_textures[ i ].up )
-            buttons_textures[ i ].up =
-                SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, BUTTONS[ i ].w, BUTTONS[ i ].h );
-
+        // UP {{{
+        /* if ( !buttons_textures[ i ].up ) */
+        buttons_textures[ i ].up =
+            SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, BUTTONS[ i ].w, BUTTONS[ i ].h );
         SDL_SetRenderTarget( renderer, buttons_textures[ i ].up );
 
         // Fill the button and outline
         __draw_rect( 0, 0, BUTTONS[ i ].w, BUTTONS[ i ].h, TRANSPARENT );
         __draw_rect( 1, 1, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUTTON );
 
-        // draw the released button
         // draw edge of button
         __draw_line( 1, BUTTONS[ i ].h - 2, 1, 1, BUT_TOP );
         __draw_line( 2, BUTTONS[ i ].h - 3, 2, 2, BUT_TOP );
@@ -590,41 +589,42 @@ static void create_buttons_textures( void )
         __draw_pixel( BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, FRAME );
 
         if ( BUTTONS[ i ].label != ( char* )0 ) {
-            // Todo: use SDL_ttf to print "nice" fonts
-
-            // for the time being use SDL_gfxPrimitives' font
+            /* Button has a text label */
             x = ( BUTTONS[ i ].w - strlen( BUTTONS[ i ].label ) * 8 ) / 2;
             y = ( BUTTONS[ i ].h + 1 ) / 2 - 4;
+
             stringRGBA( renderer, x, y, BUTTONS[ i ].label, 255, 255, 255, 255 );
-        }
-        // Pixmap centered in button
-        if ( BUTTONS[ i ].lw != 0 ) {
-            // Draw the surface on the center of the button
+        } else if ( BUTTONS[ i ].lw != 0 ) {
+            /* Button has a texture */
             x = ( 1 + BUTTONS[ i ].w - BUTTONS[ i ].lw ) / 2;
             y = ( 1 + BUTTONS[ i ].h - BUTTONS[ i ].lh ) / 2 + 1;
 
             __draw_bitmap( x, y, BUTTONS[ i ].lw, BUTTONS[ i ].lh, BUTTONS[ i ].lb, BUTTONS[ i ].lc, BUTTON );
         }
+        // }}}
 
-        // draw the depressed button
-        if ( !buttons_textures[ i ].down )
-            buttons_textures[ i ].down =
-                SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, BUTTONS[ i ].w, BUTTONS[ i ].h );
-
+        // DOWN {{{
+        /* if ( !buttons_textures[ i ].down ) */
+        buttons_textures[ i ].down =
+            SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, BUTTONS[ i ].w, BUTTONS[ i ].h );
         SDL_SetRenderTarget( renderer, buttons_textures[ i ].down );
 
+        // Fill the button and outline
         __draw_rect( 0, 0, BUTTONS[ i ].w, BUTTONS[ i ].h, TRANSPARENT );
         __draw_rect( 1, 1, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUTTON );
 
         // draw edge of button
         __draw_line( 2, BUTTONS[ i ].h - 4, 2, 2, BUT_TOP );
         __draw_line( 3, BUTTONS[ i ].h - 5, 3, 3, BUT_TOP );
+
         __draw_line( 2, 2, BUTTONS[ i ].w - 4, 2, BUT_TOP );
         __draw_line( 3, 3, BUTTONS[ i ].w - 5, 3, BUT_TOP );
+
         __draw_pixel( 4, 4, BUT_TOP );
 
         __draw_line( 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUT_BOT );
         __draw_line( 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUT_BOT );
+
         __draw_line( BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, 3, BUT_BOT );
         __draw_line( BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, 4, BUT_BOT );
         __draw_pixel( BUTTONS[ i ].w - 5, BUTTONS[ i ].h - 5, BUT_BOT );
@@ -634,7 +634,6 @@ static void create_buttons_textures( void )
         __draw_line( 2, 0, BUTTONS[ i ].w - 3, 0, FRAME );
         __draw_line( 2, BUTTONS[ i ].h - 1, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 1, FRAME );
         __draw_line( BUTTONS[ i ].w - 1, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 1, 2, FRAME );
-
         if ( i == HPKEY_ON ) {
             __draw_line( 1, 1, BUTTONS[ i ].w - 2, 1, FRAME );
             __draw_pixel( 1, 2, FRAME );
@@ -657,22 +656,23 @@ static void create_buttons_textures( void )
         __draw_pixel( 2, BUTTONS[ i ].h - 3, FRAME );
         __draw_pixel( BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, FRAME );
 
+        /* Same as .up texture */
         if ( BUTTONS[ i ].label != ( char* )0 ) {
-            // Todo: use SDL_ttf to print "nice" fonts
-
-            // for the time being use SDL_gfxPrimitives' font
+            /* Button has a text label */
             x = ( BUTTONS[ i ].w - strlen( BUTTONS[ i ].label ) * 8 ) / 2;
             y = ( BUTTONS[ i ].h + 1 ) / 2 - 4;
+            y += 2;
+
             stringRGBA( renderer, x, y, BUTTONS[ i ].label, 255, 255, 255, 255 );
-        }
-        // Pixmap centered in button
-        if ( BUTTONS[ i ].lw != 0 ) {
-            // Draw the surface on the center of the button
+        } else if ( BUTTONS[ i ].lw != 0 ) {
+            /* Button has a texture */
             x = ( 1 + BUTTONS[ i ].w - BUTTONS[ i ].lw ) / 2;
             y = ( 1 + BUTTONS[ i ].h - BUTTONS[ i ].lh ) / 2 + 1;
+            y += 2;
 
             __draw_bitmap( x, y, BUTTONS[ i ].lw, BUTTONS[ i ].lh, BUTTONS[ i ].lb, BUTTONS[ i ].lc, BUTTON );
         }
+        // }}}
     }
 
     // Give back to renderer as it was
@@ -683,10 +683,10 @@ static void _draw_key( int hpkey )
 {
     int x = KEYBOARD_OFFSET_X + BUTTONS[ hpkey ].x;
     int y = KEYBOARD_OFFSET_Y + BUTTONS[ hpkey ].y;
-    if ( keyboard[ hpkey ].pressed ) {
-        x += 1;
-        y += 2;
-    }
+    /* if ( keyboard[ hpkey ].pressed ) { */
+    /*     x += 1; */
+    /*     y += 2; */
+    /* } */
     __draw_texture( x, y, BUTTONS[ hpkey ].w, BUTTONS[ hpkey ].h,
                     keyboard[ hpkey ].pressed ? buttons_textures[ hpkey ].down : buttons_textures[ hpkey ].up );
 }
