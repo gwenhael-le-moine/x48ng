@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL2_gfxPrimitives.h> /* stringColor(); */
+#include <SDL2/SDL2_gfxPrimitives.h> /* stringRGBA(); */
 
 #include "romio.h" /* opt_gx */
 #include "config.h"
@@ -54,7 +54,7 @@ static on_off_sdl_textures_struct_t buttons_textures[ NB_KEYS ];
 static on_off_sdl_textures_struct_t annunciators_textures[ NB_ANNUNCIATORS ];
 
 // State to displayed zoomed last pressed key
-/* static SDL_Surface* showkeylastsurf = 0; */
+/* static SDL_Texture* showkeylast_texture = 0; */
 /* static int showkeylastx, showkeylasty, showkeylastkey; */
 
 static SDL_Window* window;
@@ -148,18 +148,12 @@ static void __draw_bitmap( int x, int y, unsigned int w, unsigned int h, unsigne
     __draw_texture( x, y, w, h, bitmap_to_texture( w, h, data, color_fg, color_bg ) );
 }
 
-static void write_text( int x, int y, const char* string, unsigned int length, int color_fg, int color_bg )
+static void write_text( int x, int y, const char* string, int color_fg, int color_bg )
 {
-    int w, h;
-
-    for ( unsigned int i = 0; i < length; i++ ) {
-        if ( small_font[ ( int )string[ i ] ].h != 0 ) {
-            w = small_font[ ( int )string[ i ] ].w;
-            h = small_font[ ( int )string[ i ] ].h;
-
-            __draw_bitmap( x, ( int )( y - small_font[ ( int )string[ i ] ].h ), w, h, small_font[ ( int )string[ i ] ].bits, color_fg,
-                           color_bg );
-        }
+    for ( unsigned int i = 0; i < strlen( string ); i++ ) {
+        if ( small_font[ ( int )string[ i ] ].h != 0 )
+            __draw_bitmap( x, ( int )( y - small_font[ ( int )string[ i ] ].h ), small_font[ ( int )string[ i ] ].w,
+                           small_font[ ( int )string[ i ] ].h, small_font[ ( int )string[ i ] ].bits, color_fg, color_bg );
 
         x += SmallTextWidth( &string[ i ], 1 );
     }
@@ -601,7 +595,7 @@ static void create_buttons_textures( void )
             // for the time being use SDL_gfxPrimitives' font
             x = ( BUTTONS[ i ].w - strlen( BUTTONS[ i ].label ) * 8 ) / 2;
             y = ( BUTTONS[ i ].h + 1 ) / 2 - 4;
-            stringColor( renderer, x, y, BUTTONS[ i ].label, 0xffffffff );
+            stringRGBA( renderer, x, y, BUTTONS[ i ].label, 255, 255, 255, 255 );
         }
         // Pixmap centered in button
         if ( BUTTONS[ i ].lw != 0 ) {
@@ -669,7 +663,7 @@ static void create_buttons_textures( void )
             // for the time being use SDL_gfxPrimitives' font
             x = ( BUTTONS[ i ].w - strlen( BUTTONS[ i ].label ) * 8 ) / 2;
             y = ( BUTTONS[ i ].h + 1 ) / 2 - 4;
-            stringColor( renderer, x, y, BUTTONS[ i ].label, 0xffffffff );
+            stringRGBA( renderer, x, y, BUTTONS[ i ].label, 255, 255, 255, 255 );
         }
         // Pixmap centered in button
         if ( BUTTONS[ i ].lw != 0 ) {
@@ -685,137 +679,102 @@ static void create_buttons_textures( void )
     SDL_SetRenderTarget( renderer, main_texture );
 }
 
+static void _draw_keys( void )
+{
+    for ( int i = FIRST_HPKEY; i <= LAST_HPKEY; i++ )
+        __draw_texture( KEYBOARD_OFFSET_X + BUTTONS[ i ].x, KEYBOARD_OFFSET_Y + BUTTONS[ i ].y, BUTTONS[ i ].w, BUTTONS[ i ].h,
+                        keyboard[ i ].pressed ? buttons_textures[ i ].off : buttons_textures[ i ].on );
+}
+
 static void _draw_keypad( void )
 {
-    int i, x, y;
-    int offset_y = KEYBOARD_OFFSET_Y;
-    int offset_x = KEYBOARD_OFFSET_X;
-    unsigned pw, ph;
-    unsigned colorbg;
+    int x, y;
+    int pw = opt_gx ? 58 : 44;
+    int ph = opt_gx ? 48 : 9;
     int wl, wr, ws;
 
-    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
+    for ( int i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
         if ( BUTTONS[ i ].is_menu ) {
-            // draw the dark shade under the label
-            pw = opt_gx ? 58 : 44;
-            ph = opt_gx ? 48 : 9;
+            x = KEYBOARD_OFFSET_X + BUTTONS[ i ].x;
+            y = KEYBOARD_OFFSET_Y + BUTTONS[ i ].y - small_ascent - small_descent;
 
-            // Set the coordinates to absolute
             if ( opt_gx ) {
-                x = offset_x + BUTTONS[ i ].x - 6;
-                y = offset_y + BUTTONS[ i ].y - small_ascent - small_descent - 6;
-            } else {
-                x = offset_x + BUTTONS[ i ].x + ( BUTTONS[ i ].w - pw ) / 2;
-                y = offset_y + BUTTONS[ i ].y - small_ascent - small_descent;
-            }
+                x -= 6;
+                y -= 6;
+            } else
+                x += ( BUTTONS[ i ].w - pw ) / 2;
 
             __draw_rect( x, y, pw, ph, UNDERLAY );
         }
 
-        colorbg = ( i < HPKEY_MTH ) ? DISP_PAD : PAD;
-
-        // Letter ( small character bottom right of key)
+        // Letter (small character bottom right of key)
         if ( BUTTONS[ i ].letter != ( char* )0 ) {
+            x = KEYBOARD_OFFSET_X + BUTTONS[ i ].x + BUTTONS[ i ].w;
+            y = KEYBOARD_OFFSET_Y + BUTTONS[ i ].y + BUTTONS[ i ].h;
+
             if ( opt_gx ) {
-                x = offset_x + BUTTONS[ i ].x + BUTTONS[ i ].w + 3;
-                y = offset_y + BUTTONS[ i ].y + BUTTONS[ i ].h + 1;
+                x += 3;
+                y += 1;
             } else {
-                x = offset_x + BUTTONS[ i ].x + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].letter, 1 ) / 2 + 5;
-                y = offset_y + BUTTONS[ i ].y + BUTTONS[ i ].h - 2;
+                x -= SmallTextWidth( BUTTONS[ i ].letter, 1 ) / 2 + 5;
+                y -= 2;
             }
 
-            write_text( x, y, BUTTONS[ i ].letter, 1, 0xffffffff, colorbg );
+            write_text( x, y, BUTTONS[ i ].letter, WHITE, ( i < HPKEY_MTH ) ? DISP_PAD : PAD );
         }
 
         // Bottom label: the only one is the cancel button
         if ( BUTTONS[ i ].sub != ( char* )0 ) {
-            x = offset_x + BUTTONS[ i ].x + ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].sub, strlen( BUTTONS[ i ].sub ) ) ) / 2;
-            y = offset_y + BUTTONS[ i ].y + BUTTONS[ i ].h + small_ascent + 2;
-            write_text( x, y, BUTTONS[ i ].sub, strlen( BUTTONS[ i ].sub ), WHITE, colorbg );
+            x = KEYBOARD_OFFSET_X + BUTTONS[ i ].x +
+                ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].sub, strlen( BUTTONS[ i ].sub ) ) ) / 2;
+            y = KEYBOARD_OFFSET_Y + BUTTONS[ i ].y + BUTTONS[ i ].h + small_ascent + 2;
+            write_text( x, y, BUTTONS[ i ].sub, WHITE, PAD );
         }
 
         // Draw the left labels
         if ( BUTTONS[ i ].left != ( char* )0 ) {
-            if ( BUTTONS[ i ].is_menu ) {
-                // draw the dark shade under the label
-                pw = opt_gx ? 58 : 46;
+            x = KEYBOARD_OFFSET_X + BUTTONS[ i ].x;
+            y = KEYBOARD_OFFSET_Y + BUTTONS[ i ].y - small_descent;
 
-                x = ( pw + 1 - SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) ) ) / 2;
-                y = opt_gx ? 14 : 9;
-
-                // Set the coordinates to absolute
-                if ( opt_gx ) {
-                    x += offset_x + BUTTONS[ i ].x - 6;
-                    y += offset_y + BUTTONS[ i ].y - small_ascent - small_descent - 6;
-                } else {
-                    x += offset_x + BUTTONS[ i ].x + ( BUTTONS[ i ].w - pw ) / 2;
-                    y += offset_y + BUTTONS[ i ].y - small_ascent - small_descent;
-                }
-
-                write_text( x, y, BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ), LEFT, UNDERLAY );
-            } else {
-                if ( BUTTONS[ i ].right == ( char* )0 ) {
-                    // centered label
-                    x = offset_x + BUTTONS[ i ].x +
-                        ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) ) ) / 2;
-                } else {
-                    // label to the left
-                    wl = SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) );
-                    wr = SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) );
-                    ws = SmallTextWidth( " ", 1 );
-
-                    x = offset_x + BUTTONS[ i ].x + ( 1 + BUTTONS[ i ].w - ( wl + wr + ws ) ) / 2;
-                }
-
-                y = offset_y + BUTTONS[ i ].y - small_descent;
-
-                write_text( x, y, BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ), LEFT, BLACK );
-            } // is_menu
-        }
-
-        // draw the right labels
-        if ( BUTTONS[ i ].right != ( char* )0 ) {
-            if ( BUTTONS[ i ].is_menu ) {
-                // draw the dark shade under the label
-                pw = opt_gx ? 58 : 44;
-
-                x = ( pw + 1 - SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) ) ) / 2;
-                y = opt_gx ? 14 : 8;
-
-                // Set the coordinates to absolute
-                if ( opt_gx ) {
-                    x += offset_x + BUTTONS[ i ].x - 6;
-                    y += offset_y + BUTTONS[ i ].y - small_ascent - small_descent - 6;
-                } else {
-                    x += offset_x + BUTTONS[ i ].x + ( BUTTONS[ i ].w - pw ) / 2;
-                    y += offset_y + BUTTONS[ i ].y - small_ascent - small_descent;
-                }
-
-                write_text( x, y, BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ), RIGHT, UNDERLAY );
-            } // BUTTONS[i].is_menu
+            if ( BUTTONS[ i ].right == ( char* )0 )
+                // centered label
+                x += ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) ) ) / 2;
             else {
-                if ( BUTTONS[ i ].left == ( char* )0 ) {
-                    // centered label
-                    x = offset_x + BUTTONS[ i ].x +
-                        ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) ) ) / 2;
-                } else {
-                    // label to the right
-                    wl = SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) );
-                    wr = SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) );
-                    ws = SmallTextWidth( " ", 1 );
+                // label to the left
+                x -= 6;
+                /* wl = SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) ); */
+                /* wr = SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) ); */
+                /* ws = SmallTextWidth( " ", 1 ); */
 
-                    x = offset_x + BUTTONS[ i ].x + ( 1 + BUTTONS[ i ].w - ( wl + wr + ws ) ) / 2 + wl + ws;
-                }
-
-                y = offset_y + BUTTONS[ i ].y - small_descent;
-
-                write_text( x, y, BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ), RIGHT, BLACK );
+                /* x += ( 1 + BUTTONS[ i ].w - ( wl + wr + ws ) ) / 2; */
             }
+
+            write_text( x, y, BUTTONS[ i ].left, LEFT, BUTTONS[ i ].is_menu ? UNDERLAY : PAD );
         }
 
-        __draw_texture( KEYBOARD_OFFSET_X + BUTTONS[ i ].x, KEYBOARD_OFFSET_Y + BUTTONS[ i ].y, BUTTONS[ i ].w, BUTTONS[ i ].h,
-                        keyboard[ i ].pressed ? buttons_textures[ i ].off : buttons_textures[ i ].on );
+        // draw the right labels ( .is_menu never have one )
+        if ( BUTTONS[ i ].right != ( char* )0 ) {
+            x = KEYBOARD_OFFSET_X + BUTTONS[ i ].x;
+            y = KEYBOARD_OFFSET_Y + BUTTONS[ i ].y - small_descent;
+
+            if ( BUTTONS[ i ].left == ( char* )0 )
+                // centered label
+                x += ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) ) ) / 2;
+            else {
+                // label to the right
+                wl = SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) );
+                /* wr = SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) ); */
+                ws = SmallTextWidth( " ", 1 );
+
+                /* x += ( 1 + BUTTONS[ i ].w - ( wl + wr + ws ) ) / 2 + wl + ws; */
+                x += ( wl + ws ) - 6;
+            }
+
+            write_text( x, y, BUTTONS[ i ].right, RIGHT, PAD );
+        }
     }
+
+    _draw_keys();
 }
 
 static void _draw_bezel_LCD( void )
@@ -891,17 +850,17 @@ static void _draw_background_LCD( void ) { __draw_rect( display_offset_x, displa
 /*     showkeylastkey = hpkey; */
 
 /*     // Starts by hiding last */
-/*     if ( showkeylastsurf != 0 ) { */
+/*     if ( showkeylast_texture != 0 ) { */
 /*         drect.x = showkeylastx; */
 /*         drect.y = showkeylasty; */
-/*         SDL_BlitSurface( showkeylastsurf, 0, window, &drect ); */
+/*         SDL_BlitSurface( showkeylast_texture, 0, window, &drect ); */
 
 /*         // Update */
-/*         SDL_UpdateRect( window, showkeylastx, showkeylasty, showkeylastsurf->w, showkeylastsurf->h ); */
+/*         SDL_UpdateRect( window, showkeylastx, showkeylasty, showkeylast_texture->w, showkeylast_texture->h ); */
 
 /*         // Free */
-/*         SDL_FreeSurface( showkeylastsurf ); */
-/*         showkeylastsurf = 0; */
+/*         SDL_FreeSurface( showkeylast_texture ); */
+/*         showkeylast_texture = 0; */
 /*     } */
 
 /*     if ( hpkey == -1 ) */
@@ -911,7 +870,8 @@ static void _draw_background_LCD( void ) { __draw_rect( display_offset_x, displa
 /*     ssurf = ( keyboard[ hpkey ].pressed ) ? buttons_textures[ hpkey ].off : buttons_textures[ hpkey ].on; */
 
 /*     // Background backup */
-/*     showkeylastsurf = SDL_CreateRGBSurface( SDL_SWSURFACE, ssurf->w, ssurf->h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 ); */
+/*     showkeylast_texture = SDL_CreateRGBSurface( SDL_SWSURFACE, ssurf->w, ssurf->h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 );
+ */
 
 /*     // Where to */
 /*     x = KEYBOARD_OFFSET_X + BUTTONS[ hpkey ].x - ( ssurf->w - ssurf->w + 1 ) / 2; */
@@ -938,7 +898,7 @@ static void _draw_background_LCD( void ) { __draw_rect( display_offset_x, displa
 /*     srect.h = ssurf->h; */
 /*     drect.x = 0; */
 /*     drect.y = 0; */
-/*     SDL_BlitSurface( window, &srect, showkeylastsurf, &drect ); */
+/*     SDL_BlitSurface( window, &srect, showkeylast_texture, &drect ); */
 
 /*     // Blit the button */
 /*     drect.x = x; */
@@ -971,7 +931,7 @@ static void _draw_serial_devices_path( void )
     }
 
     if ( strlen( text ) > 0 )
-        stringColor( renderer, 10, 240, text, 0xffffffff );
+        stringRGBA( renderer, 10, 240, text, 255, 255, 255, 255 );
 }
 
 static void sdl_draw_nibble( int nx, int ny, int val )
@@ -1031,8 +991,8 @@ void sdl_get_event( void )
     static int lasthpkey = -1;           // last key that was pressed or -1 for none
     static int lastticks = -1;           // time at which a key was pressed or -1 if timer expired
     static bool lastislongpress = false; // last key press was a long press
-    /* static int pressed_hpkey = -1;       // Indicate if a key is being held down by */
-    /*                                      // a finger (not set for long presses) */
+    static int pressed_hpkey = -1;       // Indicate if a key is being held down by
+                                         // a finger (not set for long presses)
 
     // Check whether long pres on key
     if ( lastticks > 0 && ( SDL_GetTicks() - lastticks > 750 ) ) {
@@ -1061,7 +1021,7 @@ void sdl_get_event( void )
                 if ( hpkey == -1 || keyboard[ hpkey ].pressed )
                     break;
 
-                /* pressed_hpkey = hpkey; */
+                pressed_hpkey = hpkey;
                 press_key( hpkey );
                 lasthpkey = hpkey;
                 // Start timer
@@ -1073,7 +1033,7 @@ void sdl_get_event( void )
                 if ( hpkey == -1 )
                     break;
 
-                /* pressed_hpkey = -1; */
+                pressed_hpkey = -1;
                 if ( !lastislongpress ) {
                     release_all_keys();
                     lasthpkey = -1; // No key is pressed anymore
@@ -1089,7 +1049,7 @@ void sdl_get_event( void )
                 if ( hpkey == -1 || keyboard[ hpkey ].pressed )
                     break;
 
-                /* pressed_hpkey = hpkey; */
+                pressed_hpkey = hpkey;
                 press_key( hpkey );
                 break;
             case SDL_KEYUP:
@@ -1097,7 +1057,7 @@ void sdl_get_event( void )
                 if ( hpkey == -1 )
                     break;
 
-                /* pressed_hpkey = -1; */
+                pressed_hpkey = -1;
                 release_key( hpkey );
                 break;
         }
@@ -1106,6 +1066,8 @@ void sdl_get_event( void )
     // Display button being pressed, if any
     /* if ( !config.hide_chrome ) */
     /*     _show_key( pressed_hpkey ); */
+    if ( !config.hide_chrome && pressed_hpkey > 0 )
+        _draw_keys();
 }
 
 void sdl_update_LCD( void )
