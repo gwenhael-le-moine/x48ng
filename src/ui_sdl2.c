@@ -542,7 +542,7 @@ static void _draw_header( void )
     }
 }
 
-static void __create_buttons( void )
+static void create_buttons_textures( void )
 {
     unsigned x, y;
 
@@ -681,21 +681,8 @@ static void __create_buttons( void )
         }
     }
 
-    SDL_SetRenderTarget( renderer, NULL );
-}
-
-static void __draw_buttons( void )
-{
+    // Give back to renderer as it was
     SDL_SetRenderTarget( renderer, main_texture );
-
-    for ( int i = FIRST_HPKEY; i <= LAST_HPKEY; i++ )
-        __draw_texture( KEYBOARD_OFFSET_X + BUTTONS[ i ].x, KEYBOARD_OFFSET_Y + BUTTONS[ i ].y, BUTTONS[ i ].w, BUTTONS[ i ].h,
-                        keyboard[ i ].pressed ? buttons_textures[ i ].off : buttons_textures[ i ].on );
-
-    // Always immediately update annunciators
-    SDL_SetRenderTarget( renderer, NULL );
-    SDL_RenderCopy( renderer, main_texture, NULL, NULL );
-    SDL_RenderPresent( renderer );
 }
 
 static void _draw_keypad( void )
@@ -706,8 +693,6 @@ static void _draw_keypad( void )
     unsigned pw, ph;
     unsigned colorbg;
     int wl, wr, ws;
-
-    __create_buttons();
 
     for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
         if ( BUTTONS[ i ].is_menu ) {
@@ -827,9 +812,10 @@ static void _draw_keypad( void )
                 write_text( x, y, BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ), RIGHT, BLACK );
             }
         }
-    }
 
-    __draw_buttons();
+        __draw_texture( KEYBOARD_OFFSET_X + BUTTONS[ i ].x, KEYBOARD_OFFSET_Y + BUTTONS[ i ].y, BUTTONS[ i ].w, BUTTONS[ i ].h,
+                        keyboard[ i ].pressed ? buttons_textures[ i ].off : buttons_textures[ i ].on );
+    }
 }
 
 static void _draw_bezel_LCD( void )
@@ -1191,8 +1177,6 @@ void sdl_draw_annunc( void )
     bool annunc_state;
     last_annunc_state = saturn.annunc;
 
-    create_annunciators_textures();
-
     SDL_SetRenderTarget( renderer, main_texture );
 
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
@@ -1287,8 +1271,12 @@ void init_sdl2_ui( int argc, char** argv )
 
     colors_setup();
 
+    create_annunciators_textures();
+
     if ( !config.hide_chrome ) {
         int cut = BUTTONS[ HPKEY_MTH ].y + KEYBOARD_OFFSET_Y - 19;
+
+        create_buttons_textures();
 
         _draw_background( width, cut, width, height );
         _draw_bezel( cut, KEYBOARD_OFFSET_Y, width, height );
