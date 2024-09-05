@@ -714,10 +714,10 @@ static void _draw_keypad( void )
     int offset_y = KEYBOARD_OFFSET_Y;
     int offset_x = KEYBOARD_OFFSET_X;
     unsigned pw, ph;
-    unsigned colorbg, colorfg;
+    unsigned colorbg;
     int wl, wr, ws;
 
-       __create_buttons();
+    __create_buttons();
 
     for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
         if ( BUTTONS[ i ].is_menu ) {
@@ -737,10 +737,7 @@ static void _draw_keypad( void )
             __draw_rect( x, y, pw, ph, UNDERLAY );
         }
 
-        if ( i < HPKEY_MTH )
-            colorbg = DISP_PAD;
-        else
-            colorbg = PAD;
+        colorbg = ( i < HPKEY_MTH ) ? DISP_PAD : PAD;
 
         // Letter ( small character bottom right of key)
         if ( BUTTONS[ i ].letter != ( char* )0 ) {
@@ -757,11 +754,9 @@ static void _draw_keypad( void )
 
         // Bottom label: the only one is the cancel button
         if ( BUTTONS[ i ].sub != ( char* )0 ) {
-            colorfg = WHITE;
-
             x = offset_x + BUTTONS[ i ].x + ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].sub, strlen( BUTTONS[ i ].sub ) ) ) / 2;
             y = offset_y + BUTTONS[ i ].y + BUTTONS[ i ].h + small_ascent + 2;
-            write_text( x, y, BUTTONS[ i ].sub, strlen( BUTTONS[ i ].sub ), colorfg, colorbg );
+            write_text( x, y, BUTTONS[ i ].sub, strlen( BUTTONS[ i ].sub ), WHITE, colorbg );
         }
 
         // Draw the left labels
@@ -769,9 +764,6 @@ static void _draw_keypad( void )
             if ( BUTTONS[ i ].is_menu ) {
                 // draw the dark shade under the label
                 pw = opt_gx ? 58 : 46;
-
-                colorbg = UNDERLAY;
-                colorfg = LEFT;
 
                 x = ( pw + 1 - SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) ) ) / 2;
                 y = opt_gx ? 14 : 9;
@@ -785,12 +777,8 @@ static void _draw_keypad( void )
                     y += offset_y + BUTTONS[ i ].y - small_ascent - small_descent;
                 }
 
-                write_text( x, y, BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ), colorfg, colorbg );
-            } else // is_menu
-            {
-                colorbg = BLACK;
-                colorfg = LEFT;
-
+                write_text( x, y, BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ), LEFT, UNDERLAY );
+            } else {
                 if ( BUTTONS[ i ].right == ( char* )0 ) {
                     // centered label
                     x = offset_x + BUTTONS[ i ].x +
@@ -806,7 +794,7 @@ static void _draw_keypad( void )
 
                 y = offset_y + BUTTONS[ i ].y - small_descent;
 
-                write_text( x, y, BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ), colorfg, colorbg );
+                write_text( x, y, BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ), LEFT, BLACK );
             } // is_menu
         }
 
@@ -815,9 +803,6 @@ static void _draw_keypad( void )
             if ( BUTTONS[ i ].is_menu ) {
                 // draw the dark shade under the label
                 pw = opt_gx ? 58 : 44;
-
-                colorbg = UNDERLAY;
-                colorfg = RIGHT;
 
                 x = ( pw + 1 - SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) ) ) / 2;
                 y = opt_gx ? 14 : 8;
@@ -831,12 +816,9 @@ static void _draw_keypad( void )
                     y += offset_y + BUTTONS[ i ].y - small_ascent - small_descent;
                 }
 
-                write_text( x, y, BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ), colorfg, colorbg );
+                write_text( x, y, BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ), RIGHT, UNDERLAY );
             } // BUTTONS[i].is_menu
             else {
-                colorbg = BLACK;
-                colorfg = RIGHT;
-
                 if ( BUTTONS[ i ].left == ( char* )0 ) {
                     // centered label
                     x = offset_x + BUTTONS[ i ].x +
@@ -852,7 +834,7 @@ static void _draw_keypad( void )
 
                 y = offset_y + BUTTONS[ i ].y - small_descent;
 
-                write_text( x, y, BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ), colorfg, colorbg );
+                write_text( x, y, BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ), RIGHT, BLACK );
             }
         }
     }
