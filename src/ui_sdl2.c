@@ -691,9 +691,12 @@ static void _draw_keypad( void )
     int x, y;
     int pw = opt_gx ? 58 : 44;
     int ph = opt_gx ? 48 : 9;
-    int wl, wr, ws;
+    int left_label_width, right_label_width;
+    int space_char_width = SmallTextWidth( " ", 1 );
+    int total_top_labels_width;
 
     for ( int i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
+        // Background
         if ( BUTTONS[ i ].is_menu ) {
             x = KEYBOARD_OFFSET_X + BUTTONS[ i ].x;
             y = KEYBOARD_OFFSET_Y + BUTTONS[ i ].y - small_ascent - small_descent;
@@ -736,17 +739,17 @@ static void _draw_keypad( void )
             x = KEYBOARD_OFFSET_X + BUTTONS[ i ].x;
             y = KEYBOARD_OFFSET_Y + BUTTONS[ i ].y - small_descent;
 
+            left_label_width = SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) );
+
             if ( BUTTONS[ i ].right == ( char* )0 )
                 // centered label
-                x += ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) ) ) / 2;
+                x += ( 1 + BUTTONS[ i ].w - left_label_width ) / 2;
             else {
                 // label to the left
-                x -= 6;
-                /* wl = SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) ); */
-                /* wr = SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) ); */
-                /* ws = SmallTextWidth( " ", 1 ); */
+                right_label_width = SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) );
 
-                /* x += ( 1 + BUTTONS[ i ].w - ( wl + wr + ws ) ) / 2; */
+                /* x += ( 1 + BUTTONS[ i ].w - ( left_label_width + right_label_width + space_char_width ) ) / 2; */
+                x -= 6;
             }
 
             write_text( x, y, BUTTONS[ i ].left, LEFT, BUTTONS[ i ].is_menu ? UNDERLAY : PAD );
@@ -759,15 +762,14 @@ static void _draw_keypad( void )
 
             if ( BUTTONS[ i ].left == ( char* )0 )
                 // centered label
-                x += ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) ) ) / 2;
+                x += ( 1 + BUTTONS[ i ].w - right_label_width ) / 2;
             else {
                 // label to the right
-                wl = SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) );
-                /* wr = SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) ); */
-                ws = SmallTextWidth( " ", 1 );
+                /* x += ( 1 + BUTTONS[ i ].w - ( left_label_width + right_label_width + space_char_width ) ) / 2 + left_label_width +
+                 * space_char_width; */
 
-                /* x += ( 1 + BUTTONS[ i ].w - ( wl + wr + ws ) ) / 2 + wl + ws; */
-                x += ( wl + ws ) - 6;
+                x += ( left_label_width + space_char_width ) - 6;
+                /* x += BUTTONS[ i ].w - right_label_width; */
             }
 
             write_text( x, y, BUTTONS[ i ].right, RIGHT, PAD );
