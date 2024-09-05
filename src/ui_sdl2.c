@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL2_gfxPrimitives.h> /* rectangleColor(); stringColor(); */
+#include <SDL2/SDL2_gfxPrimitives.h> /* stringColor(); */
 
 #include "romio.h" /* opt_gx */
 #include "config.h"
@@ -544,154 +544,144 @@ static void _draw_header( void )
 
 static void __create_buttons( void )
 {
-    unsigned i, x, y;
-    unsigned pixel;
+    unsigned x, y;
 
-    for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
-        /* // Create surfaces for each button */
-        /* if ( !buttons_textures[ i ].on ) */
-        /*     buttons_textures[ i ].on = */
-        /*         SDL_CreateRGBSurface( SDL_SWSURFACE, BUTTONS[ i ].w, BUTTONS[ i ].h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000
-         * ); */
+    for ( int i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
+        // Create surfaces for each button
+        if ( !buttons_textures[ i ].on )
+            buttons_textures[ i ].on =
+                SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, BUTTONS[ i ].w, BUTTONS[ i ].h );
 
-        /* if ( !buttons_textures[ i ].off ) */
-        /*     buttons_textures[ i ].off = */
-        /*         SDL_CreateRGBSurface( SDL_SWSURFACE, BUTTONS[ i ].w, BUTTONS[ i ].h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000
-         * ); */
+        SDL_SetRenderTarget( renderer, buttons_textures[ i ].on );
 
-        /* // Use alpha channel */
-        /* pixel = 0x00000000; */
-        /* // pixel = 0xffff0000; */
+        // Fill the button and outline
+        __draw_rect( 0, 0, BUTTONS[ i ].w, BUTTONS[ i ].h, TRANSPARENT );
+        __draw_rect( 1, 1, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUTTON );
 
-        /* // Fill the button and outline */
-        /* SDL_FillRect( buttons_textures[ i ].on, 0, pixel ); */
-        /* SDL_FillRect( buttons_textures[ i ].off, 0, pixel ); */
+        // draw the released button
+        // draw edge of button
+        __draw_line( 1, BUTTONS[ i ].h - 2, 1, 1, BUT_TOP );
+        __draw_line( 2, BUTTONS[ i ].h - 3, 2, 2, BUT_TOP );
+        __draw_line( 3, BUTTONS[ i ].h - 4, 3, 3, BUT_TOP );
 
-        /* SDL_Rect rect; */
-        /* rect.x = 1; */
-        /* rect.y = 1; */
-        /* rect.w = BUTTONS[ i ].w - 2; */
-        /* rect.h = BUTTONS[ i ].h - 2; */
-        /* SDL_FillRect( buttons_textures[ i ].on, &rect, BUTTON ); */
-        /* SDL_FillRect( buttons_textures[ i ].off, &rect, BUTTON ); */
+        __draw_line( 1, 1, BUTTONS[ i ].w - 2, 1, BUT_TOP );
+        __draw_line( 2, 2, BUTTONS[ i ].w - 3, 2, BUT_TOP );
+        __draw_line( 3, 3, BUTTONS[ i ].w - 4, 3, BUT_TOP );
+        __draw_line( 4, 4, BUTTONS[ i ].w - 5, 4, BUT_TOP );
 
-        /* // draw the released button */
-        /* // draw edge of button */
-        /* lineColor( buttons_textures[ i ].on, 1, BUTTONS[ i ].h - 2, 1, 1, color2bgra( BUT_TOP ) ); */
-        /* lineColor( buttons_textures[ i ].on, 2, BUTTONS[ i ].h - 3, 2, 2, color2bgra( BUT_TOP ) ); */
-        /* lineColor( buttons_textures[ i ].on, 3, BUTTONS[ i ].h - 4, 3, 3, color2bgra( BUT_TOP ) ); */
+        __draw_pixel( 4, 5, BUT_TOP );
 
-        /* lineColor( buttons_textures[ i ].on, 1, 1, BUTTONS[ i ].w - 2, 1, color2bgra( BUT_TOP ) ); */
-        /* lineColor( buttons_textures[ i ].on, 2, 2, BUTTONS[ i ].w - 3, 2, color2bgra( BUT_TOP ) ); */
-        /* lineColor( buttons_textures[ i ].on, 3, 3, BUTTONS[ i ].w - 4, 3, color2bgra( BUT_TOP ) ); */
-        /* lineColor( buttons_textures[ i ].on, 4, 4, BUTTONS[ i ].w - 5, 4, color2bgra( BUT_TOP ) ); */
+        __draw_line( 3, BUTTONS[ i ].h - 2, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUT_BOT );
+        __draw_line( 4, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUT_BOT );
 
-        /* pixelColor( buttons_textures[ i ].on, 4, 5, color2bgra( BUT_TOP ) ); */
+        __draw_line( BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUTTONS[ i ].w - 2, 3, BUT_BOT );
+        __draw_line( BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, 4, BUT_BOT );
+        __draw_line( BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, 5, BUT_BOT );
+        __draw_pixel( BUTTONS[ i ].w - 5, BUTTONS[ i ].h - 4, BUT_BOT );
 
-        /* lineColor( buttons_textures[ i ].on, 3, BUTTONS[ i ].h - 2, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, color2bgra( BUT_BOT ) ); */
-        /* lineColor( buttons_textures[ i ].on, 4, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, color2bgra( BUT_BOT ) ); */
+        // draw frame around button
+        __draw_line( 0, BUTTONS[ i ].h - 3, 0, 2, FRAME );
+        __draw_line( 2, 0, BUTTONS[ i ].w - 3, 0, FRAME );
+        __draw_line( 2, BUTTONS[ i ].h - 1, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 1, FRAME );
+        __draw_line( BUTTONS[ i ].w - 1, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 1, 2, FRAME );
+        if ( i == HPKEY_ON ) {
+            __draw_line( 1, 1, BUTTONS[ 1 ].w - 2, 1, FRAME );
+            __draw_pixel( 1, 2, FRAME );
+            __draw_pixel( BUTTONS[ i ].w - 2, 2, FRAME );
+        } else {
+            __draw_pixel( 1, 1, FRAME );
+            __draw_pixel( BUTTONS[ i ].w - 2, 1, FRAME );
+        }
+        __draw_pixel( 1, BUTTONS[ i ].h - 2, FRAME );
+        __draw_pixel( BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, FRAME );
 
-        /* lineColor( buttons_textures[ i ].on, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUTTONS[ i ].w - 2, 3, color2bgra( BUT_BOT ) ); */
-        /* lineColor( buttons_textures[ i ].on, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, 4, color2bgra( BUT_BOT ) ); */
-        /* lineColor( buttons_textures[ i ].on, BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, 5, color2bgra( BUT_BOT ) ); */
-        /* pixelColor( buttons_textures[ i ].on, BUTTONS[ i ].w - 5, BUTTONS[ i ].h - 4, color2bgra( BUT_BOT ) ); */
+        if ( BUTTONS[ i ].label != ( char* )0 ) {
+            // Todo: use SDL_ttf to print "nice" fonts
 
-        /* // draw frame around button */
+            // for the time being use SDL_gfxPrimitives' font
+            x = ( BUTTONS[ i ].w - strlen( BUTTONS[ i ].label ) * 8 ) / 2;
+            y = ( BUTTONS[ i ].h + 1 ) / 2 - 4;
+            stringColor( renderer, x, y, BUTTONS[ i ].label, 0xffffffff );
+        }
+        // Pixmap centered in button
+        if ( BUTTONS[ i ].lw != 0 ) {
+            // Draw the surface on the center of the button
+            x = ( 1 + BUTTONS[ i ].w - BUTTONS[ i ].lw ) / 2;
+            y = ( 1 + BUTTONS[ i ].h - BUTTONS[ i ].lh ) / 2 + 1;
 
-        /* lineColor( buttons_textures[ i ].on, 0, BUTTONS[ i ].h - 3, 0, 2, color2bgra( FRAME ) ); */
-        /* lineColor( buttons_textures[ i ].on, 2, 0, BUTTONS[ i ].w - 3, 0, color2bgra( FRAME ) ); */
-        /* lineColor( buttons_textures[ i ].on, 2, BUTTONS[ i ].h - 1, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 1, color2bgra( FRAME ) ); */
-        /* lineColor( buttons_textures[ i ].on, BUTTONS[ i ].w - 1, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 1, 2, color2bgra( FRAME ) ); */
-        /* if ( i == HPKEY_ON ) { */
-        /*     lineColor( buttons_textures[ i ].on, 1, 1, BUTTONS[ 1 ].w - 2, 1, color2bgra( FRAME ) ); */
-        /*     pixelColor( buttons_textures[ i ].on, 1, 2, color2bgra( FRAME ) ); */
-        /*     pixelColor( buttons_textures[ i ].on, BUTTONS[ i ].w - 2, 2, color2bgra( FRAME ) ); */
-        /* } else { */
-        /*     pixelColor( buttons_textures[ i ].on, 1, 1, color2bgra( FRAME ) ); */
-        /*     pixelColor( buttons_textures[ i ].on, BUTTONS[ i ].w - 2, 1, color2bgra( FRAME ) ); */
-        /* } */
-        /* pixelColor( buttons_textures[ i ].on, 1, BUTTONS[ i ].h - 2, color2bgra( FRAME ) ); */
-        /* pixelColor( buttons_textures[ i ].on, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, color2bgra( FRAME ) ); */
+            __draw_bitmap( x, y, BUTTONS[ i ].lw, BUTTONS[ i ].lh, BUTTONS[ i ].lb, BUTTONS[ i ].lc, BUTTON );
+        }
 
-        /* // draw the depressed button */
+        // draw the depressed button
+        if ( !buttons_textures[ i ].off )
+            buttons_textures[ i ].off =
+                SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, BUTTONS[ i ].w, BUTTONS[ i ].h );
 
-        /* // draw edge of button */
-        /* lineColor( buttons_textures[ i ].off, 2, BUTTONS[ i ].h - 4, 2, 2, color2bgra( BUT_TOP ) ); */
-        /* lineColor( buttons_textures[ i ].off, 3, BUTTONS[ i ].h - 5, 3, 3, color2bgra( BUT_TOP ) ); */
-        /* lineColor( buttons_textures[ i ].off, 2, 2, BUTTONS[ i ].w - 4, 2, color2bgra( BUT_TOP ) ); */
-        /* lineColor( buttons_textures[ i ].off, 3, 3, BUTTONS[ i ].w - 5, 3, color2bgra( BUT_TOP ) ); */
-        /* pixelColor( buttons_textures[ i ].off, 4, 4, color2bgra( BUT_TOP ) ); */
+        SDL_SetRenderTarget( renderer, buttons_textures[ i ].off );
 
-        /* lineColor( buttons_textures[ i ].off, 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, color2bgra( BUT_BOT ) ); */
-        /* lineColor( buttons_textures[ i ].off, 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, color2bgra( BUT_BOT ) ); */
-        /* lineColor( buttons_textures[ i ].off, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, 3, color2bgra( BUT_BOT ) ); */
-        /* lineColor( buttons_textures[ i ].off, BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, 4, color2bgra( BUT_BOT ) ); */
-        /* pixelColor( buttons_textures[ i ].off, BUTTONS[ i ].w - 5, BUTTONS[ i ].h - 5, color2bgra( BUT_BOT ) ); */
+        __draw_rect( 0, 0, BUTTONS[ i ].w, BUTTONS[ i ].h, TRANSPARENT );
+        __draw_rect( 1, 1, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUTTON );
 
-        /* // draw frame around button */
-        /* lineColor( buttons_textures[ i ].off, 0, BUTTONS[ i ].h - 3, 0, 2, color2bgra( FRAME ) ); */
-        /* lineColor( buttons_textures[ i ].off, 2, 0, BUTTONS[ i ].w - 3, 0, color2bgra( FRAME ) ); */
-        /* lineColor( buttons_textures[ i ].off, 2, BUTTONS[ i ].h - 1, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 1, color2bgra( FRAME ) ); */
-        /* lineColor( buttons_textures[ i ].off, BUTTONS[ i ].w - 1, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 1, 2, color2bgra( FRAME ) ); */
+        // draw edge of button
+        __draw_line( 2, BUTTONS[ i ].h - 4, 2, 2, BUT_TOP );
+        __draw_line( 3, BUTTONS[ i ].h - 5, 3, 3, BUT_TOP );
+        __draw_line( 2, 2, BUTTONS[ i ].w - 4, 2, BUT_TOP );
+        __draw_line( 3, 3, BUTTONS[ i ].w - 5, 3, BUT_TOP );
+        __draw_pixel( 4, 4, BUT_TOP );
 
-        /* if ( i == HPKEY_ON ) { */
-        /*     lineColor( buttons_textures[ i ].off, 1, 1, BUTTONS[ i ].w - 2, 1, color2bgra( FRAME ) ); */
-        /*     pixelColor( buttons_textures[ i ].off, 1, 2, color2bgra( FRAME ) ); */
-        /*     pixelColor( buttons_textures[ i ].off, BUTTONS[ i ].w - 2, 2, color2bgra( FRAME ) ); */
-        /* } else { */
-        /*     pixelColor( buttons_textures[ i ].off, 1, 1, color2bgra( FRAME ) ); */
-        /*     pixelColor( buttons_textures[ i ].off, BUTTONS[ i ].w - 2, 1, color2bgra( FRAME ) ); */
-        /* } */
-        /* pixelColor( buttons_textures[ i ].off, 1, BUTTONS[ i ].h - 2, color2bgra( FRAME ) ); */
-        /* pixelColor( buttons_textures[ i ].off, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, color2bgra( FRAME ) ); */
-        /* if ( i == HPKEY_ON ) { */
-        /*     rectangleColor( buttons_textures[ i ].off, 1, 2, 1 + BUTTONS[ i ].w - 3, 2 + BUTTONS[ i ].h - 4, color2bgra( FRAME ) ); */
-        /*     pixelColor( buttons_textures[ i ].off, 2, 3, color2bgra( FRAME ) ); */
-        /*     pixelColor( buttons_textures[ i ].off, BUTTONS[ i ].w - 3, 3, color2bgra( FRAME ) ); */
-        /* } else { */
-        /*     rectangleColor( buttons_textures[ i ].off, 1, 1, 1 + BUTTONS[ i ].w - 3, 1 + BUTTONS[ i ].h - 3, color2bgra( FRAME ) ); */
-        /*     pixelColor( buttons_textures[ i ].off, 2, 2, color2bgra( FRAME ) ); */
-        /*     pixelColor( buttons_textures[ i ].off, BUTTONS[ i ].w - 3, 2, color2bgra( FRAME ) ); */
-        /* } */
-        /* pixelColor( buttons_textures[ i ].off, 2, BUTTONS[ i ].h - 3, color2bgra( FRAME ) ); */
-        /* pixelColor( buttons_textures[ i ].off, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, color2bgra( FRAME ) ); */
+        __draw_line( 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUT_BOT );
+        __draw_line( 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUT_BOT );
+        __draw_line( BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, 3, BUT_BOT );
+        __draw_line( BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, 4, BUT_BOT );
+        __draw_pixel( BUTTONS[ i ].w - 5, BUTTONS[ i ].h - 5, BUT_BOT );
 
-        /* if ( BUTTONS[ i ].label != ( char* )0 ) { */
-        /*     // Todo: use SDL_ttf to print "nice" fonts */
+        // draw frame around button
+        __draw_line( 0, BUTTONS[ i ].h - 3, 0, 2, FRAME );
+        __draw_line( 2, 0, BUTTONS[ i ].w - 3, 0, FRAME );
+        __draw_line( 2, BUTTONS[ i ].h - 1, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 1, FRAME );
+        __draw_line( BUTTONS[ i ].w - 1, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 1, 2, FRAME );
 
-        /*     // for the time being use SDL_gfxPrimitives' font */
-        /*     x = ( BUTTONS[ i ].w - strlen( BUTTONS[ i ].label ) * 8 ) / 2; */
-        /*     y = ( BUTTONS[ i ].h + 1 ) / 2 - 4; */
-        /*     stringColor( buttons_textures[ i ].on, x, y, BUTTONS[ i ].label, 0xffffffff ); */
-        /*     stringColor( buttons_textures[ i ].off, x, y, BUTTONS[ i ].label, 0xffffffff ); */
-        /* } */
-        /* // Pixmap centered in button */
-        /* if ( BUTTONS[ i ].lw != 0 ) { */
-        /*     // If there's a bitmap, try to plot this */
-        /*     unsigned colorbg = BUTTON; */
-        /*     unsigned colorfg = BUTTONS[ i ].lc; */
+        if ( i == HPKEY_ON ) {
+            __draw_line( 1, 1, BUTTONS[ i ].w - 2, 1, FRAME );
+            __draw_pixel( 1, 2, FRAME );
+            __draw_pixel( BUTTONS[ i ].w - 2, 2, FRAME );
+        } else {
+            __draw_pixel( 1, 1, FRAME );
+            __draw_pixel( BUTTONS[ i ].w - 2, 1, FRAME );
+        }
+        __draw_pixel( 1, BUTTONS[ i ].h - 2, FRAME );
+        __draw_pixel( BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, FRAME );
+        if ( i == HPKEY_ON ) {
+            __draw_rect( 1, 2, 1 + BUTTONS[ i ].w - 3, 2 + BUTTONS[ i ].h - 4, FRAME );
+            __draw_pixel( 2, 3, FRAME );
+            __draw_pixel( BUTTONS[ i ].w - 3, 3, FRAME );
+        } else {
+            __draw_rect( 1, 1, 1 + BUTTONS[ i ].w - 3, 1 + BUTTONS[ i ].h - 3, FRAME );
+            __draw_pixel( 2, 2, FRAME );
+            __draw_pixel( BUTTONS[ i ].w - 3, 2, FRAME );
+        }
+        __draw_pixel( 2, BUTTONS[ i ].h - 3, FRAME );
+        __draw_pixel( BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, FRAME );
 
-        /*     // Blit the label surface to the button */
-        /*     SDL_Surface* surf; */
-        /*     surf = bitmap_to_surface( BUTTONS[ i ].lw, BUTTONS[ i ].lh, BUTTONS[ i ].lb, colorfg, colorbg ); */
-        /*     // Draw the surface on the center of the button */
-        /*     x = ( 1 + BUTTONS[ i ].w - BUTTONS[ i ].lw ) / 2; */
-        /*     y = ( 1 + BUTTONS[ i ].h - BUTTONS[ i ].lh ) / 2 + 1; */
-        /*     SDL_Rect srect; */
-        /*     SDL_Rect drect; */
-        /*     srect.x = 0; */
-        /*     srect.y = 0; */
-        /*     srect.w = BUTTONS[ i ].lw; */
-        /*     srect.h = BUTTONS[ i ].lh; */
-        /*     drect.x = x; */
-        /*     drect.y = y; */
-        /*     drect.w = BUTTONS[ i ].lw; */
-        /*     drect.h = BUTTONS[ i ].lh; */
-        /*     SDL_BlitSurface( surf, &srect, buttons_textures[ i ].off, &drect ); */
-        /*     SDL_BlitSurface( surf, &srect, buttons_textures[ i ].on, &drect ); */
-        /*     SDL_FreeSurface( surf ); */
-        /* } */
+        if ( BUTTONS[ i ].label != ( char* )0 ) {
+            // Todo: use SDL_ttf to print "nice" fonts
+
+            // for the time being use SDL_gfxPrimitives' font
+            x = ( BUTTONS[ i ].w - strlen( BUTTONS[ i ].label ) * 8 ) / 2;
+            y = ( BUTTONS[ i ].h + 1 ) / 2 - 4;
+            stringColor( renderer, x, y, BUTTONS[ i ].label, 0xffffffff );
+        }
+        // Pixmap centered in button
+        if ( BUTTONS[ i ].lw != 0 ) {
+            // Draw the surface on the center of the button
+            x = ( 1 + BUTTONS[ i ].w - BUTTONS[ i ].lw ) / 2;
+            y = ( 1 + BUTTONS[ i ].h - BUTTONS[ i ].lh ) / 2 + 1;
+
+            __draw_bitmap( x, y, BUTTONS[ i ].lw, BUTTONS[ i ].lh, BUTTONS[ i ].lb, BUTTONS[ i ].lc, BUTTON );
+        }
     }
+
+    SDL_SetRenderTarget( renderer, NULL );
 }
 
 static void __draw_buttons( void )
