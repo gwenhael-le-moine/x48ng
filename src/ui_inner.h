@@ -49,7 +49,7 @@ typedef struct button_t {
     const char* name;
 
     int x, y;
-    unsigned int w, h;
+    int w, h;
 
     int lc;
     const char* label;
