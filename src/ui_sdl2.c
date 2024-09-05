@@ -40,8 +40,8 @@
 /* typedef */
 /***********/
 typedef struct on_off_sdl_textures_struct_t {
-    SDL_Texture* on;
-    SDL_Texture* off;
+    SDL_Texture* up;
+    SDL_Texture* down;
 } on_off_sdl_textures_struct_t;
 
 /*************/
@@ -55,7 +55,7 @@ static on_off_sdl_textures_struct_t annunciators_textures[ NB_ANNUNCIATORS ];
 
 // State to displayed zoomed last pressed key
 /* static SDL_Texture* showkeylast_texture = 0; */
-/* static int showkeylastx, showkeylasty, showkeylastkey; */
+static int showkeylastx, showkeylasty, showkeylastkey;
 
 static SDL_Window* window;
 static SDL_Renderer* renderer;
@@ -193,8 +193,8 @@ static void colors_setup( void )
 static void create_annunciators_textures( void )
 {
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
-        annunciators_textures[ i ].on = bitmap_to_texture( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, PIXEL, LCD );
-        annunciators_textures[ i ].off = bitmap_to_texture( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, LCD, LCD );
+        annunciators_textures[ i ].up = bitmap_to_texture( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, PIXEL, LCD );
+        annunciators_textures[ i ].down = bitmap_to_texture( ann_tbl[ i ].width, ann_tbl[ i ].height, ann_tbl[ i ].bits, LCD, LCD );
     }
 }
 
@@ -542,11 +542,11 @@ static void create_buttons_textures( void )
 
     for ( int i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
         // Create surfaces for each button
-        if ( !buttons_textures[ i ].on )
-            buttons_textures[ i ].on =
+        if ( !buttons_textures[ i ].up )
+            buttons_textures[ i ].up =
                 SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, BUTTONS[ i ].w, BUTTONS[ i ].h );
 
-        SDL_SetRenderTarget( renderer, buttons_textures[ i ].on );
+        SDL_SetRenderTarget( renderer, buttons_textures[ i ].up );
 
         // Fill the button and outline
         __draw_rect( 0, 0, BUTTONS[ i ].w, BUTTONS[ i ].h, TRANSPARENT );
@@ -607,11 +607,11 @@ static void create_buttons_textures( void )
         }
 
         // draw the depressed button
-        if ( !buttons_textures[ i ].off )
-            buttons_textures[ i ].off =
+        if ( !buttons_textures[ i ].down )
+            buttons_textures[ i ].down =
                 SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, BUTTONS[ i ].w, BUTTONS[ i ].h );
 
-        SDL_SetRenderTarget( renderer, buttons_textures[ i ].off );
+        SDL_SetRenderTarget( renderer, buttons_textures[ i ].down );
 
         __draw_rect( 0, 0, BUTTONS[ i ].w, BUTTONS[ i ].h, TRANSPARENT );
         __draw_rect( 1, 1, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUTTON );
@@ -679,11 +679,22 @@ static void create_buttons_textures( void )
     SDL_SetRenderTarget( renderer, main_texture );
 }
 
+static void _draw_key( int hpkey )
+{
+    int x = KEYBOARD_OFFSET_X + BUTTONS[ hpkey ].x;
+    int y = KEYBOARD_OFFSET_Y + BUTTONS[ hpkey ].y;
+    if ( keyboard[ hpkey ].pressed ) {
+        x += 1;
+        y += 2;
+    }
+    __draw_texture( x, y, BUTTONS[ hpkey ].w, BUTTONS[ hpkey ].h,
+                    keyboard[ hpkey ].pressed ? buttons_textures[ hpkey ].down : buttons_textures[ hpkey ].up );
+}
+
 static void _draw_keys( void )
 {
     for ( int i = FIRST_HPKEY; i <= LAST_HPKEY; i++ )
-        __draw_texture( KEYBOARD_OFFSET_X + BUTTONS[ i ].x, KEYBOARD_OFFSET_Y + BUTTONS[ i ].y, BUTTONS[ i ].w, BUTTONS[ i ].h,
-                        keyboard[ i ].pressed ? buttons_textures[ i ].off : buttons_textures[ i ].on );
+        _draw_key( i );
 }
 
 static void _draw_keypad( void )
@@ -762,9 +773,8 @@ static void _draw_keypad( void )
             if ( BUTTONS[ i ].left == ( char* )0 ) {
                 right_label_width = SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) );
                 total_top_labels_width = right_label_width;
-            } else {
+            } else
                 x += space_char_width + left_label_width;
-            }
 
             x += ( 1 + BUTTONS[ i ].w - total_top_labels_width ) / 2;
 
@@ -833,79 +843,79 @@ static void _draw_background( int width, int height, int w_top, int h_top )
 
 static void _draw_background_LCD( void ) { __draw_rect( display_offset_x, display_offset_y, DISPLAY_WIDTH, DISPLAY_HEIGHT, LCD ); }
 
-/* // Show the hp key which is being pressed */
-/* static void _show_key( int hpkey ) */
-/* { */
-/*     SDL_Rect srect, drect; */
-/*     SDL_Surface* ssurf; */
-/*     int x; */
-/*     int y; */
+// Show the hp key which is being pressed
+static void _show_key( int hpkey )
+{
+    if ( hpkey < 0 )
+        return;
 
-/*     // If we're called with the same key as before, do nothing */
-/*     if ( showkeylastkey == hpkey ) */
-/*         return; */
+    // If we're called with the same key as before, do nothing
+    if ( showkeylastkey == hpkey )
+        return;
 
-/*     showkeylastkey = hpkey; */
+    showkeylastkey = hpkey;
 
-/*     // Starts by hiding last */
-/*     if ( showkeylast_texture != 0 ) { */
-/*         drect.x = showkeylastx; */
-/*         drect.y = showkeylasty; */
-/*         SDL_BlitSurface( showkeylast_texture, 0, window, &drect ); */
+    /* SDL_Rect srect, drect; */
+    /* SDL_Surface* ssurf; */
+    int x = 0;
+    int y = 0;
 
-/*         // Update */
-/*         SDL_UpdateRect( window, showkeylastx, showkeylasty, showkeylast_texture->w, showkeylast_texture->h ); */
+    /* // Starts by hiding last */
+    /* if ( showkeylast_texture != 0 ) { */
+    /*     drect.x = showkeylastx; */
+    /*     drect.y = showkeylasty; */
+    /*     SDL_BlitSurface( showkeylast_texture, 0, window, &drect ); */
 
-/*         // Free */
-/*         SDL_FreeSurface( showkeylast_texture ); */
-/*         showkeylast_texture = 0; */
-/*     } */
+    /*     // Update */
+    /*     SDL_UpdateRect( window, showkeylastx, showkeylasty, showkeylast_texture->w, showkeylast_texture->h ); */
 
-/*     if ( hpkey == -1 ) */
-/*         return; */
+    /*     // Free */
+    /*     SDL_FreeSurface( showkeylast_texture ); */
+    /*     showkeylast_texture = 0; */
+    /* } */
 
-/*     // Which surface to show */
-/*     ssurf = ( keyboard[ hpkey ].pressed ) ? buttons_textures[ hpkey ].off : buttons_textures[ hpkey ].on; */
+    /* // Which surface to show */
+    /* ssurf = ( keyboard[ hpkey ].pressed ) ? buttons_textures[ hpkey ].down : buttons_textures[ hpkey ].up; */
 
-/*     // Background backup */
-/*     showkeylast_texture = SDL_CreateRGBSurface( SDL_SWSURFACE, ssurf->w, ssurf->h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 );
- */
+    /* // Background backup */
+    /* showkeylast_texture = SDL_CreateRGBSurface( SDL_SWSURFACE, ssurf->w, ssurf->h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 );
+     */
 
-/*     // Where to */
-/*     x = KEYBOARD_OFFSET_X + BUTTONS[ hpkey ].x - ( ssurf->w - ssurf->w + 1 ) / 2; */
-/*     y = KEYBOARD_OFFSET_Y + BUTTONS[ hpkey ].y - ( ssurf->h - ssurf->h + 1 ) / 2; */
-/*     // blitting does not clip to screen, so if we are out of the screen we */
-/*     // shift the button to fit */
-/*     if ( x < 0 ) */
-/*         x = 0; */
-/*     if ( y < 0 ) */
-/*         y = 0; */
-/*     if ( x + ssurf->w > window->w ) */
-/*         x = window->w - ssurf->w; */
-/*     if ( y + ssurf->h > window->h ) */
-/*         y = window->h - ssurf->h; */
+    /* // Where to */
+    /* x = KEYBOARD_OFFSET_X + BUTTONS[ hpkey ].x - ( ssurf->w - ssurf->w + 1 ) / 2; */
+    /* y = KEYBOARD_OFFSET_Y + BUTTONS[ hpkey ].y - ( ssurf->h - ssurf->h + 1 ) / 2; */
+    /* // blitting does not clip to screen, so if we are out of the screen we */
+    /* // shift the button to fit */
+    /* if ( x < 0 ) */
+    /*     x = 0; */
+    /* if ( y < 0 ) */
+    /*     y = 0; */
+    /* if ( x + ssurf->w > window->w ) */
+    /*     x = window->w - ssurf->w; */
+    /* if ( y + ssurf->h > window->h ) */
+    /*     y = window->h - ssurf->h; */
 
-/*     // Backup where to */
-/*     showkeylastx = x; */
-/*     showkeylasty = y; */
+    // Backup where to
+    showkeylastx = x;
+    showkeylasty = y;
 
-/*     // Backup old surface */
-/*     srect.x = x; */
-/*     srect.y = y; */
-/*     srect.w = ssurf->w; */
-/*     srect.h = ssurf->h; */
-/*     drect.x = 0; */
-/*     drect.y = 0; */
-/*     SDL_BlitSurface( window, &srect, showkeylast_texture, &drect ); */
+    /* // Backup old surface */
+    /* srect.x = x; */
+    /* srect.y = y; */
+    /* srect.w = ssurf->w; */
+    /* srect.h = ssurf->h; */
+    /* drect.x = 0; */
+    /* drect.y = 0; */
+    /* SDL_BlitSurface( window, &srect, showkeylast_texture, &drect ); */
 
-/*     // Blit the button */
-/*     drect.x = x; */
-/*     drect.y = y; */
-/*     SDL_BlitSurface( ssurf, 0, window, &drect ); */
+    /* // Blit the button */
+    /* drect.x = x; */
+    /* drect.y = y; */
+    /* SDL_BlitSurface( ssurf, 0, window, &drect ); */
 
-/*     // Update */
-/*     SDL_UpdateRect( window, x, y, ssurf->w, ssurf->h ); */
-/* } */
+    /* // Update */
+    /* SDL_UpdateRect( window, x, y, ssurf->w, ssurf->h ); */
+}
 
 static void _draw_serial_devices_path( void )
 {
@@ -1062,10 +1072,8 @@ void sdl_get_event( void )
     }
 
     // Display button being pressed, if any
-    /* if ( !config.hide_chrome ) */
-    /*     _show_key( pressed_hpkey ); */
-    if ( !config.hide_chrome && pressed_hpkey > 0 )
-        _draw_keys();
+    if ( !config.hide_chrome && pressed_hpkey != 1 )
+        _show_key( pressed_hpkey );
 }
 
 void sdl_update_LCD( void )
@@ -1143,7 +1151,7 @@ void sdl_draw_annunc( void )
         annunc_state = ( ( annunciators_bits[ i ] & saturn.annunc ) == annunciators_bits[ i ] );
 
         __draw_texture( display_offset_x + ann_tbl[ i ].x, display_offset_y + ann_tbl[ i ].y, ann_tbl[ i ].width, ann_tbl[ i ].height,
-                        ( annunc_state ) ? annunciators_textures[ i ].on : annunciators_textures[ i ].off );
+                        ( annunc_state ) ? annunciators_textures[ i ].up : annunciators_textures[ i ].down );
     }
 
     // Always immediately update annunciators
