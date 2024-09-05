@@ -2,7 +2,7 @@ name: C/C++ CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
   pull_request:
     branches: [ "main" ]
 
@@ -16,12 +16,14 @@ jobs:
     - name: update deps
       run: sudo apt-get -y update
     - name: install deps
-      run: sudo apt install pkgconf libreadline-dev libsdl1.2-compat-dev libsdl-gfx1.2-dev libx11-dev libxext-dev liblua5.4-dev
+      run: sudo apt install pkgconf libreadline-dev libsdl1.2-compat-dev libsdl-gfx1.2-dev libsdl2-gfx-dev libsdl2-dev libx11-dev libxext-dev liblua5.4-dev
     - name: make standard
       run: make clean-all && make
-    - name: make without sdl
-      run: make clean-all && make WITH_SDL=no
+    - name: make sdl1.2 version
+      run: make clean-all && make WITH_SDL2=no WITH_SDL=yes
+    - name: make without any sdl
+      run: make clean-all && make WITH_SDL2=no WITH_SDL=no
     - name: make without x11
       run: make clean-all && make WITH_X11=no
     - name: make with neither x11 nor sdl
-      run: make clean-all && make WITH_X11=no WITH_SDL=no
+      run: make clean-all && make WITH_X11=no WITH_SDL2=no WITH_SDL=no
