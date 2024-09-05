@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL2_gfxPrimitives.h> /* lineColor(); pixelColor(); rectangleColor();stringColor(); */
+#include <SDL2/SDL2_gfxPrimitives.h> /* rectangleColor(); stringColor(); */
 
 #include "romio.h" /* opt_gx */
 #include "config.h"
@@ -106,6 +106,18 @@ static SDL_Texture* bitmap_to_texture( unsigned int w, unsigned int h, unsigned 
     SDL_FreeSurface( surf );
 
     return tex;
+}
+
+static void __draw_pixel( int x, int y, int color )
+{
+    SDL_SetRenderDrawColor( renderer, colors[ color ].r, colors[ color ].g, colors[ color ].b, 255 );
+    SDL_RenderDrawPoint( renderer, x, y );
+}
+
+static void __draw_line( int x1, int y1, int x2, int y2, int color )
+{
+    SDL_SetRenderDrawColor( renderer, colors[ color ].r, colors[ color ].g, colors[ color ].b, 255 );
+    SDL_RenderDrawLine( renderer, x1, y1, x2, y2 );
 }
 
 static void __draw_rect( int x, int y, int w, int h, int color )
@@ -399,85 +411,85 @@ static int sdlkey_to_hpkey( SDL_Keycode k )
 static void _draw_bezel( unsigned int cut, unsigned int offset_y, int keypad_width, int keypad_height )
 {
     // bottom lines
-    lineColor( renderer, 1, keypad_height - 1, keypad_width - 1, keypad_height - 1, color2bgra( PAD_TOP ) );
-    lineColor( renderer, 2, keypad_height - 2, keypad_width - 2, keypad_height - 2, color2bgra( PAD_TOP ) );
+    __draw_line( 1, keypad_height - 1, keypad_width - 1, keypad_height - 1, PAD_TOP );
+    __draw_line( 2, keypad_height - 2, keypad_width - 2, keypad_height - 2, PAD_TOP );
 
     // right lines
-    lineColor( renderer, keypad_width - 1, keypad_height - 1, keypad_width - 1, cut, color2bgra( PAD_TOP ) );
-    lineColor( renderer, keypad_width - 2, keypad_height - 2, keypad_width - 2, cut, color2bgra( PAD_TOP ) );
+    __draw_line( keypad_width - 1, keypad_height - 1, keypad_width - 1, cut, PAD_TOP );
+    __draw_line( keypad_width - 2, keypad_height - 2, keypad_width - 2, cut, PAD_TOP );
 
     // right lines
-    lineColor( renderer, keypad_width - 1, cut - 1, keypad_width - 1, 1, color2bgra( DISP_PAD_TOP ) );
-    lineColor( renderer, keypad_width - 2, cut - 1, keypad_width - 2, 2, color2bgra( DISP_PAD_TOP ) );
+    __draw_line( keypad_width - 1, cut - 1, keypad_width - 1, 1, DISP_PAD_TOP );
+    __draw_line( keypad_width - 2, cut - 1, keypad_width - 2, 2, DISP_PAD_TOP );
 
     // top lines
-    lineColor( renderer, 0, 0, keypad_width - 2, 0, color2bgra( DISP_PAD_BOT ) );
-    lineColor( renderer, 1, 1, keypad_width - 3, 1, color2bgra( DISP_PAD_BOT ) );
+    __draw_line( 0, 0, keypad_width - 2, 0, DISP_PAD_BOT );
+    __draw_line( 1, 1, keypad_width - 3, 1, DISP_PAD_BOT );
 
     // left lines
-    lineColor( renderer, 0, cut - 1, 0, 0, color2bgra( DISP_PAD_BOT ) );
-    lineColor( renderer, 1, cut - 1, 1, 1, color2bgra( DISP_PAD_BOT ) );
+    __draw_line( 0, cut - 1, 0, 0, DISP_PAD_BOT );
+    __draw_line( 1, cut - 1, 1, 1, DISP_PAD_BOT );
 
     // left lines
-    lineColor( renderer, 0, keypad_height - 2, 0, cut, color2bgra( PAD_BOT ) );
-    lineColor( renderer, 1, keypad_height - 3, 1, cut, color2bgra( PAD_BOT ) );
+    __draw_line( 0, keypad_height - 2, 0, cut, PAD_BOT );
+    __draw_line( 1, keypad_height - 3, 1, cut, PAD_BOT );
 
     // lower the menu BUTTONS
 
     // bottom lines
-    lineColor( renderer, 3, keypad_height - 3, keypad_width - 3, keypad_height - 3, color2bgra( PAD_TOP ) );
-    lineColor( renderer, 4, keypad_height - 4, keypad_width - 4, keypad_height - 4, color2bgra( PAD_TOP ) );
+    __draw_line( 3, keypad_height - 3, keypad_width - 3, keypad_height - 3, PAD_TOP );
+    __draw_line( 4, keypad_height - 4, keypad_width - 4, keypad_height - 4, PAD_TOP );
 
     // right lines
-    lineColor( renderer, keypad_width - 3, keypad_height - 3, keypad_width - 3, cut, color2bgra( PAD_TOP ) );
-    lineColor( renderer, keypad_width - 4, keypad_height - 4, keypad_width - 4, cut, color2bgra( PAD_TOP ) );
+    __draw_line( keypad_width - 3, keypad_height - 3, keypad_width - 3, cut, PAD_TOP );
+    __draw_line( keypad_width - 4, keypad_height - 4, keypad_width - 4, cut, PAD_TOP );
 
     // right lines
-    lineColor( renderer, keypad_width - 3, cut - 1, keypad_width - 3, offset_y - ( KBD_UPLINE - 1 ), color2bgra( DISP_PAD_TOP ) );
-    lineColor( renderer, keypad_width - 4, cut - 1, keypad_width - 4, offset_y - ( KBD_UPLINE - 2 ), color2bgra( DISP_PAD_TOP ) );
+    __draw_line( keypad_width - 3, cut - 1, keypad_width - 3, offset_y - ( KBD_UPLINE - 1 ), DISP_PAD_TOP );
+    __draw_line( keypad_width - 4, cut - 1, keypad_width - 4, offset_y - ( KBD_UPLINE - 2 ), DISP_PAD_TOP );
 
     // top lines
-    lineColor( renderer, 2, offset_y - ( KBD_UPLINE - 0 ), keypad_width - 4, offset_y - ( KBD_UPLINE - 0 ), color2bgra( DISP_PAD_BOT ) );
-    lineColor( renderer, 3, offset_y - ( KBD_UPLINE - 1 ), keypad_width - 5, offset_y - ( KBD_UPLINE - 1 ), color2bgra( DISP_PAD_BOT ) );
+    __draw_line( 2, offset_y - ( KBD_UPLINE - 0 ), keypad_width - 4, offset_y - ( KBD_UPLINE - 0 ), DISP_PAD_BOT );
+    __draw_line( 3, offset_y - ( KBD_UPLINE - 1 ), keypad_width - 5, offset_y - ( KBD_UPLINE - 1 ), DISP_PAD_BOT );
 
     // left lines
-    lineColor( renderer, 2, cut - 1, 2, offset_y - ( KBD_UPLINE - 1 ), color2bgra( DISP_PAD_BOT ) );
-    lineColor( renderer, 3, cut - 1, 3, offset_y - ( KBD_UPLINE - 2 ), color2bgra( DISP_PAD_BOT ) );
+    __draw_line( 2, cut - 1, 2, offset_y - ( KBD_UPLINE - 1 ), DISP_PAD_BOT );
+    __draw_line( 3, cut - 1, 3, offset_y - ( KBD_UPLINE - 2 ), DISP_PAD_BOT );
 
     // left lines
-    lineColor( renderer, 2, keypad_height - 4, 2, cut, color2bgra( PAD_BOT ) );
-    lineColor( renderer, 3, keypad_height - 5, 3, cut, color2bgra( PAD_BOT ) );
+    __draw_line( 2, keypad_height - 4, 2, cut, PAD_BOT );
+    __draw_line( 3, keypad_height - 5, 3, cut, PAD_BOT );
 
     // lower the keyboard
 
     // bottom lines
-    lineColor( renderer, 5, keypad_height - 5, keypad_width - 3, keypad_height - 5, color2bgra( PAD_TOP ) );
-    lineColor( renderer, 6, keypad_height - 6, keypad_width - 4, keypad_height - 6, color2bgra( PAD_TOP ) );
+    __draw_line( 5, keypad_height - 5, keypad_width - 3, keypad_height - 5, PAD_TOP );
+    __draw_line( 6, keypad_height - 6, keypad_width - 4, keypad_height - 6, PAD_TOP );
 
     // right lines
-    lineColor( renderer, keypad_width - 5, keypad_height - 5, keypad_width - 5, cut + 1, color2bgra( PAD_TOP ) );
-    lineColor( renderer, keypad_width - 6, keypad_height - 6, keypad_width - 6, cut + 2, color2bgra( PAD_TOP ) );
+    __draw_line( keypad_width - 5, keypad_height - 5, keypad_width - 5, cut + 1, PAD_TOP );
+    __draw_line( keypad_width - 6, keypad_height - 6, keypad_width - 6, cut + 2, PAD_TOP );
 
     // top lines
-    lineColor( renderer, 4, cut, keypad_width - 6, cut, color2bgra( DISP_PAD_BOT ) );
-    lineColor( renderer, 5, cut + 1, keypad_width - 7, cut + 1, color2bgra( DISP_PAD_BOT ) );
+    __draw_line( 4, cut, keypad_width - 6, cut, DISP_PAD_BOT );
+    __draw_line( 5, cut + 1, keypad_width - 7, cut + 1, DISP_PAD_BOT );
 
     // left lines
-    lineColor( renderer, 4, keypad_height - 6, 4, cut + 1, color2bgra( PAD_BOT ) );
-    lineColor( renderer, 5, keypad_height - 7, 5, cut + 2, color2bgra( PAD_BOT ) );
+    __draw_line( 4, keypad_height - 6, 4, cut + 1, PAD_BOT );
+    __draw_line( 5, keypad_height - 7, 5, cut + 2, PAD_BOT );
 
     // round off the bottom edge
-    lineColor( renderer, keypad_width - 7, keypad_height - 7, keypad_width - 7, keypad_height - 14, color2bgra( PAD_TOP ) );
-    lineColor( renderer, keypad_width - 8, keypad_height - 8, keypad_width - 8, keypad_height - 11, color2bgra( PAD_TOP ) );
-    lineColor( renderer, keypad_width - 7, keypad_height - 7, keypad_width - 14, keypad_height - 7, color2bgra( PAD_TOP ) );
-    lineColor( renderer, keypad_width - 7, keypad_height - 8, keypad_width - 11, keypad_height - 8, color2bgra( PAD_TOP ) );
-    pixelColor( renderer, keypad_width - 9, keypad_height - 9, color2bgra( PAD_TOP ) );
+    __draw_line( keypad_width - 7, keypad_height - 7, keypad_width - 7, keypad_height - 14, PAD_TOP );
+    __draw_line( keypad_width - 8, keypad_height - 8, keypad_width - 8, keypad_height - 11, PAD_TOP );
+    __draw_line( keypad_width - 7, keypad_height - 7, keypad_width - 14, keypad_height - 7, PAD_TOP );
+    __draw_line( keypad_width - 7, keypad_height - 8, keypad_width - 11, keypad_height - 8, PAD_TOP );
+    __draw_pixel( keypad_width - 9, keypad_height - 9, PAD_TOP );
 
-    lineColor( renderer, 7, keypad_height - 7, 13, keypad_height - 7, color2bgra( PAD_TOP ) );
-    lineColor( renderer, 8, keypad_height - 8, 10, keypad_height - 8, color2bgra( PAD_TOP ) );
+    __draw_line( 7, keypad_height - 7, 13, keypad_height - 7, PAD_TOP );
+    __draw_line( 8, keypad_height - 8, 10, keypad_height - 8, PAD_TOP );
 
-    lineColor( renderer, 6, keypad_height - 8, 6, keypad_height - 14, color2bgra( PAD_BOT ) );
-    lineColor( renderer, 7, keypad_height - 9, 7, keypad_height - 11, color2bgra( PAD_BOT ) );
+    __draw_line( 6, keypad_height - 8, 6, keypad_height - 14, PAD_BOT );
+    __draw_line( 7, keypad_height - 9, 7, keypad_height - 11, PAD_BOT );
 }
 
 static void _draw_header( void )
@@ -492,10 +504,10 @@ static void _draw_header( void )
     __draw_bitmap( x, 10, hp_width, hp_height, hp_bitmap, LOGO, LOGO_BACK );
 
     if ( !opt_gx ) {
-        lineColor( renderer, display_offset_x, 9, display_offset_x + hp_width - 1, 9, color2bgra( FRAME ) );
-        lineColor( renderer, display_offset_x - 1, 10, display_offset_x - 1, 10 + hp_height - 1, color2bgra( FRAME ) );
-        lineColor( renderer, display_offset_x, 10 + hp_height, display_offset_x + hp_width - 1, 10 + hp_height, color2bgra( FRAME ) );
-        lineColor( renderer, display_offset_x + hp_width, 10, display_offset_x + hp_width, 10 + hp_height - 1, color2bgra( FRAME ) );
+        __draw_line( display_offset_x, 9, display_offset_x + hp_width - 1, 9, FRAME );
+        __draw_line( display_offset_x - 1, 10, display_offset_x - 1, 10 + hp_height - 1, FRAME );
+        __draw_line( display_offset_x, 10 + hp_height, display_offset_x + hp_width - 1, 10 + hp_height, FRAME );
+        __draw_line( display_offset_x + hp_width, 10, display_offset_x + hp_width, 10 + hp_height - 1, FRAME );
     }
 
     // write the name of it
@@ -701,162 +713,148 @@ static void _draw_keypad( void )
     int i, x, y;
     int offset_y = KEYBOARD_OFFSET_Y;
     int offset_x = KEYBOARD_OFFSET_X;
-    SDL_Rect rect;
-    unsigned color;
     unsigned pw, ph;
     unsigned colorbg, colorfg;
     int wl, wr, ws;
 
-    __create_buttons();
+       __create_buttons();
 
-    // SDLDrawKeyMenu();
     for ( i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
-        /* if ( BUTTONS[ i ].is_menu ) { */
-        /*     // draw the dark shade under the label */
-        /*     pw = opt_gx ? 58 : 44; */
-        /*     ph = opt_gx ? 48 : 9; */
+        if ( BUTTONS[ i ].is_menu ) {
+            // draw the dark shade under the label
+            pw = opt_gx ? 58 : 44;
+            ph = opt_gx ? 48 : 9;
 
-        /*     color = UNDERLAY; */
+            // Set the coordinates to absolute
+            if ( opt_gx ) {
+                x = offset_x + BUTTONS[ i ].x - 6;
+                y = offset_y + BUTTONS[ i ].y - small_ascent - small_descent - 6;
+            } else {
+                x = offset_x + BUTTONS[ i ].x + ( BUTTONS[ i ].w - pw ) / 2;
+                y = offset_y + BUTTONS[ i ].y - small_ascent - small_descent;
+            }
 
-        /*     // Set the coordinates to absolute */
-        /*     if ( opt_gx ) { */
-        /*         x = offset_x + BUTTONS[ i ].x - 6; */
-        /*         y = offset_y + BUTTONS[ i ].y - small_ascent - small_descent - 6; */
-        /*     } else { */
-        /*         x = offset_x + BUTTONS[ i ].x + ( BUTTONS[ i ].w - pw ) / 2; */
-        /*         y = offset_y + BUTTONS[ i ].y - small_ascent - small_descent; */
-        /*     } */
+            __draw_rect( x, y, pw, ph, UNDERLAY );
+        }
 
-        /*     rect.x = x; */
-        /*     rect.y = y; */
-        /*     rect.w = pw; */
-        /*     rect.h = ph; */
-        /*     SDL_FillRect( window, &rect, color ); */
-        /* } */
+        if ( i < HPKEY_MTH )
+            colorbg = DISP_PAD;
+        else
+            colorbg = PAD;
 
-        /* // SDLDrawKeysLetters(); */
-        /* if ( i < HPKEY_MTH ) */
-        /*     colorbg = DISP_PAD; */
-        /* else */
-        /*     colorbg = PAD; */
+        // Letter ( small character bottom right of key)
+        if ( BUTTONS[ i ].letter != ( char* )0 ) {
+            if ( opt_gx ) {
+                x = offset_x + BUTTONS[ i ].x + BUTTONS[ i ].w + 3;
+                y = offset_y + BUTTONS[ i ].y + BUTTONS[ i ].h + 1;
+            } else {
+                x = offset_x + BUTTONS[ i ].x + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].letter, 1 ) / 2 + 5;
+                y = offset_y + BUTTONS[ i ].y + BUTTONS[ i ].h - 2;
+            }
 
-        /* // Letter ( small character bottom right of key) */
-        /* if ( BUTTONS[ i ].letter != ( char* )0 ) { */
-        /*     if ( opt_gx ) { */
-        /*         x = offset_x + BUTTONS[ i ].x + BUTTONS[ i ].w + 3; */
-        /*         y = offset_y + BUTTONS[ i ].y + BUTTONS[ i ].h + 1; */
-        /*     } else { */
-        /*         x = offset_x + BUTTONS[ i ].x + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].letter, 1 ) / 2 + 5; */
-        /*         y = offset_y + BUTTONS[ i ].y + BUTTONS[ i ].h - 2; */
-        /*     } */
+            write_text( x, y, BUTTONS[ i ].letter, 1, 0xffffffff, colorbg );
+        }
 
-        /*     write_text( x, y, BUTTONS[ i ].letter, 1, 0xffffffff, colorbg ); */
-        /* } */
+        // Bottom label: the only one is the cancel button
+        if ( BUTTONS[ i ].sub != ( char* )0 ) {
+            colorfg = WHITE;
 
-        /* // SDLDrawKeysLabelsBottom(); */
-        /* // Bottom label: the only one is the cancel button */
-        /* if ( BUTTONS[ i ].sub != ( char* )0 ) { */
-        /*     colorfg = WHITE; */
+            x = offset_x + BUTTONS[ i ].x + ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].sub, strlen( BUTTONS[ i ].sub ) ) ) / 2;
+            y = offset_y + BUTTONS[ i ].y + BUTTONS[ i ].h + small_ascent + 2;
+            write_text( x, y, BUTTONS[ i ].sub, strlen( BUTTONS[ i ].sub ), colorfg, colorbg );
+        }
 
-        /*     x = offset_x + BUTTONS[ i ].x + ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].sub, strlen( BUTTONS[ i ].sub ) ) ) / 2;
-         */
-        /*     y = offset_y + BUTTONS[ i ].y + BUTTONS[ i ].h + small_ascent + 2; */
-        /*     write_text( x, y, BUTTONS[ i ].sub, strlen( BUTTONS[ i ].sub ), colorfg, colorbg ); */
-        /* } */
+        // Draw the left labels
+        if ( BUTTONS[ i ].left != ( char* )0 ) {
+            if ( BUTTONS[ i ].is_menu ) {
+                // draw the dark shade under the label
+                pw = opt_gx ? 58 : 46;
 
-        /* // SDLDrawKeysLabelsLeft(); */
-        /* // Draw the left labels */
-        /* if ( BUTTONS[ i ].left != ( char* )0 ) { */
-        /*     if ( BUTTONS[ i ].is_menu ) { */
-        /*         // draw the dark shade under the label */
-        /*         pw = opt_gx ? 58 : 46; */
+                colorbg = UNDERLAY;
+                colorfg = LEFT;
 
-        /*         colorbg = UNDERLAY; */
-        /*         colorfg = LEFT; */
+                x = ( pw + 1 - SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) ) ) / 2;
+                y = opt_gx ? 14 : 9;
 
-        /*         x = ( pw + 1 - SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) ) ) / 2; */
-        /*         y = opt_gx ? 14 : 9; */
+                // Set the coordinates to absolute
+                if ( opt_gx ) {
+                    x += offset_x + BUTTONS[ i ].x - 6;
+                    y += offset_y + BUTTONS[ i ].y - small_ascent - small_descent - 6;
+                } else {
+                    x += offset_x + BUTTONS[ i ].x + ( BUTTONS[ i ].w - pw ) / 2;
+                    y += offset_y + BUTTONS[ i ].y - small_ascent - small_descent;
+                }
 
-        /*         // Set the coordinates to absolute */
-        /*         if ( opt_gx ) { */
-        /*             x += offset_x + BUTTONS[ i ].x - 6; */
-        /*             y += offset_y + BUTTONS[ i ].y - small_ascent - small_descent - 6; */
-        /*         } else { */
-        /*             x += offset_x + BUTTONS[ i ].x + ( BUTTONS[ i ].w - pw ) / 2; */
-        /*             y += offset_y + BUTTONS[ i ].y - small_ascent - small_descent; */
-        /*         } */
+                write_text( x, y, BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ), colorfg, colorbg );
+            } else // is_menu
+            {
+                colorbg = BLACK;
+                colorfg = LEFT;
 
-        /*         write_text( x, y, BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ), colorfg, colorbg ); */
-        /*     } else // is_menu */
-        /*     { */
-        /*         colorbg = BLACK; */
-        /*         colorfg = LEFT; */
+                if ( BUTTONS[ i ].right == ( char* )0 ) {
+                    // centered label
+                    x = offset_x + BUTTONS[ i ].x +
+                        ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) ) ) / 2;
+                } else {
+                    // label to the left
+                    wl = SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) );
+                    wr = SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) );
+                    ws = SmallTextWidth( " ", 1 );
 
-        /*         if ( BUTTONS[ i ].right == ( char* )0 ) { */
-        /*             // centered label */
-        /*             x = offset_x + BUTTONS[ i ].x + */
-        /*                 ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) ) ) / 2; */
-        /*         } else { */
-        /*             // label to the left */
-        /*             wl = SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) ); */
-        /*             wr = SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) ); */
-        /*             ws = SmallTextWidth( " ", 1 ); */
+                    x = offset_x + BUTTONS[ i ].x + ( 1 + BUTTONS[ i ].w - ( wl + wr + ws ) ) / 2;
+                }
 
-        /*             x = offset_x + BUTTONS[ i ].x + ( 1 + BUTTONS[ i ].w - ( wl + wr + ws ) ) / 2; */
-        /*         } */
+                y = offset_y + BUTTONS[ i ].y - small_descent;
 
-        /*         y = offset_y + BUTTONS[ i ].y - small_descent; */
+                write_text( x, y, BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ), colorfg, colorbg );
+            } // is_menu
+        }
 
-        /*         write_text( x, y, BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ), colorfg, colorbg ); */
-        /*     } // is_menu */
-        /* } */
+        // draw the right labels
+        if ( BUTTONS[ i ].right != ( char* )0 ) {
+            if ( BUTTONS[ i ].is_menu ) {
+                // draw the dark shade under the label
+                pw = opt_gx ? 58 : 44;
 
-        /* // SDLDrawKeysLabelsRight(); */
-        /* // draw the right labels */
-        /* if ( BUTTONS[ i ].right != ( char* )0 ) { */
-        /*     if ( BUTTONS[ i ].is_menu ) { */
-        /*         // draw the dark shade under the label */
-        /*         pw = opt_gx ? 58 : 44; */
+                colorbg = UNDERLAY;
+                colorfg = RIGHT;
 
-        /*         colorbg = UNDERLAY; */
-        /*         colorfg = RIGHT; */
+                x = ( pw + 1 - SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) ) ) / 2;
+                y = opt_gx ? 14 : 8;
 
-        /*         x = ( pw + 1 - SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) ) ) / 2; */
-        /*         y = opt_gx ? 14 : 8; */
+                // Set the coordinates to absolute
+                if ( opt_gx ) {
+                    x += offset_x + BUTTONS[ i ].x - 6;
+                    y += offset_y + BUTTONS[ i ].y - small_ascent - small_descent - 6;
+                } else {
+                    x += offset_x + BUTTONS[ i ].x + ( BUTTONS[ i ].w - pw ) / 2;
+                    y += offset_y + BUTTONS[ i ].y - small_ascent - small_descent;
+                }
 
-        /*         // Set the coordinates to absolute */
-        /*         if ( opt_gx ) { */
-        /*             x += offset_x + BUTTONS[ i ].x - 6; */
-        /*             y += offset_y + BUTTONS[ i ].y - small_ascent - small_descent - 6; */
-        /*         } else { */
-        /*             x += offset_x + BUTTONS[ i ].x + ( BUTTONS[ i ].w - pw ) / 2; */
-        /*             y += offset_y + BUTTONS[ i ].y - small_ascent - small_descent; */
-        /*         } */
+                write_text( x, y, BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ), colorfg, colorbg );
+            } // BUTTONS[i].is_menu
+            else {
+                colorbg = BLACK;
+                colorfg = RIGHT;
 
-        /*         write_text( x, y, BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ), colorfg, colorbg ); */
-        /*     } // BUTTONS[i].is_menu */
-        /*     else { */
-        /*         colorbg = BLACK; */
-        /*         colorfg = RIGHT; */
+                if ( BUTTONS[ i ].left == ( char* )0 ) {
+                    // centered label
+                    x = offset_x + BUTTONS[ i ].x +
+                        ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) ) ) / 2;
+                } else {
+                    // label to the right
+                    wl = SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) );
+                    wr = SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) );
+                    ws = SmallTextWidth( " ", 1 );
 
-        /*         if ( BUTTONS[ i ].left == ( char* )0 ) { */
-        /*             // centered label */
-        /*             x = offset_x + BUTTONS[ i ].x + */
-        /*                 ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) ) ) / 2; */
-        /*         } else { */
-        /*             // label to the right */
-        /*             wl = SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) ); */
-        /*             wr = SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) ); */
-        /*             ws = SmallTextWidth( " ", 1 ); */
+                    x = offset_x + BUTTONS[ i ].x + ( 1 + BUTTONS[ i ].w - ( wl + wr + ws ) ) / 2 + wl + ws;
+                }
 
-        /*             x = offset_x + BUTTONS[ i ].x + ( 1 + BUTTONS[ i ].w - ( wl + wr + ws ) ) / 2 + wl + ws; */
-        /*         } */
+                y = offset_y + BUTTONS[ i ].y - small_descent;
 
-        /*         y = offset_y + BUTTONS[ i ].y - small_descent; */
-
-        /*         write_text( x, y, BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ), colorfg, colorbg ); */
-        /*     } */
-        /* } */
+                write_text( x, y, BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ), colorfg, colorbg );
+            }
+        }
     }
 
     __draw_buttons();
@@ -865,57 +863,51 @@ static void _draw_keypad( void )
 static void _draw_bezel_LCD( void )
 {
     for ( int i = 0; i < DISP_FRAME; i++ ) {
-        lineColor( renderer, display_offset_x - i, display_offset_y + DISPLAY_HEIGHT + 2 * i, display_offset_x + DISPLAY_WIDTH + i,
-                   display_offset_y + DISPLAY_HEIGHT + 2 * i, color2bgra( DISP_PAD_TOP ) );
-        lineColor( renderer, display_offset_x - i, display_offset_y + DISPLAY_HEIGHT + 2 * i + 1, display_offset_x + DISPLAY_WIDTH + i,
-                   display_offset_y + DISPLAY_HEIGHT + 2 * i + 1, color2bgra( DISP_PAD_TOP ) );
-        lineColor( renderer, display_offset_x + DISPLAY_WIDTH + i, display_offset_y - i, display_offset_x + DISPLAY_WIDTH + i,
-                   display_offset_y + DISPLAY_HEIGHT + 2 * i, color2bgra( DISP_PAD_TOP ) );
+        __draw_line( display_offset_x - i, display_offset_y + DISPLAY_HEIGHT + 2 * i, display_offset_x + DISPLAY_WIDTH + i,
+                     display_offset_y + DISPLAY_HEIGHT + 2 * i, DISP_PAD_TOP );
+        __draw_line( display_offset_x - i, display_offset_y + DISPLAY_HEIGHT + 2 * i + 1, display_offset_x + DISPLAY_WIDTH + i,
+                     display_offset_y + DISPLAY_HEIGHT + 2 * i + 1, DISP_PAD_TOP );
+        __draw_line( display_offset_x + DISPLAY_WIDTH + i, display_offset_y - i, display_offset_x + DISPLAY_WIDTH + i,
+                     display_offset_y + DISPLAY_HEIGHT + 2 * i, DISP_PAD_TOP );
 
-        lineColor( renderer, display_offset_x - i - 1, display_offset_y - i - 1, display_offset_x + DISPLAY_WIDTH + i - 1,
-                   display_offset_y - i - 1, color2bgra( DISP_PAD_BOT ) );
-        lineColor( renderer, display_offset_x - i - 1, display_offset_y - i - 1, display_offset_x - i - 1,
-                   display_offset_y + DISPLAY_HEIGHT + 2 * i - 1, color2bgra( DISP_PAD_BOT ) );
+        __draw_line( display_offset_x - i - 1, display_offset_y - i - 1, display_offset_x + DISPLAY_WIDTH + i - 1, display_offset_y - i - 1,
+                     DISP_PAD_BOT );
+        __draw_line( display_offset_x - i - 1, display_offset_y - i - 1, display_offset_x - i - 1,
+                     display_offset_y + DISPLAY_HEIGHT + 2 * i - 1, DISP_PAD_BOT );
     }
 
     // round off corners
-    lineColor( renderer, display_offset_x - DISP_FRAME, display_offset_y - DISP_FRAME, display_offset_x - DISP_FRAME + 3,
-               display_offset_y - DISP_FRAME, color2bgra( DISP_PAD ) );
-    lineColor( renderer, display_offset_x - DISP_FRAME, display_offset_y - DISP_FRAME, display_offset_x - DISP_FRAME,
-               display_offset_y - DISP_FRAME + 3, color2bgra( DISP_PAD ) );
-    pixelColor( renderer, display_offset_x - DISP_FRAME + 1, display_offset_y - DISP_FRAME + 1, color2bgra( DISP_PAD ) );
+    __draw_line( display_offset_x - DISP_FRAME, display_offset_y - DISP_FRAME, display_offset_x - DISP_FRAME + 3,
+                 display_offset_y - DISP_FRAME, DISP_PAD );
+    __draw_line( display_offset_x - DISP_FRAME, display_offset_y - DISP_FRAME, display_offset_x - DISP_FRAME,
+                 display_offset_y - DISP_FRAME + 3, DISP_PAD );
+    __draw_pixel( display_offset_x - DISP_FRAME + 1, display_offset_y - DISP_FRAME + 1, DISP_PAD );
 
-    lineColor( renderer, display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 4, display_offset_y - DISP_FRAME,
-               display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y - DISP_FRAME, color2bgra( DISP_PAD ) );
-    lineColor( renderer, display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y - DISP_FRAME,
-               display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y - DISP_FRAME + 3, color2bgra( DISP_PAD ) );
-    pixelColor( renderer, display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 2, display_offset_y - DISP_FRAME + 1, color2bgra( DISP_PAD ) );
+    __draw_line( display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 4, display_offset_y - DISP_FRAME,
+                 display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y - DISP_FRAME, DISP_PAD );
+    __draw_line( display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y - DISP_FRAME,
+                 display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y - DISP_FRAME + 3, DISP_PAD );
+    __draw_pixel( display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 2, display_offset_y - DISP_FRAME + 1, DISP_PAD );
 
-    lineColor( renderer, display_offset_x - DISP_FRAME, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 4,
-               display_offset_x - DISP_FRAME, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1, color2bgra( DISP_PAD ) );
-    lineColor( renderer, display_offset_x - DISP_FRAME, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1,
-               display_offset_x - DISP_FRAME + 3, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1, color2bgra( DISP_PAD ) );
-    pixelColor( renderer, display_offset_x - DISP_FRAME + 1, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 2,
-                color2bgra( DISP_PAD ) );
+    __draw_line( display_offset_x - DISP_FRAME, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 4, display_offset_x - DISP_FRAME,
+                 display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1, DISP_PAD );
+    __draw_line( display_offset_x - DISP_FRAME, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1, display_offset_x - DISP_FRAME + 3,
+                 display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1, DISP_PAD );
+    __draw_pixel( display_offset_x - DISP_FRAME + 1, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 2, DISP_PAD );
 
-    lineColor( renderer, display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 4,
-               display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1,
-               color2bgra( DISP_PAD ) );
-    lineColor( renderer, display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 4, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1,
-               display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1,
-               color2bgra( DISP_PAD ) );
-    pixelColor( renderer, display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 2, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 2,
-                color2bgra( DISP_PAD ) );
+    __draw_line( display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 4,
+                 display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1, DISP_PAD );
+    __draw_line( display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 4, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1,
+                 display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 1, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 1, DISP_PAD );
+    __draw_pixel( display_offset_x + DISPLAY_WIDTH + DISP_FRAME - 2, display_offset_y + DISPLAY_HEIGHT + 2 * DISP_FRAME - 2, DISP_PAD );
 
     // simulate rounded lcd corners
-    lineColor( renderer, display_offset_x - 1, display_offset_y + 1, display_offset_x - 1, display_offset_y + DISPLAY_HEIGHT - 2,
-               color2bgra( LCD ) );
-    lineColor( renderer, display_offset_x + 1, display_offset_y - 1, display_offset_x + DISPLAY_WIDTH - 2, display_offset_y - 1,
-               color2bgra( LCD ) );
-    lineColor( renderer, display_offset_x + 1, display_offset_y + DISPLAY_HEIGHT, display_offset_x + DISPLAY_WIDTH - 2,
-               display_offset_y + DISPLAY_HEIGHT, color2bgra( LCD ) );
-    lineColor( renderer, display_offset_x + DISPLAY_WIDTH, display_offset_y + 1, display_offset_x + DISPLAY_WIDTH,
-               display_offset_y + DISPLAY_HEIGHT - 2, color2bgra( LCD ) );
+    __draw_line( display_offset_x - 1, display_offset_y + 1, display_offset_x - 1, display_offset_y + DISPLAY_HEIGHT - 2, LCD );
+    __draw_line( display_offset_x + 1, display_offset_y - 1, display_offset_x + DISPLAY_WIDTH - 2, display_offset_y - 1, LCD );
+    __draw_line( display_offset_x + 1, display_offset_y + DISPLAY_HEIGHT, display_offset_x + DISPLAY_WIDTH - 2,
+                 display_offset_y + DISPLAY_HEIGHT, LCD );
+    __draw_line( display_offset_x + DISPLAY_WIDTH, display_offset_y + 1, display_offset_x + DISPLAY_WIDTH,
+                 display_offset_y + DISPLAY_HEIGHT - 2, LCD );
 }
 
 static void _draw_background( int width, int height, int w_top, int h_top )
@@ -1330,7 +1322,7 @@ void init_sdl2_ui( int argc, char** argv )
         _draw_bezel( cut, KEYBOARD_OFFSET_Y, width, height );
         _draw_header();
         _draw_bezel_LCD();
-        /* _draw_keypad(); */
+        _draw_keypad();
 
         _draw_serial_devices_path();
     }
