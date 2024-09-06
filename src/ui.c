@@ -143,8 +143,9 @@ letter_t small_font[ 128 ] = {
 
 color_t colors_sx[ NB_COLORS ] = {
     {
-     .name = "white",   /* #ffffff */
-        .r = 255,
+     /* #ffffff */
+        .name = "white",
+     .r = 255,
      .g = 255,
      .b = 255,
      .a = 255,
@@ -152,8 +153,9 @@ color_t colors_sx[ NB_COLORS ] = {
      .gray_rgb = 255,
      },
     {
-     .name = "left",                 /* #ffa600 */
-        .r = 255,
+     /* #ffa600 */
+        .name = "left",
+     .r = 255,
      .g = 166,
      .b = 0,
      .a = 255,
@@ -161,8 +163,9 @@ color_t colors_sx[ NB_COLORS ] = {
      .gray_rgb = 230,
      },
     {
-     .name = "right",   /* #00d2ff */
-        .r = 0,
+     /* #00d2ff */
+        .name = "right",
+     .r = 0,
      .g = 210,
      .b = 255,
      .a = 255,
@@ -170,8 +173,9 @@ color_t colors_sx[ NB_COLORS ] = {
      .gray_rgb = 169,
      },
     {
-     .name = "but_top",          /* #6d5d5d */
-        .r = 109,
+     /* #6d5d5d */
+        .name = "but_top",
+     .r = 109,
      .g = 93,
      .b = 93,
      .a = 255,
@@ -179,8 +183,9 @@ color_t colors_sx[ NB_COLORS ] = {
      .gray_rgb = 91,
      },
     {
-     .name = "button",  /* #5a4d4d */
-        .r = 90,
+     /* #5a4d4d */
+        .name = "button",
+     .r = 90,
      .g = 77,
      .b = 77,
      .a = 255,
@@ -188,8 +193,9 @@ color_t colors_sx[ NB_COLORS ] = {
      .gray_rgb = 81,
      },
     {
-     .name = "but_bot",                       /* #4c4141 */
-        .r = 76,
+     /* #4c4141 */
+        .name = "but_bot",
+     .r = 76,
      .g = 65,
      .b = 65,
      .a = 255,
@@ -197,8 +203,9 @@ color_t colors_sx[ NB_COLORS ] = {
      .gray_rgb = 69,
      },
     {
-     .name = "lcd_col",   /* #cadd5c */
-        .r = 202,
+     /* #cadd5c */
+        .name = "lcd_col",
+     .r = 202,
      .g = 221,
      .b = 92,
      .a = 255,
@@ -206,8 +213,9 @@ color_t colors_sx[ NB_COLORS ] = {
      .gray_rgb = 205,
      },
     {
-     .name = "pix_col",          /* #000080 */
-        .r = 0,
+     /* #000080 */
+        .name = "pix_col",
+     .r = 0,
      .g = 0,
      .b = 128,
      .a = 255,
@@ -215,8 +223,9 @@ color_t colors_sx[ NB_COLORS ] = {
      .gray_rgb = 20,
      },
     {
-     .name = "pad_top",          /* #6d4e4e */
-        .r = 109,
+     /* #6d4e4e */
+        .name = "pad_top",
+     .r = 109,
      .g = 78,
      .b = 78,
      .a = 255,
@@ -224,8 +233,9 @@ color_t colors_sx[ NB_COLORS ] = {
      .gray_rgb = 88,
      },
     {
-     .name = "pad", /* #5a4040 */
-        .r = 90,
+     /* #5a4040 */
+        .name = "pad",
+     .r = 90,
      .g = 64,
      .b = 64,
      .a = 255,
@@ -233,8 +243,9 @@ color_t colors_sx[ NB_COLORS ] = {
      .gray_rgb = 73,
      },
     {
-     .name = "pad_bot",                 /* #4c3636 */
-        .r = 76,
+     /* #4c3636 */
+        .name = "pad_bot",
+     .r = 76,
      .g = 54,
      .b = 54,
      .a = 255,
@@ -242,8 +253,9 @@ color_t colors_sx[ NB_COLORS ] = {
      .gray_rgb = 60,
      },
     {
-     .name = "disp_pad_top",     /* #9b7654 */
-        .r = 155,
+     /* #9b7654 */
+        .name = "disp_pad_top",
+     .r = 155,
      .g = 118,
      .b = 84,
      .a = 255,
@@ -251,8 +263,9 @@ color_t colors_sx[ NB_COLORS ] = {
      .gray_rgb = 124,
      },
     {
-     .name = "disp_pad",           /* #7c5e43 */
-        .r = 124,
+     /* #7c5e43 */
+        .name = "disp_pad",
+     .r = 124,
      .g = 94,
      .b = 67,
      .a = 255,
@@ -260,8 +273,9 @@ color_t colors_sx[ NB_COLORS ] = {
      .gray_rgb = 99,
      },
     {
-     .name = "disp_pad_bot",   /* #644b35 */
-        .r = 100,
+     /* #644b35 */
+        .name = "disp_pad_bot",
+     .r = 100,
      .g = 75,
      .b = 53,
      .a = 255,
@@ -269,8 +283,9 @@ color_t colors_sx[ NB_COLORS ] = {
      .gray_rgb = 79,
      },
     {
-     .name = "logo",                       /* #cca96b */
-        .r = 204,
+     /* #cca96b */
+        .name = "logo",
+     .r = 204,
      .g = 169,
      .b = 107,
      .a = 255,
@@ -278,8 +293,9 @@ color_t colors_sx[ NB_COLORS ] = {
      .gray_rgb = 172,
      },
     {
-     .name = "logo_back",  /* #404040 */
-        .r = 64,
+     /* #404040 */
+        .name = "logo_back",
+     .r = 64,
      .g = 64,
      .b = 64,
      .a = 255,
@@ -287,8 +303,9 @@ color_t colors_sx[ NB_COLORS ] = {
      .gray_rgb = 65,
      },
     {
-     .name = "label",          /* #cab890 */
-        .r = 202,
+     /* #cab890 */
+        .name = "label",
+     .r = 202,
      .g = 184,
      .b = 144,
      .a = 255,
@@ -296,8 +313,9 @@ color_t colors_sx[ NB_COLORS ] = {
      .gray_rgb = 185,
      },
     {
-     .name = "frame",           /* #000000 */
-        .r = 0,
+     /* #000000 */
+        .name = "frame",
+     .r = 0,
      .g = 0,
      .b = 0,
      .a = 255,
@@ -305,8 +323,9 @@ color_t colors_sx[ NB_COLORS ] = {
      .gray_rgb = 0,
      },
     {
-     .name = "underlay",    /* #3c2a2a */
-        .r = 60,
+     /* #3c2a2a */
+        .name = "underlay",
+     .r = 60,
      .g = 42,
      .b = 42,
      .a = 255,
@@ -314,20 +333,12 @@ color_t colors_sx[ NB_COLORS ] = {
      .gray_rgb = 48,
      },
     {
-     .name = "black",                 /* #000000 */
-        .r = 0,
+     /* #000000 */
+        .name = "black",
+     .r = 0,
      .g = 0,
      .b = 0,
      .a = 255,
-     .mono_rgb = 0,
-     .gray_rgb = 0,
-     },
-    {
-     .name = "transparent",     /* #000000 */
-        .r = 0,
-     .g = 0,
-     .b = 0,
-     .a = 0,
      .mono_rgb = 0,
      .gray_rgb = 0,
      },
@@ -335,8 +346,9 @@ color_t colors_sx[ NB_COLORS ] = {
 
 color_t colors_gx[ NB_COLORS ] = {
     {
-     .name = "white",   /* #FFFFFF */
-        .r = 255,
+     /* #FFFFFF */
+        .name = "white",
+     .r = 255,
      .g = 255,
      .b = 255,
      .a = 255,
@@ -344,8 +356,9 @@ color_t colors_gx[ NB_COLORS ] = {
      .gray_rgb = 255,
      },
     {
-     .name = "left",                 /* #ffbaff */
-        .r = 255,
+     /* #ffbaff */
+        .name = "left",
+     .r = 255,
      .g = 186,
      .b = 255,
      .a = 255,
@@ -353,8 +366,9 @@ color_t colors_gx[ NB_COLORS ] = {
      .gray_rgb = 220,
      },
     {
-     .name = "right",   /* #00ffcc */
-        .r = 0,
+     /* #00ffcc */
+        .name = "right",
+     .r = 0,
      .g = 255,
      .b = 204,
      .a = 255,
@@ -362,8 +376,9 @@ color_t colors_gx[ NB_COLORS ] = {
      .gray_rgb = 169,
      },
     {
-     .name = "but_top",          /* #646464 */
-        .r = 104,
+     /* #646464 */
+        .name = "but_top",
+     .r = 104,
      .g = 104,
      .b = 104,
      .a = 255,
@@ -371,8 +386,9 @@ color_t colors_gx[ NB_COLORS ] = {
      .gray_rgb = 104,
      },
     {
-     .name = "button",  /* #585858 */
-        .r = 88,
+     /* #585858 */
+        .name = "button",
+     .r = 88,
      .g = 88,
      .b = 88,
      .a = 255,
@@ -380,8 +396,9 @@ color_t colors_gx[ NB_COLORS ] = {
      .gray_rgb = 88,
      },
     {
-     .name = "but_bot",                       /* #4a4a4a */
-        .r = 74,
+     /* #4a4a4a */
+        .name = "but_bot",
+     .r = 74,
      .g = 74,
      .b = 74,
      .a = 255,
@@ -389,8 +406,9 @@ color_t colors_gx[ NB_COLORS ] = {
      .gray_rgb = 74,
      },
     {
-     .name = "lcd_col",   /* #cadd5c */
-        .r = 202,
+     /* #cadd5c */
+        .name = "lcd_col",
+     .r = 202,
      .g = 221,
      .b = 92,
      .a = 255,
@@ -398,8 +416,9 @@ color_t colors_gx[ NB_COLORS ] = {
      .gray_rgb = 205,
      },
     {
-     .name = "pix_col",          /* #000080 */
-        .r = 0,
+     /* #000080 */
+        .name = "pix_col",
+     .r = 0,
      .g = 0,
      .b = 128,
      .a = 255,
@@ -407,8 +426,9 @@ color_t colors_gx[ NB_COLORS ] = {
      .gray_rgb = 20,
      },
     {
-     .name = "pad_top",          /* #585858 */
-        .r = 88,
+     /* #585858 */
+        .name = "pad_top",
+     .r = 88,
      .g = 88,
      .b = 88,
      .a = 255,
@@ -416,8 +436,9 @@ color_t colors_gx[ NB_COLORS ] = {
      .gray_rgb = 88,
      },
     {
-     .name = "pad", /* #4a4a4a */
-        .r = 74,
+     /* #4a4a4a */
+        .name = "pad",
+     .r = 74,
      .g = 74,
      .b = 74,
      .a = 255,
@@ -425,8 +446,9 @@ color_t colors_gx[ NB_COLORS ] = {
      .gray_rgb = 74,
      },
     {
-     .name = "pad_bot",                 /* #404040 */
-        .r = 64,
+     /* #404040 */
+        .name = "pad_bot",
+     .r = 64,
      .g = 64,
      .b = 64,
      .a = 255,
@@ -434,8 +456,9 @@ color_t colors_gx[ NB_COLORS ] = {
      .gray_rgb = 64,
      },
     {
-     .name = "disp_pad_top",     /* #808080 */
-        .r = 128,
+     /* #808080 */
+        .name = "disp_pad_top",
+     .r = 128,
      .g = 128,
      .b = 138,
      .a = 255,
@@ -443,8 +466,9 @@ color_t colors_gx[ NB_COLORS ] = {
      .gray_rgb = 128,
      },
     {
-     .name = "disp_pad",           /* #68686E */
-        .r = 104,
+     /* #68686E */
+        .name = "disp_pad",
+     .r = 104,
      .g = 104,
      .b = 110,
      .a = 255,
@@ -452,8 +476,9 @@ color_t colors_gx[ NB_COLORS ] = {
      .gray_rgb = 104,
      },
     {
-     .name = "disp_pad_bot",   /* #54545a */
-        .r = 84,
+     /* #54545a */
+        .name = "disp_pad_bot",
+     .r = 84,
      .g = 84,
      .b = 90,
      .a = 255,
@@ -461,8 +486,9 @@ color_t colors_gx[ NB_COLORS ] = {
      .gray_rgb = 84,
      },
     {
-     .name = "logo",                       /* #b0b0b8 */
-        .r = 176,
+     /* #b0b0b8 */
+        .name = "logo",
+     .r = 176,
      .g = 176,
      .b = 184,
      .a = 255,
@@ -470,8 +496,9 @@ color_t colors_gx[ NB_COLORS ] = {
      .gray_rgb = 176,
      },
     {
-     .name = "logo_back",  /* #68686e */
-        .r = 104,
+     /* #68686e */
+        .name = "logo_back",
+     .r = 104,
      .g = 104,
      .b = 110,
      .a = 255,
@@ -479,8 +506,9 @@ color_t colors_gx[ NB_COLORS ] = {
      .gray_rgb = 104,
      },
     {
-     .name = "label",          /* #f0f0f0 */
-        .r = 240,
+     /* #f0f0f0 */
+        .name = "label",
+     .r = 240,
      .g = 240,
      .b = 240,
      .a = 255,
@@ -488,8 +516,9 @@ color_t colors_gx[ NB_COLORS ] = {
      .gray_rgb = 240,
      },
     {
-     .name = "frame",           /* #000000 */
-        .r = 0,
+     /* #000000 */
+        .name = "frame",
+     .r = 0,
      .g = 0,
      .b = 0,
      .a = 255,
@@ -497,8 +526,9 @@ color_t colors_gx[ NB_COLORS ] = {
      .gray_rgb = 0,
      },
     {
-     .name = "underlay",    /* #68686e */
-        .r = 104,
+     /* #68686e */
+        .name = "underlay",
+     .r = 104,
      .g = 104,
      .b = 110,
      .a = 255,
@@ -506,20 +536,12 @@ color_t colors_gx[ NB_COLORS ] = {
      .gray_rgb = 104,
      },
     {
-     .name = "black",                 /* #000000 */
-        .r = 0,
+     /* #000000 */
+        .name = "black",
+     .r = 0,
      .g = 0,
      .b = 0,
      .a = 255,
-     .mono_rgb = 0,
-     .gray_rgb = 0,
-     },
-    {
-     .name = "transparent",     /* #000000 */
-        .r = 0,
-     .g = 0,
-     .b = 0,
-     .a = 0,
      .mono_rgb = 0,
      .gray_rgb = 0,
      },
