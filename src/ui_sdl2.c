@@ -683,12 +683,12 @@ static void _draw_key( int hpkey )
 {
     int x = KEYBOARD_OFFSET_X + BUTTONS[ hpkey ].x;
     int y = KEYBOARD_OFFSET_Y + BUTTONS[ hpkey ].y;
-    /* if ( keyboard[ hpkey ].pressed ) { */
-    /*     x += 1; */
-    /*     y += 2; */
-    /* } */
+    if ( keyboard[ hpkey ].pressed ) {
+        // x += 1;
+        y += 1;
+    }
     __draw_texture( x, y, BUTTONS[ hpkey ].w, BUTTONS[ hpkey ].h,
-                    keyboard[ hpkey ].pressed ? buttons_textures[ hpkey ].down : buttons_textures[ hpkey ].up );
+                    /* keyboard[ hpkey ].pressed ? buttons_textures[ hpkey ].down : */ buttons_textures[ hpkey ].up );
 }
 
 static void _draw_keys( void )
@@ -849,16 +849,25 @@ static void _show_key( int hpkey )
     if ( hpkey < 0 )
         return;
 
-    // If we're called with the same key as before, do nothing
-    if ( showkeylastkey == hpkey )
-        return;
+    SDL_SetRenderTarget( renderer, main_texture );
 
-    showkeylastkey = hpkey;
+    _draw_key( hpkey );
 
-    /* SDL_Rect srect, drect; */
-    /* SDL_Surface* ssurf; */
-    int x = 0;
-    int y = 0;
+    SDL_SetRenderTarget( renderer, NULL );
+    SDL_RenderCopy( renderer, main_texture, NULL, NULL );
+    SDL_RenderPresent( renderer );
+
+    return;
+    /* // If we're called with the same key as before, do nothing */
+    /* if ( showkeylastkey == hpkey ) */
+    /*     return; */
+
+    /* showkeylastkey = hpkey; */
+
+    /* /\* SDL_Rect srect, drect; *\/ */
+    /* /\* SDL_Surface* ssurf; *\/ */
+    /* int x = 0; */
+    /* int y = 0; */
 
     /* // Starts by hiding last */
     /* if ( showkeylast_texture != 0 ) { */
@@ -895,9 +904,9 @@ static void _show_key( int hpkey )
     /* if ( y + ssurf->h > window->h ) */
     /*     y = window->h - ssurf->h; */
 
-    // Backup where to
-    showkeylastx = x;
-    showkeylasty = y;
+    /* // Backup where to */
+    /* showkeylastx = x; */
+    /* showkeylasty = y; */
 
     /* // Backup old surface */
     /* srect.x = x; */
@@ -1028,9 +1037,10 @@ void sdl_get_event( void )
                 // React to mouse up/down when click over a button
                 if ( hpkey == -1 || keyboard[ hpkey ].pressed )
                     break;
-
                 pressed_hpkey = hpkey;
                 press_key( hpkey );
+                _show_key( pressed_hpkey );
+
                 lasthpkey = hpkey;
                 // Start timer
                 lastticks = SDL_GetTicks();
@@ -1041,11 +1051,13 @@ void sdl_get_event( void )
                 if ( hpkey == -1 )
                     break;
 
-                pressed_hpkey = -1;
                 if ( !lastislongpress ) {
                     release_all_keys();
                     lasthpkey = -1; // No key is pressed anymore
                 }
+
+                _show_key( pressed_hpkey );
+                pressed_hpkey = -1;
 
                 // Stop timer, clear long key press
                 lastticks = -1;
@@ -1059,21 +1071,24 @@ void sdl_get_event( void )
 
                 pressed_hpkey = hpkey;
                 press_key( hpkey );
+                _show_key( pressed_hpkey );
                 break;
             case SDL_KEYUP:
                 hpkey = sdlkey_to_hpkey( event.key.keysym.sym );
                 if ( hpkey == -1 )
                     break;
 
-                pressed_hpkey = -1;
                 release_key( hpkey );
+
+                _show_key( pressed_hpkey );
+                pressed_hpkey = -1;
                 break;
         }
     }
 
-    // Display button being pressed, if any
-    if ( !config.hide_chrome && pressed_hpkey != 1 )
-        _show_key( pressed_hpkey );
+    /* // Display button being pressed, if any */
+    /* if ( !config.hide_chrome && pressed_hpkey != 1 ) */
+    /*     _show_key( pressed_hpkey ); */
 }
 
 void sdl_update_LCD( void )
