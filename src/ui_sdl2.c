@@ -681,14 +681,8 @@ static void create_buttons_textures( void )
 
 static void _draw_key( int hpkey )
 {
-    int x = KEYBOARD_OFFSET_X + BUTTONS[ hpkey ].x;
-    int y = KEYBOARD_OFFSET_Y + BUTTONS[ hpkey ].y;
-    if ( keyboard[ hpkey ].pressed ) {
-        // x += 1;
-        y += 1;
-    }
-    __draw_texture( x, y, BUTTONS[ hpkey ].w, BUTTONS[ hpkey ].h,
-                    /* keyboard[ hpkey ].pressed ? buttons_textures[ hpkey ].down : */ buttons_textures[ hpkey ].up );
+    __draw_texture( KEYBOARD_OFFSET_X + BUTTONS[ hpkey ].x, KEYBOARD_OFFSET_Y + BUTTONS[ hpkey ].y, BUTTONS[ hpkey ].w, BUTTONS[ hpkey ].h,
+                    keyboard[ hpkey ].pressed ? buttons_textures[ hpkey ].down : buttons_textures[ hpkey ].up );
 }
 
 static void _draw_keys( void )
@@ -846,7 +840,7 @@ static void _draw_background_LCD( void ) { __draw_rect( display_offset_x, displa
 // Show the hp key which is being pressed
 static void _show_key( int hpkey )
 {
-    if ( hpkey < 0 )
+    if ( config.hide_chrome || hpkey < 0 )
         return;
 
     SDL_SetRenderTarget( renderer, main_texture );
@@ -997,32 +991,34 @@ static inline void draw_row( long addr, int row )
         draw_nibble( i, row, read_nibble( addr + i ) );
 }
 
+static int sdl_press_key( int hpkey )
+{
+    if ( hpkey == -1 || keyboard[ hpkey ].pressed )
+        return -1;
+
+    press_key( hpkey );
+    _show_key( hpkey );
+
+    return hpkey;
+}
+
+static int sdl_release_key( int hpkey )
+{
+    if ( hpkey == -1 || !keyboard[ hpkey ].pressed )
+        return -1;
+
+    release_key( hpkey );
+    _show_key( hpkey );
+
+    return hpkey;
+}
+
 /**********/
 /* public */
 /**********/
 void sdl_get_event( void )
 {
     SDL_Event event;
-
-    int hpkey = -1;
-    static int lasthpkey = -1;           // last key that was pressed or -1 for none
-    static int lastticks = -1;           // time at which a key was pressed or -1 if timer expired
-    static bool lastislongpress = false; // last key press was a long press
-    static int pressed_hpkey = -1;       // Indicate if a key is being held down by
-                                         // a finger (not set for long presses)
-
-    // Check whether long pres on key
-    if ( lastticks > 0 && ( SDL_GetTicks() - lastticks > 750 ) ) {
-        // time elapsed
-        lastticks = -1;
-
-        // Check that the mouse is still on the same last key
-        int x, y;
-        int state = SDL_GetMouseState( &x, &y );
-
-        if ( state & SDL_BUTTON( 1 ) && mouse_click_to_hpkey( x, y ) == lasthpkey )
-            lastislongpress = true;
-    }
 
     // Iterate as long as there are events
     while ( SDL_PollEvent( &event ) ) {
@@ -1033,55 +1029,17 @@ void sdl_get_event( void )
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
-                hpkey = mouse_click_to_hpkey( event.button.x, event.button.y );
-                // React to mouse up/down when click over a button
-                if ( hpkey == -1 || keyboard[ hpkey ].pressed )
-                    break;
-                pressed_hpkey = hpkey;
-                press_key( hpkey );
-                _show_key( pressed_hpkey );
-
-                lasthpkey = hpkey;
-                // Start timer
-                lastticks = SDL_GetTicks();
+                sdl_press_key( mouse_click_to_hpkey( event.button.x, event.button.y ) );
                 break;
             case SDL_MOUSEBUTTONUP:
-                hpkey = mouse_click_to_hpkey( event.button.x, event.button.y );
-                // React to mouse up/down when click over a button
-                if ( hpkey == -1 )
-                    break;
-
-                if ( !lastislongpress ) {
-                    release_all_keys();
-                    lasthpkey = -1; // No key is pressed anymore
-                }
-
-                _show_key( pressed_hpkey );
-                pressed_hpkey = -1;
-
-                // Stop timer, clear long key press
-                lastticks = -1;
-                lastislongpress = false;
+                sdl_release_key( mouse_click_to_hpkey( event.button.x, event.button.y ) );
                 break;
 
             case SDL_KEYDOWN:
-                hpkey = sdlkey_to_hpkey( event.key.keysym.sym );
-                if ( hpkey == -1 || keyboard[ hpkey ].pressed )
-                    break;
-
-                pressed_hpkey = hpkey;
-                press_key( hpkey );
-                _show_key( pressed_hpkey );
+                sdl_press_key( sdlkey_to_hpkey( event.key.keysym.sym ) );
                 break;
             case SDL_KEYUP:
-                hpkey = sdlkey_to_hpkey( event.key.keysym.sym );
-                if ( hpkey == -1 )
-                    break;
-
-                release_key( hpkey );
-
-                _show_key( pressed_hpkey );
-                pressed_hpkey = -1;
+                sdl_release_key( sdlkey_to_hpkey( event.key.keysym.sym ) );
                 break;
         }
     }
