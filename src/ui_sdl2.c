@@ -538,54 +538,64 @@ static void _draw_header( void )
 
 static void create_buttons_textures( void )
 {
-    unsigned x, y;
+    int x, y;
 
     for ( int i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
         // Create surfaces for each button
         // UP {{{
-        /* if ( !buttons_textures[ i ].up ) */
         buttons_textures[ i ].up =
             SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, BUTTONS[ i ].w, BUTTONS[ i ].h );
         SDL_SetRenderTarget( renderer, buttons_textures[ i ].up );
 
         // Fill the button and outline
-        __draw_rect( 0, 0, BUTTONS[ i ].w, BUTTONS[ i ].h, TRANSPARENT );
         __draw_rect( 1, 1, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUTTON );
 
         // draw edge of button
+        // left
         __draw_line( 1, BUTTONS[ i ].h - 2, 1, 1, BUT_TOP );
         __draw_line( 2, BUTTONS[ i ].h - 3, 2, 2, BUT_TOP );
         __draw_line( 3, BUTTONS[ i ].h - 4, 3, 3, BUT_TOP );
-
+        // top
         __draw_line( 1, 1, BUTTONS[ i ].w - 2, 1, BUT_TOP );
         __draw_line( 2, 2, BUTTONS[ i ].w - 3, 2, BUT_TOP );
         __draw_line( 3, 3, BUTTONS[ i ].w - 4, 3, BUT_TOP );
         __draw_line( 4, 4, BUTTONS[ i ].w - 5, 4, BUT_TOP );
-
+        // top-left
         __draw_pixel( 4, 5, BUT_TOP );
-
+        // bottom
         __draw_line( 3, BUTTONS[ i ].h - 2, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUT_BOT );
         __draw_line( 4, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUT_BOT );
-
+        // right
         __draw_line( BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUTTONS[ i ].w - 2, 3, BUT_BOT );
         __draw_line( BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, 4, BUT_BOT );
         __draw_line( BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, 5, BUT_BOT );
         __draw_pixel( BUTTONS[ i ].w - 5, BUTTONS[ i ].h - 4, BUT_BOT );
 
         // draw frame around button
+        // left
         __draw_line( 0, BUTTONS[ i ].h - 3, 0, 2, FRAME );
+        // top
         __draw_line( 2, 0, BUTTONS[ i ].w - 3, 0, FRAME );
+        // bottom
         __draw_line( 2, BUTTONS[ i ].h - 1, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 1, FRAME );
+        // right
         __draw_line( BUTTONS[ i ].w - 1, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 1, 2, FRAME );
         if ( i == HPKEY_ON ) {
+            // top
             __draw_line( 1, 1, BUTTONS[ 1 ].w - 2, 1, FRAME );
+            // top-left
             __draw_pixel( 1, 2, FRAME );
+            // top-right
             __draw_pixel( BUTTONS[ i ].w - 2, 2, FRAME );
         } else {
+            // top-left
             __draw_pixel( 1, 1, FRAME );
+            // top-right
             __draw_pixel( BUTTONS[ i ].w - 2, 1, FRAME );
         }
+        // bottom-left
         __draw_pixel( 1, BUTTONS[ i ].h - 2, FRAME );
+        // bottom-right
         __draw_pixel( BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, FRAME );
 
         if ( BUTTONS[ i ].label != ( char* )0 ) {
@@ -603,14 +613,12 @@ static void create_buttons_textures( void )
         }
         // }}}
 
-        // DOWN {{{
-        /* if ( !buttons_textures[ i ].down ) */
+        // DOWN {{{    //FIXME
         buttons_textures[ i ].down =
             SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, BUTTONS[ i ].w, BUTTONS[ i ].h );
         SDL_SetRenderTarget( renderer, buttons_textures[ i ].down );
 
         // Fill the button and outline
-        __draw_rect( 0, 0, BUTTONS[ i ].w, BUTTONS[ i ].h, TRANSPARENT );
         __draw_rect( 1, 1, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUTTON );
 
         // draw edge of button
