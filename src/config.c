@@ -712,7 +712,7 @@ int config_init( int argc, char* argv[] )
                     fprintf( stdout, "tui" );
                 break;
         }
-        fprintf( stdout, "\" -- possible values: \"x11\", \"sdl\", \"tui\", \"tui-small\", \"tui-tiny\"\n" );
+        fprintf( stdout, "\" -- possible values: \"x11\", \"sdl2\", \"sdl\" (deprecated), \"tui\", \"tui-small\", \"tui-tiny\"\n" );
         fprintf( stdout, "hide_chrome = %s\n", config.hide_chrome ? "true" : "false" );
         fprintf( stdout, "fullscreen = %s\n", config.show_ui_fullscreen ? "true" : "false" );
         fprintf( stdout, "mono = %s\n", config.mono ? "true" : "false" );
