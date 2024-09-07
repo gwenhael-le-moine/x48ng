@@ -548,7 +548,7 @@ static void create_buttons_textures( void )
         SDL_SetRenderTarget( renderer, buttons_textures[ i ].up );
 
         // Fill the button and outline
-        __draw_rect( 1, 1, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUTTON );
+        __draw_rect( 0, 0, BUTTONS[ i ].w, BUTTONS[ i ].h, BUTTON );
 
         // draw edge of button
         // left
@@ -613,13 +613,13 @@ static void create_buttons_textures( void )
         }
         // }}}
 
-        // DOWN {{{    //FIXME
+        // DOWN {{{
         buttons_textures[ i ].down =
             SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, BUTTONS[ i ].w, BUTTONS[ i ].h );
         SDL_SetRenderTarget( renderer, buttons_textures[ i ].down );
 
         // Fill the button and outline
-        __draw_rect( 1, 1, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUTTON );
+        __draw_rect( 0, 0, BUTTONS[ i ].w, BUTTONS[ i ].h, BUTTON );
 
         // draw edge of button
         // left
