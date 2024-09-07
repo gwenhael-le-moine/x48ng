@@ -1042,18 +1042,21 @@ void sdl_get_event( void )
             case SDL_MOUSEBUTTONDOWN:
                 hpkey = mouse_click_to_hpkey( event.button.x, event.button.y );
                 if ( sdl_press_key( hpkey ) != -1 ) {
-                    lasthpkey = hpkey;
-                    // Start timer
-                    lastticks = SDL_GetTicks();
+                    if ( lasthpkey == -1 ) {
+                        lasthpkey = hpkey;
+                        // Start timer
+                        lastticks = SDL_GetTicks();
+                    } else
+                        lasthpkey = lastticks = -1;
                 }
 
                 break;
             case SDL_MOUSEBUTTONUP:
                 hpkey = mouse_click_to_hpkey( event.button.x, event.button.y );
-                if ( lasthpkey != hpkey || lastticks == -1 || ( SDL_GetTicks() - lastticks < 750 ) ) {
-                    lasthpkey = lastticks = -1;
+                if ( lasthpkey != hpkey || lastticks == -1 || ( SDL_GetTicks() - lastticks < 750 ) )
                     sdl_release_key( hpkey );
-                }
+
+                lasthpkey = lastticks = -1;
                 break;
 
             case SDL_KEYDOWN:
