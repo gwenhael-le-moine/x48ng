@@ -1027,6 +1027,9 @@ static int sdl_release_key( int hpkey )
 void sdl_get_event( void )
 {
     SDL_Event event;
+    int hpkey = -1;
+    static int lasthpkey = -1; // last key that was pressed or -1 for none
+    static int lastticks = -1; // time at which a key was pressed or -1 if timer expired
 
     // Iterate as long as there are events
     while ( SDL_PollEvent( &event ) ) {
@@ -1037,10 +1040,20 @@ void sdl_get_event( void )
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
-                sdl_press_key( mouse_click_to_hpkey( event.button.x, event.button.y ) );
+                hpkey = mouse_click_to_hpkey( event.button.x, event.button.y );
+                if ( sdl_press_key( hpkey ) != -1 ) {
+                    lasthpkey = hpkey;
+                    // Start timer
+                    lastticks = SDL_GetTicks();
+                }
+
                 break;
             case SDL_MOUSEBUTTONUP:
-                sdl_release_key( mouse_click_to_hpkey( event.button.x, event.button.y ) );
+                hpkey = mouse_click_to_hpkey( event.button.x, event.button.y );
+                if ( lasthpkey != hpkey || lastticks == -1 || ( SDL_GetTicks() - lastticks < 750 ) ) {
+                    lasthpkey = lastticks = -1;
+                    sdl_release_key( hpkey );
+                }
                 break;
 
             case SDL_KEYDOWN:
@@ -1051,10 +1064,6 @@ void sdl_get_event( void )
                 break;
         }
     }
-
-    /* // Display button being pressed, if any */
-    /* if ( !config.hide_chrome && pressed_hpkey != 1 ) */
-    /*     _show_key( pressed_hpkey ); */
 }
 
 void sdl_update_LCD( void )
