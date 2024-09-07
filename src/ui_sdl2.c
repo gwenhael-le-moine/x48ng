@@ -650,12 +650,6 @@ static void _draw_key( int hpkey )
                     keyboard[ hpkey ].pressed ? buttons_textures[ hpkey ].down : buttons_textures[ hpkey ].up );
 }
 
-static void _draw_keys( void )
-{
-    for ( int i = FIRST_HPKEY; i <= LAST_HPKEY; i++ )
-        _draw_key( i );
-}
-
 static void _draw_keypad( void )
 {
     int x, y;
@@ -666,7 +660,6 @@ static void _draw_keypad( void )
     int total_top_labels_width;
 
     for ( int i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
-        total_top_labels_width = 0;
         // Background
         if ( BUTTONS[ i ].is_menu ) {
             x = KEYBOARD_OFFSET_X + BUTTONS[ i ].x;
@@ -705,6 +698,7 @@ static void _draw_keypad( void )
             write_with_small_font( x, y, BUTTONS[ i ].sub, WHITE, PAD );
         }
 
+        total_top_labels_width = 0;
         // Draw the left labels
         if ( BUTTONS[ i ].left != ( char* )0 ) {
             x = KEYBOARD_OFFSET_X + BUTTONS[ i ].x;
@@ -741,7 +735,8 @@ static void _draw_keypad( void )
         }
     }
 
-    _draw_keys();
+    for ( int i = FIRST_HPKEY; i <= LAST_HPKEY; i++ )
+        _draw_key( i );
 }
 
 static void _draw_bezel_LCD( void )
@@ -870,12 +865,11 @@ static inline void draw_nibble( int col, int row, int val )
 
     lcd_nibbles_buffer[ row ][ col ] = val;
 
-    int y = row;
     int x = col * 4;
     if ( row <= display.lines )
         x -= ( 2 * display.offset );
 
-    sdl_draw_nibble( x, y, val );
+    sdl_draw_nibble( x, row, val );
 }
 
 /* Identical in all ui_*.c */
