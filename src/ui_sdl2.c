@@ -622,64 +622,133 @@ static void create_buttons_textures( void )
         __draw_rect( 1, 1, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUTTON );
 
         // draw edge of button
-        __draw_line( 2, BUTTONS[ i ].h - 4, 2, 2, BUT_TOP );
-        __draw_line( 3, BUTTONS[ i ].h - 5, 3, 3, BUT_TOP );
-
-        __draw_line( 2, 2, BUTTONS[ i ].w - 4, 2, BUT_TOP );
-        __draw_line( 3, 3, BUTTONS[ i ].w - 5, 3, BUT_TOP );
-
-        __draw_pixel( 4, 4, BUT_TOP );
-
-        __draw_line( 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUT_BOT );
-        __draw_line( 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUT_BOT );
-
-        __draw_line( BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, 3, BUT_BOT );
-        __draw_line( BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, 4, BUT_BOT );
-        __draw_pixel( BUTTONS[ i ].w - 5, BUTTONS[ i ].h - 5, BUT_BOT );
+        // left
+        __draw_line( 1, BUTTONS[ i ].h - 2, 1, 1, BUT_TOP );
+        __draw_line( 2, BUTTONS[ i ].h - 3, 2, 2, BUT_TOP );
+        __draw_line( 3, BUTTONS[ i ].h - 4, 3, 3, BUT_TOP );
+        // top
+        __draw_line( 1, 1, BUTTONS[ i ].w - 2, 1, BUT_TOP );
+        __draw_line( 2, 2, BUTTONS[ i ].w - 3, 2, BUT_TOP );
+        __draw_line( 3, 3, BUTTONS[ i ].w - 4, 3, BUT_TOP );
+        __draw_line( 4, 4, BUTTONS[ i ].w - 5, 4, BUT_TOP );
+        // top-left
+        __draw_pixel( 4, 5, BUT_TOP );
+        // bottom
+        __draw_line( 3, BUTTONS[ i ].h - 2, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUT_BOT );
+        __draw_line( 4, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUT_BOT );
+        // right
+        __draw_line( BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUTTONS[ i ].w - 2, 3, BUT_BOT );
+        __draw_line( BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, 4, BUT_BOT );
+        __draw_line( BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, 5, BUT_BOT );
+        __draw_pixel( BUTTONS[ i ].w - 5, BUTTONS[ i ].h - 4, BUT_BOT );
 
         // draw frame around button
+        // left
         __draw_line( 0, BUTTONS[ i ].h - 3, 0, 2, FRAME );
+        __draw_line( 1, BUTTONS[ i ].h - 3, 1, 2, FRAME ); /* down */
+        // top
         __draw_line( 2, 0, BUTTONS[ i ].w - 3, 0, FRAME );
+        __draw_line( 2, 1, BUTTONS[ i ].w - 3, 1, FRAME ); /* down */
+        // bottom
         __draw_line( 2, BUTTONS[ i ].h - 1, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 1, FRAME );
+        __draw_line( 2, BUTTONS[ i ].h - 2, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 2, FRAME ); /* down */
+        // right
         __draw_line( BUTTONS[ i ].w - 1, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 1, 2, FRAME );
+        __draw_line( BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 2, 2, FRAME ); /* down */
         if ( i == HPKEY_ON ) {
-            __draw_line( 1, 1, BUTTONS[ i ].w - 2, 1, FRAME );
-            __draw_pixel( 1, 2, FRAME );
-            __draw_pixel( BUTTONS[ i ].w - 2, 2, FRAME );
+            // top
+            __draw_line( 1, 2, BUTTONS[ 1 ].w - 2, 2, FRAME ); /* down change */
+            // top-left
+            __draw_pixel( 1, 3, FRAME ); /* down change */
+            // top-right
+            __draw_pixel( BUTTONS[ i ].w - 2, 3, FRAME ); /* down change */
         } else {
-            __draw_pixel( 1, 1, FRAME );
-            __draw_pixel( BUTTONS[ i ].w - 2, 1, FRAME );
+            // top-left
+            __draw_pixel( 1, 2, FRAME ); /* down change */
+            // top-right
+            __draw_pixel( BUTTONS[ i ].w - 2, 2, FRAME ); /* down change */
         }
+        // bottom-left
         __draw_pixel( 1, BUTTONS[ i ].h - 2, FRAME );
+        // bottom-right
         __draw_pixel( BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, FRAME );
-        if ( i == HPKEY_ON ) {
-            __draw_rect( 1, 2, 1 + BUTTONS[ i ].w - 3, 2 + BUTTONS[ i ].h - 4, FRAME );
-            __draw_pixel( 2, 3, FRAME );
-            __draw_pixel( BUTTONS[ i ].w - 3, 3, FRAME );
-        } else {
-            __draw_rect( 1, 1, 1 + BUTTONS[ i ].w - 3, 1 + BUTTONS[ i ].h - 3, FRAME );
-            __draw_pixel( 2, 2, FRAME );
-            __draw_pixel( BUTTONS[ i ].w - 3, 2, FRAME );
-        }
-        __draw_pixel( 2, BUTTONS[ i ].h - 3, FRAME );
-        __draw_pixel( BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, FRAME );
 
-        /* Same as .up texture */
         if ( BUTTONS[ i ].label != ( char* )0 ) {
             /* Button has a text label */
             x = ( BUTTONS[ i ].w - strlen( BUTTONS[ i ].label ) * 8 ) / 2;
-            y = ( BUTTONS[ i ].h + 1 ) / 2 - 4;
-            y += 2;
+            y = ( BUTTONS[ i ].h + 1 ) / 2 - 5; /* down change */
 
             stringRGBA( renderer, x, y, BUTTONS[ i ].label, 255, 255, 255, 255 );
         } else if ( BUTTONS[ i ].lw != 0 ) {
             /* Button has a texture */
             x = ( 1 + BUTTONS[ i ].w - BUTTONS[ i ].lw ) / 2;
-            y = ( 1 + BUTTONS[ i ].h - BUTTONS[ i ].lh ) / 2 + 1;
-            y += 2;
+            y = ( 1 + BUTTONS[ i ].h - BUTTONS[ i ].lh ) / 2; /* down change */
 
             __draw_bitmap( x, y, BUTTONS[ i ].lw, BUTTONS[ i ].lh, BUTTONS[ i ].lb, BUTTONS[ i ].lc, BUTTON );
         }
+
+        /* // Fill the button and outline */
+        /* __draw_rect( 1, 1, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUTTON ); */
+
+        /* // draw edge of button */
+        /* __draw_line( 2, BUTTONS[ i ].h - 4, 2, 2, BUT_TOP ); */
+        /* __draw_line( 3, BUTTONS[ i ].h - 5, 3, 3, BUT_TOP ); */
+
+        /* __draw_line( 2, 2, BUTTONS[ i ].w - 4, 2, BUT_TOP ); */
+        /* __draw_line( 3, 3, BUTTONS[ i ].w - 5, 3, BUT_TOP ); */
+
+        /* __draw_pixel( 4, 4, BUT_TOP ); */
+
+        /* __draw_line( 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUT_BOT ); */
+        /* __draw_line( 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUT_BOT ); */
+
+        /* __draw_line( BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, 3, BUT_BOT ); */
+        /* __draw_line( BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, 4, BUT_BOT ); */
+        /* __draw_pixel( BUTTONS[ i ].w - 5, BUTTONS[ i ].h - 5, BUT_BOT ); */
+
+        /* // draw frame around button */
+        /* __draw_line( 0, BUTTONS[ i ].h - 3, 0, 2, FRAME ); */
+        /* __draw_line( 2, 0, BUTTONS[ i ].w - 3, 0, FRAME ); */
+        /* __draw_line( 2, BUTTONS[ i ].h - 1, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 1, FRAME ); */
+        /* __draw_line( BUTTONS[ i ].w - 1, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 1, 2, FRAME ); */
+        /* if ( i == HPKEY_ON ) { */
+        /*     __draw_line( 1, 1, BUTTONS[ i ].w - 2, 1, FRAME ); */
+        /*     __draw_pixel( 1, 2, FRAME ); */
+        /*     __draw_pixel( BUTTONS[ i ].w - 2, 2, FRAME ); */
+        /* } else { */
+        /*     __draw_pixel( 1, 1, FRAME ); */
+        /*     __draw_pixel( BUTTONS[ i ].w - 2, 1, FRAME ); */
+        /* } */
+        /* __draw_pixel( 1, BUTTONS[ i ].h - 2, FRAME ); */
+        /* __draw_pixel( BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, FRAME ); */
+        /* if ( i == HPKEY_ON ) { */
+        /*     __draw_rect( 1, 2, 1 + BUTTONS[ i ].w - 3, 2 + BUTTONS[ i ].h - 4, FRAME ); */
+        /*     __draw_pixel( 2, 3, FRAME ); */
+        /*     __draw_pixel( BUTTONS[ i ].w - 3, 3, FRAME ); */
+        /* } else { */
+        /*     __draw_rect( 1, 1, 1 + BUTTONS[ i ].w - 3, 1 + BUTTONS[ i ].h - 3, FRAME ); */
+        /*     __draw_pixel( 2, 2, FRAME ); */
+        /*     __draw_pixel( BUTTONS[ i ].w - 3, 2, FRAME ); */
+        /* } */
+        /* __draw_pixel( 2, BUTTONS[ i ].h - 3, FRAME ); */
+        /* __draw_pixel( BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, FRAME ); */
+
+        /* /\* Same as .up texture *\/ */
+        /* if ( BUTTONS[ i ].label != ( char* )0 ) { */
+        /*     /\* Button has a text label *\/ */
+        /*     x = ( BUTTONS[ i ].w - strlen( BUTTONS[ i ].label ) * 8 ) / 2; */
+        /*     y = ( BUTTONS[ i ].h + 1 ) / 2 - 4; */
+        /*     y += 2; */
+
+        /*     stringRGBA( renderer, x, y, BUTTONS[ i ].label, 255, 255, 255, 255 ); */
+        /* } else if ( BUTTONS[ i ].lw != 0 ) { */
+        /*     /\* Button has a texture *\/ */
+        /*     x = ( 1 + BUTTONS[ i ].w - BUTTONS[ i ].lw ) / 2; */
+        /*     y = ( 1 + BUTTONS[ i ].h - BUTTONS[ i ].lh ) / 2 + 1; */
+        /*     y += 2; */
+
+        /*     __draw_bitmap( x, y, BUTTONS[ i ].lw, BUTTONS[ i ].lh, BUTTONS[ i ].lb, BUTTONS[ i ].lc, BUTTON ); */
+        /* } */
         // }}}
     }
 
@@ -860,72 +929,6 @@ static void _show_key( int hpkey )
     SDL_RenderPresent( renderer );
 
     return;
-    /* // If we're called with the same key as before, do nothing */
-    /* if ( showkeylastkey == hpkey ) */
-    /*     return; */
-
-    /* showkeylastkey = hpkey; */
-
-    /* /\* SDL_Rect srect, drect; *\/ */
-    /* /\* SDL_Surface* ssurf; *\/ */
-    /* int x = 0; */
-    /* int y = 0; */
-
-    /* // Starts by hiding last */
-    /* if ( showkeylast_texture != 0 ) { */
-    /*     drect.x = showkeylastx; */
-    /*     drect.y = showkeylasty; */
-    /*     SDL_BlitSurface( showkeylast_texture, 0, window, &drect ); */
-
-    /*     // Update */
-    /*     SDL_UpdateRect( window, showkeylastx, showkeylasty, showkeylast_texture->w, showkeylast_texture->h ); */
-
-    /*     // Free */
-    /*     SDL_FreeSurface( showkeylast_texture ); */
-    /*     showkeylast_texture = 0; */
-    /* } */
-
-    /* // Which surface to show */
-    /* ssurf = ( keyboard[ hpkey ].pressed ) ? buttons_textures[ hpkey ].down : buttons_textures[ hpkey ].up; */
-
-    /* // Background backup */
-    /* showkeylast_texture = SDL_CreateRGBSurface( SDL_SWSURFACE, ssurf->w, ssurf->h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 );
-     */
-
-    /* // Where to */
-    /* x = KEYBOARD_OFFSET_X + BUTTONS[ hpkey ].x - ( ssurf->w - ssurf->w + 1 ) / 2; */
-    /* y = KEYBOARD_OFFSET_Y + BUTTONS[ hpkey ].y - ( ssurf->h - ssurf->h + 1 ) / 2; */
-    /* // blitting does not clip to screen, so if we are out of the screen we */
-    /* // shift the button to fit */
-    /* if ( x < 0 ) */
-    /*     x = 0; */
-    /* if ( y < 0 ) */
-    /*     y = 0; */
-    /* if ( x + ssurf->w > window->w ) */
-    /*     x = window->w - ssurf->w; */
-    /* if ( y + ssurf->h > window->h ) */
-    /*     y = window->h - ssurf->h; */
-
-    /* // Backup where to */
-    /* showkeylastx = x; */
-    /* showkeylasty = y; */
-
-    /* // Backup old surface */
-    /* srect.x = x; */
-    /* srect.y = y; */
-    /* srect.w = ssurf->w; */
-    /* srect.h = ssurf->h; */
-    /* drect.x = 0; */
-    /* drect.y = 0; */
-    /* SDL_BlitSurface( window, &srect, showkeylast_texture, &drect ); */
-
-    /* // Blit the button */
-    /* drect.x = x; */
-    /* drect.y = y; */
-    /* SDL_BlitSurface( ssurf, 0, window, &drect ); */
-
-    /* // Update */
-    /* SDL_UpdateRect( window, x, y, ssurf->w, ssurf->h ); */
 }
 
 static void _draw_serial_devices_path( void )
