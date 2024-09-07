@@ -21,7 +21,7 @@ WITH_SDL2 ?= yes
 WITH_SDL ?= no
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 38
+VERSION_MINOR = 39
 PATCHLEVEL = 0
 
 DOTOS = src/emu_serial.o \
