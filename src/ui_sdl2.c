@@ -1101,7 +1101,8 @@ void init_sdl2_ui( int argc, char** argv )
     else
         window_flags |= SDL_WINDOW_RESIZABLE;
 
-    window = SDL_CreateWindow( config.progname, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, window_flags );
+    window = SDL_CreateWindow( config.progname, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width * config.scale,
+                               height * config.scale, window_flags );
     if ( window == NULL ) {
         printf( "Couldn't create window: %s\n", SDL_GetError() );
         exit( 1 );
@@ -1110,6 +1111,8 @@ void init_sdl2_ui( int argc, char** argv )
     renderer = SDL_CreateRenderer( window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE );
     if ( renderer == NULL )
         exit( 2 );
+
+    SDL_RenderSetLogicalSize( renderer, width, height );
 
     main_texture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height );
 

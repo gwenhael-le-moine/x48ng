@@ -35,6 +35,7 @@ typedef struct {
     /* sdl */
     bool hide_chrome;
     bool show_ui_fullscreen;
+    double scale;
 
     /* x11 */
     bool netbook;

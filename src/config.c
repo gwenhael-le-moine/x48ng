@@ -43,6 +43,7 @@ config_t config = {
     /* sdl */
     .hide_chrome = false,
     .show_ui_fullscreen = false,
+    .scale = 1.0,
 
     /* x11 */
     .netbook = false,
@@ -245,6 +246,7 @@ int config_init( int argc, char* argv[] )
     int clopt_throttle = -1;
     int clopt_hide_chrome = -1;
     int clopt_show_ui_fullscreen = -1;
+    double clopt_scale = -1.0;
     int clopt_netbook = -1;
     int clopt_mono = -1;
     int clopt_gray = -1;
@@ -282,6 +284,7 @@ int config_init( int argc, char* argv[] )
         {"sdl",              no_argument,       &clopt_frontend_type,           FRONTEND_SDL },
         {"no-chrome",        no_argument,       &clopt_hide_chrome,             true         },
         {"fullscreen",       no_argument,       &clopt_show_ui_fullscreen,      true         },
+        {"scale",            required_argument, NULL,                           7110         },
 
         {"x11",              no_argument,       &clopt_frontend_type,           FRONTEND_X11 },
         {"netbook",          no_argument,       &clopt_netbook,                 true         },
@@ -403,6 +406,9 @@ int config_init( int argc, char* argv[] )
                 break;
             case 1015:
                 clopt_serialLine = optarg;
+                break;
+            case 7110:
+                clopt_scale = atof( optarg );
                 break;
             case 8110:
                 clopt_x11_visual = optarg;
@@ -562,6 +568,9 @@ int config_init( int argc, char* argv[] )
     lua_getglobal( config_lua_values, "fullscreen" );
     config.show_ui_fullscreen = lua_toboolean( config_lua_values, -1 );
 
+    lua_getglobal( config_lua_values, "scale" );
+    config.scale = lua_tonumber( config_lua_values, -1.0 );
+
     lua_getglobal( config_lua_values, "netbook" );
     config.netbook = lua_toboolean( config_lua_values, -1 );
 
@@ -644,6 +653,8 @@ int config_init( int argc, char* argv[] )
         config.hide_chrome = clopt_hide_chrome;
     if ( clopt_show_ui_fullscreen != -1 )
         config.show_ui_fullscreen = clopt_show_ui_fullscreen;
+    if ( clopt_scale != -1.0 )
+        config.scale = clopt_scale;
     if ( clopt_netbook != -1 )
         config.netbook = clopt_netbook;
     if ( clopt_mono != -1 )
@@ -715,6 +726,7 @@ int config_init( int argc, char* argv[] )
         fprintf( stdout, "\" -- possible values: \"x11\", \"sdl2\", \"sdl\" (deprecated), \"tui\", \"tui-small\", \"tui-tiny\"\n" );
         fprintf( stdout, "hide_chrome = %s\n", config.hide_chrome ? "true" : "false" );
         fprintf( stdout, "fullscreen = %s\n", config.show_ui_fullscreen ? "true" : "false" );
+        fprintf( stdout, "scale = %f -- applies only to sdl2\n", config.scale );
         fprintf( stdout, "mono = %s\n", config.mono ? "true" : "false" );
         fprintf( stdout, "gray = %s\n", config.gray ? "true" : "false" );
         fprintf( stdout, "leave_shift_keys = %s\n", config.leave_shift_keys ? "true" : "false" );
