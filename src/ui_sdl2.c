@@ -53,10 +53,6 @@ color_t colors[ NB_COLORS ];
 static on_off_sdl_textures_struct_t buttons_textures[ NB_KEYS ];
 static on_off_sdl_textures_struct_t annunciators_textures[ NB_ANNUNCIATORS ];
 
-// State to displayed zoomed last pressed key
-/* static SDL_Texture* showkeylast_texture = 0; */
-static int showkeylastx, showkeylasty, showkeylastkey;
-
 static SDL_Window* window;
 static SDL_Renderer* renderer;
 static SDL_Texture* main_texture;
@@ -64,10 +60,6 @@ static SDL_Texture* main_texture;
 /****************************/
 /* functions implementation */
 /****************************/
-/* static inline unsigned color2argb( int color ) */
-/* { */
-/*     return 0x000000ff | ( colors[ color ].r << 24 ) | ( colors[ color ].g << 16 ) | ( colors[ color ].b << 8 ); */
-/* } */
 static inline unsigned color2bgra( int color )
 {
     return 0xff000000 | ( colors[ color ].r << 16 ) | ( colors[ color ].g << 8 ) | colors[ color ].b;
