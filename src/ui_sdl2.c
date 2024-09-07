@@ -140,7 +140,7 @@ static void __draw_bitmap( int x, int y, unsigned int w, unsigned int h, unsigne
     __draw_texture( x, y, w, h, bitmap_to_texture( w, h, data, color_fg, color_bg ) );
 }
 
-static void write_text( int x, int y, const char* string, int color_fg, int color_bg )
+static void write_with_small_font( int x, int y, const char* string, int color_fg, int color_bg )
 {
     for ( unsigned int i = 0; i < strlen( string ); i++ ) {
         if ( small_font[ ( int )string[ i ] ].h != 0 )
@@ -694,7 +694,7 @@ static void _draw_keypad( void )
                 y -= 2;
             }
 
-            write_text( x, y, BUTTONS[ i ].letter, WHITE, ( i < HPKEY_MTH ) ? DISP_PAD : PAD );
+            write_with_small_font( x, y, BUTTONS[ i ].letter, WHITE, ( i < HPKEY_MTH ) ? DISP_PAD : PAD );
         }
 
         // Bottom label: the only one is the cancel button
@@ -702,7 +702,7 @@ static void _draw_keypad( void )
             x = KEYBOARD_OFFSET_X + BUTTONS[ i ].x +
                 ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].sub, strlen( BUTTONS[ i ].sub ) ) ) / 2;
             y = KEYBOARD_OFFSET_Y + BUTTONS[ i ].y + BUTTONS[ i ].h + small_ascent + 2;
-            write_text( x, y, BUTTONS[ i ].sub, WHITE, PAD );
+            write_with_small_font( x, y, BUTTONS[ i ].sub, WHITE, PAD );
         }
 
         // Draw the left labels
@@ -721,7 +721,7 @@ static void _draw_keypad( void )
 
             x += ( 1 + BUTTONS[ i ].w - total_top_labels_width ) / 2;
 
-            write_text( x, y, BUTTONS[ i ].left, LEFT, BUTTONS[ i ].is_menu ? UNDERLAY : PAD );
+            write_with_small_font( x, y, BUTTONS[ i ].left, LEFT, BUTTONS[ i ].is_menu ? UNDERLAY : PAD );
         }
 
         // draw the right labels ( .is_menu never have one )
@@ -737,7 +737,7 @@ static void _draw_keypad( void )
 
             x += ( 1 + BUTTONS[ i ].w - total_top_labels_width ) / 2;
 
-            write_text( x, y, BUTTONS[ i ].right, RIGHT, PAD );
+            write_with_small_font( x, y, BUTTONS[ i ].right, RIGHT, PAD );
         }
     }
 
