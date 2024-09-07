@@ -686,69 +686,6 @@ static void create_buttons_textures( void )
 
             __draw_bitmap( x, y, BUTTONS[ i ].lw, BUTTONS[ i ].lh, BUTTONS[ i ].lb, BUTTONS[ i ].lc, BUTTON );
         }
-
-        /* // Fill the button and outline */
-        /* __draw_rect( 1, 1, BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, BUTTON ); */
-
-        /* // draw edge of button */
-        /* __draw_line( 2, BUTTONS[ i ].h - 4, 2, 2, BUT_TOP ); */
-        /* __draw_line( 3, BUTTONS[ i ].h - 5, 3, 3, BUT_TOP ); */
-
-        /* __draw_line( 2, 2, BUTTONS[ i ].w - 4, 2, BUT_TOP ); */
-        /* __draw_line( 3, 3, BUTTONS[ i ].w - 5, 3, BUT_TOP ); */
-
-        /* __draw_pixel( 4, 4, BUT_TOP ); */
-
-        /* __draw_line( 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUT_BOT ); */
-        /* __draw_line( 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUT_BOT ); */
-
-        /* __draw_line( BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 3, 3, BUT_BOT ); */
-        /* __draw_line( BUTTONS[ i ].w - 4, BUTTONS[ i ].h - 4, BUTTONS[ i ].w - 4, 4, BUT_BOT ); */
-        /* __draw_pixel( BUTTONS[ i ].w - 5, BUTTONS[ i ].h - 5, BUT_BOT ); */
-
-        /* // draw frame around button */
-        /* __draw_line( 0, BUTTONS[ i ].h - 3, 0, 2, FRAME ); */
-        /* __draw_line( 2, 0, BUTTONS[ i ].w - 3, 0, FRAME ); */
-        /* __draw_line( 2, BUTTONS[ i ].h - 1, BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 1, FRAME ); */
-        /* __draw_line( BUTTONS[ i ].w - 1, BUTTONS[ i ].h - 3, BUTTONS[ i ].w - 1, 2, FRAME ); */
-        /* if ( i == HPKEY_ON ) { */
-        /*     __draw_line( 1, 1, BUTTONS[ i ].w - 2, 1, FRAME ); */
-        /*     __draw_pixel( 1, 2, FRAME ); */
-        /*     __draw_pixel( BUTTONS[ i ].w - 2, 2, FRAME ); */
-        /* } else { */
-        /*     __draw_pixel( 1, 1, FRAME ); */
-        /*     __draw_pixel( BUTTONS[ i ].w - 2, 1, FRAME ); */
-        /* } */
-        /* __draw_pixel( 1, BUTTONS[ i ].h - 2, FRAME ); */
-        /* __draw_pixel( BUTTONS[ i ].w - 2, BUTTONS[ i ].h - 2, FRAME ); */
-        /* if ( i == HPKEY_ON ) { */
-        /*     __draw_rect( 1, 2, 1 + BUTTONS[ i ].w - 3, 2 + BUTTONS[ i ].h - 4, FRAME ); */
-        /*     __draw_pixel( 2, 3, FRAME ); */
-        /*     __draw_pixel( BUTTONS[ i ].w - 3, 3, FRAME ); */
-        /* } else { */
-        /*     __draw_rect( 1, 1, 1 + BUTTONS[ i ].w - 3, 1 + BUTTONS[ i ].h - 3, FRAME ); */
-        /*     __draw_pixel( 2, 2, FRAME ); */
-        /*     __draw_pixel( BUTTONS[ i ].w - 3, 2, FRAME ); */
-        /* } */
-        /* __draw_pixel( 2, BUTTONS[ i ].h - 3, FRAME ); */
-        /* __draw_pixel( BUTTONS[ i ].w - 3, BUTTONS[ i ].h - 3, FRAME ); */
-
-        /* /\* Same as .up texture *\/ */
-        /* if ( BUTTONS[ i ].label != ( char* )0 ) { */
-        /*     /\* Button has a text label *\/ */
-        /*     x = ( BUTTONS[ i ].w - strlen( BUTTONS[ i ].label ) * 8 ) / 2; */
-        /*     y = ( BUTTONS[ i ].h + 1 ) / 2 - 4; */
-        /*     y += 2; */
-
-        /*     stringRGBA( renderer, x, y, BUTTONS[ i ].label, 255, 255, 255, 255 ); */
-        /* } else if ( BUTTONS[ i ].lw != 0 ) { */
-        /*     /\* Button has a texture *\/ */
-        /*     x = ( 1 + BUTTONS[ i ].w - BUTTONS[ i ].lw ) / 2; */
-        /*     y = ( 1 + BUTTONS[ i ].h - BUTTONS[ i ].lh ) / 2 + 1; */
-        /*     y += 2; */
-
-        /*     __draw_bitmap( x, y, BUTTONS[ i ].lw, BUTTONS[ i ].lh, BUTTONS[ i ].lb, BUTTONS[ i ].lc, BUTTON ); */
-        /* } */
         // }}}
     }
 
