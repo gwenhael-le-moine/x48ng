@@ -26,7 +26,7 @@ You can use the script `setup-x48ng-home.sh` or simply run `x48ng --rom=<romfile
 
 ![screenshot of x48ng --x11](./x11-screenshot.png?raw=true "screenshot of x48ng --x11")
 
-### `--sdl` version
+### `--sdl`/`--sdl2` version
 
 ![screenshot of x48ng --sdl](./sdl-screenshot.png?raw=true "screenshot of x48ng --sdl")
 
@@ -58,16 +58,13 @@ _To quit `x48ng` use `F7`
 5. refactoring as a way to explore/understand the codebase
 6. drop Xresources
 7. link to lua to use it as a config file reader
+8. ported the SDL1 GUI to SDL2
 
 ## Bugs to fix
 
 See and report at https://github.com/gwenhael-le-moine/x48ng/issues
 
 ## What more I would like to do:
-
-### short term
-
-- port from sdl1.2 to sdl2
 
 ### long(er) term
 
@@ -89,7 +86,12 @@ Ncurses front-end is always built-in.
 - Lua
 - readline
 
-for SDL version:
+for SDL2 version:
+
+- SDL2_gfx
+- SDL 2
+
+for SDL1 version:
 
 - SDL_gfx1
 - SDL 1.2 or sdl12_compat
