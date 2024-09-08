@@ -348,6 +348,8 @@ int config_init( int argc, char* argv[] )
                             "false)\n"
                             "     --fullscreen         make the UI fullscreen "
                             "(default: false)\n"
+                            "     --scale=<number>     make the UI scale <number> times "
+                            "(default: 1.0)\n"
                             "     --netbook            make the UI horizontal (default: "
                             "false)\n"
                             "     --visual=<X visual>  use x11 visual <X visual> (default: "
@@ -569,7 +571,7 @@ int config_init( int argc, char* argv[] )
     config.show_ui_fullscreen = lua_toboolean( config_lua_values, -1 );
 
     lua_getglobal( config_lua_values, "scale" );
-    config.scale = lua_tonumber( config_lua_values, -1.0 );
+    config.scale = luaL_optnumber( config_lua_values, -1, 1.0 );
 
     lua_getglobal( config_lua_values, "netbook" );
     config.netbook = lua_toboolean( config_lua_values, -1 );
@@ -653,7 +655,7 @@ int config_init( int argc, char* argv[] )
         config.hide_chrome = clopt_hide_chrome;
     if ( clopt_show_ui_fullscreen != -1 )
         config.show_ui_fullscreen = clopt_show_ui_fullscreen;
-    if ( clopt_scale != -1.0 )
+    if ( clopt_scale > 0.0 )
         config.scale = clopt_scale;
     if ( clopt_netbook != -1 )
         config.netbook = clopt_netbook;
