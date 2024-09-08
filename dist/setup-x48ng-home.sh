@@ -6,7 +6,7 @@ CWD=$(pwd)
 CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 DOTX48NG=${DOTX48NG:-$CONFIG_HOME/x48ng}
 CONFIG_FILE="${DOTX48NG}"/config.lua
-ROM=${ROM:-$CWD/ROMs/gxrom-r}
+ROM=${ROM:-./ROMs/gxrom-r}
 
 mkdir -p "${DOTX48NG}"
 
