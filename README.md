@@ -77,7 +77,7 @@ The `Makefile` will try to autodetect if necessary dependencies for x11 and sdl 
 
 You can force disable x11 front-end by compiling with `make WITH_X11=no`.
 
-You can force disable sdl front-end by compiling with `make WITH_SDL=no`.
+You can force disable sdl front-end by compiling with `make WITH_SDL2=no`.
 
 Ncurses front-end is always built-in.
 
@@ -88,13 +88,8 @@ Ncurses front-end is always built-in.
 
 for SDL2 version:
 
+- SDL2
 - SDL2_gfx
-- SDL 2
-
-for SDL1 version:
-
-- SDL_gfx1
-- SDL 1.2 or sdl12_compat
 
 for x11 version:
 

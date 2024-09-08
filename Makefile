@@ -17,8 +17,8 @@ FULL_WARNINGS = no
 LUA_VERSION ?= lua
 PKG_CONFIG ?= pkg-config
 WITH_X11 ?= yes
+WITH_SDL ?= yes
 WITH_SDL2 ?= yes
-WITH_SDL ?= no
 
 VERSION_MAJOR = 0
 VERSION_MINOR = 40
@@ -107,24 +107,16 @@ ifeq ($(WITH_X11), yes)
 endif
 
 ### SDL2 UI
+ifeq ($(WITH_SDL), yes)
+	WITH_SDL2 = yes
+endif
 ifeq ($(WITH_SDL2), yes)
-	WITH_SDL = no
 	SDLCFLAGS = $(shell "$(PKG_CONFIG)" --cflags sdl2 SDL2_gfx)
 	SDLLIBS = $(shell "$(PKG_CONFIG)" --libs sdl2 SDL2_gfx)
 
 	override CFLAGS += $(SDLCFLAGS) -DHAS_SDL2=1
 	LIBS += $(SDLLIBS)
 	DOTOS += src/ui_sdl2.o
-endif
-
-### SDL UI
-ifeq ($(WITH_SDL), yes)
-	SDLCFLAGS = $(shell "$(PKG_CONFIG)" --cflags SDL_gfx sdl12_compat)
-	SDLLIBS = $(shell "$(PKG_CONFIG)" --libs SDL_gfx sdl12_compat)
-
-	override CFLAGS += $(SDLCFLAGS) -DHAS_SDL=1
-	LIBS += $(SDLLIBS)
-	DOTOS += src/ui_sdl.o
 endif
 
 # depfiles = $(objects:.o=.d)

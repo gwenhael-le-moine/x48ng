@@ -26,11 +26,6 @@ extern void init_sdl2_ui( int argc, char** argv );
 extern void sdl2_ui_stop( void );
 #endif
 
-#ifdef HAS_SDL
-extern void init_sdl_ui( int argc, char** argv );
-extern void sdl_ui_stop( void );
-#endif
-
 extern void init_text_ui( int argc, char** argv );
 extern void text_ui_stop( void );
 

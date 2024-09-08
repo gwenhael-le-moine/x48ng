@@ -281,7 +281,7 @@ int config_init( int argc, char* argv[] )
         {"debug",            no_argument,       &clopt_useDebugger,             true         },
 
         {"sdl2",             no_argument,       &clopt_frontend_type,           FRONTEND_SDL2},
-        {"sdl",              no_argument,       &clopt_frontend_type,           FRONTEND_SDL },
+        {"sdl",              no_argument,       &clopt_frontend_type,           FRONTEND_SDL2},
         {"no-chrome",        no_argument,       &clopt_hide_chrome,             true         },
         {"fullscreen",       no_argument,       &clopt_show_ui_fullscreen,      true         },
         {"scale",            required_argument, NULL,                           7110         },
@@ -332,7 +332,6 @@ int config_init( int argc, char* argv[] )
                             "  -V --verbose            be verbose (default: false)\n"
                             "     --x11                use X11 front-end (default: true)\n"
                             "     --sdl2               use SDL2 front-end (default: false)\n"
-                            "     --sdl                use SDL front-end (default: false)\n"
                             "     --tui                use text front-end (default: false)\n"
                             "     --tui-small          use text small front-end (2×2 pixels per character) (default: "
                             "false)\n"
@@ -534,8 +533,6 @@ int config_init( int argc, char* argv[] )
 #  define DEFAULT_FRONTEND "x11"
 #elif HAS_SDL2
 #  define DEFAULT_FRONTEND "sdl2"
-#elif HAS_SDL
-#  define DEFAULT_FRONTEND "sdl"
 #else
 #  define DEFAULT_FRONTEND "tui"
 #endif
@@ -545,8 +542,8 @@ int config_init( int argc, char* argv[] )
             config.frontend_type = FRONTEND_X11;
         if ( strcmp( svalue, "sdl2" ) == 0 )
             config.frontend_type = FRONTEND_SDL2;
-        if ( strcmp( svalue, "sdl" ) == 0 )
-            config.frontend_type = FRONTEND_SDL;
+        if ( strcmp( svalue, "sdl" ) == 0 ) /* retro-compatibility */
+            config.frontend_type = FRONTEND_SDL2;
         if ( strcmp( svalue, "tui" ) == 0 ) {
             config.frontend_type = FRONTEND_TEXT;
             config.small = false;
@@ -713,9 +710,6 @@ int config_init( int argc, char* argv[] )
             case FRONTEND_SDL2:
                 fprintf( stdout, "sdl2" );
                 break;
-            case FRONTEND_SDL:
-                fprintf( stdout, "sdl" );
-                break;
             case FRONTEND_TEXT:
                 if ( config.small )
                     fprintf( stdout, "tui-small" );
@@ -725,7 +719,7 @@ int config_init( int argc, char* argv[] )
                     fprintf( stdout, "tui" );
                 break;
         }
-        fprintf( stdout, "\" -- possible values: \"x11\", \"sdl2\", \"sdl\" (deprecated), \"tui\", \"tui-small\", \"tui-tiny\"\n" );
+        fprintf( stdout, "\" -- possible values: \"x11\", \"sdl2\" \"tui\", \"tui-small\", \"tui-tiny\"\n" );
         fprintf( stdout, "hide_chrome = %s\n", config.hide_chrome ? "true" : "false" );
         fprintf( stdout, "fullscreen = %s\n", config.show_ui_fullscreen ? "true" : "false" );
         fprintf( stdout, "scale = %f -- applies only to sdl2\n", config.scale );
