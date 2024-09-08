@@ -538,6 +538,19 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
     // Fill the button and outline
     __draw_rect( 0, 0, BUTTONS[ hpkey ].w, BUTTONS[ hpkey ].h, BUTTON );
 
+    // fix outer-corners color
+    int outer_color = PAD;
+    if ( BUTTONS[ hpkey ].is_menu )
+        outer_color = UNDERLAY;
+    if ( hpkey < HPKEY_MTH )
+        outer_color = DISP_PAD;
+    __draw_line( 0, 0, BUTTONS[ hpkey ].w - 1, 0, outer_color );
+    __draw_line( 0, BUTTONS[ hpkey ].h - 1, BUTTONS[ hpkey ].w - 1, BUTTONS[ hpkey ].h - 1, outer_color );
+    __draw_pixel( 0, 1, outer_color );
+    __draw_pixel( 0, BUTTONS[ hpkey ].h - 2, outer_color );
+    __draw_pixel( BUTTONS[ hpkey ].w - 1, 1, outer_color );
+    __draw_pixel( BUTTONS[ hpkey ].w - 1, BUTTONS[ hpkey ].h - 2, outer_color );
+
     // draw edge of button
     // left
     __draw_line( 1, BUTTONS[ hpkey ].h - 2, 1, 1, BUT_TOP );
