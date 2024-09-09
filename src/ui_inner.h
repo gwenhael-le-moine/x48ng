@@ -362,7 +362,7 @@ static unsigned char three_bitmap[] = { 0x0e, 0x11, 0x10, 0x0c, 0x10, 0x11, 0x0e
 #define four_width 5
 #define four_height 7
 static unsigned char four_bitmap[] = {
-    6, 10, 18, 31, 2, 2, 2,
+    8, 12, 10, 9, 31, 8, 8,
 };
 
 #define five_width 5
@@ -374,7 +374,7 @@ static unsigned char five_bitmap[] = {
 #define six_width 5
 #define six_height 7
 static unsigned char six_bitmap[] = {
-    14, 17, 16, 30, 17, 17, 14,
+    14, 17, 1, 15, 17, 17, 14,
 };
 
 #define seven_width 5
@@ -392,7 +392,7 @@ static unsigned char eight_bitmap[] = {
 #define nine_width 5
 #define nine_height 7
 static unsigned char nine_bitmap[] = {
-    14, 17, 17, 30, 16, 18, 14,
+    14, 17, 17, 30, 16, 17, 14,
 };
 
 #define small_colon_width 2
