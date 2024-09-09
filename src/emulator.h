@@ -38,7 +38,7 @@
 #define HPKEY_UP 10
 #define HPKEY_NXT 11
 
-#define HPKEY_COLON 12
+#define HPKEY_QUOTE 12
 #define HPKEY_STO 13
 #define HPKEY_EVAL 14
 #define HPKEY_LEFT 15

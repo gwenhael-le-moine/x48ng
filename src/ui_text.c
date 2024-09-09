@@ -439,7 +439,7 @@ void text_get_event( void )
                 hpkey = HPKEY_NXT;
                 break;
             case 'm':
-                hpkey = HPKEY_COLON;
+                hpkey = HPKEY_QUOTE;
                 break;
             case 'n':
                 hpkey = HPKEY_STO;

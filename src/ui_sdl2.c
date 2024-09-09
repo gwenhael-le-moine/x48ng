@@ -298,7 +298,7 @@ static int sdlkey_to_hpkey( SDL_Keycode k )
         case SDLK_l:
             return HPKEY_NXT;
         case SDLK_m:
-            return HPKEY_COLON;
+            return HPKEY_QUOTE;
         case SDLK_n:
             return HPKEY_STO;
         case SDLK_o:
