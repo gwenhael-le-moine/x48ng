@@ -10,7 +10,6 @@
 #include <unistd.h>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL2_gfxPrimitives.h> /* stringRGBA(); */
 
 #include "romio.h" /* opt_gx */
 #include "config.h"
