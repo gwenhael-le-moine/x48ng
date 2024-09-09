@@ -59,7 +59,7 @@ EXTRA_WARNING_FLAGS := -Wunused-function \
 	$(call cc-option,-Wunused-variable)
 endif
 
-override CFLAGS := -std=c23 \
+override CFLAGS := -std=c2x \
 	-Wall -Wextra -Wpedantic \
 	-Wformat=2 -Wshadow \
 	-Wwrite-strings -Wstrict-prototypes -Wold-style-definition \
