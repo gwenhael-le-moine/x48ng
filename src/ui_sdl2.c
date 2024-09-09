@@ -531,13 +531,11 @@ static void _draw_header( void )
     } else {
         x = display_offset_x;
         y = TOP_SKIP - DISP_FRAME - hp48sx_height - 3;
-        __draw_bitmap( x, y, hp48sx_width, hp48sx_height, hp48sx_bitmap, RIGHT,
-                       0 ); // Background transparent: draw only green menu
+        __draw_bitmap( x, y, hp48sx_width, hp48sx_height, hp48sx_bitmap, LOGO, DISP_PAD );
 
         x = display_offset_x + DISPLAY_WIDTH - 1 - science_width;
         y = TOP_SKIP - DISP_FRAME - science_height - 4;
-        __draw_bitmap( x, y, science_width, science_height, science_bitmap, RIGHT,
-                       0 ); // Background transparent: draw only green menu
+        __draw_bitmap( x, y, science_width, science_height, science_bitmap, LOGO, DISP_PAD );
     }
 }
 
