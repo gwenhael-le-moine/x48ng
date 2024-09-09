@@ -520,15 +520,14 @@ static void _draw_header( void )
         y = hp_height + 8 - hp48gx_height;
         __draw_bitmap( x, y, hp48gx_width, hp48gx_height, hp48gx_bitmap, LOGO, DISP_PAD );
 
+        x = display_offset_x + DISPLAY_WIDTH - gx_128K_ram_width + gx_green_x_hot + 2;
+        y = 10 + gx_green_y_hot;
+        __draw_bitmap( x, y, gx_green_width, gx_green_height, gx_green_bitmap, RIGHT, DISP_PAD );
+
         x = display_offset_x + DISPLAY_WIDTH - gx_128K_ram_width + gx_silver_x_hot + 2;
         y = 10 + gx_silver_y_hot;
         __draw_bitmap( x, y, gx_silver_width, gx_silver_height, gx_silver_bitmap, LOGO,
                        0 ); // Background transparent: draw only silver line
-
-        x = display_offset_x + DISPLAY_WIDTH - gx_128K_ram_width + gx_green_x_hot + 2;
-        y = 10 + gx_green_y_hot;
-        __draw_bitmap( x, y, gx_green_width, gx_green_height, gx_green_bitmap, RIGHT,
-                       0 ); // Background transparent: draw only green menu
     } else {
         x = display_offset_x;
         y = TOP_SKIP - DISP_FRAME - hp48sx_height - 3;
