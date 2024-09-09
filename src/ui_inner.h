@@ -339,6 +339,18 @@ static unsigned char comma_bitmap[] = { 0x00, 0x00, 0x00, 0x00, 0x06, 0x06, 0x03
 #define slash_height 7
 static unsigned char slash_bitmap[] = { 0x04, 0x04, 0x02, 0x02, 0x02, 0x01, 0x01 };
 
+#define zero_width 5
+#define zero_height 7
+static unsigned char zero_bitmap[] = {
+    0b00001110, 0b00010001, 0b00011001, 0b00010101, 0b00010011, 0b00010001, 0b00001110,
+};
+
+#define one_width 5
+#define one_height 7
+static unsigned char one_bitmap[] = {
+    0b00000100, 0b00000110, 0b00000101, 0b00000100, 0b00000100, 0b00000100, 0b00011111,
+};
+
 #define two_width 5
 #define two_height 7
 static unsigned char two_bitmap[] = { 0x0e, 0x11, 0x10, 0x08, 0x04, 0x02, 0x1f };
@@ -346,6 +358,48 @@ static unsigned char two_bitmap[] = { 0x0e, 0x11, 0x10, 0x08, 0x04, 0x02, 0x1f }
 #define three_width 5
 #define three_height 7
 static unsigned char three_bitmap[] = { 0x0e, 0x11, 0x10, 0x0c, 0x10, 0x11, 0x0e };
+
+#define four_width 5
+#define four_height 7
+static unsigned char four_bitmap[] = {
+    0b00000110, 0b00001010, 0b00010010, 0b00011111, 0b00000010, 0b00000010, 0b00000010,
+};
+
+#define five_width 5
+#define five_height 7
+static unsigned char five_bitmap[] = {
+  0b00011111,
+  0b00000001,
+  0b00000001,
+  0b00001111,
+  0b00010000,
+  0b00010000,
+  0b00001111,
+};
+
+#define six_width 5
+#define six_height 7
+static unsigned char six_bitmap[] = {
+    0b00001110, 0b00010001, 0b00010000, 0b00011110, 0b00010001, 0b00010001, 0b00001110,
+};
+
+#define seven_width 5
+#define seven_height 7
+static unsigned char seven_bitmap[] = {
+    0b00011111, 0b00010000, 0b00001000, 0b00000100, 0b00000010, 0b00000001, 0b00000001,
+};
+
+#define eight_width 5
+#define eight_height 7
+static unsigned char eight_bitmap[] = {
+    0b00001110, 0b00010001, 0b00010001, 0b00001110, 0b00010001, 0b00010001, 0b00001110,
+};
+
+#define nine_width 5
+#define nine_height 7
+static unsigned char nine_bitmap[] = {
+    0b00001110, 0b00010001, 0b00010001, 0b00011110, 0b00010000, 0b00010010, 0b00001110,
+};
 
 #define small_colon_width 2
 #define small_colon_height 7
