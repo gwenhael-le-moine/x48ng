@@ -142,12 +142,27 @@ static void __draw_bitmap( int x, int y, unsigned int w, unsigned int h, unsigne
 
 static void write_with_small_font( int x, int y, const char* string, int color_fg, int color_bg )
 {
+    int c;
     for ( unsigned int i = 0; i < strlen( string ); i++ ) {
-        if ( small_font[ ( int )string[ i ] ].h != 0 )
-            __draw_bitmap( x, ( int )( y - small_font[ ( int )string[ i ] ].h ), small_font[ ( int )string[ i ] ].w,
-                           small_font[ ( int )string[ i ] ].h, small_font[ ( int )string[ i ] ].bits, color_fg, color_bg );
+        c = ( int )string[ i ];
+        if ( small_font[ c ].h != 0 )
+            __draw_bitmap( x - 1, ( int )( y - small_font[ c ].h ), small_font[ c ].w, small_font[ c ].h, small_font[ c ].bits, color_fg,
+                           color_bg );
 
         x += SmallTextWidth( &string[ i ], 1 );
+    }
+}
+
+static void write_with_big_font( int x, int y, const char* string, int color_fg, int color_bg )
+{
+    int c;
+    for ( unsigned int i = 0; i < strlen( string ); i++ ) {
+        c = ( int )string[ i ];
+        if ( big_font[ c ].h != 0 )
+            __draw_bitmap( x, y + ( big_font[ c ].h > 10 ? 0 : 2 ), big_font[ c ].w, big_font[ c ].h, big_font[ c ].bits, color_fg,
+                           color_bg );
+
+        x += BigTextWidth( &string[ i ], 1 ) - 1;
     }
 }
 
@@ -538,6 +553,27 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
     // Fill the button and outline
     __draw_rect( 0, 0, BUTTONS[ hpkey ].w, BUTTONS[ hpkey ].h, BUTTON );
 
+    if ( BUTTONS[ hpkey ].label != ( char* )0 ) {
+        /* Button has a text label */
+        x = strlen( BUTTONS[ hpkey ].label ) - 1;
+        x += ( ( BUTTONS[ hpkey ].w - BigTextWidth( BUTTONS[ hpkey ].label, strlen( BUTTONS[ hpkey ].label ) ) ) / 2 );
+        if ( is_up )
+            y = ( BUTTONS[ hpkey ].h + 1 ) / 2 - 6;
+        else
+            y = ( BUTTONS[ hpkey ].h + 1 ) / 2 - 7; /* down change */
+
+        write_with_big_font( x, y, BUTTONS[ hpkey ].label, WHITE, BUTTON );
+    } else if ( BUTTONS[ hpkey ].lw != 0 ) {
+        /* Button has a texture */
+        x = ( 1 + BUTTONS[ hpkey ].w - BUTTONS[ hpkey ].lw ) / 2;
+        if ( is_up )
+            y = ( 1 + BUTTONS[ hpkey ].h - BUTTONS[ hpkey ].lh ) / 2 + 1;
+        else
+            y = ( 1 + BUTTONS[ hpkey ].h - BUTTONS[ hpkey ].lh ) / 2;
+
+        __draw_bitmap( x, y, BUTTONS[ hpkey ].lw, BUTTONS[ hpkey ].lh, BUTTONS[ hpkey ].lb, BUTTONS[ hpkey ].lc, BUTTON );
+    }
+
     // fix outer-corners color
     int outer_color = PAD;
     if ( BUTTONS[ hpkey ].is_menu )
@@ -622,26 +658,6 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
     __draw_pixel( 1, BUTTONS[ hpkey ].h - 2, FRAME );
     // bottom-right
     __draw_pixel( BUTTONS[ hpkey ].w - 2, BUTTONS[ hpkey ].h - 2, FRAME );
-
-    if ( BUTTONS[ hpkey ].label != ( char* )0 ) {
-        /* Button has a text label */
-        x = ( BUTTONS[ hpkey ].w - strlen( BUTTONS[ hpkey ].label ) * 8 ) / 2;
-        if ( is_up )
-            y = ( BUTTONS[ hpkey ].h + 1 ) / 2 - 4;
-        else
-            y = ( BUTTONS[ hpkey ].h + 1 ) / 2 - 5; /* down change */
-
-        stringRGBA( renderer, x, y, BUTTONS[ hpkey ].label, 255, 255, 255, 255 );
-    } else if ( BUTTONS[ hpkey ].lw != 0 ) {
-        /* Button has a texture */
-        x = ( 1 + BUTTONS[ hpkey ].w - BUTTONS[ hpkey ].lw ) / 2;
-        if ( is_up )
-            y = ( 1 + BUTTONS[ hpkey ].h - BUTTONS[ hpkey ].lh ) / 2 + 1;
-        else
-            y = ( 1 + BUTTONS[ hpkey ].h - BUTTONS[ hpkey ].lh ) / 2;
-
-        __draw_bitmap( x, y, BUTTONS[ hpkey ].lw, BUTTONS[ hpkey ].lh, BUTTONS[ hpkey ].lb, BUTTONS[ hpkey ].lc, BUTTON );
-    }
 
     return texture;
 }

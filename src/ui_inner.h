@@ -77,6 +77,7 @@ typedef struct ann_struct_t {
 /* variables */
 /*************/
 extern letter_t small_font[ 128 ];
+extern letter_t big_font[ 128 ];
 
 extern color_t colors_sx[ NB_COLORS ];
 extern color_t colors_gx[ NB_COLORS ];
@@ -625,10 +626,193 @@ static unsigned char arrow_gx_bitmap[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0
 #define equal_gx_height 12
 static unsigned char equal_gx_bitmap[] = { 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00, 0x00 };
 
+/************/
+/* Big font */
+/************/
+#define big_font_dot_width 8
+#define big_font_dot_height 13
+static unsigned char big_font_dot_bitmap[] = {
+    0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000, 0b00000000,
+    0b00011000, 0b00011000, 0b00000000, 0b00000000, 0b00000000, 0b00000000,
+};
+
+#define big_font_0_width 8
+#define big_font_0_height 13
+static unsigned char big_font_0_bitmap[] = {
+    0b00011000, 0b00111100, 0b01100110, 0b01100110, 0b11000011, 0b11000011, 0b11000011,
+    0b11000011, 0b11000011, 0b01100110, 0b01100110, 0b00111100, 0b00011000,
+};
+
+#define big_font_1_width 8
+#define big_font_1_height 13
+static unsigned char big_font_1_bitmap[] = {
+    0b00011000, 0b00011100, 0b00011110, 0b00011011, 0b00011000, 0b00011000, 0b00011000,
+    0b00011000, 0b00011000, 0b00011000, 0b00011000, 0b00011000, 0b11111111,
+};
+
+#define big_font_2_width 8
+#define big_font_2_height 13
+static unsigned char big_font_2_bitmap[] = {
+    0b00111100, 0b01100110, 0b11000011, 0b11000011, 0b11000000, 0b11000000, 0b01100000,
+    0b00111000, 0b00001100, 0b00000110, 0b00000011, 0b00000011, 0b11111111,
+};
+
+#define big_font_3_width 8
+#define big_font_3_height 13
+static unsigned char big_font_3_bitmap[] = {
+    0b00111100, 0b01100110, 0b11000011, 0b11000011, 0b11000000, 0b01100000, 0b00111000,
+    0b01100000, 0b11000000, 0b11000011, 0b11000011, 0b01100110, 0b00111100,
+};
+
+#define big_font_4_width 8
+#define big_font_4_height 13
+static unsigned char big_font_4_bitmap[] = {
+    0b01100000, 0b01110000, 0b01111000, 0b01101100, 0b01100110, 0b01100011, 0b01100011,
+    0b11111111, 0b01100000, 0b01100000, 0b01100000, 0b01100000, 0b01100000,
+};
+
+#define big_font_5_width 8
+#define big_font_5_height 13
+static unsigned char big_font_5_bitmap[] = {
+    0b11111111, 0b00000011, 0b00000011, 0b00000011, 0b00000011, 0b00111011, 0b01100111,
+    0b11000000, 0b11000000, 0b11000000, 0b11000011, 0b01100110, 0b00111100,
+};
+
+#define big_font_6_width 8
+#define big_font_6_height 13
+static unsigned char big_font_6_bitmap[] = {
+    0b00111100, 0b01100110, 0b01000011, 0b00000011, 0b00000011, 0b00111011, 0b01100111,
+    0b11000011, 0b11000011, 0b11000011, 0b11000011, 0b01100110, 0b00111100,
+};
+
+#define big_font_7_width 8
+#define big_font_7_height 13
+static unsigned char big_font_7_bitmap[] = {
+    0b11111111, 0b11000000, 0b11000000, 0b01100000, 0b01100000, 0b00110000, 0b00110000,
+    0b00011000, 0b00011000, 0b00001100, 0b00001100, 0b00000110, 0b00000110,
+};
+
+#define big_font_8_width 8
+#define big_font_8_height 13
+static unsigned char big_font_8_bitmap[] = {
+    0b00111100, 0b01100110, 0b11000011, 0b11000011, 0b11000011, 0b01100110, 0b00111100,
+    0b01100110, 0b11000011, 0b11000011, 0b11000011, 0b01100110, 0b00111100,
+};
+
+#define big_font_9_width 8
+#define big_font_9_height 13
+static unsigned char big_font_9_bitmap[] = {
+    0b00111110, 0b11000011, 0b11000011, 0b11000011, 0b11000011, 0b11000011, 0b11100110,
+    0b11011100, 0b11000000, 0b11000000, 0b11000010, 0b01100110, 0b00111100,
+};
+
+#define big_font_A_width 8
+#define big_font_A_height 10
+static unsigned char big_font_A_bitmap[] = {
+    0b00011110, 0b00110011, 0b00110011, 0b00110011, 0b00110011, 0b00110011, 0b00111111, 0b00110011, 0b00110011, 0b00110011,
+};
+
+#define big_font_C_width 8
+#define big_font_C_height 10
+static unsigned char big_font_C_bitmap[] = {
+    0b00011110, 0b00110011, 0b00110011, 0b00000011, 0b00000011, 0b00000011, 0b00000011, 0b00110011, 0b00110011, 0b00011110,
+};
+
+#define big_font_D_width 8
+#define big_font_D_height 10
+static unsigned char big_font_D_bitmap[] = {
+    0b00001111, 0b00011011, 0b00110011, 0b00110011, 0b00110011, 0b00110011, 0b00110011, 0b00110011, 0b00011011, 0b00001111,
+};
+
+#define big_font_E_width 8
+#define big_font_E_height 10
+static unsigned char big_font_E_bitmap[] = {
+    0b00111111, 0b00000011, 0b00000011, 0b00000011, 0b00011111, 0b00000011, 0b00000011, 0b00000011, 0b00000011, 0b00111111,
+};
+
+#define big_font_G_width 8
+#define big_font_G_height 10
+static unsigned char big_font_G_bitmap[] = {
+    0b00011110, 0b00110011, 0b00110011, 0b00000011, 0b00000011, 0b00111011, 0b00110011, 0b00110011, 0b00110011, 0b00011110,
+};
+
+#define big_font_H_width 8
+#define big_font_H_height 10
+static unsigned char big_font_H_bitmap[] = {
+    0b00110011, 0b00110011, 0b00110011, 0b00110011, 0b00111111, 0b00110011, 0b00110011, 0b00110011, 0b00110011, 0b00110011,
+};
+
+#define big_font_I_width 8
+#define big_font_I_height 10
+static unsigned char big_font_I_bitmap[] = {
+    0b00111111, 0b00001100, 0b00001100, 0b00001100, 0b00001100, 0b00001100, 0b00001100, 0b00001100, 0b00001100, 0b00111111,
+};
+
+#define big_font_L_width 8
+#define big_font_L_height 10
+static unsigned char big_font_L_bitmap[] = {
+    0b00000011, 0b00000011, 0b00000011, 0b00000011, 0b00000011, 0b00000011, 0b00000011, 0b00000011, 0b00000011, 0b00111111,
+};
+
+#define big_font_M_width 8
+#define big_font_M_height 10
+static unsigned char big_font_M_bitmap[] = {
+    0b00100001, 0b00110011, 0b00110011, 0b00111111, 0b00111111, 0b00110011, 0b00110011, 0b00110011, 0b00110011, 0b00110011,
+};
+
+#define big_font_N_width 8
+#define big_font_N_height 10
+static unsigned char big_font_N_bitmap[] = {
+    0b00110011, 0b00110011, 0b00110111, 0b00110111, 0b00110111, 0b00111011, 0b00111011, 0b00111011, 0b00110011, 0b00110011,
+};
+
+#define big_font_O_width 8
+#define big_font_O_height 10
+static unsigned char big_font_O_bitmap[] = {
+    0b00011110, 0b00110011, 0b00110011, 0b00110011, 0b00110011, 0b00110011, 0b00110011, 0b00110011, 0b00110011, 0b00011110,
+};
+
+#define big_font_P_width 8
+#define big_font_P_height 10
+static unsigned char big_font_P_bitmap[] = {
+    0b00011111, 0b00110011, 0b00110011, 0b00110011, 0b00110011, 0b00011111, 0b00000011, 0b00000011, 0b00000011, 0b00000011,
+};
+
+#define big_font_R_width 8
+#define big_font_R_height 10
+static unsigned char big_font_R_bitmap[] = {
+    0b00011111, 0b00110011, 0b00110011, 0b00110011, 0b00011111, 0b00011011, 0b00110011, 0b00110011, 0b00110011, 0b00110011,
+};
+
+#define big_font_S_width 8
+#define big_font_S_height 10
+static unsigned char big_font_S_bitmap[] = {
+    0b00011110, 0b00110011, 0b00110011, 0b00000110, 0b00001100, 0b00001100, 0b00011000, 0b00110011, 0b00110011, 0b00011110,
+};
+
+#define big_font_T_width 8
+#define big_font_T_height 10
+static unsigned char big_font_T_bitmap[] = {
+    0b00111111, 0b00001100, 0b00001100, 0b00001100, 0b00001100, 0b00001100, 0b00001100, 0b00001100, 0b00001100, 0b00001100,
+};
+
+#define big_font_V_width 8
+#define big_font_V_height 10
+static unsigned char big_font_V_bitmap[] = {
+    0b00110011, 0b00110011, 0b00110011, 0b00110011, 0b00110011, 0b00110011, 0b00110011, 0b00011110, 0b00011110, 0b00001100,
+};
+
+#define big_font_X_width 8
+#define big_font_X_height 10
+static unsigned char big_font_X_bitmap[] = {
+    0b00110011, 0b00110011, 0b00011110, 0b00011110, 0b00001100, 0b00001100, 0b00011110, 0b00011110, 0b00110011, 0b00110011,
+};
+
 /*************/
 /* functions */
 /*************/
 extern int SmallTextWidth( const char* string, unsigned int length );
+extern int BigTextWidth( const char* string, unsigned int length );
 extern void ui_init_LCD( void );
 
 #endif /* _UI_INNER_H */

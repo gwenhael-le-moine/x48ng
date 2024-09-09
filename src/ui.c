@@ -141,6 +141,137 @@ letter_t small_font[ 128 ] = {
     {0,                 0,                  0                 }
 };
 
+letter_t big_font[ 128 ] = {
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  }, /* # 16 */
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  }, /* # 32 */
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {big_font_dot_width, big_font_dot_height, big_font_dot_bitmap}, /* # 46 */
+    {0,                  0,                   0                  },
+    {big_font_0_width,   big_font_0_height,   big_font_0_bitmap  }, /* # 48 */
+    {big_font_1_width,   big_font_1_height,   big_font_1_bitmap  },
+    {big_font_2_width,   big_font_2_height,   big_font_2_bitmap  },
+    {big_font_3_width,   big_font_3_height,   big_font_3_bitmap  },
+    {big_font_4_width,   big_font_4_height,   big_font_4_bitmap  },
+    {big_font_5_width,   big_font_5_height,   big_font_5_bitmap  },
+    {big_font_6_width,   big_font_6_height,   big_font_6_bitmap  },
+    {big_font_7_width,   big_font_7_height,   big_font_7_bitmap  },
+    {big_font_8_width,   big_font_8_height,   big_font_8_bitmap  },
+    {big_font_9_width,   big_font_9_height,   big_font_9_bitmap  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  }, /* # 64 */
+    {big_font_A_width,   big_font_A_height,   big_font_A_bitmap  },
+    {0,                  0,                   0                  },
+    {big_font_C_width,   big_font_C_height,   big_font_C_bitmap  },
+    {big_font_D_width,   big_font_D_height,   big_font_D_bitmap  },
+    {big_font_E_width,   big_font_E_height,   big_font_E_bitmap  },
+    {0,                  0,                   0                  },
+    {big_font_G_width,   big_font_G_height,   big_font_G_bitmap  },
+    {big_font_H_width,   big_font_H_height,   big_font_H_bitmap  },
+    {big_font_I_width,   big_font_I_height,   big_font_I_bitmap  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {big_font_L_width,   big_font_L_height,   big_font_L_bitmap  },
+    {big_font_M_width,   big_font_M_height,   big_font_M_bitmap  },
+    {big_font_N_width,   big_font_N_height,   big_font_N_bitmap  },
+    {big_font_O_width,   big_font_O_height,   big_font_O_bitmap  },
+    {big_font_P_width,   big_font_P_height,   big_font_P_bitmap  }, /* # 80 */
+    {0,                  0,                   0                  },
+    {big_font_R_width,   big_font_R_height,   big_font_R_bitmap  },
+    {big_font_S_width,   big_font_S_height,   big_font_S_bitmap  },
+    {big_font_T_width,   big_font_T_height,   big_font_T_bitmap  },
+    {0,                  0,                   0                  },
+    {big_font_V_width,   big_font_V_height,   big_font_V_bitmap  },
+    {0,                  0,                   0                  },
+    {big_font_X_width,   big_font_X_height,   big_font_X_bitmap  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  }, /* # 96 */
+    {0,                  0,                   0                  }, /* a == left arrow   */
+    {0,                  0,                   0                  }, /* b == differential */
+    {0,                  0,                   0                  }, /* c == integral */
+    {0,                  0,                   0                  }, /* d == sigma */
+    {0,                  0,                   0                  }, /* e == sqr */
+    {0,                  0,                   0                  }, /* f == root */
+    {0,                  0,                   0                  }, /* g == pow10 */
+    {0,                  0,                   0                  }, /* h == exp */
+    {0,                  0,                   0                  }, /* i == << >> */
+    {0,                  0,                   0                  }, /* j == " " */
+    {0,                  0,                   0                  }, /* k == New Line */
+    {0,                  0,                   0                  }, /* l == pi */
+    {0,                  0,                   0                  }, /* m == angle */
+    {0,                  0,                   0                  }, /* n == sqr gx */
+    {0,                  0,                   0                  }, /* o == root gx */
+    {0,                  0,                   0                  }, /* p == pow10 gx */
+    {0,                  0,                   0                  }, /* q == exp gx */
+    {0,                  0,                   0                  }, /* r == ( ) gx */
+    {0,                  0,                   0                  }, /* s == # gx */
+    {0,                  0,                   0                  }, /* t == [] gx */
+    {0,                  0,                   0                  }, /* u == _ gx */
+    {0,                  0,                   0                  }, /* v == << >> gx */
+    {0,                  0,                   0                  }, /* w == " " gx */
+    {0,                  0,                   0                  }, /* x == {} gx */
+    {0,                  0,                   0                  }, /* y == :: gx */
+    {0,                  0,                   0                  }, /* z == angle gx */
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  },
+    {0,                  0,                   0                  }
+};
+
 color_t colors_sx[ NB_COLORS ] = {
     {
      /* #ffffff */
@@ -2166,6 +2297,22 @@ int SmallTextWidth( const char* string, unsigned int length )
             if ( config.verbose )
                 fprintf( stderr, "Unknown small letter 0x00%x\n", ( int )string[ i ] );
             w += 5;
+        }
+    }
+
+    return w;
+}
+
+int BigTextWidth( const char* string, unsigned int length )
+{
+    int w = 0;
+    for ( unsigned int i = 0; i < length; i++ ) {
+        if ( big_font[ ( int )string[ i ] ].h != 0 )
+            w += big_font[ ( int )string[ i ] ].w;
+        else {
+            if ( config.verbose )
+                fprintf( stderr, "Unknown small letter 0x00%x\n", ( int )string[ i ] );
+            w += 7;
         }
     }
 
