@@ -12,37 +12,37 @@ unsigned char lcd_nibbles_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
 
 letter_t small_font[ 128 ] = {
     {0,                 0,                  0               },
-    {nl_gx_width,       nl_gx_height,       nl_gx_bits      }, /* \001 == \n gx */
-    {comma_gx_width,    comma_gx_height,    comma_gx_bits   }, /* \002 == comma gx */
-    {arrow_gx_width,    arrow_gx_height,    arrow_gx_bits   }, /* \003 == \-> gx */
-    {equal_gx_width,    equal_gx_height,    equal_gx_bits   }, /* \004 == equal gx */
-    {pi_gx_width,       pi_gx_height,       pi_gx_bits      }, /* \005 == pi gx */
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               }, /* # 16 */
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
-    {0,                 0,                  0               },
+    {nl_gx_width,       nl_gx_height,       nl_gx_bits      }, /* \x01 == \n gx */
+    {comma_gx_width,    comma_gx_height,    comma_gx_bits   }, /* \x02 == comma gx */
+    {arrow_gx_width,    arrow_gx_height,    arrow_gx_bits   }, /* \x03 == \-> gx */
+    {equal_gx_width,    equal_gx_height,    equal_gx_bits   }, /* \x04 == equal gx */
+    {pi_gx_width,       pi_gx_height,       pi_gx_bits      }, /* \x05 == pi gx */
+    {arrow_width,       arrow_height,       arrow_bits      }, /* \x06 == left arrow   */
+    {diff_width,        diff_height,        diff_bits       }, /* \x07 == differential */
+    {integral_width,    integral_height,    integral_bits   }, /* \x08 == integral */
+    {sigma_width,       sigma_height,       sigma_bits      }, /* \x09 == sigma */
+    {sqr_width,         sqr_height,         sqr_bits        }, /* \x0a == sqr */
+    {root_width,        root_height,        root_bits       }, /* \x0b == root */
+    {pow10_width,       pow10_height,       pow10_bits      }, /* \x0c == pow10 */
+    {exp_width,         exp_height,         exp_bits        }, /* \x0d == exp */
+    {prog_width,        prog_height,        prog_bits       }, /* \x0e == << >> */
+    {string_width,      string_height,      string_bits     }, /* \x0f == " " */
+    {nl_width,          nl_height,          nl_bits         }, /* \x10 == New Line # 16 */
+    {pi_width,          pi_height,          pi_bits         }, /* \x11 == pi */
+    {angle_width,       angle_height,       angle_bits      }, /* \x12 == angle */
+    {sqr_gx_width,      sqr_gx_height,      sqr_gx_bits     }, /* \x13 == sqr gx */
+    {root_gx_width,     root_gx_height,     root_gx_bits    }, /* \x14 == root gx */
+    {pow10_gx_width,    pow10_gx_height,    pow10_gx_bits   }, /* \x15 == pow10 gx */
+    {exp_gx_width,      exp_gx_height,      exp_gx_bits     }, /* \x16 == exp gx */
+    {parens_gx_width,   parens_gx_height,   parens_gx_bits  }, /* \x17 == ( ) gx */
+    {hash_gx_width,     hash_gx_height,     hash_gx_bits    }, /* \x18 == # gx */
+    {bracket_gx_width,  bracket_gx_height,  bracket_gx_bits }, /* \x19 == [] gx */
+    {under_gx_width,    under_gx_height,    under_gx_bits   }, /* \x1a == _ gx */
+    {prog_gx_width,     prog_gx_height,     prog_gx_bits    }, /* \x1b == << >> gx */
+    {quote_gx_width,    quote_gx_height,    quote_gx_bits   }, /* \x1c == " " gx */
+    {curly_gx_width,    curly_gx_height,    curly_gx_bits   }, /* \x1d == {} gx */
+    {colon_gx_width,    colon_gx_height,    colon_gx_bits   }, /* \x1e == :: gx */
+    {angle_gx_width,    angle_gx_height,    angle_gx_bits   }, /* \x1f == angle gx */
     {blank_width,       blank_height,       blank_bits      }, /* # 32 */
     {0,                 0,                  0               },
     {0,                 0,                  0               },
@@ -108,37 +108,37 @@ letter_t small_font[ 128 ] = {
     {0,                 0,                  0               },
     {under_width,       under_height,       under_bits      },
     {0,                 0,                  0               }, /* # 96 */
-    {arrow_width,       arrow_height,       arrow_bits      }, /* a == left arrow   */
-    {diff_width,        diff_height,        diff_bits       }, /* b == differential */
-    {integral_width,    integral_height,    integral_bits   }, /* c == integral */
-    {sigma_width,       sigma_height,       sigma_bits      }, /* d == sigma */
-    {sqr_width,         sqr_height,         sqr_bits        }, /* e == sqr */
-    {root_width,        root_height,        root_bits       }, /* f == root */
-    {pow10_width,       pow10_height,       pow10_bits      }, /* g == pow10 */
-    {exp_width,         exp_height,         exp_bits        }, /* h == exp */
-    {prog_width,        prog_height,        prog_bits       }, /* i == << >> */
-    {string_width,      string_height,      string_bits     }, /* j == " " */
-    {nl_width,          nl_height,          nl_bits         }, /* k == New Line */
-    {pi_width,          pi_height,          pi_bits         }, /* l == pi */
-    {angle_width,       angle_height,       angle_bits      }, /* m == angle */
-    {sqr_gx_width,      sqr_gx_height,      sqr_gx_bits     }, /* n == sqr gx */
-    {root_gx_width,     root_gx_height,     root_gx_bits    }, /* o == root gx */
-    {pow10_gx_width,    pow10_gx_height,    pow10_gx_bits   }, /* p == pow10 gx */
-    {exp_gx_width,      exp_gx_height,      exp_gx_bits     }, /* q == exp gx */
-    {parens_gx_width,   parens_gx_height,   parens_gx_bits  }, /* r == ( ) gx */
-    {hash_gx_width,     hash_gx_height,     hash_gx_bits    }, /* s == # gx */
-    {bracket_gx_width,  bracket_gx_height,  bracket_gx_bits }, /* t == [] gx */
-    {under_gx_width,    under_gx_height,    under_gx_bits   }, /* u == _ gx */
-    {prog_gx_width,     prog_gx_height,     prog_gx_bits    }, /* v == << >> gx */
-    {quote_gx_width,    quote_gx_height,    quote_gx_bits   }, /* w == " " gx */
-    {curly_gx_width,    curly_gx_height,    curly_gx_bits   }, /* x == {} gx */
-    {colon_gx_width,    colon_gx_height,    colon_gx_bits   }, /* y == :: gx */
-    {angle_gx_width,    angle_gx_height,    angle_gx_bits   }, /* z == angle gx */
+    {0,                 0,                  0               }, /* a */
+    {0,                 0,                  0               }, /* b */
+    {0,                 0,                  0               }, /* c */
+    {0,                 0,                  0               }, /* d */
+    {0,                 0,                  0               }, /* e */
+    {0,                 0,                  0               }, /* f */
+    {0,                 0,                  0               }, /* g */
+    {0,                 0,                  0               }, /* h */
+    {0,                 0,                  0               }, /* i */
+    {0,                 0,                  0               }, /* j */
+    {0,                 0,                  0               }, /* k */
+    {0,                 0,                  0               }, /* l */
+    {0,                 0,                  0               }, /* m */
+    {0,                 0,                  0               }, /* n */
+    {0,                 0,                  0               }, /* o */
+    {0,                 0,                  0               }, /* p */
+    {0,                 0,                  0               }, /* q */
+    {0,                 0,                  0               }, /* r */
+    {0,                 0,                  0               }, /* s */
+    {0,                 0,                  0               }, /* t */
+    {0,                 0,                  0               }, /* u */
+    {0,                 0,                  0               }, /* v */
+    {0,                 0,                  0               }, /* w */
+    {0,                 0,                  0               }, /* x */
+    {0,                 0,                  0               }, /* y */
+    {0,                 0,                  0               }, /* z */
     {lcurly_width,      lcurly_height,      lcurly_bits     },
     {0,                 0,                  0               },
     {rcurly_width,      rcurly_height,      rcurly_bits     },
     {0,                 0,                  0               },
-    {0,                 0,                  0               }
+    {0,                 0,                  0               }, /* 127 */
 };
 
 letter_t big_font[ 128 ] = {
@@ -917,9 +917,9 @@ button_t buttons_sx[ NB_KEYS ] = {
      .lh = 0,
      .lb = 0,
      .letter = "O",
-     .left = "aQ",
+     .left = "\x80Q",
      .is_menu = 0,
-     .right = "aNUM",
+     .right = "\x80NUM",
      .sub = 0     },
     {.name = "LEFT",
      .x = 150,
@@ -984,7 +984,7 @@ button_t buttons_sx[ NB_KEYS ] = {
      .letter = "S",
      .left = "ASIN",
      .is_menu = 0,
-     .right = "b",
+     .right = "\x07",
      .sub = 0     },
     {.name = "COS",
      .x = 50,
@@ -1000,7 +1000,7 @@ button_t buttons_sx[ NB_KEYS ] = {
      .letter = "T",
      .left = "ACOS",
      .is_menu = 0,
-     .right = "c",
+     .right = "\x08",
      .sub = 0     },
     {.name = "TAN",
      .x = 100,
@@ -1016,7 +1016,7 @@ button_t buttons_sx[ NB_KEYS ] = {
      .letter = "U",
      .left = "ATAN",
      .is_menu = 0,
-     .right = "d",
+     .right = "\x09",
      .sub = 0     },
     {.name = "SQRT",
      .x = 150,
@@ -1030,9 +1030,9 @@ button_t buttons_sx[ NB_KEYS ] = {
      .lh = sqrt_height,
      .lb = sqrt_bitmap,
      .letter = "V",
-     .left = "e",
+     .left = "\x0a",
      .is_menu = 0,
-     .right = "f",
+     .right = "\x0b",
      .sub = 0     },
     {.name = "POWER",
      .x = 200,
@@ -1046,7 +1046,7 @@ button_t buttons_sx[ NB_KEYS ] = {
      .lh = power_height,
      .lb = power_bitmap,
      .letter = "W",
-     .left = "g",
+     .left = "\x0c",
      .is_menu = 0,
      .right = "LOG",
      .sub = 0     },
@@ -1062,7 +1062,7 @@ button_t buttons_sx[ NB_KEYS ] = {
      .lh = inv_height,
      .lb = inv_bitmap,
      .letter = "X",
-     .left = "h",
+     .left = "\x0d",
      .is_menu = 0,
      .right = "LN",
      .sub = 0     },
@@ -1386,9 +1386,9 @@ button_t buttons_sx[ NB_KEYS ] = {
      .lh = minus_height,
      .lb = minus_bitmap,
      .letter = 0,
-     .left = "i",
+     .left = "\x0e",
      .is_menu = 0,
-     .right = "j",
+     .right = "\x0f",
      .sub = 0     },
 
     {.name = "ON",
@@ -1421,7 +1421,7 @@ button_t buttons_sx[ NB_KEYS ] = {
      .letter = 0,
      .left = "= ",
      .is_menu = 0,
-     .right = " a",
+     .right = " \x80",
      .sub = 0     },
     {.name = "PERIOD",
      .x = 120,
@@ -1437,7 +1437,7 @@ button_t buttons_sx[ NB_KEYS ] = {
      .letter = 0,
      .left = ",",
      .is_menu = 0,
-     .right = " k",
+     .right = " \x10",
      .sub = 0     },
     {.name = "SPC",
      .x = 180,
@@ -1451,9 +1451,9 @@ button_t buttons_sx[ NB_KEYS ] = {
      .lh = 0,
      .lb = 0,
      .letter = 0,
-     .left = "l ",
+     .left = "\x11 ",
      .is_menu = 0,
-     .right = " m",
+     .right = " \x12",
      .sub = 0     },
     {.name = "PLUS",
      .x = 240,
@@ -1712,7 +1712,7 @@ button_t buttons_gx[ NB_KEYS ] = {
      .lh = 0,
      .lb = 0,
      .letter = "O",
-     .left = "aNUM",
+     .left = "\x06NUM",
      .is_menu = 0,
      .right = "UNDO",
      .sub = 0       },
@@ -1779,7 +1779,7 @@ button_t buttons_gx[ NB_KEYS ] = {
      .letter = "S",
      .left = "ASIN",
      .is_menu = 0,
-     .right = "b",
+     .right = "\x07",
      .sub = 0       },
     {.name = "COS",
      .x = 50,
@@ -1795,7 +1795,7 @@ button_t buttons_gx[ NB_KEYS ] = {
      .letter = "T",
      .left = "ACOS",
      .is_menu = 0,
-     .right = "c",
+     .right = "\x08",
      .sub = 0       },
     {.name = "TAN",
      .x = 100,
@@ -1811,7 +1811,7 @@ button_t buttons_gx[ NB_KEYS ] = {
      .letter = "U",
      .left = "ATAN",
      .is_menu = 0,
-     .right = "d",
+     .right = "\x09",
      .sub = 0       },
     {.name = "SQRT",
      .x = 150,
@@ -1825,9 +1825,9 @@ button_t buttons_gx[ NB_KEYS ] = {
      .lh = sqrt_height,
      .lb = sqrt_bitmap,
      .letter = "V",
-     .left = "n",
+     .left = "\x13",
      .is_menu = 0,
-     .right = "o",
+     .right = "\x14",
      .sub = 0       },
     {.name = "POWER",
      .x = 200,
@@ -1841,7 +1841,7 @@ button_t buttons_gx[ NB_KEYS ] = {
      .lh = power_height,
      .lb = power_bitmap,
      .letter = "W",
-     .left = "p",
+     .left = "\x15",
      .is_menu = 0,
      .right = "LOG",
      .sub = 0       },
@@ -1857,7 +1857,7 @@ button_t buttons_gx[ NB_KEYS ] = {
      .lh = inv_height,
      .lb = inv_bitmap,
      .letter = "X",
-     .left = "q",
+     .left = "\x16",
      .is_menu = 0,
      .right = "LN",
      .sub = 0       },
@@ -2019,9 +2019,9 @@ button_t buttons_gx[ NB_KEYS ] = {
      .lh = div_height,
      .lb = div_bitmap,
      .letter = 0,
-     .left = "r ",
+     .left = "\x17 ",
      .is_menu = 0,
-     .right = "s",
+     .right = "\x18",
      .sub = 0       },
 
     {.name = "SHL",
@@ -2100,9 +2100,9 @@ button_t buttons_gx[ NB_KEYS ] = {
      .lh = mul_height,
      .lb = mul_bitmap,
      .letter = 0,
-     .left = "t ",
+     .left = "\x19 ",
      .is_menu = 0,
-     .right = "u",
+     .right = "\x1a",
      .sub = 0       },
 
     {.name = "SHR",
@@ -2181,9 +2181,9 @@ button_t buttons_gx[ NB_KEYS ] = {
      .lh = minus_height,
      .lb = minus_bitmap,
      .letter = 0,
-     .left = "v ",
+     .left = "\x1b ",
      .is_menu = 0,
-     .right = "w",
+     .right = "\x1c",
      .sub = 0       },
 
     {.name = "ON",
@@ -2214,9 +2214,9 @@ button_t buttons_gx[ NB_KEYS ] = {
      .lh = 0,
      .lb = 0,
      .letter = 0,
-     .left = "\004 ",
+     .left = "\x04 ",
      .is_menu = 0,
-     .right = "\003",
+     .right = "\x03",
      .sub = 0       },
     {.name = "PERIOD",
      .x = 120,
@@ -2230,9 +2230,9 @@ button_t buttons_gx[ NB_KEYS ] = {
      .lh = 0,
      .lb = 0,
      .letter = 0,
-     .left = "\002 ",
+     .left = "\x02 ",
      .is_menu = 0,
-     .right = "\001",
+     .right = "\x01",
      .sub = 0       },
     {.name = "SPC",
      .x = 180,
@@ -2246,9 +2246,9 @@ button_t buttons_gx[ NB_KEYS ] = {
      .lh = 0,
      .lb = 0,
      .letter = 0,
-     .left = "\005 ",
+     .left = "\x05 ",
      .is_menu = 0,
-     .right = "z",
+     .right = "\x1f",
      .sub = 0       },
     {.name = "PLUS",
      .x = 240,
@@ -2262,9 +2262,9 @@ button_t buttons_gx[ NB_KEYS ] = {
      .lh = plus_height,
      .lb = plus_bitmap,
      .letter = 0,
-     .left = "x ",
+     .left = "\x1d ",
      .is_menu = 0,
-     .right = "y",
+     .right = "\x1e",
      .sub = 0       },
 };
 
