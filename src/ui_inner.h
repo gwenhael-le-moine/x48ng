@@ -2,9 +2,9 @@
 #define _UI_INNER_H 1
 
 #include "emulator.h"
-#include "ui_bitmaps.h"
-#include "ui_small_font.h"
-#include "ui_big_font.h"
+#include "ui_bitmaps_misc.h"
+#include "ui_bitmaps_small_font.h"
+#include "ui_bitmaps_big_font.h"
 
 // Colors
 /*                          SX      GX     */
