@@ -846,7 +846,7 @@ static void _draw_serial_devices_path( void )
     }
 
     if ( strlen( text ) > 0 )
-        write_with_small_font( 10, 250, text, WHITE, DISP_PAD );
+        write_with_small_font( SIDE_SKIP, KEYBOARD_OFFSET_Y - ( DISP_KBD_SKIP / 2 ), text, WHITE, DISP_PAD );
 }
 
 static void sdl_draw_nibble( int nx, int ny, int val )
