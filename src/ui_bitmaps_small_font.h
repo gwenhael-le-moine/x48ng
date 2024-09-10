@@ -85,6 +85,66 @@ static unsigned char nine_bits[] = {
 #define small_colon_height 7
 static unsigned char small_colon_bits[] = { 0x00, 0x03, 0x03, 0x00, 0x03, 0x03, 0x00 };
 
+#define d_width 5
+#define d_height 7
+static unsigned char d_bits[] = {
+    16, 16, 30, 17, 17, 30, 0,
+};
+
+#define e_width 5
+#define e_height 7
+static unsigned char e_bits[] = {
+    0, 14, 17, 15, 1, 14, 0,
+};
+
+#define i_width 5
+#define i_height 7
+static unsigned char i_bits[] = {
+    4, 0, 6, 4, 4, 14, 0,
+};
+
+#define p_width 5
+#define p_height 7
+static unsigned char p_bits[] = {
+    0, 15, 17, 17, 15, 1, 1,
+};
+
+#define r_width 5
+#define r_height 7
+static unsigned char r_bits[] = {
+    0, 29, 3, 1, 1, 1, 0,
+};
+
+#define s_width 5
+#define s_height 7
+static unsigned char s_bits[] = {
+    0, 30, 1, 14, 16, 15, 0,
+};
+
+#define t_width 5
+#define t_height 7
+static unsigned char t_bits[] = {
+    2, 15, 2, 2, 2, 12, 0,
+};
+
+#define v_width 5
+#define v_height 7
+static unsigned char v_bits[] = {
+    0, 17, 17, 10, 10, 4, 0,
+};
+
+#define w_width 5
+#define w_height 7
+static unsigned char w_bits[] = {
+    0, 17, 17, 21, 21, 10, 0,
+};
+
+#define y_width 5
+#define y_height 7
+static unsigned char y_bits[] = {
+    0, 0, 17, 17, 30, 16, 15,
+};
+
 #define A_width 5
 #define A_height 7
 static unsigned char A_bits[] = { 0x0e, 0x11, 0x11, 0x1f, 0x11, 0x11, 0x11 };

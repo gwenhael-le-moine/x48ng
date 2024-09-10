@@ -826,7 +826,6 @@ static void _show_key( int hpkey )
 
 static void _draw_serial_devices_path( void )
 {
-    int i = 0;
     char text[ 1024 ] = "";
 
     if ( config.verbose ) {
@@ -835,25 +834,15 @@ static void _draw_serial_devices_path( void )
     }
 
     if ( wire_name ) {
-        char wire_name_uppercase[ strlen( wire_name ) ];
-        strcpy( wire_name_uppercase, wire_name );
-        for ( i = 0; i < ( int )strlen( wire_name ); i++ )
-            wire_name_uppercase[ i ] = toupper( wire_name_uppercase[ i ] );
-
-        strcat( text, "WIRE: " );
-        strcat( text, wire_name_uppercase );
+        strcat( text, "wire: " );
+        strcat( text, wire_name );
     }
     if ( ir_name ) {
-        char ir_name_uppercase[ strlen( ir_name ) ];
-        strcpy( ir_name_uppercase, ir_name );
-        for ( i = 0; i < ( int )strlen( ir_name ); i++ )
-            ir_name_uppercase[ i ] = toupper( ir_name_uppercase[ i ] );
-
         if ( strlen( text ) > 0 )
             strcat( text, " | " );
 
         strcat( text, "IR: " );
-        strcat( text, ir_name_uppercase );
+        strcat( text, ir_name );
     }
 
     if ( strlen( text ) > 0 )

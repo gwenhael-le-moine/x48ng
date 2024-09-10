@@ -111,28 +111,28 @@ letter_t small_font[ 128 ] = {
     {0,                 0,                  0               }, /* a */
     {0,                 0,                  0               }, /* b */
     {0,                 0,                  0               }, /* c */
-    {0,                 0,                  0               }, /* d */
-    {0,                 0,                  0               }, /* e */
+    {d_width,           d_height,           d_bits          },
+    {e_width,           e_height,           e_bits          },
     {0,                 0,                  0               }, /* f */
     {0,                 0,                  0               }, /* g */
     {0,                 0,                  0               }, /* h */
-    {0,                 0,                  0               }, /* i */
+    {i_width,           i_height,           i_bits          },
     {0,                 0,                  0               }, /* j */
     {0,                 0,                  0               }, /* k */
     {0,                 0,                  0               }, /* l */
     {0,                 0,                  0               }, /* m */
     {0,                 0,                  0               }, /* n */
     {0,                 0,                  0               }, /* o */
-    {0,                 0,                  0               }, /* p */
+    {p_width,           p_height,           p_bits          },
     {0,                 0,                  0               }, /* q */
-    {0,                 0,                  0               }, /* r */
-    {0,                 0,                  0               }, /* s */
-    {0,                 0,                  0               }, /* t */
+    {r_width,           r_height,           r_bits          },
+    {s_width,           s_height,           s_bits          },
+    {t_width,           t_height,           t_bits          },
     {0,                 0,                  0               }, /* u */
-    {0,                 0,                  0               }, /* v */
-    {0,                 0,                  0               }, /* w */
+    {v_width,           v_height,           v_bits          },
+    {w_width,           w_height,           w_bits          },
     {0,                 0,                  0               }, /* x */
-    {0,                 0,                  0               }, /* y */
+    {y_width,           y_height,           y_bits          },
     {0,                 0,                  0               }, /* z */
     {lcurly_width,      lcurly_height,      lcurly_bits     },
     {0,                 0,                  0               },
