@@ -543,6 +543,7 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
 {
     bool is_down = !is_up;
     int x, y;
+    int on_key_offset_y = ( hpkey == HPKEY_ON ) ? 1 : 0;
     SDL_Texture* texture =
         SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, BUTTONS[ hpkey ].w, BUTTONS[ hpkey ].h );
     SDL_SetRenderTarget( renderer, texture );
@@ -586,10 +587,7 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
         __draw_line( 4, 4, BUTTONS[ hpkey ].w - 5, 4, BUT_TOP );
     }
     // top-left
-    if ( is_up )
-        __draw_pixel( 4, 5, BUT_TOP );
-    else
-        __draw_pixel( 4, 3, BUT_TOP );
+    __draw_pixel( 4, 3 + ( is_up ? 2 : 0 ), BUT_TOP );
     // left
     __draw_line( 1, BUTTONS[ hpkey ].h - 2, 1, 1, BUT_TOP );
     __draw_line( 2, BUTTONS[ hpkey ].h - 3, 2, 2, BUT_TOP );
@@ -620,18 +618,26 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
     __draw_pixel( 1, BUTTONS[ hpkey ].h - 2, FRAME );
     // bottom-right
     __draw_pixel( BUTTONS[ hpkey ].w - 2, BUTTONS[ hpkey ].h - 2, FRAME );
+    if ( hpkey == HPKEY_ON ) {
+        // top
+        __draw_line( 2, 1, BUTTONS[ hpkey ].w - 3, 1, FRAME );
+        // top-left
+        __draw_pixel( 1, 1 + on_key_offset_y, FRAME );
+        // top-right
+        __draw_pixel( BUTTONS[ hpkey ].w - 2, 1 + on_key_offset_y, FRAME );
+    }
 
     if ( is_down ) {
         // top
-        __draw_line( 2, 1, BUTTONS[ hpkey ].w - 3, 1, FRAME );
+        __draw_line( 2, 1 + on_key_offset_y, BUTTONS[ hpkey ].w - 3, 1 + on_key_offset_y, FRAME );
         // left
-        __draw_line( 1, 2, 1, BUTTONS[ hpkey ].h / 1.5, FRAME );
+        __draw_line( 1, 2, 1, BUTTONS[ hpkey ].h, FRAME );
         // right
-        __draw_line( BUTTONS[ hpkey ].w - 2, 2, BUTTONS[ hpkey ].w - 2, BUTTONS[ hpkey ].h / 1.5, FRAME );
+        __draw_line( BUTTONS[ hpkey ].w - 2, 2, BUTTONS[ hpkey ].w - 2, BUTTONS[ hpkey ].h, FRAME );
         // top-left
-        __draw_pixel( 2, 2, FRAME );
+        __draw_pixel( 2, 2 + on_key_offset_y, FRAME );
         // top-right
-        __draw_pixel( BUTTONS[ hpkey ].w - 3, 2, FRAME );
+        __draw_pixel( BUTTONS[ hpkey ].w - 3, 2 + on_key_offset_y, FRAME );
     }
 
     return texture;
