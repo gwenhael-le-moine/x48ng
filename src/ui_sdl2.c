@@ -589,9 +589,9 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
     // top-left
     __draw_pixel( 4, 3 + ( is_up ? 2 : 0 ), BUT_TOP );
     // left
-    __draw_line( 1, BUTTONS[ hpkey ].h - 2, 1, 1, BUT_TOP );
-    __draw_line( 2, BUTTONS[ hpkey ].h - 3, 2, 2, BUT_TOP );
-    __draw_line( 3, BUTTONS[ hpkey ].h - 4, 3, 3, BUT_TOP );
+    __draw_line( 1, 1, 1, BUTTONS[ hpkey ].h - 2, BUT_TOP );
+    __draw_line( 2, 2, 2, BUTTONS[ hpkey ].h - 3, BUT_TOP );
+    __draw_line( 3, 3, 3, BUTTONS[ hpkey ].h - 4, BUT_TOP );
     // right
     __draw_line( BUTTONS[ hpkey ].w - 2, BUTTONS[ hpkey ].h - 2, BUTTONS[ hpkey ].w - 2, 3, BUT_BOT );
     __draw_line( BUTTONS[ hpkey ].w - 3, BUTTONS[ hpkey ].h - 3, BUTTONS[ hpkey ].w - 3, 4, BUT_BOT );
@@ -605,7 +605,7 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
     // top
     __draw_line( 2, 0, BUTTONS[ hpkey ].w - 3, 0, FRAME );
     // left
-    __draw_line( 0, BUTTONS[ hpkey ].h - 3, 0, 2, FRAME );
+    __draw_line( 0, 2, 0, BUTTONS[ hpkey ].h - 3, FRAME );
     // right
     __draw_line( BUTTONS[ hpkey ].w - 1, BUTTONS[ hpkey ].h - 3, BUTTONS[ hpkey ].w - 1, 2, FRAME );
     // bottom
