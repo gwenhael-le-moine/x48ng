@@ -1059,6 +1059,7 @@ void sdl_adjust_contrast( void )
     // redraw annunc
     last_annunc_state = -1;
 
+    create_annunciators_textures();
     sdl_draw_annunc();
 }
 
