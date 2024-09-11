@@ -206,10 +206,7 @@ static inline void add_address( word_20* dat, int add )
 {
     *dat += add;
 
-    if ( *dat & ( word_20 )0xfff00000 )
-        saturn.CARRY = 1;
-    else
-        saturn.CARRY = 0;
+    saturn.CARRY = ( *dat & ( word_20 )0xfff00000 ) ? 1 : 0;
 
     *dat &= 0xfffff;
 }
@@ -257,8 +254,8 @@ static bool step_instruction_00e( void )
     bool illegal_instruction = false;
 
     int op2 = read_nibble( saturn.PC + 2 );
-    int op3 = read_nibble( saturn.PC + 3 );
-    switch ( op3 ) {
+
+    switch ( read_nibble( saturn.PC + 3 ) ) {
         case 0: /* A=A&B */
             saturn.PC += 4;
             and_register( saturn.A, saturn.A, saturn.B, op2 );
@@ -334,8 +331,7 @@ static bool step_instruction_00( void )
 {
     bool illegal_instruction = false;
 
-    int op1 = read_nibble( saturn.PC + 1 );
-    switch ( op1 ) {
+    switch ( read_nibble( saturn.PC + 1 ) ) {
         case 0: /* RTNSXM */
             saturn.XM = 1;
             saturn.PC = pop_return_addr();
@@ -449,8 +445,7 @@ static bool step_instruction_010( void )
 {
     bool illegal_instruction = false;
 
-    int op3 = read_nibble( saturn.PC + 2 );
-    switch ( op3 ) {
+    switch ( read_nibble( saturn.PC + 2 ) ) {
         case 0: /* saturn.R0=A */
             saturn.PC += 3;
             copy_register( saturn.R0, saturn.A, W_FIELD );
@@ -508,8 +503,7 @@ static bool step_instruction_011( void )
 {
     bool illegal_instruction = false;
 
-    int op3 = read_nibble( saturn.PC + 2 );
-    switch ( op3 ) {
+    switch ( read_nibble( saturn.PC + 2 ) ) {
         case 0: /* A=R0 */
             saturn.PC += 3;
             copy_register( saturn.A, saturn.R0, W_FIELD );
@@ -567,8 +561,7 @@ static bool step_instruction_012( void )
 {
     bool illegal_instruction = false;
 
-    int op3 = read_nibble( saturn.PC + 2 );
-    switch ( op3 ) {
+    switch ( read_nibble( saturn.PC + 2 ) ) {
         case 0: /* AR0EX */
             saturn.PC += 3;
             exchange_register( saturn.A, saturn.R0, W_FIELD );
@@ -626,8 +619,7 @@ static bool step_instruction_013( void )
 {
     bool illegal_instruction = false;
 
-    int op3 = read_nibble( saturn.PC + 2 );
-    switch ( op3 ) {
+    switch ( read_nibble( saturn.PC + 2 ) ) {
         case 0: /* D0=A */
             saturn.PC += 3;
             register_to_address( saturn.A, &saturn.D0, 0 );
@@ -833,10 +825,9 @@ static bool step_instruction_015( void )
 static bool step_instruction_01( void )
 {
     bool illegal_instruction = false;
-    int op2 = read_nibble( saturn.PC + 1 );
     int op3;
 
-    switch ( op2 ) {
+    switch ( read_nibble( saturn.PC + 1 ) ) {
         case 0:
             illegal_instruction = step_instruction_010();
             break;
@@ -1011,10 +1002,7 @@ static bool step_instruction_08a( void )
 {
     bool illegal_instruction = false;
 
-    int op2 = read_nibble( saturn.PC + 2 );
-    int op3;
-
-    switch ( op2 ) {
+    switch ( read_nibble( saturn.PC + 2 ) ) {
         case 0: /* ?A=B */
             saturn.CARRY = is_equal_register( saturn.A, saturn.B, A_FIELD );
             break;
@@ -1068,7 +1056,9 @@ static bool step_instruction_08a( void )
     }
     if ( saturn.CARRY ) {
         saturn.PC += 3;
-        op3 = read_nibbles( saturn.PC, 2 );
+
+        int op3 = read_nibbles( saturn.PC, 2 );
+
         if ( op3 ) {
             if ( op3 & 0x80 )
                 op3 |= jumpmasks[ 2 ];
@@ -1179,10 +1169,9 @@ static bool step_instruction_080( void )
 {
     bool illegal_instruction = false;
 
-    int op3 = read_nibble( saturn.PC + 2 );
     int op4;
 
-    switch ( op3 ) {
+    switch ( read_nibble( saturn.PC + 2 ) ) {
         case 0: /* OUT=CS */
             saturn.PC += 3;
             copy_register( saturn.OUT, saturn.C, OUTS_FIELD );
@@ -1437,8 +1426,9 @@ static bool step_instruction_0818( void )
     bool illegal_instruction = false;
 
     int op3 = read_nibble( saturn.PC + 3 );
-    int op4 = read_nibble( saturn.PC + 4 );
     int op5 = read_nibble( saturn.PC + 5 );
+
+    int op4 = read_nibble( saturn.PC + 4 );
     if ( op4 < 8 ) { /* PLUS */
         switch ( op4 & 3 ) {
             case 0: /* A=A+CON */
@@ -1520,9 +1510,8 @@ static bool step_instruction_081a0( void )
 {
     bool illegal_instruction = false;
     int op3 = read_nibble( saturn.PC + 3 );
-    int op5 = read_nibble( saturn.PC + 5 );
 
-    switch ( op5 ) {
+    switch ( read_nibble( saturn.PC + 5 ) ) {
         case 0: /* saturn.R0=A */
             saturn.PC += 6;
             copy_register( saturn.R0, saturn.A, op3 );
@@ -1580,9 +1569,8 @@ static bool step_instruction_081a1( void )
 {
     bool illegal_instruction = false;
     int op3 = read_nibble( saturn.PC + 3 );
-    int op5 = read_nibble( saturn.PC + 5 );
 
-    switch ( op5 ) {
+    switch ( read_nibble( saturn.PC + 5 ) ) {
         case 0: /* A=R0 */
             saturn.PC += 6;
             copy_register( saturn.A, saturn.R0, op3 );
@@ -1640,9 +1628,8 @@ static bool step_instruction_081a2( void )
 {
     bool illegal_instruction = false;
     int op3 = read_nibble( saturn.PC + 3 );
-    int op5 = read_nibble( saturn.PC + 5 );
 
-    switch ( op5 ) {
+    switch ( read_nibble( saturn.PC + 5 ) ) {
         case 0: /* AR0EX */
             saturn.PC += 6;
             exchange_register( saturn.A, saturn.R0, op3 );
@@ -1700,8 +1687,7 @@ static bool step_instruction_081a( void )
 {
     bool illegal_instruction = false;
 
-    int op4 = read_nibble( saturn.PC + 4 );
-    switch ( op4 ) {
+    switch ( read_nibble( saturn.PC + 4 ) ) {
         case 0:
             illegal_instruction = step_instruction_081a0();
             break;
@@ -1721,9 +1707,8 @@ static bool step_instruction_081a( void )
 static bool step_instruction_081b( void )
 {
     bool illegal_instruction = false;
-    int op3 = read_nibble( saturn.PC + 3 );
 
-    switch ( op3 ) {
+    switch ( read_nibble( saturn.PC + 3 ) ) {
         case 2: /* PC=A */
             saturn.PC = dat_to_addr( saturn.A );
             break;
@@ -1758,9 +1743,8 @@ static bool step_instruction_081b( void )
 static bool step_instruction_081( void )
 {
     bool illegal_instruction = false;
-    int op2 = read_nibble( saturn.PC + 2 );
 
-    switch ( op2 ) {
+    switch ( read_nibble( saturn.PC + 2 ) ) {
         case 0: /* ASLC */
             saturn.PC += 3;
             shift_left_circ_register( saturn.A, W_FIELD );
@@ -1832,10 +1816,7 @@ static bool step_instruction_08b( void )
 {
     bool illegal_instruction = false;
 
-    int op2 = read_nibble( saturn.PC + 2 );
-    int op3;
-
-    switch ( op2 ) {
+    switch ( read_nibble( saturn.PC + 2 ) ) {
         case 0: /* ?A>B */
             saturn.CARRY = is_greater_register( saturn.A, saturn.B, A_FIELD );
             break;
@@ -1889,7 +1870,9 @@ static bool step_instruction_08b( void )
     }
     if ( saturn.CARRY ) {
         saturn.PC += 3;
-        op3 = read_nibbles( saturn.PC, 2 );
+
+        int op3 = read_nibbles( saturn.PC, 2 );
+
         if ( op3 ) {
             if ( op3 & 0x80 )
                 op3 |= jumpmasks[ 2 ];
@@ -2039,6 +2022,7 @@ static bool step_instruction_09( void )
     bool illegal_instruction = false;
     int op1 = read_nibble( saturn.PC + 1 );
     int op2 = read_nibble( saturn.PC + 2 );
+
     if ( op1 < 8 ) {
         switch ( op2 ) {
             case 0: /* ?A=B */
@@ -2149,7 +2133,9 @@ static bool step_instruction_09( void )
     }
     if ( saturn.CARRY ) {
         saturn.PC += 3;
+
         int op3 = read_nibbles( saturn.PC, 2 );
+
         if ( op3 ) {
             if ( op3 & 0x80 )
                 op3 |= jumpmasks[ 2 ];
@@ -2169,6 +2155,7 @@ static bool step_instruction_0a( void )
     bool illegal_instruction = false;
     int op1 = read_nibble( saturn.PC + 1 );
     int op2 = read_nibble( saturn.PC + 2 );
+
     if ( op1 < 8 ) {
         switch ( op2 ) {
             case 0: /* A=A+B */
@@ -2318,6 +2305,7 @@ static bool step_instruction_0b( void )
     bool illegal_instruction = false;
     int op1 = read_nibble( saturn.PC + 1 );
     int op2 = read_nibble( saturn.PC + 2 );
+
     if ( op1 < 8 ) {
         switch ( op2 ) {
             case 0: /* A=A-B */
