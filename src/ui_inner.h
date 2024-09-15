@@ -43,7 +43,7 @@ typedef struct letter_t {
 
 typedef struct color_t {
     const char* name;
-    int r, g, b, a;
+    int r, g, b;
     int mono_rgb;
     int gray_rgb;
 } color_t;

@@ -12,7 +12,7 @@ bool opt_gx = false;
 bool opt_49 = false;
 unsigned int rom_size = 0;
 
-int read_rom_file( const char* name, unsigned char** mem, unsigned int* size )
+bool read_rom_file( const char* name, unsigned char** mem, unsigned int* size )
 {
     struct stat st;
     FILE* fp;
@@ -25,19 +25,19 @@ int read_rom_file( const char* name, unsigned char** mem, unsigned int* size )
     *size = 0;
     if ( NULL == ( fp = fopen( name, "r" ) ) ) {
         fprintf( stderr, "can\'t open %s\n", name );
-        return 0;
+        return false;
     }
 
     if ( stat( name, &st ) < 0 ) {
         fprintf( stderr, "can\'t stat %s\n", name );
         fclose( fp );
-        return 0;
+        return false;
     }
 
     if ( fread( four, 1, 4, fp ) != 4 ) {
         fprintf( stderr, "can\'t read first 4 bytes of %s\n", name );
         fclose( fp );
-        return 0;
+        return false;
     }
 
     if ( four[ 0 ] == 0x02 && four[ 1 ] == 0x03 && four[ 2 ] == 0x06 && four[ 3 ] == 0x09 ) {
@@ -53,14 +53,14 @@ int read_rom_file( const char* name, unsigned char** mem, unsigned int* size )
     } else {
         fprintf( stderr, "%s is not a HP48 ROM\n", name );
         fclose( fp );
-        return 0;
+        return false;
     }
 
     if ( fseek( fp, 0, 0 ) < 0 ) {
         fprintf( stderr, "can\'t fseek to position 0 in %s\n", name );
         *size = 0;
         fclose( fp );
-        return 0;
+        return false;
     }
 
     *mem = ( unsigned char* )malloc( *size );
@@ -75,7 +75,7 @@ int read_rom_file( const char* name, unsigned char** mem, unsigned int* size )
             *mem = NULL;
             *size = 0;
             fclose( fp );
-            return 0;
+            return false;
         }
     } else {
         /*
@@ -88,7 +88,7 @@ int read_rom_file( const char* name, unsigned char** mem, unsigned int* size )
             *mem = NULL;
             *size = 0;
             fclose( fp );
-            return 0;
+            return false;
         }
 
         if ( NULL == ( tmp_mem = ( unsigned char* )malloc( ( size_t )st.st_size ) ) ) {
@@ -99,7 +99,7 @@ int read_rom_file( const char* name, unsigned char** mem, unsigned int* size )
                     *mem = NULL;
                     *size = 0;
                     fclose( fp );
-                    return 0;
+                    return false;
                 }
                 ( *mem )[ j++ ] = byte & 0xf;
                 ( *mem )[ j++ ] = ( byte >> 4 ) & 0xf;
@@ -112,7 +112,7 @@ int read_rom_file( const char* name, unsigned char** mem, unsigned int* size )
                 *size = 0;
                 fclose( fp );
                 free( tmp_mem );
-                return 0;
+                return false;
             }
 
             for ( i = 0, j = 0; i < *size / 2; i++ ) {
@@ -129,10 +129,7 @@ int read_rom_file( const char* name, unsigned char** mem, unsigned int* size )
     if ( ( *mem )[ 0x29 ] == 0x00 ) {
         if ( *size == ROM_SIZE_GX ) {
             opt_gx = true;
-        } else if ( *size == 4 * ROM_SIZE_GX ) {
-            fprintf( stderr, "%s seems to be HP49 ROM, but size is 0x%x\n", name, *size );
-            opt_49 = true;
-        } else if ( *size == 8 * ROM_SIZE_GX ) {
+        } else if ( ( *size == 4 * ROM_SIZE_GX ) || ( *size == 8 * ROM_SIZE_GX ) ) {
             fprintf( stderr, "%s seems to be HP49 ROM, but size is 0x%x\n", name, *size );
             opt_49 = true;
         } else {
@@ -140,7 +137,7 @@ int read_rom_file( const char* name, unsigned char** mem, unsigned int* size )
             free( *mem );
             *mem = NULL;
             *size = 0;
-            return 0;
+            return false;
         }
     } else {
         if ( *size == ROM_SIZE_SX ) {
@@ -150,9 +147,9 @@ int read_rom_file( const char* name, unsigned char** mem, unsigned int* size )
             free( *mem );
             *mem = NULL;
             *size = 0;
-            return 0;
+            return false;
         }
     }
 
-    return 1;
+    return true;
 }
