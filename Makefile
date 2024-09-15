@@ -131,7 +131,7 @@ endif
 # # to generate each dependency file (if it needs to).
 # -include $(depfiles)
 
-.PHONY: all clean clean-all pretty-code install mrproper
+.PHONY: all clean clean-all pretty-code mrproper install uninstall
 
 all: $(TARGETS)
 
@@ -187,3 +187,13 @@ install: all dist/config.lua
 
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/share/applications
 	sed "s|@PREFIX@|$(PREFIX)|g" dist/x48ng.desktop > $(DESTDIR)$(PREFIX)/share/applications/x48ng.desktop
+
+uninstall:
+	rm -f $(DESTDIR)$(PREFIX)/bin/x48ng
+	rm -f $(DESTDIR)$(PREFIX)/libexec/x48ng-dump2rom
+	rm -f $(DESTDIR)$(PREFIX)/libexec/x48ng-checkrom
+	rm -f $(DESTDIR)$(MANDIR)/man1/x48ng.1
+	rm -f $(DESTDIR)$(PREFIX)/share/applications/x48ng.desktop
+
+	rm -fr $(DESTDIR)$(PREFIX)/share/x48ng/
+	rm -fr $(DESTDIR)$(DOCDIR)
