@@ -5,13 +5,13 @@
 config_dir = "x48ng"
 
 -- Pathes are either relative to `config_dir` or absolute
-rom = "rom"
+rom = "ROMs/gxrom-r"
 ram = "ram"
 state = "state"
 port1 = "port1"
 port2 = "port2"
 
-pseudo_terminal = false
+pseudo_terminal = true
 serial = false
 serial_line = "/dev/ttyS0"
 
@@ -22,13 +22,14 @@ throttle = false
 --------------------
 -- User Interface --
 --------------------
-frontend = "x11" -- possible values: "x11", "sdl", "tui", "tui-small", "tui-tiny"
+frontend = "sdl2" -- possible values: "x11", "sdl2" "tui", "tui-small", "tui-tiny"
 hide_chrome = false
 fullscreen = false
+scale = 1.000000 -- applies only to sdl2
 mono = false
 gray = false
 leave_shift_keys = false
-inhibit_shutdown = false
+inhibit_shutdown = true
 
 x11_visual = "default"
 netbook = false
