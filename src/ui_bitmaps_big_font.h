@@ -64,7 +64,7 @@ static unsigned char big_font_8_bits[] = {
 #define big_font_9_width 8
 #define big_font_9_height 13
 static unsigned char big_font_9_bits[] = {
-    62, 195, 195, 195, 195, 195, 230, 220, 192, 192, 194, 102, 60,
+    60, 102, 195, 195, 195, 195, 230, 220, 192, 192, 194, 102, 60,
 };
 
 #define big_font_A_width 8
