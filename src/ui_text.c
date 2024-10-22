@@ -508,7 +508,8 @@ void text_get_event( void )
             case KEY_F( 1 ):
             case KEY_ENTER:
             case '\n':
-            case ',':
+        case ',':
+        case 13:
                 hpkey = HPKEY_ENTER;
                 break;
             case KEY_BACKSPACE:
