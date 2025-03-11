@@ -2,6 +2,15 @@
 
 This is my fork of x48-0.6.4 where I deviate from the original code and do my own thing. (See ./README_0.6.4 for the original README)
 
+**x48ng** is part of my little collection of HP calculators' emulators' that I took over maintenance :
+
+- (x50ng)[https://codeberg.org/gwh/x50ng]
+- (x48ng)[https://codeberg.org/gwh/x48ng] ← You are here
+- (saturnng)[https://codeberg.org/gwh/saturnng]
+- (hpemung)[https://codeberg.org/gwh/hpemung]
+
+[ The reference public source repository is https://codeberg.org/gwh/x48ng ]
+
 ## Usage
 
 `x48ng --help`
