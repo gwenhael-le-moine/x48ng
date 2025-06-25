@@ -3012,7 +3012,6 @@ void schedule( void )
         sigalarm_triggered = false;
 
         ui_refresh_LCD();
-
         ui_get_event();
     }
 }
