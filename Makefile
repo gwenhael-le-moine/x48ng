@@ -16,13 +16,12 @@ CFLAGS ?= -g -O2
 FULL_WARNINGS = no
 LUA_VERSION ?= lua
 PKG_CONFIG ?= pkg-config
-WITH_X11 ?= yes
 WITH_SDL ?= yes
 WITH_SDL2 ?= yes
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 41
-PATCHLEVEL = 1
+VERSION_MINOR = 50
+PATCHLEVEL = 0
 
 DOTOS = src/emu_serial.o \
 	src/emu_emulate.o \
@@ -41,7 +40,7 @@ DOTOS = src/emu_serial.o \
 MAKEFLAGS +=-j$(NUM_CORES) -l$(NUM_CORES)
 
 cc-option = $(shell if $(CC) $(1) -c -x c /dev/null -o /dev/null > /dev/null 2>&1; \
-	      then echo $(1); fi)
+		  then echo $(1); fi)
 
 ifeq ($(FULL_WARNINGS), no)
 EXTRA_WARNING_FLAGS := -Wno-unused-function \
@@ -95,16 +94,6 @@ LIBS += $(shell "$(PKG_CONFIG)" --libs readline)
 ### Text UI
 override CFLAGS += $(shell "$(PKG_CONFIG)" --cflags ncursesw) -DNCURSES_WIDECHAR=1
 LIBS += $(shell "$(PKG_CONFIG)" --libs ncursesw)
-
-### X11 UI
-ifeq ($(WITH_X11), yes)
-	X11CFLAGS = $(shell "$(PKG_CONFIG)" --cflags x11 xext) -D_GNU_SOURCE=1
-	X11LIBS = $(shell "$(PKG_CONFIG)" --libs x11 xext)
-
-	override CFLAGS += $(X11CFLAGS) -DHAS_X11=1
-	LIBS += $(X11LIBS)
-	DOTOS += src/ui_x11.o
-endif
 
 ### SDL2 UI
 ifeq ($(WITH_SDL), yes)

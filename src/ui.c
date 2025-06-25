@@ -2284,24 +2284,16 @@ void start_UI( int argc, char** argv )
     ui_init_LCD();
 
     switch ( config.frontend_type ) {
-#if defined( HAS_X11 )
-        case FRONTEND_X11:
-        default:
-            init_x11_ui( argc, argv );
-            break;
-#endif
 
 #if defined( HAS_SDL2 )
         case FRONTEND_SDL2:
-#  if !defined( HAS_X11 )
         default:
-#  endif
             init_sdl2_ui( argc, argv );
             break;
 #endif
 
         case FRONTEND_TEXT:
-#if ( !defined( HAS_X11 ) && !defined( HAS_SDL2 ) )
+#if !defined( HAS_SDL2 )
         default:
 #endif
             init_text_ui( argc, argv );
@@ -2312,24 +2304,16 @@ void start_UI( int argc, char** argv )
 void ui_stop( void )
 {
     switch ( config.frontend_type ) {
-#if defined( HAS_X11 )
-        case FRONTEND_X11:
-        default:
-            x11_ui_stop();
-            break;
-#endif
 
 #if defined( HAS_SDL2 )
         case FRONTEND_SDL2:
-#  if !defined( HAS_X11 )
         default:
-#  endif
             sdl2_ui_stop();
             break;
 #endif
 
         case FRONTEND_TEXT:
-#if ( !defined( HAS_X11 ) && !defined( HAS_SDL2 ) )
+#if !defined( HAS_SDL2 )
         default:
 #endif
             text_ui_stop();

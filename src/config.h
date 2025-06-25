@@ -4,8 +4,7 @@
 #include <stdbool.h>
 
 #define FRONTEND_TEXT 0
-#define FRONTEND_X11 1
-#define FRONTEND_SDL2 2
+#define FRONTEND_SDL2 1
 
 typedef struct {
     char* progname;
@@ -35,19 +34,6 @@ typedef struct {
     bool hide_chrome;
     bool show_ui_fullscreen;
     double scale;
-
-    /* x11 */
-    bool netbook;
-    char* name;
-    char* title;
-    char* x11_visual;
-    bool monoIcon;
-    bool iconic;
-    bool xrm;
-    char* smallFont;
-    char* mediumFont;
-    char* largeFont;
-    char* connFont;
 } config_t;
 extern config_t config;
 
