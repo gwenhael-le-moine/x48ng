@@ -1,9 +1,11 @@
-.PHONY: get-roms mrproper
+.PHONY: get-roms mrproper clean
 
 get-roms: sxrom-a sxrom-b sxrom-c sxrom-d sxrom-e sxrom-j gxrom-l gxrom-m gxrom-p gxrom-r
 
 mrproper:
 	rm -f ./sxrom-a ./sxrom-b ./sxrom-c ./sxrom-d ./sxrom-e ./sxrom-j ./gxrom-l ./gxrom-m ./gxrom-p ./gxrom-r
+
+clean: mrproper
 
 sxrom-a:
 	curl "https://www.hpcalc.org/hp48/pc/emulators/sxrom-a.zip" --output - | funzip > "sxrom-a"

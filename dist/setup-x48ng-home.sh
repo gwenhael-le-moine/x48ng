@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 cd "$(dirname "$0")" || exit 1
 CWD=$(pwd)
@@ -13,14 +13,9 @@ PORT1=${PORT1:-port1}
 PORT2=${PORT2:-port2}
 
 mkdir -p "${DOTX48NG}"
-
-cp -r "$CWD"/ROMs/ "${DOTX48NG}"/
-
 cd "${DOTX48NG}" || exit 1
-echo "The next step will download all available HP 48 ROMs from https://hpcalc.org where \"HP graciously began allowing this to be downloaded in mid-2000.\""
-echo "You can hit Ctrl-C now if you do not wish to download them."
-read -r
-make -C ROMs get-roms
+
+cp -R "$CWD"/ROMs "${DOTX48NG}"/ROMs
 
 PORT1_SIZE=128
 PORT2_SIZE=4096
@@ -37,4 +32,12 @@ fi
 dd if=/dev/zero of="$DOTX48NG"/"$PORT1" bs=1k count=$PORT1_SIZE
 dd if=/dev/zero of="$DOTX48NG"/"$PORT2" bs=1k count=$PORT2_SIZE
 
-x48ng --rom="$ROM" --ram="$RAM" --state="$STATE" --port1="$PORT1" --port2="$PORT2" --print-config > "${CONFIG}"
+echo "The next step will download all available HP 48 ROMs from https://hpcalc.org where \"HP graciously began allowing this to be downloaded in mid-2000.\""
+echo "You can hit Ctrl-C now if you do not wish to download them."
+read -r
+gmake -C ROMs get-roms
+
+BINX48NG=x48ng
+[ -x "$CWD"/x48ng ] && BINX48NG="$CWD"/x48ng
+
+"$BINX48NG" --rom="$ROM" --ram="$RAM" --state="$STATE" --port1="$PORT1" --port2="$PORT2" --print-config > "${CONFIG}"
