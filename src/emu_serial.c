@@ -181,7 +181,7 @@ void serial_baud( int baud )
         }
     }
 
-#if !defined( __APPLE__ ) && !defined(__FreeBSD__)
+#if !defined( __APPLE__ ) && !defined( __FreeBSD__ )
 #  pragma GCC diagnostic push                            // save the actual diag context
 #  pragma GCC diagnostic ignored "-Wmaybe-uninitialized" // disable maybe warnings
 #  pragma GCC diagnostic ignored "-Wuninitialized"       // disable maybe warnings
@@ -224,7 +224,7 @@ void serial_baud( int baud )
             break;
     }
 
-#if defined(__FreeBSD__)
+#if defined( __FreeBSD__ )
     if ( ir_fd >= 0 ) {
 #else
     if ( ( ir_fd >= 0 ) && ( ( ttybuf.c_cflag & CBAUD ) == 0 ) ) {
