@@ -17,7 +17,7 @@ FULL_WARNINGS = no
 LUA_VERSION ?= lua
 PKG_CONFIG ?= pkg-config
 WITH_SDL ?= yes
-WITH_SDL2 ?= yes
+WITH_SDL ?= yes
 
 VERSION_MAJOR = 0
 VERSION_MINOR = 50
@@ -95,17 +95,14 @@ LIBS += $(shell "$(PKG_CONFIG)" --libs readline)
 override CFLAGS += $(shell "$(PKG_CONFIG)" --cflags ncursesw) -DNCURSES_WIDECHAR=1
 LIBS += $(shell "$(PKG_CONFIG)" --libs ncursesw)
 
-### SDL2 UI
+### SDL UI
 ifeq ($(WITH_SDL), yes)
-	WITH_SDL2 = yes
-endif
-ifeq ($(WITH_SDL2), yes)
 	SDLCFLAGS = $(shell "$(PKG_CONFIG)" --cflags sdl2)
 	SDLLIBS = $(shell "$(PKG_CONFIG)" --libs sdl2)
 
-	override CFLAGS += $(SDLCFLAGS) -DHAS_SDL2=1
+	override CFLAGS += $(SDLCFLAGS) -DHAS_SDL=1
 	LIBS += $(SDLLIBS)
-	DOTOS += src/ui_sdl2.o
+	DOTOS += src/ui_sdl.o
 endif
 
 # depfiles = $(objects:.o=.d)

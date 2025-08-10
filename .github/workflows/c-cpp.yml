@@ -20,4 +20,4 @@ jobs:
     - name: make standard
       run: make clean-all && make
     - name: make without any sdl
-      run: make clean-all && make WITH_SDL2=no
+      run: make clean-all && make WITH_SDL=no

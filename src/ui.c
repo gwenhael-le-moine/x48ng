@@ -2285,15 +2285,15 @@ void start_UI( int argc, char** argv )
 
     switch ( config.frontend_type ) {
 
-#if defined( HAS_SDL2 )
-        case FRONTEND_SDL2:
+#if defined( HAS_SDL )
+        case FRONTEND_SDL:
         default:
             init_sdl2_ui( argc, argv );
             break;
 #endif
 
         case FRONTEND_TEXT:
-#if !defined( HAS_SDL2 )
+#if !defined( HAS_SDL )
         default:
 #endif
             init_text_ui( argc, argv );
@@ -2305,15 +2305,15 @@ void ui_stop( void )
 {
     switch ( config.frontend_type ) {
 
-#if defined( HAS_SDL2 )
-        case FRONTEND_SDL2:
+#if defined( HAS_SDL )
+        case FRONTEND_SDL:
         default:
             sdl2_ui_stop();
             break;
 #endif
 
         case FRONTEND_TEXT:
-#if !defined( HAS_SDL2 )
+#if !defined( HAS_SDL )
         default:
 #endif
             text_ui_stop();

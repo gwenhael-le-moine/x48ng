@@ -16,7 +16,7 @@ extern unsigned char lcd_nibbles_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
 /*************/
 /* functions */
 /*************/
-#ifdef HAS_SDL2
+#ifdef HAS_SDL
 extern void init_sdl2_ui( int argc, char** argv );
 extern void sdl2_ui_stop( void );
 #endif

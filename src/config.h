@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 #define FRONTEND_TEXT 0
-#define FRONTEND_SDL2 1
+#define FRONTEND_SDL 1
 
 typedef struct {
     char* progname;

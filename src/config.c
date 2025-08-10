@@ -235,47 +235,47 @@ int config_init( int argc, char* argv[] )
 
     const char* optstring = "c:hvVtsirT";
     struct option long_options[] = {
-        {"config",           required_argument, NULL,                           'c'          },
-        {"config-dir",       required_argument, NULL,                           1000         },
-        {"rom",              required_argument, NULL,                           1010         },
-        {"ram",              required_argument, NULL,                           1011         },
-        {"state",            required_argument, NULL,                           1012         },
-        {"port1",            required_argument, NULL,                           1013         },
-        {"port2",            required_argument, NULL,                           1014         },
+        {"config",           required_argument, NULL,                           'c'         },
+        {"config-dir",       required_argument, NULL,                           1000        },
+        {"rom",              required_argument, NULL,                           1010        },
+        {"ram",              required_argument, NULL,                           1011        },
+        {"state",            required_argument, NULL,                           1012        },
+        {"port1",            required_argument, NULL,                           1013        },
+        {"port2",            required_argument, NULL,                           1014        },
 
-        {"serial-line",      required_argument, NULL,                           1015         },
+        {"serial-line",      required_argument, NULL,                           1015        },
 
-        {"help",             no_argument,       NULL,                           'h'          },
-        {"version",          no_argument,       NULL,                           'v'          },
+        {"help",             no_argument,       NULL,                           'h'         },
+        {"version",          no_argument,       NULL,                           'v'         },
 
-        {"print-config",     no_argument,       ( int* )&config.print_config,   true         },
-        {"verbose",          no_argument,       &clopt_verbose,                 true         },
-        {"terminal",         no_argument,       &clopt_useTerminal,             true         },
-        {"serial",           no_argument,       &clopt_useSerial,               true         },
+        {"print-config",     no_argument,       ( int* )&config.print_config,   true        },
+        {"verbose",          no_argument,       &clopt_verbose,                 true        },
+        {"terminal",         no_argument,       &clopt_useTerminal,             true        },
+        {"serial",           no_argument,       &clopt_useSerial,               true        },
 
-        {"reset",            no_argument,       ( int* )&config.resetOnStartup, true         },
-        {"throttle",         no_argument,       &clopt_throttle,                true         },
+        {"reset",            no_argument,       ( int* )&config.resetOnStartup, true        },
+        {"throttle",         no_argument,       &clopt_throttle,                true        },
 
-        {"debug",            no_argument,       &clopt_useDebugger,             true         },
+        {"debug",            no_argument,       &clopt_useDebugger,             true        },
 
-        {"sdl2",             no_argument,       &clopt_frontend_type,           FRONTEND_SDL2},
-        {"sdl",              no_argument,       &clopt_frontend_type,           FRONTEND_SDL2},
-        {"no-chrome",        no_argument,       &clopt_hide_chrome,             true         },
-        {"fullscreen",       no_argument,       &clopt_show_ui_fullscreen,      true         },
-        {"scale",            required_argument, NULL,                           7110         },
+        {"sdl2",             no_argument,       &clopt_frontend_type,           FRONTEND_SDL},
+        {"sdl",              no_argument,       &clopt_frontend_type,           FRONTEND_SDL},
+        {"no-chrome",        no_argument,       &clopt_hide_chrome,             true        },
+        {"fullscreen",       no_argument,       &clopt_show_ui_fullscreen,      true        },
+        {"scale",            required_argument, NULL,                           7110        },
 
-        {"tui",              no_argument,       NULL,                           9100         },
-        {"tui-small",        no_argument,       NULL,                           9110         },
-        {"tui-tiny",         no_argument,       NULL,                           9120         },
-        {"small",            no_argument,       NULL,                           9109         }, /* DEPRECATED */
-        {"tiny",             no_argument,       NULL,                           9119         }, /* DEPRECATED */
+        {"tui",              no_argument,       NULL,                           9100        },
+        {"tui-small",        no_argument,       NULL,                           9110        },
+        {"tui-tiny",         no_argument,       NULL,                           9120        },
+        {"small",            no_argument,       NULL,                           9109        }, /* DEPRECATED */
+        {"tiny",             no_argument,       NULL,                           9119        }, /* DEPRECATED */
 
-        {"mono",             no_argument,       &clopt_mono,                    true         },
-        {"gray",             no_argument,       &clopt_gray,                    true         },
-        {"leave-shift-keys", no_argument,       &clopt_leave_shift_keys,        true         },
-        {"inhibit-shutdown", no_argument,       &clopt_inhibit_shutdown,        true         },
+        {"mono",             no_argument,       &clopt_mono,                    true        },
+        {"gray",             no_argument,       &clopt_gray,                    true        },
+        {"leave-shift-keys", no_argument,       &clopt_leave_shift_keys,        true        },
+        {"inhibit-shutdown", no_argument,       &clopt_inhibit_shutdown,        true        },
 
-        {0,                  0,                 0,                              0            }
+        {0,                  0,                 0,                              0           }
     };
 
     const char* help_text = "usage: %s [options]\n"
@@ -468,7 +468,7 @@ int config_init( int argc, char* argv[] )
     config.throttle = lua_toboolean( config_lua_values, -1 );
 
     lua_getglobal( config_lua_values, "frontend" );
-#ifdef HAS_SDL2
+#ifdef HAS_SDL
 #  define DEFAULT_FRONTEND "sdl2"
 #else
 #  define DEFAULT_FRONTEND "tui"
@@ -476,9 +476,9 @@ int config_init( int argc, char* argv[] )
     const char* svalue = luaL_optstring( config_lua_values, -1, DEFAULT_FRONTEND );
     if ( svalue != NULL ) {
         if ( strcmp( svalue, "sdl2" ) == 0 )
-            config.frontend_type = FRONTEND_SDL2;
+            config.frontend_type = FRONTEND_SDL;
         if ( strcmp( svalue, "sdl" ) == 0 ) /* retro-compatibility */
-            config.frontend_type = FRONTEND_SDL2;
+            config.frontend_type = FRONTEND_SDL;
         if ( strcmp( svalue, "tui" ) == 0 ) {
             config.frontend_type = FRONTEND_TEXT;
             config.small = false;
@@ -601,7 +601,7 @@ int config_init( int argc, char* argv[] )
         fprintf( stdout, "--------------------\n" );
         fprintf( stdout, "frontend = \"" );
         switch ( config.frontend_type ) {
-            case FRONTEND_SDL2:
+            case FRONTEND_SDL:
                 fprintf( stdout, "sdl" );
                 break;
             case FRONTEND_TEXT:
