@@ -54,7 +54,7 @@ endif
 ifeq ($(FULL_WARNINGS), yes)
 EXTRA_WARNING_FLAGS := -Wunused-function \
 	-Wredundant-decls \
-	-fsanitize-trap \
+	-fsanitize=thread \
 	$(call cc-option,-Wunused-variable)
 endif
 
