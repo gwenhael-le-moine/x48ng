@@ -7,7 +7,7 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 
-#include "config.h"
+#include "options.h"
 #include "emulator.h"
 #include "emulator_for_debugger.h"
 #include "romio.h"

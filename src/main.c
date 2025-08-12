@@ -11,7 +11,7 @@
 
 #include "debugger.h"
 #include "emulator.h"
-#include "config.h"
+#include "options.h"
 #include "ui.h" /* setup_frontend(); init_ui(); */
 
 void signal_handler( int sig )

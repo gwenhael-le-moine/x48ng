@@ -31,7 +31,7 @@ DOTOS = src/emu_serial.o \
 	src/emu_register.o \
 	src/emu_timer.o \
 	src/debugger.o \
-	src/config.o \
+	src/options.o \
 	src/romio.o \
 	src/ui_text.o \
 	src/ui.o \

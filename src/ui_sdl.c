@@ -12,7 +12,7 @@
 #include <SDL2/SDL.h>
 
 #include "romio.h" /* opt_gx */
-#include "config.h"
+#include "options.h"
 #include "ui.h"
 #include "ui_inner.h"
 
@@ -545,7 +545,7 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
     int x, y;
     int on_key_offset_y = ( hpkey == HPKEY_ON ) ? 1 : 0;
     SDL_Texture* texture =
-        SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, BUTTONS[ hpkey ].w, BUTTONS[ hpkey ].h );
+        SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGB444, SDL_TEXTUREACCESS_TARGET, BUTTONS[ hpkey ].w, BUTTONS[ hpkey ].h );
     SDL_SetRenderTarget( renderer, texture );
 
     // Fill the button and outline
@@ -1125,7 +1125,7 @@ void init_sdl2_ui( int argc, char** argv )
 
     SDL_RenderSetLogicalSize( renderer, width, height );
 
-    main_texture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height );
+    main_texture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGB444, SDL_TEXTUREACCESS_TARGET, width, height );
 
     SDL_SetRenderTarget( renderer, main_texture );
 

@@ -13,7 +13,7 @@
 #include <lua.h>
 #include <lauxlib.h>
 
-#include "config.h"
+#include "options.h"
 
 config_t config = {
     .progname = ( char* )"x48ng",

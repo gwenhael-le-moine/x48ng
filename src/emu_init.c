@@ -10,7 +10,7 @@
 #include "emulator.h"
 #include "emulator_inner.h"
 #include "romio.h"
-#include "config.h"
+#include "options.h"
 
 #define X48_MAGIC 0x48503438
 #define NB_CONFIG 8
