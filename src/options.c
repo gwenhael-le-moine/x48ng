@@ -30,7 +30,7 @@ config_t config = {
 
     .frontend_type = FRONTEND_TEXT,
 
-    .leave_shift_keys = false,
+    .shiftless = false,
     .inhibit_shutdown = false,
 
     .mono = false,
@@ -41,8 +41,8 @@ config_t config = {
     .tiny = false,
 
     /* sdl */
-    .hide_chrome = false,
-    .show_ui_fullscreen = false,
+    .chromeless = false,
+    .fullscreen = false,
     .scale = 1.0,
 };
 
@@ -223,14 +223,14 @@ int config_init( int argc, char* argv[] )
     int clopt_useSerial = -1;
     int clopt_useDebugger = -1;
     int clopt_throttle = -1;
-    int clopt_hide_chrome = -1;
-    int clopt_show_ui_fullscreen = -1;
+    int clopt_chromeless = -1;
+    int clopt_fullscreen = -1;
     double clopt_scale = -1.0;
     int clopt_mono = -1;
     int clopt_gray = -1;
     int clopt_small = -1;
     int clopt_tiny = -1;
-    int clopt_leave_shift_keys = -1;
+    int clopt_shiftless = -1;
     int clopt_inhibit_shutdown = -1;
 
     const char* optstring = "c:hvVtsirT";
@@ -260,8 +260,8 @@ int config_init( int argc, char* argv[] )
 
         {"sdl2",             no_argument,       &clopt_frontend_type,           FRONTEND_SDL},
         {"sdl",              no_argument,       &clopt_frontend_type,           FRONTEND_SDL},
-        {"no-chrome",        no_argument,       &clopt_hide_chrome,             true        },
-        {"fullscreen",       no_argument,       &clopt_show_ui_fullscreen,      true        },
+        {"no-chrome",        no_argument,       &clopt_chromeless,              true        },
+        {"fullscreen",       no_argument,       &clopt_fullscreen,              true        },
         {"scale",            required_argument, NULL,                           7110        },
 
         {"tui",              no_argument,       NULL,                           9100        },
@@ -272,7 +272,7 @@ int config_init( int argc, char* argv[] )
 
         {"mono",             no_argument,       &clopt_mono,                    true        },
         {"gray",             no_argument,       &clopt_gray,                    true        },
-        {"leave-shift-keys", no_argument,       &clopt_leave_shift_keys,        true        },
+        {"leave-shift-keys", no_argument,       &clopt_shiftless,               true        },
         {"inhibit-shutdown", no_argument,       &clopt_inhibit_shutdown,        true        },
 
         {0,                  0,                 0,                              0           }
@@ -496,11 +496,19 @@ int config_init( int argc, char* argv[] )
         }
     }
 
+    /* DEPRECATED */
     lua_getglobal( config_lua_values, "hide_chrome" );
-    config.hide_chrome = lua_toboolean( config_lua_values, -1 );
+    config.chromeless = lua_toboolean( config_lua_values, -1 );
+
+    /* DEPRECATED */
+    lua_getglobal( config_lua_values, "leave_shift_keys" );
+    config.shiftless = lua_toboolean( config_lua_values, -1 );
+
+    lua_getglobal( config_lua_values, "chromeless" );
+    config.chromeless = lua_toboolean( config_lua_values, -1 );
 
     lua_getglobal( config_lua_values, "fullscreen" );
-    config.show_ui_fullscreen = lua_toboolean( config_lua_values, -1 );
+    config.fullscreen = lua_toboolean( config_lua_values, -1 );
 
     lua_getglobal( config_lua_values, "scale" );
     config.scale = luaL_optnumber( config_lua_values, -1, 1.0 );
@@ -511,8 +519,8 @@ int config_init( int argc, char* argv[] )
     lua_getglobal( config_lua_values, "gray" );
     config.gray = lua_toboolean( config_lua_values, -1 );
 
-    lua_getglobal( config_lua_values, "leave_shift_keys" );
-    config.leave_shift_keys = lua_toboolean( config_lua_values, -1 );
+    lua_getglobal( config_lua_values, "shiftless" );
+    config.shiftless = lua_toboolean( config_lua_values, -1 );
 
     lua_getglobal( config_lua_values, "inhibit_shutdown" );
     config.inhibit_shutdown = lua_toboolean( config_lua_values, -1 );
@@ -547,10 +555,10 @@ int config_init( int argc, char* argv[] )
         config.useDebugger = clopt_useDebugger;
     if ( clopt_frontend_type != -1 )
         config.frontend_type = clopt_frontend_type;
-    if ( clopt_hide_chrome != -1 )
-        config.hide_chrome = clopt_hide_chrome;
-    if ( clopt_show_ui_fullscreen != -1 )
-        config.show_ui_fullscreen = clopt_show_ui_fullscreen;
+    if ( clopt_chromeless != -1 )
+        config.chromeless = clopt_chromeless;
+    if ( clopt_fullscreen != -1 )
+        config.fullscreen = clopt_fullscreen;
     if ( clopt_scale > 0.0 )
         config.scale = clopt_scale;
     if ( clopt_mono != -1 )
@@ -561,8 +569,8 @@ int config_init( int argc, char* argv[] )
         config.small = clopt_small;
     if ( clopt_tiny != -1 )
         config.tiny = clopt_tiny;
-    if ( clopt_leave_shift_keys != -1 )
-        config.leave_shift_keys = clopt_leave_shift_keys;
+    if ( clopt_shiftless != -1 )
+        config.shiftless = clopt_shiftless;
     if ( clopt_inhibit_shutdown != -1 )
         config.inhibit_shutdown = clopt_inhibit_shutdown;
 
@@ -614,12 +622,12 @@ int config_init( int argc, char* argv[] )
                 break;
         }
         fprintf( stdout, "\" -- possible values: \"sdl\" \"tui\", \"tui-small\", \"tui-tiny\"\n" );
-        fprintf( stdout, "hide_chrome = %s\n", config.hide_chrome ? "true" : "false" );
-        fprintf( stdout, "fullscreen = %s\n", config.show_ui_fullscreen ? "true" : "false" );
+        fprintf( stdout, "chromeless = %s\n", config.chromeless ? "true" : "false" );
+        fprintf( stdout, "fullscreen = %s\n", config.fullscreen ? "true" : "false" );
         fprintf( stdout, "scale = %f -- applies only to sdl2\n", config.scale );
         fprintf( stdout, "mono = %s\n", config.mono ? "true" : "false" );
         fprintf( stdout, "gray = %s\n", config.gray ? "true" : "false" );
-        fprintf( stdout, "leave_shift_keys = %s\n", config.leave_shift_keys ? "true" : "false" );
+        fprintf( stdout, "shiftless = %s\n", config.shiftless ? "true" : "false" );
         fprintf( stdout, "inhibit_shutdown = %s\n", config.inhibit_shutdown ? "true" : "false" );
         fprintf( stdout, "--------------------------------------------------------------------------------\n" );
 

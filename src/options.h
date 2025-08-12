@@ -1,15 +1,16 @@
-#ifndef _CONFIG_H
-#define _CONFIG_H 1
+#ifndef _OPTIONS_H
+#define _OPTIONS_H 1
 
 #include <stdbool.h>
 
-#define FRONTEND_TEXT 0
-#define FRONTEND_SDL 1
+typedef enum { FRONTEND_TEXT, FRONTEND_SDL } frontends_t;
 
 typedef struct {
     char* progname;
 
     bool verbose;
+    bool shiftless;
+
     bool print_config;
     bool useTerminal;
     bool useSerial;
@@ -18,22 +19,21 @@ typedef struct {
     bool resetOnStartup;
     int frontend_type;
 
-    char* serialLine;
-
-    bool leave_shift_keys;
     bool inhibit_shutdown;
 
     bool mono;
     bool gray;
 
-    /* tui */
-    bool small;
-    bool tiny;
-
     /* sdl */
-    bool hide_chrome;
-    bool show_ui_fullscreen;
+    bool chromeless;
+    bool fullscreen;
     double scale;
+
+    /* tui */
+    bool tiny;
+    bool small;
+
+    char* serialLine;
 } config_t;
 extern config_t config;
 
@@ -51,4 +51,4 @@ extern char normalized_port2_path[ MAX_LENGTH_FILENAME ];
 /*************/
 extern int config_init( int argc, char* argv[] );
 
-#endif /* !_CONFIG_H */
+#endif /* !_OPTIONS_H */

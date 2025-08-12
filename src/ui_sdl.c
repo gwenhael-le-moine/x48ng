@@ -379,11 +379,11 @@ static int sdlkey_to_hpkey( SDL_Keycode k )
         case SDLK_ESCAPE:
             return HPKEY_ON;
         case SDLK_LSHIFT:
-            if ( !config.leave_shift_keys )
+            if ( !config.shiftless )
                 return HPKEY_SHL;
             break;
         case SDLK_RSHIFT:
-            if ( !config.leave_shift_keys )
+            if ( !config.shiftless )
                 return HPKEY_SHR;
             break;
         case SDLK_F2:
@@ -810,7 +810,7 @@ static void _draw_background_LCD( void ) { __draw_rect( display_offset_x, displa
 // Show the hp key which is being pressed
 static void _show_key( int hpkey )
 {
-    if ( config.hide_chrome || hpkey < 0 )
+    if ( config.chromeless || hpkey < 0 )
         return;
 
     SDL_SetRenderTarget( renderer, main_texture );
@@ -1099,7 +1099,7 @@ void init_sdl2_ui( int argc, char** argv )
     width = ( BUTTONS[ LAST_HPKEY ].x + BUTTONS[ LAST_HPKEY ].w ) + 2 * SIDE_SKIP;
     height = display_offset_y + DISPLAY_HEIGHT + DISP_KBD_SKIP + BUTTONS[ LAST_HPKEY ].y + BUTTONS[ LAST_HPKEY ].h + BOTTOM_SKIP;
 
-    if ( config.hide_chrome ) {
+    if ( config.chromeless ) {
         display_offset_x = 0;
         display_offset_y = 0;
         width = DISPLAY_WIDTH;
@@ -1107,7 +1107,7 @@ void init_sdl2_ui( int argc, char** argv )
     }
 
     uint32_t window_flags = SDL_WINDOW_ALLOW_HIGHDPI;
-    if ( config.show_ui_fullscreen )
+    if ( config.fullscreen )
         window_flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
     else
         window_flags |= SDL_WINDOW_RESIZABLE;
@@ -1133,7 +1133,7 @@ void init_sdl2_ui( int argc, char** argv )
 
     create_annunciators_textures();
 
-    if ( !config.hide_chrome ) {
+    if ( !config.chromeless ) {
         int cut = BUTTONS[ HPKEY_MTH ].y + KEYBOARD_OFFSET_Y - 19;
 
         create_buttons_textures();
