@@ -22,6 +22,7 @@ PKG_CONFIG ?= pkg-config
 OPTIM ?= 2
 FULL_WARNINGS ?= no
 WITH_SDL ?= yes
+WITH_GTK ?= no
 
 MAKEFLAGS +=-j$(NUM_CORES) -l$(NUM_CORES)
 
@@ -48,11 +49,19 @@ ifeq ($(WITH_SDL), yes)
 	SDL_SRC = src/ui_sdl.c
 endif
 
+ifeq ($(WITH_GTK), yes)
+	GTK_CFLAGS = -DHAS_GTK=1 $(shell "$(PKG_CONFIG)" --cflags gtk4)
+	GTK_LIBS = $(shell "$(PKG_CONFIG)" --libs gtk4)
+	# GTK_SRC = src/ui4x/gtk.c
+	# GTK_HEADERS = src/ui4x/gtk.h
+endif
+
 LIBS = -lm \
 	$(LUA_LIBS) \
 	$(DEBUG_LIBS) \
 	$(NCURSES_LIBS) \
-	$(SDL_LIBS)
+	$(SDL_LIBS) \
+	$(GTK_LIBS)
 
 HEADERS = src/debugger.h \
 	src/emulator_core.h \
@@ -112,14 +121,16 @@ override CFLAGS := -std=c11 \
 	$(call cc-option,-Wno-unknown-warning-option) \
 	$(EXTRA_WARNING_CFLAGS) \
 	$(SDL_CFLAGS) \
-	$(LUA_CFLAGS) \
+	$(GTK_CFLAGS) \
 	$(NCURSES_CFLAGS) \
+	$(LUA_CFLAGS) \
 	$(DEBUG_CFLAGS) \
 	-O$(OPTIM) \
+	-D_GNU_SOURCE=1 \
 	-DVERSION_MAJOR=$(VERSION_MAJOR) \
 	-DVERSION_MINOR=$(VERSION_MINOR) \
 	-DPATCHLEVEL=$(PATCHLEVEL) \
-	-I./src/ -D_GNU_SOURCE=1 \
+	-I./src/ \
 	$(CFLAGS)
 
 # depfiles = $(objects:.o=.d)
