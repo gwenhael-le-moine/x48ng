@@ -14,7 +14,6 @@
 
 #include <curses.h>
 
-#include "romio.h"   /* opt_gx */
 #include "options.h" /* mono, gray, small, tiny, progname */
 #include "ui.h"      /* last_annunc_state, lcd_nibbles_buffer, DISP_ROWS */
 #include "ui_inner.h"

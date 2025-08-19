@@ -11,7 +11,6 @@
 
 #include <SDL2/SDL.h>
 
-#include "romio.h" /* opt_gx */
 #include "options.h"
 #include "ui.h"
 #include "ui_inner.h"
@@ -498,12 +497,12 @@ static void _draw_header( void )
     int y;
 
     // insert the HP Logo
-    if ( opt_gx )
+    if ( config.model == MODEL_48GX )
         x -= 6;
 
     __draw_bitmap( x, 10, hp_width, hp_height, hp_bitmap, LOGO, LOGO_BACK );
 
-    if ( !opt_gx ) {
+    if ( config.model == MODEL_48SX ) {
         __draw_line( display_offset_x, 9, display_offset_x + hp_width - 1, 9, FRAME );
         __draw_line( display_offset_x - 1, 10, display_offset_x - 1, 10 + hp_height - 1, FRAME );
         __draw_line( display_offset_x, 10 + hp_height, display_offset_x + hp_width - 1, 10 + hp_height, FRAME );
@@ -511,7 +510,7 @@ static void _draw_header( void )
     }
 
     // write the name of it
-    if ( opt_gx ) {
+    if ( config.model == MODEL_48GX ) {
         x = display_offset_x + DISPLAY_WIDTH - gx_128K_ram_width + gx_128K_ram_x_hot + 2;
         y = 10 + gx_128K_ram_y_hot;
         __draw_bitmap( x, y, gx_128K_ram_width, gx_128K_ram_height, gx_128K_ram_bitmap, LABEL, DISP_PAD );
@@ -663,8 +662,8 @@ static void _draw_key( int hpkey )
 static void _draw_keypad( void )
 {
     int x, y;
-    int pw = opt_gx ? 58 : 44;
-    int ph = opt_gx ? 48 : 9;
+    int pw = config.model == MODEL_48GX ? 58 : 44;
+    int ph = config.model == MODEL_48GX ? 48 : 9;
     int left_label_width, right_label_width;
     int space_char_width = SmallTextWidth( " ", 1 );
     int total_top_labels_width;
@@ -675,7 +674,7 @@ static void _draw_keypad( void )
             x = KEYBOARD_OFFSET_X + BUTTONS[ i ].x;
             y = KEYBOARD_OFFSET_Y + BUTTONS[ i ].y - small_ascent - small_descent;
 
-            if ( opt_gx ) {
+            if ( config.model == MODEL_48GX ) {
                 x -= 6;
                 y -= 6;
             } else
@@ -689,7 +688,7 @@ static void _draw_keypad( void )
             x = KEYBOARD_OFFSET_X + BUTTONS[ i ].x + BUTTONS[ i ].w;
             y = KEYBOARD_OFFSET_Y + BUTTONS[ i ].y + BUTTONS[ i ].h;
 
-            if ( opt_gx ) {
+            if ( config.model == MODEL_48GX ) {
                 x += 3;
                 y += 1;
             } else {

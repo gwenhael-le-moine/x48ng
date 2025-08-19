@@ -1,6 +1,8 @@
 #ifndef _UI_INNER_H
 #define _UI_INNER_H 1
 
+#include "options.h"
+
 #include "emulator_core.h"
 #include "ui_bitmaps_misc.h"
 #include "ui_bitmaps_small_font.h"
@@ -83,11 +85,11 @@ extern letter_t big_font[ 128 ];
 
 extern color_t colors_sx[ NB_COLORS ];
 extern color_t colors_gx[ NB_COLORS ];
-#define COLORS ( opt_gx ? colors_gx : colors_sx )
+#define COLORS ( config.model == MODEL_48GX ? colors_gx : colors_sx )
 
 extern button_t buttons_sx[ NB_KEYS ];
 extern button_t buttons_gx[ NB_KEYS ];
-#define BUTTONS ( opt_gx ? buttons_gx : buttons_sx )
+#define BUTTONS ( config.model == MODEL_48GX ? buttons_gx : buttons_sx )
 
 extern ann_struct_t ann_tbl[ NB_ANNUNCIATORS ];
 

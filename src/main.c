@@ -12,6 +12,7 @@
 #include "debugger.h"
 #include "emulator_core.h"
 #include "options.h"
+#include "romio.h"
 #include "ui.h" /* setup_frontend(); init_ui(); */
 
 void signal_handler( int sig )
@@ -102,6 +103,7 @@ int main( int argc, char** argv )
 
     /* Emulator */
     start_emulator();
+    config.model = opt_gx ? MODEL_48GX : MODEL_48SX;
 
     /* (G)UI */
     start_UI( argc, argv );
