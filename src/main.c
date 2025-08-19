@@ -109,7 +109,7 @@ int main( int argc, char** argv )
     config.model = opt_gx ? MODEL_48GX : MODEL_48SX;
 
     /* (G)UI */
-    start_UI( argc, argv );
+    start_UI();
 
     /************************/
     /* Start emulation loop */

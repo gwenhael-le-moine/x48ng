@@ -17,11 +17,11 @@ extern unsigned char lcd_nibbles_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
 /* functions */
 /*************/
 #ifdef HAS_SDL
-extern void init_sdl2_ui( int argc, char** argv );
+extern void init_sdl2_ui( void );
 extern void sdl2_ui_stop( void );
 #endif
 
-extern void init_text_ui( int argc, char** argv );
+extern void init_text_ui( void );
 extern void text_ui_stop( void );
 
 /*************************************************/
@@ -50,7 +50,7 @@ extern void ( *ui_refresh_LCD )( void );
 /* used in: main.c */
 /*******************/
 extern void ui_stop( void );
-extern void start_UI( int argc, char** argv );
+extern void start_UI( void );
 
 extern void close_and_exit( void );
 

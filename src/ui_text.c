@@ -559,7 +559,7 @@ void text_ui_stop( void )
     endwin();
 }
 
-void init_text_ui( int argc, char** argv )
+void init_text_ui( void )
 {
     if ( config.verbose )
         fprintf( stderr, "UI is ncurses\n" );

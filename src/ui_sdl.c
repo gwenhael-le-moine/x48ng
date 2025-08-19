@@ -1069,7 +1069,7 @@ void sdl2_ui_stop( void )
     SDL_DestroyWindow( window );
 }
 
-void init_sdl2_ui( int argc, char** argv )
+void init_sdl2_ui( void )
 {
     if ( config.verbose )
         fprintf( stderr, "UI is sdl2\n" );

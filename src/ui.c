@@ -2279,7 +2279,7 @@ int BigTextWidth( const char* string, unsigned int length )
     return w;
 }
 
-void start_UI( int argc, char** argv )
+void start_UI( void )
 {
     ui_init_LCD();
 
@@ -2288,7 +2288,7 @@ void start_UI( int argc, char** argv )
 #if defined( HAS_SDL )
         case FRONTEND_SDL:
         default:
-            init_sdl2_ui( argc, argv );
+            init_sdl2_ui();
             break;
 #endif
 
@@ -2296,7 +2296,7 @@ void start_UI( int argc, char** argv )
 #if !defined( HAS_SDL )
         default:
 #endif
-            init_text_ui( argc, argv );
+            init_text_ui();
             break;
     }
 }
