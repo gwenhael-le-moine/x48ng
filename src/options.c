@@ -28,7 +28,7 @@ config_t config = {
 
     .serialLine = NULL,
 
-    .frontend_type = FRONTEND_TEXT,
+    .frontend = FRONTEND_NCURSES,
 
     .shiftless = false,
     .inhibit_shutdown = false,
@@ -217,7 +217,7 @@ int config_init( int argc, char* argv[] )
     char* clopt_port1FileName = NULL;
     char* clopt_port2FileName = NULL;
     char* clopt_serialLine = NULL;
-    int clopt_frontend_type = -1;
+    int clopt_frontend = -1;
     int clopt_verbose = -1;
     int clopt_useTerminal = -1;
     int clopt_useSerial = -1;
@@ -258,8 +258,8 @@ int config_init( int argc, char* argv[] )
 
         {"debug",            no_argument,       &clopt_useDebugger,             true        },
 
-        {"sdl2",             no_argument,       &clopt_frontend_type,           FRONTEND_SDL},
-        {"sdl",              no_argument,       &clopt_frontend_type,           FRONTEND_SDL},
+        {"sdl2",             no_argument,       &clopt_frontend,                FRONTEND_SDL},
+        {"sdl",              no_argument,       &clopt_frontend,                FRONTEND_SDL},
         {"no-chrome",        no_argument,       &clopt_chromeless,              true        },
         {"fullscreen",       no_argument,       &clopt_fullscreen,              true        },
         {"scale",            required_argument, NULL,                           7110        },
@@ -366,7 +366,7 @@ int config_init( int argc, char* argv[] )
                 clopt_scale = atof( optarg );
                 break;
             case 9100:
-                clopt_frontend_type = FRONTEND_TEXT;
+                clopt_frontend = FRONTEND_NCURSES;
                 clopt_small = false;
                 clopt_tiny = false;
                 break;
@@ -374,7 +374,7 @@ int config_init( int argc, char* argv[] )
                 fprintf( stdout, "`--small` is deprecated, please use `--tui-small` instead of `--tui --small`" );
                 /* break; */ /* intentional fall-through */
             case 9110:
-                clopt_frontend_type = FRONTEND_TEXT;
+                clopt_frontend = FRONTEND_NCURSES;
                 clopt_small = true;
                 clopt_tiny = false;
                 break;
@@ -382,7 +382,7 @@ int config_init( int argc, char* argv[] )
                 fprintf( stdout, "`--tiny` is deprecated, please use `--tui-tiny` instead of `--tui --tiny`" );
                 /* break; */ /* intentional fall-through */
             case 9120:
-                clopt_frontend_type = FRONTEND_TEXT;
+                clopt_frontend = FRONTEND_NCURSES;
                 clopt_small = false;
                 clopt_tiny = true;
                 break;
@@ -476,21 +476,21 @@ int config_init( int argc, char* argv[] )
     const char* svalue = luaL_optstring( config_lua_values, -1, DEFAULT_FRONTEND );
     if ( svalue != NULL ) {
         if ( strcmp( svalue, "sdl2" ) == 0 )
-            config.frontend_type = FRONTEND_SDL;
+            config.frontend = FRONTEND_SDL;
         if ( strcmp( svalue, "sdl" ) == 0 ) /* retro-compatibility */
-            config.frontend_type = FRONTEND_SDL;
+            config.frontend = FRONTEND_SDL;
         if ( strcmp( svalue, "tui" ) == 0 ) {
-            config.frontend_type = FRONTEND_TEXT;
+            config.frontend = FRONTEND_NCURSES;
             config.small = false;
             config.tiny = false;
         }
         if ( strcmp( svalue, "tui-small" ) == 0 ) {
-            config.frontend_type = FRONTEND_TEXT;
+            config.frontend = FRONTEND_NCURSES;
             config.small = true;
             config.tiny = false;
         }
         if ( strcmp( svalue, "tui-tiny" ) == 0 ) {
-            config.frontend_type = FRONTEND_TEXT;
+            config.frontend = FRONTEND_NCURSES;
             config.small = false;
             config.tiny = true;
         }
@@ -553,8 +553,8 @@ int config_init( int argc, char* argv[] )
         config.throttle = clopt_throttle;
     if ( clopt_useDebugger != -1 )
         config.useDebugger = clopt_useDebugger;
-    if ( clopt_frontend_type != -1 )
-        config.frontend_type = clopt_frontend_type;
+    if ( clopt_frontend != -1 )
+        config.frontend = clopt_frontend;
     if ( clopt_chromeless != -1 )
         config.chromeless = clopt_chromeless;
     if ( clopt_fullscreen != -1 )
@@ -608,11 +608,11 @@ int config_init( int argc, char* argv[] )
         fprintf( stdout, "-- User Interface --\n" );
         fprintf( stdout, "--------------------\n" );
         fprintf( stdout, "frontend = \"" );
-        switch ( config.frontend_type ) {
+        switch ( config.frontend ) {
             case FRONTEND_SDL:
                 fprintf( stdout, "sdl" );
                 break;
-            case FRONTEND_TEXT:
+            case FRONTEND_NCURSES:
                 if ( config.small )
                     fprintf( stdout, "tui-small" );
                 else if ( config.tiny )

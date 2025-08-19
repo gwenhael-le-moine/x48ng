@@ -29,7 +29,7 @@ long port2_size;
 long port2_mask;
 bool port2_is_ram;
 
-hpkey_t keyboard[ 49 ] = {
+hpkey_t keyboard[ NB_KEYS ] = {
     /* From top left to bottom right */
     {0x14,   0},
     {0x84,   0},

@@ -2283,7 +2283,7 @@ void start_UI( int argc, char** argv )
 {
     ui_init_LCD();
 
-    switch ( config.frontend_type ) {
+    switch ( config.frontend ) {
 
 #if defined( HAS_SDL )
         case FRONTEND_SDL:
@@ -2292,7 +2292,7 @@ void start_UI( int argc, char** argv )
             break;
 #endif
 
-        case FRONTEND_TEXT:
+        case FRONTEND_NCURSES:
 #if !defined( HAS_SDL )
         default:
 #endif
@@ -2303,7 +2303,7 @@ void start_UI( int argc, char** argv )
 
 void ui_stop( void )
 {
-    switch ( config.frontend_type ) {
+    switch ( config.frontend ) {
 
 #if defined( HAS_SDL )
         case FRONTEND_SDL:
@@ -2312,7 +2312,7 @@ void ui_stop( void )
             break;
 #endif
 
-        case FRONTEND_TEXT:
+        case FRONTEND_NCURSES:
 #if !defined( HAS_SDL )
         default:
 #endif
