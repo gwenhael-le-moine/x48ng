@@ -16,8 +16,8 @@
 #include "ui.h"
 #include "ui_inner.h"
 
-#define KEYBOARD_HEIGHT ( BUTTONS[ LAST_HPKEY ].y + BUTTONS[ LAST_HPKEY ].h )
-#define KEYBOARD_WIDTH ( BUTTONS[ LAST_HPKEY ].x + BUTTONS[ LAST_HPKEY ].w )
+#define KEYBOARD_HEIGHT ( BUTTONS[ NB_KEYS - 1 ].y + BUTTONS[ NB_KEYS - 1 ].h )
+#define KEYBOARD_WIDTH ( BUTTONS[ NB_KEYS - 1 ].x + BUTTONS[ NB_KEYS - 1 ].w )
 
 #define TOP_SKIP 65
 #define SIDE_SKIP 20
@@ -174,7 +174,7 @@ static void colors_setup( void )
     if ( contrast > 0x13 )
         contrast = 0x13;
 
-    for ( unsigned i = FIRST_COLOR; i < LAST_COLOR; i++ ) {
+    for ( unsigned i = 0; i < NB_COLORS; i++ ) {
         colors[ i ] = COLORS[ i ];
         if ( config.mono ) {
             colors[ i ].r = colors[ i ].mono_rgb;
@@ -645,7 +645,7 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
 
 static void create_buttons_textures( void )
 {
-    for ( int i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
+    for ( int i = 0; i < NB_KEYS; i++ ) {
         buttons_textures[ i ].up = create_button_texture( i, true );
         buttons_textures[ i ].down = create_button_texture( i, false );
     }
@@ -669,7 +669,7 @@ static void _draw_keypad( void )
     int space_char_width = SmallTextWidth( " ", 1 );
     int total_top_labels_width;
 
-    for ( int i = FIRST_HPKEY; i <= LAST_HPKEY; i++ ) {
+    for ( int i = 0; i < NB_KEYS; i++ ) {
         // Background
         if ( BUTTONS[ i ].is_menu ) {
             x = KEYBOARD_OFFSET_X + BUTTONS[ i ].x;
@@ -745,7 +745,7 @@ static void _draw_keypad( void )
         }
     }
 
-    for ( int i = FIRST_HPKEY; i <= LAST_HPKEY; i++ )
+    for ( int i = 0; i < NB_KEYS; i++ )
         _draw_key( i );
 }
 
@@ -1096,8 +1096,8 @@ void init_sdl2_ui( int argc, char** argv )
     unsigned int width, height;
     display_offset_x = DISPLAY_OFFSET_X;
     display_offset_y = DISPLAY_OFFSET_Y;
-    width = ( BUTTONS[ LAST_HPKEY ].x + BUTTONS[ LAST_HPKEY ].w ) + 2 * SIDE_SKIP;
-    height = display_offset_y + DISPLAY_HEIGHT + DISP_KBD_SKIP + BUTTONS[ LAST_HPKEY ].y + BUTTONS[ LAST_HPKEY ].h + BOTTOM_SKIP;
+    width = ( BUTTONS[ NB_KEYS - 1 ].x + BUTTONS[ NB_KEYS - 1 ].w ) + 2 * SIDE_SKIP;
+    height = display_offset_y + DISPLAY_HEIGHT + DISP_KBD_SKIP + BUTTONS[ NB_KEYS - 1 ].y + BUTTONS[ NB_KEYS - 1 ].h + BOTTOM_SKIP;
 
     if ( config.chromeless ) {
         display_offset_x = 0;

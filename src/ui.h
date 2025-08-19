@@ -1,7 +1,7 @@
 #ifndef _UI_H
 #define _UI_H 1
 
-#include "emulator.h" /* word_4; word_20; */
+#include "emulator_core.h" /* word_4; word_20; */
 
 #define DISP_ROWS 64
 #define NIBS_PER_BUFFER_ROW ( NIBBLES_PER_ROW + 2 )

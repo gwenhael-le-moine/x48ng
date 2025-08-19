@@ -1,5 +1,5 @@
-#ifndef _EMULATOR_H
-#define _EMULATOR_H 1
+#ifndef _EMULATOR_CORE_H
+#define _EMULATOR_CORE_H 1
 
 #include <stdint.h> /* int64_t */
 #include <stdbool.h>
@@ -24,67 +24,58 @@
 #define NIBBLES_NB_BITS 4
 
 // Keys
-#define HPKEY_A 0
-#define HPKEY_B 1
-#define HPKEY_C 2
-#define HPKEY_D 3
-#define HPKEY_E 4
-#define HPKEY_F 5
-
-#define HPKEY_MTH 6
-#define HPKEY_PRG 7
-#define HPKEY_CST 8
-#define HPKEY_VAR 9
-#define HPKEY_UP 10
-#define HPKEY_NXT 11
-
-#define HPKEY_QUOTE 12
-#define HPKEY_STO 13
-#define HPKEY_EVAL 14
-#define HPKEY_LEFT 15
-#define HPKEY_DOWN 16
-#define HPKEY_RIGHT 17
-
-#define HPKEY_SIN 18
-#define HPKEY_COS 19
-#define HPKEY_TAN 20
-#define HPKEY_SQRT 21
-#define HPKEY_POWER 22
-#define HPKEY_INV 23
-
-#define HPKEY_ENTER 24
-#define HPKEY_NEG 25
-#define HPKEY_EEX 26
-#define HPKEY_DEL 27
-#define HPKEY_BS 28
-
-#define HPKEY_ALPHA 29
-#define HPKEY_7 30
-#define HPKEY_8 31
-#define HPKEY_9 32
-#define HPKEY_DIV 33
-
-#define HPKEY_SHL 34
-#define HPKEY_4 35
-#define HPKEY_5 36
-#define HPKEY_6 37
-#define HPKEY_MUL 38
-
-#define HPKEY_SHR 39
-#define HPKEY_1 40
-#define HPKEY_2 41
-#define HPKEY_3 42
-#define HPKEY_MINUS 43
-
-#define HPKEY_ON 44
-#define HPKEY_0 45
-#define HPKEY_PERIOD 46
-#define HPKEY_SPC 47
-#define HPKEY_PLUS 48
-
-#define FIRST_HPKEY HPKEY_A
-#define LAST_HPKEY HPKEY_PLUS
-#define NB_KEYS ( LAST_HPKEY + 1 )
+typedef enum {
+    HPKEY_A = 0,
+    HPKEY_B,
+    HPKEY_C,
+    HPKEY_D,
+    HPKEY_E,
+    HPKEY_F,
+    HPKEY_MTH,
+    HPKEY_PRG,
+    HPKEY_CST,
+    HPKEY_VAR,
+    HPKEY_UP,
+    HPKEY_NXT,
+    HPKEY_QUOTE,
+    HPKEY_STO,
+    HPKEY_EVAL,
+    HPKEY_LEFT,
+    HPKEY_DOWN,
+    HPKEY_RIGHT,
+    HPKEY_SIN,
+    HPKEY_COS,
+    HPKEY_TAN,
+    HPKEY_SQRT,
+    HPKEY_POWER,
+    HPKEY_INV,
+    HPKEY_ENTER,
+    HPKEY_NEG,
+    HPKEY_EEX,
+    HPKEY_DEL,
+    HPKEY_BS,
+    HPKEY_ALPHA,
+    HPKEY_7,
+    HPKEY_8,
+    HPKEY_9,
+    HPKEY_DIV,
+    HPKEY_SHL,
+    HPKEY_4,
+    HPKEY_5,
+    HPKEY_6,
+    HPKEY_MUL,
+    HPKEY_SHR,
+    HPKEY_1,
+    HPKEY_2,
+    HPKEY_3,
+    HPKEY_MINUS,
+    HPKEY_ON,
+    HPKEY_0,
+    HPKEY_PERIOD,
+    HPKEY_SPC,
+    HPKEY_PLUS,
+    NB_KEYS
+} hp48_keynames_t;
 
 #define KEYS_BUFFER_SIZE 9
 
@@ -307,4 +298,4 @@ extern void press_key( int hpkey );   /* used in ui_*.c */
 extern void release_key( int hpkey ); /* used in ui_*.c */
 extern void release_all_keys( void ); /* used in ui_*.c */
 
-#endif /* !_EMULATOR_H */
+#endif /* !_EMULATOR_CORE_H */

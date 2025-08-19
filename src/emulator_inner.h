@@ -1,7 +1,7 @@
 #ifndef _EMULATOR_INNER_H
 #define _EMULATOR_INNER_H 1
 
-#include "emulator.h"
+#include "emulator_core.h"
 
 #define OUT_FIELD 17
 

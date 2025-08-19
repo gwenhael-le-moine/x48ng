@@ -1,7 +1,7 @@
 #ifndef _DEBUGGER_H
 #define _DEBUGGER_H 1
 
-#include "emulator.h"
+#include "emulator_core.h"
 #include "emulator_for_debugger.h"
 
 #define USER_INTERRUPT 1

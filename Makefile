@@ -55,7 +55,7 @@ LIBS = -lm \
 	$(SDL_LIBS)
 
 HEADERS = src/debugger.h \
-	src/emulator.h \
+	src/emulator_core.h \
 	src/emulator_for_debugger.h \
 	src/emulator_inner.h \
 	src/options.h \

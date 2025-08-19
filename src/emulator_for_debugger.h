@@ -1,7 +1,7 @@
 #ifndef _EMULATOR_FOR_DEBUGGER_H
 #define _EMULATOR_FOR_DEBUGGER_H 1
 
-#include "emulator.h"
+#include "emulator_core.h"
 
 extern device_t device;
 

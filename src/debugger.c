@@ -8,7 +8,7 @@
 #include <readline/readline.h>
 
 #include "options.h"
-#include "emulator.h"
+#include "emulator_core.h"
 #include "emulator_for_debugger.h"
 #include "romio.h"
 #include "ui.h" /* ui_update_LCD(); */

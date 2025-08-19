@@ -4,7 +4,7 @@
 #include <sys/time.h>
 
 #include "debugger.h" /* enter_debugger, TRAP_INSTRUCTION, ILLEGAL_INSTRUCTION */
-#include "emulator.h"
+#include "emulator_core.h"
 #include "emulator_inner.h"
 #include "options.h" /* throttle */
 #include "ui.h"      /* ui_get_event(); ui_adjust_contrast(); ui_update_LCD(); ui_draw_annunc(); */

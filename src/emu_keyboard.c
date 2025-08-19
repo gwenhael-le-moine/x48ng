@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "emulator.h"
+#include "emulator_core.h"
 #include "emulator_inner.h"
 
 void press_key( int hpkey )
@@ -51,7 +51,7 @@ void release_key( int hpkey )
 
 void release_all_keys( void )
 {
-    for ( int hpkey = FIRST_HPKEY; hpkey <= LAST_HPKEY; hpkey++ )
+    for ( int hpkey = 0; hpkey < NB_KEYS; hpkey++ )
         if ( keyboard[ hpkey ].pressed )
             release_key( hpkey );
 }

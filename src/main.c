@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 #include "debugger.h"
-#include "emulator.h"
+#include "emulator_core.h"
 #include "options.h"
 #include "ui.h" /* setup_frontend(); init_ui(); */
 

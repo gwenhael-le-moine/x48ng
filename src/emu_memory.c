@@ -4,7 +4,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#include "emulator.h"
+#include "emulator_core.h"
 #include "emulator_inner.h"
 #include "romio.h"
 #include "options.h"
