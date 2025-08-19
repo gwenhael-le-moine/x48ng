@@ -56,6 +56,6 @@ extern char normalized_port2_path[ MAX_LENGTH_FILENAME ];
 /*************/
 /* functions */
 /*************/
-extern int config_init( int argc, char* argv[] );
+extern config_t* config_init( int argc, char* argv[] );
 
 #endif /* !_OPTIONS_H */

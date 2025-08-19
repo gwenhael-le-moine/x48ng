@@ -15,6 +15,8 @@
 #include "romio.h"
 #include "ui.h" /* setup_frontend(); init_ui(); */
 
+config_t config;
+
 void signal_handler( int sig )
 {
     switch ( sig ) {
@@ -36,6 +38,8 @@ void signal_handler( int sig )
 int main( int argc, char** argv )
 {
     setlocale( LC_ALL, "C" );
+
+    config = *config_init( argc, argv );
 
     /*****************************************/
     /* handlers for SIGALRM, SIGPIPE */
@@ -99,7 +103,6 @@ int main( int argc, char** argv )
     /********************/
     /* initialize stuff */
     /********************/
-    config_init( argc, argv );
 
     /* Emulator */
     start_emulator();

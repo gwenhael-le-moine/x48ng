@@ -15,7 +15,7 @@
 
 #include "options.h"
 
-config_t config = {
+static config_t __config = {
     .progname = ( char* )"x48ng",
 
     .verbose = false,
@@ -130,7 +130,7 @@ static inline void get_absolute_config_dir( char* source, char* dest )
         char* xdg_config_home = getenv( "XDG_CONFIG_HOME" );
 
         if ( xdg_config_home ) {
-            if ( config.verbose )
+            if ( __config.verbose )
                 fprintf( stderr, "XDG_CONFIG_HOME is %s\n", xdg_config_home );
 
             strcpy( dest, xdg_config_home );
@@ -139,7 +139,7 @@ static inline void get_absolute_config_dir( char* source, char* dest )
             char* home = getenv( "HOME" );
 
             if ( home ) {
-                if ( config.verbose )
+                if ( __config.verbose )
                     fprintf( stderr, "HOME is %s\n", home );
 
                 strcpy( dest, home );
@@ -148,13 +148,13 @@ static inline void get_absolute_config_dir( char* source, char* dest )
                 struct passwd* pwd = getpwuid( getuid() );
 
                 if ( pwd ) {
-                    if ( config.verbose )
+                    if ( __config.verbose )
                         fprintf( stderr, "pwd->pw_dir is %s\n", pwd->pw_dir );
 
                     strcpy( dest, pwd->pw_dir );
                     strcat( dest, "/" );
                 } else {
-                    if ( config.verbose )
+                    if ( __config.verbose )
                         fprintf( stderr, "can\'t figure out your home directory, "
                                          "trying /tmp\n" );
 
@@ -184,7 +184,7 @@ static inline bool normalize_config_dir( void )
     struct stat st;
 
     get_absolute_config_dir( configDir, normalized_config_path );
-    if ( config.verbose )
+    if ( __config.verbose )
         fprintf( stderr, "normalized_config_path: %s\n", normalized_config_path );
 
     if ( stat( normalized_config_path, &st ) == -1 )
@@ -205,7 +205,7 @@ static inline void normalize_filenames( void )
     normalize_filename( port2FileName, normalized_port2_path );
 }
 
-int config_init( int argc, char* argv[] )
+config_t* config_init( int argc, char* argv[] )
 {
     int option_index;
     int c = '?';
@@ -235,49 +235,49 @@ int config_init( int argc, char* argv[] )
 
     const char* optstring = "c:hvVtsirT";
     struct option long_options[] = {
-        {"help",             no_argument,       NULL,                           'h'         },
-        {"version",          no_argument,       NULL,                           'v'         },
-        {"verbose",          no_argument,       &clopt_verbose,                 true        },
-        {"print-config",     no_argument,       ( int* )&config.print_config,   true        },
+        {"help",             no_argument,       NULL,                             'h'         },
+        {"version",          no_argument,       NULL,                             'v'         },
+        {"verbose",          no_argument,       &clopt_verbose,                   true        },
+        {"print-config",     no_argument,       ( int* )&__config.print_config,   true        },
 
-        {"throttle",         no_argument,       &clopt_throttle,                true        },
-        {"reset",            no_argument,       ( int* )&config.resetOnStartup, true        },
+        {"throttle",         no_argument,       &clopt_throttle,                  true        },
+        {"reset",            no_argument,       ( int* )&__config.resetOnStartup, true        },
 
-        {"config",           required_argument, NULL,                           'c'         },
-        {"config-dir",       required_argument, NULL,                           1000        },
-        {"rom",              required_argument, NULL,                           1010        },
-        {"ram",              required_argument, NULL,                           1011        },
-        {"state",            required_argument, NULL,                           1012        },
-        {"port1",            required_argument, NULL,                           1013        },
-        {"port2",            required_argument, NULL,                           1014        },
+        {"config",           required_argument, NULL,                             'c'         },
+        {"config-dir",       required_argument, NULL,                             1000        },
+        {"rom",              required_argument, NULL,                             1010        },
+        {"ram",              required_argument, NULL,                             1011        },
+        {"state",            required_argument, NULL,                             1012        },
+        {"port1",            required_argument, NULL,                             1013        },
+        {"port2",            required_argument, NULL,                             1014        },
 
-        {"serial-line",      required_argument, NULL,                           1015        },
+        {"serial-line",      required_argument, NULL,                             1015        },
 
-        {"terminal",         no_argument,       &clopt_useTerminal,             true        },
-        {"serial",           no_argument,       &clopt_useSerial,               true        },
+        {"terminal",         no_argument,       &clopt_useTerminal,               true        },
+        {"serial",           no_argument,       &clopt_useSerial,                 true        },
 
-        {"debug",            no_argument,       &clopt_useDebugger,             true        },
+        {"debug",            no_argument,       &clopt_useDebugger,               true        },
 
-        {"sdl2",             no_argument,       &clopt_frontend,                FRONTEND_SDL}, /* DEPRECATED */
-        {"sdl",              no_argument,       &clopt_frontend,                FRONTEND_SDL},
-        {"no-chrome",        no_argument,       &clopt_chromeless,              true        }, /* DEPRECATED */
-        {"chromeless",       no_argument,       &clopt_chromeless,              true        },
-        {"fullscreen",       no_argument,       &clopt_fullscreen,              true        },
-        {"scale",            required_argument, NULL,                           7110        },
+        {"sdl2",             no_argument,       &clopt_frontend,                  FRONTEND_SDL}, /* DEPRECATED */
+        {"sdl",              no_argument,       &clopt_frontend,                  FRONTEND_SDL},
+        {"no-chrome",        no_argument,       &clopt_chromeless,                true        }, /* DEPRECATED */
+        {"chromeless",       no_argument,       &clopt_chromeless,                true        },
+        {"fullscreen",       no_argument,       &clopt_fullscreen,                true        },
+        {"scale",            required_argument, NULL,                             7110        },
 
-        {"tui",              no_argument,       NULL,                           9100        },
-        {"tui-small",        no_argument,       NULL,                           9110        },
-        {"tui-tiny",         no_argument,       NULL,                           9120        },
-        {"small",            no_argument,       NULL,                           9109        }, /* DEPRECATED */
-        {"tiny",             no_argument,       NULL,                           9119        }, /* DEPRECATED */
+        {"tui",              no_argument,       NULL,                             9100        },
+        {"tui-small",        no_argument,       NULL,                             9110        },
+        {"tui-tiny",         no_argument,       NULL,                             9120        },
+        {"small",            no_argument,       NULL,                             9109        }, /* DEPRECATED */
+        {"tiny",             no_argument,       NULL,                             9119        }, /* DEPRECATED */
 
-        {"mono",             no_argument,       &clopt_mono,                    true        },
-        {"gray",             no_argument,       &clopt_gray,                    true        },
-        {"leave-shift-keys", no_argument,       &clopt_shiftless,               true        }, /* DEPRECATED */
-        {"shiftless",        no_argument,       &clopt_shiftless,               true        },
-        {"inhibit-shutdown", no_argument,       &clopt_inhibit_shutdown,        true        },
+        {"mono",             no_argument,       &clopt_mono,                      true        },
+        {"gray",             no_argument,       &clopt_gray,                      true        },
+        {"leave-shift-keys", no_argument,       &clopt_shiftless,                 true        }, /* DEPRECATED */
+        {"shiftless",        no_argument,       &clopt_shiftless,                 true        },
+        {"inhibit-shutdown", no_argument,       &clopt_inhibit_shutdown,          true        },
 
-        {0,                  0,                 0,                              0           }
+        {0,                  0,                 0,                                0           }
     };
 
     const char* help_text = "usage: %s [options]\n"
@@ -286,7 +286,7 @@ int config_init( int argc, char* argv[] )
                             "  -v --version            show version\n"
                             "     --print-config       print configuration as config file\n"
                             "  -c --config=<path>      use <path> as x48ng's config file (default: "
-                            "$XDG_CONFIG_HOME/x48ng/config.lua)\n"
+                            "$XDG_CONFIG_HOME/x48ng/__config.lua)\n"
                             "     --config-dir=<path>  use <path> as x48ng's home (default: "
                             "$XDG_CONFIG_HOME/x48ng/)\n"
                             "     --rom=<filename>     use <filename> (absolute or relative to "
@@ -333,11 +333,11 @@ int config_init( int argc, char* argv[] )
 
         switch ( c ) {
             case 'h':
-                fprintf( stderr, help_text, config.progname, config.serialLine );
+                fprintf( stderr, help_text, __config.progname, __config.serialLine );
                 exit( 0 );
                 break;
             case 'v':
-                fprintf( stderr, "%s %d.%d.%d\n", config.progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
+                fprintf( stderr, "%s %d.%d.%d\n", __config.progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
                 exit( 0 );
                 break;
             case 'c':
@@ -398,7 +398,7 @@ int config_init( int argc, char* argv[] )
                 clopt_useSerial = true;
                 break;
             case 'r':
-                config.resetOnStartup = true;
+                __config.resetOnStartup = true;
                 break;
             case 'T':
                 clopt_throttle = true;
@@ -424,7 +424,7 @@ int config_init( int argc, char* argv[] )
         fprintf( stderr, "Configuration directory doesn't exist!\n" );
 
     /**********************/
-    /* 1. read config.lua */
+    /* 1. read __config.lua */
     /**********************/
     normalize_filename( config_file, normalized_config_file );
     if ( !config_read( normalized_config_file ) ) {
@@ -432,8 +432,8 @@ int config_init( int argc, char* argv[] )
         fprintf( stderr, "Continuing using default configuration as printed below.\n\n" );
 
         fprintf( stderr, "You can solve this by running `mkdir -p %s && %s --print-config >> %s`\n\n", normalized_config_path,
-                 config.progname, normalized_config_file );
-        config.print_config = true;
+                 __config.progname, normalized_config_file );
+        __config.print_config = true;
     }
 
     lua_getglobal( config_lua_values, "config_dir" );
@@ -455,19 +455,19 @@ int config_init( int argc, char* argv[] )
     port2FileName = ( char* )luaL_optstring( config_lua_values, -1, "port2" );
 
     lua_getglobal( config_lua_values, "serial_line" );
-    config.serialLine = ( char* )luaL_optstring( config_lua_values, -1, "/dev/ttyS0" );
+    __config.serialLine = ( char* )luaL_optstring( config_lua_values, -1, "/dev/ttyS0" );
 
     lua_getglobal( config_lua_values, "pseudo_terminal" );
-    config.useTerminal = lua_toboolean( config_lua_values, -1 );
+    __config.useTerminal = lua_toboolean( config_lua_values, -1 );
 
     lua_getglobal( config_lua_values, "serial" );
-    config.useSerial = lua_toboolean( config_lua_values, -1 );
+    __config.useSerial = lua_toboolean( config_lua_values, -1 );
 
     lua_getglobal( config_lua_values, "debugger" );
-    config.useDebugger = lua_toboolean( config_lua_values, -1 );
+    __config.useDebugger = lua_toboolean( config_lua_values, -1 );
 
     lua_getglobal( config_lua_values, "throttle" );
-    config.throttle = lua_toboolean( config_lua_values, -1 );
+    __config.throttle = lua_toboolean( config_lua_values, -1 );
 
     lua_getglobal( config_lua_values, "frontend" );
 #ifdef HAS_SDL
@@ -478,54 +478,54 @@ int config_init( int argc, char* argv[] )
     const char* svalue = luaL_optstring( config_lua_values, -1, DEFAULT_FRONTEND );
     if ( svalue != NULL ) {
         if ( strcmp( svalue, "sdl2" ) == 0 )
-            config.frontend = FRONTEND_SDL;
+            __config.frontend = FRONTEND_SDL;
         if ( strcmp( svalue, "sdl" ) == 0 ) /* retro-compatibility */
-            config.frontend = FRONTEND_SDL;
+            __config.frontend = FRONTEND_SDL;
         if ( strcmp( svalue, "tui" ) == 0 ) {
-            config.frontend = FRONTEND_NCURSES;
-            config.small = false;
-            config.tiny = false;
+            __config.frontend = FRONTEND_NCURSES;
+            __config.small = false;
+            __config.tiny = false;
         }
         if ( strcmp( svalue, "tui-small" ) == 0 ) {
-            config.frontend = FRONTEND_NCURSES;
-            config.small = true;
-            config.tiny = false;
+            __config.frontend = FRONTEND_NCURSES;
+            __config.small = true;
+            __config.tiny = false;
         }
         if ( strcmp( svalue, "tui-tiny" ) == 0 ) {
-            config.frontend = FRONTEND_NCURSES;
-            config.small = false;
-            config.tiny = true;
+            __config.frontend = FRONTEND_NCURSES;
+            __config.small = false;
+            __config.tiny = true;
         }
     }
 
     /* DEPRECATED */
     lua_getglobal( config_lua_values, "hide_chrome" );
-    config.chromeless = lua_toboolean( config_lua_values, -1 );
+    __config.chromeless = lua_toboolean( config_lua_values, -1 );
 
     /* DEPRECATED */
     lua_getglobal( config_lua_values, "leave_shift_keys" );
-    config.shiftless = lua_toboolean( config_lua_values, -1 );
+    __config.shiftless = lua_toboolean( config_lua_values, -1 );
 
     lua_getglobal( config_lua_values, "chromeless" );
-    config.chromeless = lua_toboolean( config_lua_values, -1 );
+    __config.chromeless = lua_toboolean( config_lua_values, -1 );
 
     lua_getglobal( config_lua_values, "fullscreen" );
-    config.fullscreen = lua_toboolean( config_lua_values, -1 );
+    __config.fullscreen = lua_toboolean( config_lua_values, -1 );
 
     lua_getglobal( config_lua_values, "scale" );
-    config.scale = luaL_optnumber( config_lua_values, -1, 1.0 );
+    __config.scale = luaL_optnumber( config_lua_values, -1, 1.0 );
 
     lua_getglobal( config_lua_values, "mono" );
-    config.mono = lua_toboolean( config_lua_values, -1 );
+    __config.mono = lua_toboolean( config_lua_values, -1 );
 
     lua_getglobal( config_lua_values, "gray" );
-    config.gray = lua_toboolean( config_lua_values, -1 );
+    __config.gray = lua_toboolean( config_lua_values, -1 );
 
     lua_getglobal( config_lua_values, "shiftless" );
-    config.shiftless = lua_toboolean( config_lua_values, -1 );
+    __config.shiftless = lua_toboolean( config_lua_values, -1 );
 
     lua_getglobal( config_lua_values, "inhibit_shutdown" );
-    config.inhibit_shutdown = lua_toboolean( config_lua_values, -1 );
+    __config.inhibit_shutdown = lua_toboolean( config_lua_values, -1 );
 
     /****************************************************/
     /* 2. treat command-line params which have priority */
@@ -543,38 +543,38 @@ int config_init( int argc, char* argv[] )
     if ( clopt_port2FileName != NULL )
         port2FileName = strdup( clopt_port2FileName );
     if ( clopt_serialLine != NULL )
-        config.serialLine = strdup( clopt_serialLine );
+        __config.serialLine = strdup( clopt_serialLine );
 
     if ( clopt_verbose != -1 )
-        config.verbose = clopt_verbose;
+        __config.verbose = clopt_verbose;
     if ( clopt_useTerminal != -1 )
-        config.useTerminal = clopt_useTerminal;
+        __config.useTerminal = clopt_useTerminal;
     if ( clopt_useSerial != -1 )
-        config.useSerial = clopt_useSerial;
+        __config.useSerial = clopt_useSerial;
     if ( clopt_throttle != -1 )
-        config.throttle = clopt_throttle;
+        __config.throttle = clopt_throttle;
     if ( clopt_useDebugger != -1 )
-        config.useDebugger = clopt_useDebugger;
+        __config.useDebugger = clopt_useDebugger;
     if ( clopt_frontend != -1 )
-        config.frontend = clopt_frontend;
+        __config.frontend = clopt_frontend;
     if ( clopt_chromeless != -1 )
-        config.chromeless = clopt_chromeless;
+        __config.chromeless = clopt_chromeless;
     if ( clopt_fullscreen != -1 )
-        config.fullscreen = clopt_fullscreen;
+        __config.fullscreen = clopt_fullscreen;
     if ( clopt_scale > 0.0 )
-        config.scale = clopt_scale;
+        __config.scale = clopt_scale;
     if ( clopt_mono != -1 )
-        config.mono = clopt_mono;
+        __config.mono = clopt_mono;
     if ( clopt_gray != -1 )
-        config.gray = clopt_gray;
+        __config.gray = clopt_gray;
     if ( clopt_small != -1 )
-        config.small = clopt_small;
+        __config.small = clopt_small;
     if ( clopt_tiny != -1 )
-        config.tiny = clopt_tiny;
+        __config.tiny = clopt_tiny;
     if ( clopt_shiftless != -1 )
-        config.shiftless = clopt_shiftless;
+        __config.shiftless = clopt_shiftless;
     if ( clopt_inhibit_shutdown != -1 )
-        config.inhibit_shutdown = clopt_inhibit_shutdown;
+        __config.inhibit_shutdown = clopt_inhibit_shutdown;
 
     /* After getting configs and params */
     /* normalize config_dir again in case it's been modified */
@@ -583,8 +583,8 @@ int config_init( int argc, char* argv[] )
 
     normalize_filenames();
 
-    config.print_config |= config.verbose;
-    if ( config.print_config ) {
+    __config.print_config |= __config.verbose;
+    if ( __config.print_config ) {
         fprintf( stdout, "--------------------------------------------------------------------------------\n" );
         fprintf( stdout, "-- Configuration file for x48ng\n" );
         fprintf( stdout, "-- This is a comment\n" );
@@ -598,19 +598,19 @@ int config_init( int argc, char* argv[] )
         fprintf( stdout, "port1 = \"%s\"\n", port1FileName );
         fprintf( stdout, "port2 = \"%s\"\n", port2FileName );
         fprintf( stdout, "\n" );
-        fprintf( stdout, "pseudo_terminal = %s\n", config.useTerminal ? "true" : "false" );
-        fprintf( stdout, "serial = %s\n", config.useSerial ? "true" : "false" );
-        fprintf( stdout, "serial_line = \"%s\"\n", config.serialLine );
+        fprintf( stdout, "pseudo_terminal = %s\n", __config.useTerminal ? "true" : "false" );
+        fprintf( stdout, "serial = %s\n", __config.useSerial ? "true" : "false" );
+        fprintf( stdout, "serial_line = \"%s\"\n", __config.serialLine );
         fprintf( stdout, "\n" );
-        fprintf( stdout, "verbose = %s\n", config.verbose ? "true" : "false" );
-        fprintf( stdout, "debugger = %s\n", config.useDebugger ? "true" : "false" );
-        fprintf( stdout, "throttle = %s\n", config.throttle ? "true" : "false" );
+        fprintf( stdout, "verbose = %s\n", __config.verbose ? "true" : "false" );
+        fprintf( stdout, "debugger = %s\n", __config.useDebugger ? "true" : "false" );
+        fprintf( stdout, "throttle = %s\n", __config.throttle ? "true" : "false" );
         fprintf( stdout, "\n" );
         fprintf( stdout, "--------------------\n" );
         fprintf( stdout, "-- User Interface --\n" );
         fprintf( stdout, "--------------------\n" );
         fprintf( stdout, "frontend = \"" );
-        switch ( config.frontend ) {
+        switch ( __config.frontend ) {
             case FRONTEND_SDL:
                 fprintf( stdout, "sdl" );
                 break;
@@ -618,28 +618,28 @@ int config_init( int argc, char* argv[] )
                 fprintf( stdout, "gtk" );
                 break;
             case FRONTEND_NCURSES:
-                if ( config.small )
+                if ( __config.small )
                     fprintf( stdout, "tui-small" );
-                else if ( config.tiny )
+                else if ( __config.tiny )
                     fprintf( stdout, "tui-tiny" );
                 else
                     fprintf( stdout, "tui" );
                 break;
         }
         fprintf( stdout, "\" -- possible values: \"sdl\" \"tui\", \"tui-small\", \"tui-tiny\"\n" );
-        fprintf( stdout, "chromeless = %s\n", config.chromeless ? "true" : "false" );
-        fprintf( stdout, "fullscreen = %s\n", config.fullscreen ? "true" : "false" );
-        fprintf( stdout, "scale = %f -- applies only to sdl2\n", config.scale );
-        fprintf( stdout, "mono = %s\n", config.mono ? "true" : "false" );
-        fprintf( stdout, "gray = %s\n", config.gray ? "true" : "false" );
-        fprintf( stdout, "shiftless = %s\n", config.shiftless ? "true" : "false" );
-        fprintf( stdout, "inhibit_shutdown = %s\n", config.inhibit_shutdown ? "true" : "false" );
+        fprintf( stdout, "chromeless = %s\n", __config.chromeless ? "true" : "false" );
+        fprintf( stdout, "fullscreen = %s\n", __config.fullscreen ? "true" : "false" );
+        fprintf( stdout, "scale = %f -- applies only to sdl2\n", __config.scale );
+        fprintf( stdout, "mono = %s\n", __config.mono ? "true" : "false" );
+        fprintf( stdout, "gray = %s\n", __config.gray ? "true" : "false" );
+        fprintf( stdout, "shiftless = %s\n", __config.shiftless ? "true" : "false" );
+        fprintf( stdout, "inhibit_shutdown = %s\n", __config.inhibit_shutdown ? "true" : "false" );
         fprintf( stdout, "--------------------------------------------------------------------------------\n" );
 
-        if ( !config.verbose )
+        if ( !__config.verbose )
             exit( 0 );
     }
-    if ( config.verbose ) {
+    if ( __config.verbose ) {
         fprintf( stderr, "normalized_config_path = %s\n", normalized_config_path );
         fprintf( stderr, "normalized_rom_path = %s\n", normalized_rom_path );
         fprintf( stderr, "normalized_ram_path = %s\n", normalized_ram_path );
@@ -648,5 +648,7 @@ int config_init( int argc, char* argv[] )
         fprintf( stderr, "normalized_port2_path = %s\n", normalized_port2_path );
     }
 
-    return ( optind );
+    // return ( optind );
+
+    return &__config;
 }
