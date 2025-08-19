@@ -8,51 +8,89 @@
 
 TARGETS = dist/x48ng dist/x48ng-checkrom dist/x48ng-dump2rom
 
-PREFIX = /usr
-DOCDIR = $(PREFIX)/doc/x48ng
-MANDIR = $(PREFIX)/man
-
-CFLAGS ?= -g -O2
-FULL_WARNINGS = no
-LUA_VERSION ?= lua
-PKG_CONFIG ?= pkg-config
-WITH_SDL ?= yes
-WITH_SDL ?= yes
-
 VERSION_MAJOR = 0
 VERSION_MINOR = 50
 PATCHLEVEL = 0
 
-DOTOS = src/emu_serial.o \
-	src/emu_emulate.o \
-	src/emu_init.o \
-	src/emu_keyboard.o \
-	src/emu_memory.o \
-	src/emu_register.o \
-	src/emu_timer.o \
-	src/debugger.o \
-	src/options.o \
-	src/romio.o \
-	src/ui_text.o \
-	src/ui.o \
-	src/main.o
+PREFIX ?= /usr
+DOCDIR ?= $(PREFIX)/doc/x48ng
+MANDIR ?= $(PREFIX)/man
+
+LUA_VERSION ?= lua
+PKG_CONFIG ?= pkg-config
+
+OPTIM ?= 2
+FULL_WARNINGS ?= no
+WITH_SDL ?= yes
 
 MAKEFLAGS +=-j$(NUM_CORES) -l$(NUM_CORES)
 
 cc-option = $(shell if $(CC) $(1) -c -x c /dev/null -o /dev/null > /dev/null 2>&1; \
 		  then echo $(1); fi)
 
+### lua
+LUA_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags $(LUA_VERSION))
+LUA_LIBS = $(shell "$(PKG_CONFIG)" --libs $(LUA_VERSION))
+
+### debugger
+DEBUG_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags readline)
+DEBUG_LIBS = $(shell "$(PKG_CONFIG)" --libs readline)
+
+### Text UI
+NCURSES_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags ncursesw) -DNCURSES_WIDECHAR=1
+NCURSES_LIBS = $(shell "$(PKG_CONFIG)" --libs ncursesw)
+
+### SDL UI
+ifeq ($(WITH_SDL), yes)
+	SDL_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags sdl2) -DHAS_SDL=1
+	SDL_LIBS = $(shell "$(PKG_CONFIG)" --libs sdl2)
+
+	SDL_SRC = src/ui_sdl.c
+endif
+
+LIBS = -lm \
+	$(LUA_LIBS) \
+	$(DEBUG_LIBS) \
+	$(NCURSES_LIBS) \
+	$(SDL_LIBS)
+
+HEADERS = src/debugger.h \
+	src/emulator.h \
+	src/emulator_for_debugger.h \
+	src/emulator_inner.h \
+	src/options.h \
+	src/romio.h \
+	src/ui.h \
+	src/ui_bitmaps_big_font.h \
+	src/ui_bitmaps_misc.h \
+	src/ui_bitmaps_small_font.h \
+	src/ui_inner.h
+
+SRC = src/emu_serial.c \
+	src/emu_emulate.c \
+	src/emu_init.c \
+	src/emu_keyboard.c \
+	src/emu_memory.c \
+	src/emu_register.c \
+	src/emu_timer.c \
+	src/debugger.c \
+	src/options.c \
+	src/romio.c \
+	src/ui_text.c \
+	src/ui.c \
+	$(SDL_SRC) \
+	src/main.c
+OBJS = $(SRC:.c=.o)
+
 ifeq ($(FULL_WARNINGS), no)
-EXTRA_WARNING_FLAGS := -Wno-unused-function \
+EXTRA_WARNING_CFLAGS := -Wno-unused-function \
 	-Wno-redundant-decls \
 	$(call cc-option,-Wno-maybe-uninitialized) \
 	$(call cc-option,-Wno-discarded-qualifiers) \
 	$(call cc-option,-Wno-uninitialized) \
 	$(call cc-option,-Wno-ignored-qualifiers)
-endif
-
-ifeq ($(FULL_WARNINGS), yes)
-EXTRA_WARNING_FLAGS := -Wunused-function \
+else
+EXTRA_WARNING_CFLAGS := -Wunused-function \
 	-Wredundant-decls \
 	-fsanitize=thread \
 	$(call cc-option,-Wunused-variable)
@@ -72,38 +110,17 @@ override CFLAGS := -std=c11 \
 	$(call cc-option,-Wjump-misses-init) \
 	$(call cc-option,-Wlogical-op) \
 	$(call cc-option,-Wno-unknown-warning-option) \
-	$(EXTRA_WARNING_FLAGS) \
-	$(CFLAGS)
-
-override CPPFLAGS := -I./src/ -D_GNU_SOURCE=1 \
+	$(EXTRA_WARNING_CFLAGS) \
+	$(SDL_CFLAGS) \
+	$(LUA_CFLAGS) \
+	$(NCURSES_CFLAGS) \
+	$(DEBUG_CFLAGS) \
+	-O$(OPTIM) \
 	-DVERSION_MAJOR=$(VERSION_MAJOR) \
 	-DVERSION_MINOR=$(VERSION_MINOR) \
 	-DPATCHLEVEL=$(PATCHLEVEL) \
-	$(CPPFLAGS)
-
-LIBS = -lm
-
-### lua
-override CFLAGS += $(shell "$(PKG_CONFIG)" --cflags $(LUA_VERSION))
-LIBS += $(shell "$(PKG_CONFIG)" --libs $(LUA_VERSION))
-
-### debugger
-override CFLAGS += $(shell "$(PKG_CONFIG)" --cflags readline)
-LIBS += $(shell "$(PKG_CONFIG)" --libs readline)
-
-### Text UI
-override CFLAGS += $(shell "$(PKG_CONFIG)" --cflags ncursesw) -DNCURSES_WIDECHAR=1
-LIBS += $(shell "$(PKG_CONFIG)" --libs ncursesw)
-
-### SDL UI
-ifeq ($(WITH_SDL), yes)
-	SDLCFLAGS = $(shell "$(PKG_CONFIG)" --cflags sdl2)
-	SDLLIBS = $(shell "$(PKG_CONFIG)" --libs sdl2)
-
-	override CFLAGS += $(SDLCFLAGS) -DHAS_SDL=1
-	LIBS += $(SDLLIBS)
-	DOTOS += src/ui_sdl.o
-endif
+	-I./src/ -D_GNU_SOURCE=1 \
+	$(CFLAGS)
 
 # depfiles = $(objects:.o=.d)
 
@@ -123,11 +140,11 @@ all: $(TARGETS)
 
 dist/x48ng-dump2rom: src/legacy_tools/dump2rom.o
 dist/x48ng-checkrom: src/legacy_tools/checkrom.o src/romio.o
-dist/x48ng: $(DOTOS)
+dist/x48ng: $(OBJS) $(HEADERS)
 
 # Binaries
 $(TARGETS):
-	$(CC) $^ -o $@ $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $(LIBS)
+	$(CC) $^ -o $@ $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 # Cleaning
 clean:
