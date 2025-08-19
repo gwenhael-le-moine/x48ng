@@ -14,20 +14,20 @@ static int wire_fd;
 static int ir_fd;
 static int ttyp;
 
-char* wire_name = ( char* )0;
-char* ir_name = ( char* )0;
+/* char* wire_name = ( char* )0; */
+/* char* config.ir_name = ( char* )0; */
 
 void update_connection_display( void )
 {
     if ( wire_fd == -1 ) {
-        if ( wire_name )
-            free( wire_name );
-        wire_name = ( char* )0;
+        if ( config.wire_name )
+            free( config.wire_name );
+        config.wire_name = ( char* )0;
     }
     if ( ir_fd == -1 ) {
-        if ( ir_name )
-            free( ir_name );
-        ir_name = ( char* )0;
+        if ( config.ir_name )
+            free( config.ir_name );
+        config.ir_name = ( char* )0;
     }
 }
 
@@ -52,7 +52,7 @@ int init_serial( void )
             if ( ( ttyp = open( tty_dev_name, O_RDWR | O_NDELAY, 0666 ) ) >= 0 ) {
                 if ( config.verbose )
                     printf( "wire connection on %s\n", tty_dev_name );
-                wire_name = strdup( tty_dev_name );
+                config.wire_name = strdup( tty_dev_name );
             }
         }
         /* BSD PTY (Legacy) */
@@ -66,7 +66,7 @@ int init_serial( void )
                         sprintf( tty_dev_name, "/dev/tty%c%x", c, n );
                         if ( config.verbose )
                             printf( "wire connection on %s\n", tty_dev_name );
-                        wire_name = strdup( tty_dev_name );
+                        config.wire_name = strdup( tty_dev_name );
                         break;
                     }
                 }
@@ -118,7 +118,7 @@ int init_serial( void )
         if ( ( ir_fd = open( tty_dev_name, O_RDWR | O_NDELAY ) ) >= 0 ) {
             if ( config.verbose )
                 printf( "IR connection on %s\n", tty_dev_name );
-            ir_name = strdup( tty_dev_name );
+            config.ir_name = strdup( tty_dev_name );
         }
     }
 

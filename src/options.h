@@ -29,6 +29,9 @@ typedef struct {
     bool tiny;
     bool small;
 
+    char* wire_name;
+    char* ir_name;
+
     bool print_config;
     bool useTerminal;
     bool useSerial;

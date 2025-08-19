@@ -235,6 +235,14 @@ int config_init( int argc, char* argv[] )
 
     const char* optstring = "c:hvVtsirT";
     struct option long_options[] = {
+        {"help",             no_argument,       NULL,                           'h'         },
+        {"version",          no_argument,       NULL,                           'v'         },
+        {"verbose",          no_argument,       &clopt_verbose,                 true        },
+        {"print-config",     no_argument,       ( int* )&config.print_config,   true        },
+
+        {"throttle",         no_argument,       &clopt_throttle,                true        },
+        {"reset",            no_argument,       ( int* )&config.resetOnStartup, true        },
+
         {"config",           required_argument, NULL,                           'c'         },
         {"config-dir",       required_argument, NULL,                           1000        },
         {"rom",              required_argument, NULL,                           1010        },
@@ -245,22 +253,15 @@ int config_init( int argc, char* argv[] )
 
         {"serial-line",      required_argument, NULL,                           1015        },
 
-        {"help",             no_argument,       NULL,                           'h'         },
-        {"version",          no_argument,       NULL,                           'v'         },
-
-        {"print-config",     no_argument,       ( int* )&config.print_config,   true        },
-        {"verbose",          no_argument,       &clopt_verbose,                 true        },
         {"terminal",         no_argument,       &clopt_useTerminal,             true        },
         {"serial",           no_argument,       &clopt_useSerial,               true        },
 
-        {"reset",            no_argument,       ( int* )&config.resetOnStartup, true        },
-        {"throttle",         no_argument,       &clopt_throttle,                true        },
-
         {"debug",            no_argument,       &clopt_useDebugger,             true        },
 
-        {"sdl2",             no_argument,       &clopt_frontend,                FRONTEND_SDL},
+        {"sdl2",             no_argument,       &clopt_frontend,                FRONTEND_SDL}, /* DEPRECATED */
         {"sdl",              no_argument,       &clopt_frontend,                FRONTEND_SDL},
-        {"no-chrome",        no_argument,       &clopt_chromeless,              true        },
+        {"no-chrome",        no_argument,       &clopt_chromeless,              true        }, /* DEPRECATED */
+        {"chromeless",       no_argument,       &clopt_chromeless,              true        },
         {"fullscreen",       no_argument,       &clopt_fullscreen,              true        },
         {"scale",            required_argument, NULL,                           7110        },
 
@@ -272,7 +273,8 @@ int config_init( int argc, char* argv[] )
 
         {"mono",             no_argument,       &clopt_mono,                    true        },
         {"gray",             no_argument,       &clopt_gray,                    true        },
-        {"leave-shift-keys", no_argument,       &clopt_shiftless,               true        },
+        {"leave-shift-keys", no_argument,       &clopt_shiftless,               true        }, /* DEPRECATED */
+        {"shiftless",        no_argument,       &clopt_shiftless,               true        },
         {"inhibit-shutdown", no_argument,       &clopt_inhibit_shutdown,        true        },
 
         {0,                  0,                 0,                              0           }
@@ -306,13 +308,13 @@ int config_init( int argc, char* argv[] )
                             "false)\n"
                             "     --tui-tiny           use text tiny front-end (2×4 pixels per character) (default: "
                             "false)\n"
-                            "  -t --use-terminal       activate pseudo terminal interface (default: "
+                            "  -t --terminal           activate pseudo terminal interface (default: "
                             "true)\n"
-                            "  -s --use-serial         activate serial interface (default: false)\n"
+                            "  -s --serial             activate serial interface (default: false)\n"
                             "     --debug              enable the debugger\n"
                             "  -r --reset              perform a reset on startup\n"
                             "  -T --throttle           try to emulate real speed (default: false)\n"
-                            "     --no-chrome          only display the LCD (default: "
+                            "     --chromeless         only display the LCD (default: "
                             "false)\n"
                             "     --fullscreen         make the UI fullscreen "
                             "(default: false)\n"
@@ -322,7 +324,7 @@ int config_init( int argc, char* argv[] )
                             "false)\n"
                             "     --gray               make the UI grayscale (default: "
                             "false)\n"
-                            "     --leave-shift-keys   _not_ mapping the shift keys to let them free for numbers (default: "
+                            "     --shiftless          _not_ mapping the shift keys to let them free for numbers (default: "
                             "false)\n"
                             "     --inhibit-shutdown   __tentative fix for stuck-on-OFF bug__ (default: "
                             "false)\n";
@@ -611,6 +613,9 @@ int config_init( int argc, char* argv[] )
         switch ( config.frontend ) {
             case FRONTEND_SDL:
                 fprintf( stdout, "sdl" );
+                break;
+            case FRONTEND_GTK:
+                fprintf( stdout, "gtk" );
                 break;
             case FRONTEND_NCURSES:
                 if ( config.small )

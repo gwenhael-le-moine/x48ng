@@ -829,20 +829,20 @@ static void _draw_serial_devices_path( void )
     char text[ 1024 ] = "";
 
     if ( config.verbose ) {
-        fprintf( stderr, "wire_name: %s\n", wire_name );
-        fprintf( stderr, "ir_name: %s\n", ir_name );
+        fprintf( stderr, "wire_name: %s\n", config.wire_name );
+        fprintf( stderr, "ir_name: %s\n", config.ir_name );
     }
 
-    if ( wire_name ) {
+    if ( config.wire_name ) {
         strcat( text, "wire: " );
-        strcat( text, wire_name );
+        strcat( text, config.wire_name );
     }
-    if ( ir_name ) {
+    if ( config.ir_name ) {
         if ( strlen( text ) > 0 )
             strcat( text, " | " );
 
         strcat( text, "IR: " );
-        strcat( text, ir_name );
+        strcat( text, config.ir_name );
     }
 
     if ( strlen( text ) > 0 )

@@ -80,14 +80,15 @@ typedef enum {
 #define KEYS_BUFFER_SIZE 9
 
 // Annunciators
-#define NB_ANNUNCIATORS 6
-
-#define ANN_LEFT 0x81
-#define ANN_RIGHT 0x82
-#define ANN_ALPHA 0x84
-#define ANN_BATTERY 0x88
-#define ANN_BUSY 0x90
-#define ANN_IO 0xa0
+typedef enum {
+    ANN_LEFT = 0x81,
+    ANN_RIGHT = 0x82,
+    ANN_ALPHA = 0x84,
+    ANN_BATTERY = 0x88,
+    ANN_BUSY = 0x90,
+    ANN_IO = 0xa0,
+    NB_ANNUNCIATORS = 6
+} annunciators_bits_t;
 
 typedef unsigned char word_1;
 typedef unsigned char word_4;
@@ -261,12 +262,6 @@ extern long sched_timer1;
 extern long sched_timer2;
 extern unsigned long t1_i_per_tick;
 extern unsigned long t2_i_per_tick;
-
-/****************/
-/* emu_serial.c */
-/****************/
-extern char* wire_name;
-extern char* ir_name;
 
 /***************/
 /* emu_timer.c */
