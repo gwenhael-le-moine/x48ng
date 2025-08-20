@@ -37,10 +37,7 @@ void saturn_config_init( void )
     saturn.version[ 1 ] = VERSION_MINOR;
     saturn.version[ 2 ] = PATCHLEVEL;
     memset( &device, 0, sizeof( device ) );
-    device.display_touched = true;
-    device.contrast_touched = true;
     device.baud_touched = true;
-    device.ann_touched = true;
     saturn.rcs = 0x0;
     saturn.tcs = 0x0;
     saturn.lbr = 0x0;

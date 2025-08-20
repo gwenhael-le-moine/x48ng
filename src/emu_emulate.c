@@ -72,7 +72,6 @@ static unsigned long delta_i;
 static long sched_instr_rollover = SCHED_INSTR_ROLLOVER;
 static long sched_receive = SCHED_RECEIVE;
 static long sched_statistics = SCHED_STATISTICS;
-static long sched_display = SCHED_NEVER;
 
 /* used in step_instruction_* */
 static word_20 jumpmasks[] = { 0xffffffff, 0xfffffff0, 0xffffff00, 0xfffff000, 0xffff0000, 0xfff00000, 0xff000000, 0xf0000000 };
@@ -1255,51 +1254,6 @@ static bool step_instruction_080( void )
             saturn.PC += 3;
             if ( config.inhibit_shutdown )
                 break;
-
-            /***************************/
-            /* hpemu/src/opcodes.c:367 */
-            /***************************/
-            /* static void op807( byte* opc ) // SHUTDN */
-            /* { */
-            /*     // TODO: Fix SHUTDN */
-            /*     if ( !cpu.in[ 0 ] && !cpu.in[ 1 ] && !cpu.in[ 3 ] ) { */
-            /*         cpu.shutdown = true; */
-            /*     } */
-            /*     cpu.pc += 3; */
-            /*     cpu.cycles += 5; */
-            /* } */
-
-            /***********************************/
-            /* saturn_bertolotti/src/cpu.c:364 */
-            /***********************************/
-            /* static void ExecSHUTDN( void ) */
-            /* { */
-            /*     debug1( DEBUG_C_TRACE, CPU_I_CALLED, "SHUTDN" ); */
-
-            /* #ifdef CPU_SPIN_SHUTDN */
-            /*     /\* If the CPU_SPIN_SHUTDN symbol is defined, the CPU module implements */
-            /*        SHUTDN as a spin loop; the program counter is reset to the starting */
-            /*        nibble of the SHUTDN opcode. */
-            /*     *\/ */
-            /*     cpu_status.PC -= 3; */
-            /* #endif */
-
-            /*     /\* Set shutdown flag *\/ */
-            /*     cpu_status.shutdn = 1; */
-
-            /* #ifndef CPU_SPIN_SHUTDN */
-            /*     /\* If the CPU_SPIN_SHUTDN symbol is not defined, the CPU module implements */
-            /*        SHUTDN signalling the condition CPU_I_SHUTDN */
-            /*     *\/ */
-            /*     ChfCondition CPU_I_SHUTDN, CHF_INFO ChfEnd; */
-            /*     ChfSignal(); */
-            /* #endif */
-            /* } */
-
-            if ( device.display_touched ) {
-                device.display_touched = 0;
-                ui_update_display();
-            }
 
             stop_timer( RUN_TIMER );
             start_timer( IDLE_TIMER );
@@ -2846,30 +2800,8 @@ void schedule( void )
 
     if ( device_check ) {
         device_check = false;
-        if ( ( sched_display -= steps ) <= 0 ) {
-            if ( device.display_touched )
-                device.display_touched -= steps;
-            if ( device.display_touched < 0 )
-                device.display_touched = 1;
-        }
 
         /* check_device() */
-        /* UI */
-        // TODO: move this out into ui_*.c
-        if ( device.display_touched > 0 && device.display_touched-- == 1 ) {
-            device.display_touched = 0;
-            ui_update_display();
-        }
-        if ( device.display_touched > 0 )
-            device_check = true;
-        if ( device.contrast_touched ) {
-            device.contrast_touched = false;
-            ui_update_display();
-        }
-        if ( device.ann_touched ) {
-            device.ann_touched = false;
-            ui_update_display();
-        }
 
         /* serial */
         if ( device.baud_touched ) {
@@ -2907,14 +2839,6 @@ void schedule( void )
             device.t2_touched = false;
         }
         /* end check_device() */
-
-        sched_display = SCHED_NEVER;
-        if ( device.display_touched ) {
-            if ( device.display_touched < sched_display )
-                sched_display = device.display_touched - 1;
-            if ( sched_display < schedule_event )
-                schedule_event = sched_display;
-        }
     }
 
     if ( ( sched_receive -= steps ) <= 0 ) {

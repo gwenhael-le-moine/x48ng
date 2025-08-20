@@ -212,7 +212,6 @@ bool get_display_state( void ) { return display.on; }
 
 void get_lcd_buffer( int* target )
 {
-    bool bit;
     int nibble;
     int bit_stop;
     int init_x;

@@ -11,8 +11,9 @@
 #include "emulator_core.h"
 #include "emulator_for_debugger.h"
 #include "romio.h"
-#include "ui4x/common.h"
 #include "debugger.h"
+
+#include "ui4x/common.h"
 
 #define MAX_ARGS 16
 
@@ -4085,14 +4086,6 @@ int debug( void )
 
         enter_debugger = 0;
         return 0;
-    }
-
-    /*
-     * update the lcd if necessary
-     */
-    if ( device.display_touched ) {
-        device.display_touched = 0;
-        ui_update_display();
     }
 
     /*

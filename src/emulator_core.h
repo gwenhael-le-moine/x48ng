@@ -46,12 +46,6 @@ typedef struct t1_t2_ticks {
 } t1_t2_ticks;
 
 typedef struct device_t {
-    int display_touched;
-
-    bool contrast_touched;
-
-    bool ann_touched;
-
     bool baud_touched;
 
     bool ioc_touched;

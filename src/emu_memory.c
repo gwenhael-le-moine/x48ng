@@ -67,8 +67,8 @@ void disp_draw_nibble( word_20 addr, word_4 val )
 static void menu_draw_nibble( word_20 addr, word_4 val )
 {
     long offset = ( addr - display.menu_start );
-    int x = offset % NIBBLES_PER_ROW;
-    int y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
+    int x = offset % display.nibs_per_line;
+    int y = display.lines + ( offset / display.nibs_per_line ) + 1;
 
     if ( val == lcd_nibbles_buffer[ y ][ x ] )
         return;
@@ -99,24 +99,20 @@ void write_dev_mem( long addr, int val )
                 else
                     display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset ) & 0xfff;
                 display.disp_end = display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
-                device.display_touched = DISP_INSTR_OFF;
             }
             return;
         case 0x101: /* CONTRAST CONTROL */
             saturn.contrast_ctrl = val;
             display.contrast &= ~0x0f;
             display.contrast |= val;
-            device.contrast_touched = true;
             return;
         case 0x102: /* DISPLAY TEST */
             display.contrast &= ~0xf0;
             display.contrast |= ( ( val & 0x1 ) << 4 );
-            device.contrast_touched = true;
             /* Fall through */
         case 0x103: /* DISPLAY TEST */
             saturn.disp_test &= ~nibble_masks[ addr - 0x102 ];
             saturn.disp_test |= val << ( ( addr - 0x102 ) * 4 );
-            /* device.disp_test_touched = true; */
             return;
         case 0x104:
         case 0x105:
@@ -127,21 +123,17 @@ void write_dev_mem( long addr, int val )
             return;
         case 0x108: /* POWER STATUS */
             saturn.power_status = val;
-            /* device.power_status_touched = true; */
             return;
         case 0x109: /* POWER CONTROL */
             saturn.power_ctrl = val;
-            /* device.power_ctrl_touched = true; */
             return;
         case 0x10a: /* MODE */
             saturn.mode = val;
-            /* device.mode_touched = true; */
             return;
         case 0x10b:
         case 0x10c: /* ANNUNC */
             saturn.annunc &= ~nibble_masks[ addr - 0x10b ];
             saturn.annunc |= val << ( ( addr - 0x10b ) * 4 );
-            device.ann_touched = true;
             return;
         case 0x10d: /* BAUD */
             saturn.baud = val;
@@ -220,7 +212,6 @@ void write_dev_mem( long addr, int val )
             if ( display.disp_start != ( saturn.disp_addr & 0xffffe ) ) {
                 display.disp_start = saturn.disp_addr & 0xffffe;
                 display.disp_end = display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
-                device.display_touched = DISP_INSTR_OFF;
             }
             return;
         case 0x125:
@@ -235,7 +226,6 @@ void write_dev_mem( long addr, int val )
                 else
                     display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset ) & 0xfff;
                 display.disp_end = display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
-                device.display_touched = DISP_INSTR_OFF;
             }
             return;
         case 0x128:
@@ -248,7 +238,6 @@ void write_dev_mem( long addr, int val )
                 if ( display.lines == 0 )
                     display.lines = 63;
                 display.disp_end = display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
-                device.display_touched = DISP_INSTR_OFF;
             }
             return;
         case 0x12a:
@@ -277,7 +266,6 @@ void write_dev_mem( long addr, int val )
             if ( display.menu_start != saturn.menu_addr ) {
                 display.menu_start = saturn.menu_addr;
                 display.menu_end = display.menu_start + 0x110;
-                device.display_touched = DISP_INSTR_OFF;
             }
             return;
         case 0x135:
@@ -505,9 +493,6 @@ void write_nibble_sx( long addr, int val )
             return;
     }
 
-    if ( device.display_touched )
-        return;
-
     if ( addr >= display.disp_start && addr < display.disp_end )
         disp_draw_nibble( addr, val );
 
@@ -654,9 +639,6 @@ void write_nibble_gx( long addr, int val )
                 }
             return;
     }
-
-    if ( device.display_touched )
-        return;
 
     if ( addr >= display.disp_start && addr < display.disp_end )
         disp_draw_nibble( addr, val );
