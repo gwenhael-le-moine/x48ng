@@ -55,15 +55,15 @@ void disp_draw_nibble( word_20 addr, word_4 val )
             return;
 
         init_x = x * NIBBLES_NB_BITS;
-        bit_stop = ( ( init_x + NIBBLES_NB_BITS >= LCD_WIDTH ) ? LCD_WIDTH - init_x : 4 );
+        bit_stop = ( ( init_x + NIBBLES_NB_BITS >= LCD_WIDTH ) ? LCD_WIDTH - init_x : NIBBLES_NB_BITS );
         for ( int bit_x = 0; bit_x < bit_stop; bit_x++ )
-            lcd_pixels_buffer[ ( y * LCD_WIDTH ) + init_x + bit_x ] = 0 != ( val & ( 1 << ( bit_x & 3 ) ) );
+            lcd_pixels_buffer[ ( y * LCD_WIDTH ) + init_x + bit_x ] = ( val & ( 1 << ( bit_x & 3 ) ) );
     } else {
         for ( y = 0; y < display.lines; y++ ) {
             init_x = x * NIBBLES_NB_BITS;
-            bit_stop = ( ( init_x + NIBBLES_NB_BITS >= LCD_WIDTH ) ? LCD_WIDTH - init_x : 4 );
+            bit_stop = ( ( init_x + NIBBLES_NB_BITS >= LCD_WIDTH ) ? LCD_WIDTH - init_x : NIBBLES_NB_BITS );
             for ( int bit_x = 0; bit_x < bit_stop; bit_x++ )
-                lcd_pixels_buffer[ ( y * LCD_WIDTH ) + init_x + bit_x ] = 0 != ( val & ( 1 << ( bit_x & 3 ) ) );
+                lcd_pixels_buffer[ ( y * LCD_WIDTH ) + init_x + bit_x ] = ( val & ( 1 << ( bit_x & 3 ) ) );
         }
     }
 }
@@ -77,7 +77,7 @@ static void menu_draw_nibble( word_20 addr, word_4 val )
     int init_x = x * NIBBLES_NB_BITS;
     int bit_stop = ( init_x + NIBBLES_NB_BITS >= LCD_WIDTH ) ? LCD_WIDTH - init_x : NIBBLES_NB_BITS;
     for ( int bit_x = 0; bit_x < bit_stop; bit_x++ )
-        lcd_pixels_buffer[ ( y * LCD_WIDTH ) + init_x + bit_x ] = 0 != ( val & ( 1 << ( bit_x & 3 ) ) );
+        lcd_pixels_buffer[ ( y * LCD_WIDTH ) + init_x + bit_x ] = ( val & ( 1 << ( bit_x & 3 ) ) );
 }
 
 static inline int calc_crc( int nib )

@@ -117,8 +117,6 @@ typedef enum {
 
 #define NB_KEYS NB_HP48_KEYS
 
-/* #define KEYS_BUFFER_SIZE 9 */
-
 // Annunciators
 typedef enum {
     ANN_LEFT = 0x81,
@@ -131,7 +129,6 @@ typedef enum {
 } annunciators_bits_t;
 
 // LCD
-// #define NIBBLES_PER_ROW 34
 #define LCD_WIDTH 131
 #define LCD_HEIGHT 64
 
