@@ -4,8 +4,8 @@ This is my fork of x48-0.6.4 where I deviate from the original code and do my ow
 
 **x48ng** is part of my little collection of HP calculators' emulators' that I took over maintenance :
 
-- [x50ng](https://codeberg.org/gwh/x50ng)
 - [x48ng](https://codeberg.org/gwh/x48ng) ← You are here
+- [x50ng](https://codeberg.org/gwh/x50ng)
 - [saturnng](https://codeberg.org/gwh/saturnng)
 - [hpemung](https://codeberg.org/gwh/hpemung)
 
@@ -63,11 +63,11 @@ _To quit `x48ng` use `F7`
 5. refactoring as a way to explore/understand the codebase
 6. drop Xresources
 7. link to lua to use it as a config file reader
-8. ported the SDL1 GUI to SDL2
+8. ported the SDL1 GUI to SDL2 to SDL3
 
 ## Bugs to fix
 
-See and report at https://github.com/gwenhael-le-moine/x48ng/issues
+See and report at https://codeberg.org/gwh/x48ng/issues or https://github.com/gwenhael-le-moine/x48ng/issues
 
 ## What more I would like to do:
 
