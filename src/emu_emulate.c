@@ -7,9 +7,10 @@
 #include "emulator_core.h"
 #include "emulator_inner.h"
 #include "options.h" /* throttle */
-#include "ui.h"      /* ui_get_event(); ui_adjust_contrast(); ui_update_LCD(); ui_draw_annunc(); */
 
 #include "debugger.h" /* in_debugger, enter_debugger */
+
+#include "ui4x/common.h"
 
 /* #define P_FIELD 0  /\* unused? *\/ */
 /* #define WP_FIELD 1 /\* unused? *\/ */
@@ -1297,7 +1298,7 @@ static bool step_instruction_080( void )
 
             if ( device.display_touched ) {
                 device.display_touched = 0;
-                ui_refresh_LCD();
+                ui_update_display();
             }
 
             stop_timer( RUN_TIMER );
@@ -1318,7 +1319,7 @@ static bool step_instruction_080( void )
                     if ( sigalarm_triggered ) {
                         sigalarm_triggered = false;
 
-                        ui_refresh_LCD();
+                        ui_update_display();
 
                         ticks = get_t1_t2();
                         if ( saturn.t2_ctrl & 0x01 )
@@ -2857,17 +2858,17 @@ void schedule( void )
         // TODO: move this out into ui_*.c
         if ( device.display_touched > 0 && device.display_touched-- == 1 ) {
             device.display_touched = 0;
-            ui_update_LCD();
+            ui_update_display();
         }
         if ( device.display_touched > 0 )
             device_check = true;
         if ( device.contrast_touched ) {
             device.contrast_touched = false;
-            ui_adjust_contrast();
+            ui_update_display();
         }
         if ( device.ann_touched ) {
             device.ann_touched = false;
-            ui_draw_annunc();
+            ui_update_display();
         }
 
         /* serial */
@@ -3011,7 +3012,7 @@ void schedule( void )
     if ( sigalarm_triggered ) {
         sigalarm_triggered = false;
 
-        ui_refresh_LCD();
+        ui_update_display();
         ui_get_event();
     }
 }

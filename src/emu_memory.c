@@ -8,7 +8,6 @@
 #include "emulator_inner.h"
 #include "romio.h"
 #include "options.h"
-#include "ui.h" /* ui_disp_draw_nibble(); ui_menu_draw_nibble(); */
 
 #define MCTL_MMIO_SX 0
 #define MCTL_SysRAM_SX 1
@@ -29,6 +28,8 @@
 long nibble_masks[ 16 ] = { 0x0000000f, 0x000000f0, 0x00000f00, 0x0000f000, 0x000f0000, 0x00f00000, 0x0f000000, 0xf0000000,
                             0x0000000f, 0x000000f0, 0x00000f00, 0x0000f000, 0x000f0000, 0x00f00000, 0x0f000000, 0xf0000000 };
 
+unsigned char lcd_nibbles_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
+
 display_t display;
 
 void ( *write_nibble )( long addr, int val );
@@ -36,6 +37,44 @@ int ( *read_nibble )( long addr );
 int ( *read_nibble_crc )( long addr );
 
 static int line_counter = -1;
+
+void disp_draw_nibble( word_20 addr, word_4 val )
+{
+    long offset = ( addr - display.disp_start );
+    int x = offset % display.nibs_per_line;
+
+    if ( x < 0 || x > 35 )
+        return;
+    if ( display.nibs_per_line != 0 ) {
+        int y = offset / display.nibs_per_line;
+        if ( y < 0 || y > 63 )
+            return;
+
+        if ( val == lcd_nibbles_buffer[ y ][ x ] )
+            return;
+
+        lcd_nibbles_buffer[ y ][ x ] = val;
+    } else {
+        for ( int y = 0; y < display.lines; y++ ) {
+            if ( val == lcd_nibbles_buffer[ y ][ x ] )
+                break;
+
+            lcd_nibbles_buffer[ y ][ x ] = val;
+        }
+    }
+}
+
+static void menu_draw_nibble( word_20 addr, word_4 val )
+{
+    long offset = ( addr - display.menu_start );
+    int x = offset % NIBBLES_PER_ROW;
+    int y = display.lines + ( offset / NIBBLES_PER_ROW ) + 1;
+
+    if ( val == lcd_nibbles_buffer[ y ][ x ] )
+        return;
+
+    lcd_nibbles_buffer[ y ][ x ] = val;
+}
 
 static inline int calc_crc( int nib )
 {
@@ -470,13 +509,13 @@ void write_nibble_sx( long addr, int val )
         return;
 
     if ( addr >= display.disp_start && addr < display.disp_end )
-        ui_disp_draw_nibble( addr, val );
+        disp_draw_nibble( addr, val );
 
     if ( display.lines == 63 )
         return;
 
     if ( addr >= display.menu_start && addr < display.menu_end )
-        ui_menu_draw_nibble( addr, val );
+        menu_draw_nibble( addr, val );
 }
 
 void write_nibble_gx( long addr, int val )
@@ -620,13 +659,13 @@ void write_nibble_gx( long addr, int val )
         return;
 
     if ( addr >= display.disp_start && addr < display.disp_end )
-        ui_disp_draw_nibble( addr, val );
+        disp_draw_nibble( addr, val );
 
     if ( display.lines == 63 )
         return;
 
     if ( addr >= display.menu_start && addr < display.menu_end )
-        ui_menu_draw_nibble( addr, val );
+        menu_draw_nibble( addr, val );
 }
 
 int read_nibble_sx( long addr )

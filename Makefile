@@ -43,17 +43,17 @@ NCURSES_LIBS = $(shell "$(PKG_CONFIG)" --libs ncursesw)
 
 ### SDL UI
 ifeq ($(WITH_SDL), yes)
-	SDL_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags sdl2) -DHAS_SDL=1
-	SDL_LIBS = $(shell "$(PKG_CONFIG)" --libs sdl2)
-
-	SDL_SRC = src/ui_sdl.c
+	SDL_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags sdl3) -DHAS_SDL=1
+	SDL_LIBS = $(shell "$(PKG_CONFIG)" --libs sdl3)
+	SDL_SRC = src/ui4x/sdl.c
+	SDL_HEADERS = src/ui4x/sdl.h
 endif
 
 ifeq ($(WITH_GTK), yes)
-	GTK_CFLAGS = -DHAS_GTK=1 $(shell "$(PKG_CONFIG)" --cflags gtk4)
+	GTK_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags gtk4) -DHAS_GTK=1
 	GTK_LIBS = $(shell "$(PKG_CONFIG)" --libs gtk4)
-	# GTK_SRC = src/ui4x/gtk.c
-	# GTK_HEADERS = src/ui4x/gtk.h
+	GTK_SRC = src/ui4x/gtk.c
+	GTK_HEADERS = src/ui4x/gtk.h
 endif
 
 LIBS = -lm \
@@ -69,26 +69,33 @@ HEADERS = src/debugger.h \
 	src/emulator_inner.h \
 	src/options.h \
 	src/romio.h \
-	src/ui.h \
-	src/ui_bitmaps_big_font.h \
-	src/ui_bitmaps_misc.h \
-	src/ui_bitmaps_small_font.h \
-	src/ui_inner.h
+	src/ui4x/bitmaps_misc.h \
+	src/ui4x/common.h \
+	src/ui4x/ncurses.h \
+	src/ui4x/inner.h \
+	$(SDL_HEADERS) \
+	$(GTK_HEADERS)
 
 SRC = src/emu_serial.c \
 	src/emu_emulate.c \
 	src/emu_init.c \
-	src/emu_keyboard.c \
 	src/emu_memory.c \
 	src/emu_register.c \
 	src/emu_timer.c \
 	src/debugger.c \
 	src/options.c \
 	src/romio.c \
-	src/ui_text.c \
-	src/ui.c \
+	src/emulator.c \
+	src/main.c \
+	src/ui4x/fonts.c \
+	src/ui4x/48sx.c \
+	src/ui4x/48gx.c \
+	src/ui4x/49g.c \
+	src/ui4x/50g.c \
+	src/ui4x/common.c \
+	src/ui4x/ncurses.c \
 	$(SDL_SRC) \
-	src/main.c
+	$(GTK_SRC)
 OBJS = $(SRC:.c=.o)
 
 ifeq ($(FULL_WARNINGS), no)

@@ -11,7 +11,7 @@
 #include "emulator_core.h"
 #include "emulator_for_debugger.h"
 #include "romio.h"
-#include "ui.h" /* ui_update_LCD(); */
+#include "ui4x/common.h"
 #include "debugger.h"
 
 #define MAX_ARGS 16
@@ -3529,7 +3529,7 @@ static void cmd_load( int argc, char** argv )
             free( tmp_saturn.port2 );
 
         /* After reloading state we need to refresh the UI's LCD */
-        ui_update_LCD();
+        ui_update_display();
     } else {
         printf( "Loading emulator-state from files failed.\n" );
         if ( saturn.rom )
@@ -4092,7 +4092,7 @@ int debug( void )
      */
     if ( device.display_touched ) {
         device.display_touched = 0;
-        ui_update_LCD();
+        ui_update_display();
     }
 
     /*

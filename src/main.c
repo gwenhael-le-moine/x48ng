@@ -13,7 +13,9 @@
 #include "emulator_core.h"
 #include "options.h"
 #include "romio.h"
-#include "ui.h" /* setup_frontend(); init_ui(); */
+
+#include "emulator.h"
+#include "ui4x/common.h"
 
 config_t config;
 
@@ -40,6 +42,17 @@ int main( int argc, char** argv )
     setlocale( LC_ALL, "C" );
 
     config = *config_init( argc, argv );
+
+    /********************/
+    /* initialize stuff */
+    /********************/
+
+    /* Emulator */
+    init_emulator( &config );
+
+    /* (G)UI */
+    setup_ui( &config );
+    ui_start( &config );
 
     /*****************************************/
     /* handlers for SIGALRM, SIGPIPE */
@@ -99,17 +112,6 @@ int main( int argc, char** argv )
     flags &= ~O_NDELAY;
     flags &= ~O_NONBLOCK;
     fcntl( STDIN_FILENO, F_SETFL, flags );
-
-    /********************/
-    /* initialize stuff */
-    /********************/
-
-    /* Emulator */
-    start_emulator();
-    config.model = opt_gx ? MODEL_48GX : MODEL_48SX;
-
-    /* (G)UI */
-    start_UI();
 
     /************************/
     /* Start emulation loop */

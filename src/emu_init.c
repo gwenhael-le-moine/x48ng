@@ -29,67 +29,6 @@ long port2_size;
 long port2_mask;
 bool port2_is_ram;
 
-hpkey_t keyboard[ NB_KEYS ] = {
-    /* From top left to bottom right */
-    {0x14,   0},
-    {0x84,   0},
-    {0x83,   0},
-    {0x82,   0},
-    {0x81,   0},
-    {0x80,   0},
-
-    {0x24,   0},
-    {0x74,   0},
-    {0x73,   0},
-    {0x72,   0},
-    {0x71,   0},
-    {0x70,   0},
-
-    {0x04,   0},
-    {0x64,   0},
-    {0x63,   0},
-    {0x62,   0},
-    {0x61,   0},
-    {0x60,   0},
-
-    {0x34,   0},
-    {0x54,   0},
-    {0x53,   0},
-    {0x52,   0},
-    {0x51,   0},
-    {0x50,   0},
-
-    {0x44,   0},
-    {0x43,   0},
-    {0x42,   0},
-    {0x41,   0},
-    {0x40,   0},
-
-    {0x35,   0},
-    {0x33,   0},
-    {0x32,   0},
-    {0x31,   0},
-    {0x30,   0},
-
-    {0x25,   0},
-    {0x23,   0},
-    {0x22,   0},
-    {0x21,   0},
-    {0x20,   0},
-
-    {0x15,   0},
-    {0x13,   0},
-    {0x12,   0},
-    {0x11,   0},
-    {0x10,   0},
-
-    {0x8000, 0},
-    {0x03,   0},
-    {0x02,   0},
-    {0x01,   0},
-    {0x00,   0},
-};
-
 int annunciators_bits[ NB_ANNUNCIATORS ] = { ANN_LEFT, ANN_RIGHT, ANN_ALPHA, ANN_BATTERY, ANN_BUSY, ANN_IO };
 
 void saturn_config_init( void )
@@ -974,7 +913,7 @@ int read_rom( const char* fname )
     return 1;
 }
 
-void init_display( void )
+static void init_display( void )
 {
     display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
 
@@ -1022,7 +961,7 @@ void start_emulator( void )
     init_display();
 }
 
-void exit_emulator( void )
+void stop_emulator( void )
 {
     if ( save_before_exit )
         write_files();
