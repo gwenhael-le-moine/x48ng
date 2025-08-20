@@ -642,6 +642,7 @@ config_t* config_init( int argc, char* argv[] )
         fprintf( stdout, "scale = %f -- applies only to sdl2\n", __config.scale );
         fprintf( stdout, "mono = %s\n", __config.mono ? "true" : "false" );
         fprintf( stdout, "gray = %s\n", __config.gray ? "true" : "false" );
+        fprintf( stdout, "black_lcd = %s\n", __config.black_lcd ? "true" : "false" );
         fprintf( stdout, "shiftless = %s\n", __config.shiftless ? "true" : "false" );
         fprintf( stdout, "inhibit_shutdown = %s\n", __config.inhibit_shutdown ? "true" : "false" );
         fprintf( stdout, "--------------------------------------------------------------------------------\n" );
