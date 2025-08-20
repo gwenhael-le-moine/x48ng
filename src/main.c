@@ -17,21 +17,34 @@
 #include "emulator.h"
 #include "ui4x/common.h"
 
+/* #define QUERY_EVENTS_EVERY_X_FRAME 4 */
+
 config_t config;
 
 void signal_handler( int sig )
 {
+    /* static int nb_refreshes_since_last_checking_events = 0; */
+
     switch ( sig ) {
         case SIGINT: /* Ctrl-C */
             enter_debugger |= USER_INTERRUPT;
             break;
         case SIGALRM:
+            /* if ( nb_refreshes_since_last_checking_events > QUERY_EVENTS_EVERY_X_FRAME ) { */
+            /*     nb_refreshes_since_last_checking_events = 0; */
+            /*     ui_get_event(); */
+            /* } */
+
+            /* ui_update_display(); */
+
+            /* nb_refreshes_since_last_checking_events++; */
+
             sigalarm_triggered = true;
             break;
         case SIGPIPE:
             ui_stop();
             exit_emulator();
-            exit( 0 );
+            exit( EXIT_SUCCESS );
         default:
             break;
     }
@@ -97,8 +110,8 @@ int main( int argc, char** argv )
     struct itimerval it;
     it.it_interval.tv_sec = 0;
     it.it_interval.tv_usec = USEC_PER_FRAME;
-    it.it_value.tv_sec = 0;
-    it.it_value.tv_usec = USEC_PER_FRAME;
+    it.it_value.tv_sec = it.it_interval.tv_sec;
+    it.it_value.tv_usec = it.it_interval.tv_usec;
     setitimer( ITIMER_REAL, &it, ( struct itimerval* )0 );
 
     /**********************************************************/

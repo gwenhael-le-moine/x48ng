@@ -20,9 +20,10 @@
 #define IDLE_TIMER 3
 
 /* LCD refresh rate is 64Hz according to https://www.hpcalc.org/hp48/docs/faq/48faq-6.html */
-#define USEC_PER_FRAME ( 1000000 / 64 )
+#define UI_REFRESH_RATE_Hz 64
+#define USEC_PER_FRAME ( 1000000 / UI_REFRESH_RATE_Hz )
 
-#define NIBBLES_PER_ROW 0x22
+#define NIBBLES_PER_ROW 34
 #define NIBBLES_NB_BITS 4
 
 #define DISP_ROWS 64
