@@ -212,7 +212,7 @@ extern void stop_emulator( void );  /* used in debugger.c; ui_*.c */
 /********************/
 /* emu_memory.c */
 /********************/
-extern unsigned char lcd_nibbles_buffer[ DISP_ROWS ][ NIBS_PER_BUFFER_ROW ];
+extern int lcd_pixels_buffer[ LCD_WIDTH * LCD_HEIGHT ];
 extern display_t display;
 
 extern int ( *read_nibble )( long addr ); /* used in debugger.c; ui_*.c */
