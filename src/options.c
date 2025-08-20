@@ -36,6 +36,9 @@ static config_t __config = {
     .mono = false,
     .gray = false,
 
+    .big_screen = false,
+    .black_lcd = false,
+
     /* tui */
     .small = false,
     .tiny = false,
@@ -232,6 +235,7 @@ config_t* config_init( int argc, char* argv[] )
     int clopt_tiny = -1;
     int clopt_shiftless = -1;
     int clopt_inhibit_shutdown = -1;
+    int clopt_black_lcd = -1;
 
     const char* optstring = "c:hvVtsirT";
     struct option long_options[] = {
@@ -264,6 +268,7 @@ config_t* config_init( int argc, char* argv[] )
         {"chromeless",       no_argument,       &clopt_chromeless,                true        },
         {"fullscreen",       no_argument,       &clopt_fullscreen,                true        },
         {"scale",            required_argument, NULL,                             7110        },
+        {"black-lcd",        no_argument,       &clopt_black_lcd,                 true        },
 
         {"tui",              no_argument,       NULL,                             9100        },
         {"tui-small",        no_argument,       NULL,                             9110        },
@@ -521,6 +526,9 @@ config_t* config_init( int argc, char* argv[] )
     lua_getglobal( config_lua_values, "gray" );
     __config.gray = lua_toboolean( config_lua_values, -1 );
 
+    lua_getglobal( config_lua_values, "black_lcd" );
+    __config.black_lcd = lua_toboolean( config_lua_values, -1 );
+
     lua_getglobal( config_lua_values, "shiftless" );
     __config.shiftless = lua_toboolean( config_lua_values, -1 );
 
@@ -571,6 +579,8 @@ config_t* config_init( int argc, char* argv[] )
         __config.small = clopt_small;
     if ( clopt_tiny != -1 )
         __config.tiny = clopt_tiny;
+    if ( clopt_black_lcd != -1 )
+        __config.black_lcd = clopt_black_lcd == true;
     if ( clopt_shiftless != -1 )
         __config.shiftless = clopt_shiftless;
     if ( clopt_inhibit_shutdown != -1 )
