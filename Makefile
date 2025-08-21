@@ -63,15 +63,15 @@ LIBS = -lm \
 	$(SDL_LIBS) \
 	$(GTK_LIBS)
 
-HEADERS = src/serial.h \
+HEADERS = src/debugger.h \
 	src/emulate.h \
 	src/init.h \
 	src/memory.h \
-	src/registers.h \
-	src/timers.h \
-	src/debugger.h \
 	src/options.h \
+	src/registers.h \
 	src/romio.h \
+	src/timers.h \
+	src/serial.h \
 	src/ui4x/bitmaps_misc.h \
 	src/ui4x/common.h \
 	src/ui4x/inner.h \
@@ -79,23 +79,23 @@ HEADERS = src/serial.h \
 	$(SDL_HEADERS) \
 	$(GTK_HEADERS)
 
-SRC = src/serial.c \
+SRC = src/debugger.c \
 	src/emulate.c \
+	src/emulator.c \
 	src/init.c \
 	src/memory.c \
-	src/registers.c \
-	src/timers.c \
-	src/debugger.c \
 	src/options.c \
+	src/registers.c \
 	src/romio.c \
-	src/emulator.c \
+	src/timers.c \
+	src/serial.c \
 	src/main.c \
-	src/ui4x/fonts.c \
-	src/ui4x/48sx.c \
 	src/ui4x/48gx.c \
+	src/ui4x/48sx.c \
 	src/ui4x/49g.c \
 	src/ui4x/50g.c \
 	src/ui4x/common.c \
+	src/ui4x/fonts.c \
 	src/ui4x/ncurses.c \
 	$(SDL_SRC) \
 	$(GTK_SRC)
