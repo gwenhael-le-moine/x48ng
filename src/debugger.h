@@ -1,8 +1,10 @@
 #ifndef _DEBUGGER_H
 #define _DEBUGGER_H 1
 
-#include "emulator_core.h"
-#include "emulator_for_debugger.h"
+#include <stdbool.h>
+
+#include "debugger.h"
+#include "types.h"
 
 #define USER_INTERRUPT 1
 #define ILLEGAL_INSTRUCTION 2

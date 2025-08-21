@@ -1,3 +1,4 @@
 *.o
 
 dist/x48ng*
+/compile_commands.json

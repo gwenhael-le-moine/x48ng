@@ -4,10 +4,12 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#include "emulator_core.h"
-#include "emulator_inner.h"
+#include "memory.h"
 #include "romio.h"
 #include "options.h"
+#include "types.h"
+#include "emulate.h"
+#include "init.h"
 
 #define MCTL_MMIO_SX 0
 #define MCTL_SysRAM_SX 1

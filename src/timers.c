@@ -7,9 +7,9 @@
 #include <sys/time.h>
 
 #include "debugger.h" /* used for in_debugger */
-#include "emulator_core.h"
-#include "emulator_inner.h"
+#include "timers.h"
 #include "romio.h"
+#include "emulate.h"
 
 #define NB_TIMERS 4
 

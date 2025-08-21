@@ -9,7 +9,7 @@
 TARGETS = dist/x48ng dist/x48ng-checkrom dist/x48ng-dump2rom
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 50
+VERSION_MINOR = 69
 PATCHLEVEL = 0
 
 PREFIX ?= /usr
@@ -22,9 +22,9 @@ PKG_CONFIG ?= pkg-config
 OPTIM ?= 2
 FULL_WARNINGS ?= no
 WITH_SDL ?= yes
-WITH_GTK ?= no
+WITH_GTK ?= no					#disabled for now, no real code yet
 
-MAKEFLAGS +=-j$(NUM_CORES) -l$(NUM_CORES)
+makeflags +=-j$(NUM_CORES) -l$(NUM_CORES)
 
 cc-option = $(shell if $(CC) $(1) -c -x c /dev/null -o /dev/null > /dev/null 2>&1; \
 		  then echo $(1); fi)
@@ -38,7 +38,7 @@ DEBUG_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags readline)
 DEBUG_LIBS = $(shell "$(PKG_CONFIG)" --libs readline)
 
 ### Text UI
-NCURSES_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags ncursesw) -DNCURSES_WIDECHAR=1
+NCURSES_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags ncursesw) -DNCURSES_WIDECHAR=1 -DHAS_NCURSES=1
 NCURSES_LIBS = $(shell "$(PKG_CONFIG)" --libs ncursesw)
 
 ### SDL UI
@@ -63,25 +63,28 @@ LIBS = -lm \
 	$(SDL_LIBS) \
 	$(GTK_LIBS)
 
-HEADERS = src/debugger.h \
-	src/emulator_core.h \
-	src/emulator_for_debugger.h \
-	src/emulator_inner.h \
+HEADERS = src/serial.h \
+	src/emulate.h \
+	src/init.h \
+	src/memory.h \
+	src/registers.h \
+	src/timers.h \
+	src/debugger.h \
 	src/options.h \
 	src/romio.h \
 	src/ui4x/bitmaps_misc.h \
 	src/ui4x/common.h \
-	src/ui4x/ncurses.h \
 	src/ui4x/inner.h \
+	src/ui4x/ncurses.h \
 	$(SDL_HEADERS) \
 	$(GTK_HEADERS)
 
-SRC = src/emu_serial.c \
-	src/emu_emulate.c \
-	src/emu_init.c \
-	src/emu_memory.c \
-	src/emu_register.c \
-	src/emu_timer.c \
+SRC = src/serial.c \
+	src/emulate.c \
+	src/init.c \
+	src/memory.c \
+	src/registers.c \
+	src/timers.c \
 	src/debugger.c \
 	src/options.c \
 	src/romio.c \
@@ -140,17 +143,17 @@ override CFLAGS := -std=c11 \
 	-I./src/ \
 	$(CFLAGS)
 
-# depfiles = $(objects:.o=.d)
+depfiles = $(objects:.o=.d)
 
-# # Have the compiler output dependency files with make targets for each
-# # of the object files. The `MT` option specifies the dependency file
-# # itself as a target, so that it's regenerated when it should be.
-# %.dep.mk: %.c
-#	$(CC) -M -MP -MT '$(<:.c=.o) $@' $(CPPFLAGS) $< > $@
+# Have the compiler output dependency files with make targets for each
+# of the object files. The `MT` option specifies the dependency file
+# itself as a target, so that it's regenerated when it should be.
+%.dep.mk: %.c
+	$(CC) -M -MP -MT '$(<:.c=.o) $@' $(CPPFLAGS) $< > $@
 
-# # Include each of those dependency files; Make will run the rule above
-# # to generate each dependency file (if it needs to).
-# -include $(depfiles)
+# Include each of those dependency files; Make will run the rule above
+# to generate each dependency file (if it needs to).
+-include $(depfiles)
 
 .PHONY: all clean clean-all pretty-code mrproper install uninstall
 
@@ -173,6 +176,10 @@ mrproper: clean
 	make -C dist/ROMs mrproper
 
 clean-all: mrproper
+
+# for clangd
+compile_commands.json: mrproper
+	bear -- make dist/x48ng
 
 # Formatting
 pretty-code:

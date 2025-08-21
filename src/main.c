@@ -10,9 +10,10 @@
 #include <unistd.h>
 
 #include "debugger.h"
-#include "emulator_core.h"
 #include "options.h"
 #include "romio.h"
+#include "emulate.h"
+#include "timers.h"
 
 #include "emulator.h"
 #include "ui4x/common.h"

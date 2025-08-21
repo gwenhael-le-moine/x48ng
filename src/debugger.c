@@ -8,10 +8,11 @@
 #include <readline/readline.h>
 
 #include "options.h"
-#include "emulator_core.h"
-#include "emulator_for_debugger.h"
 #include "romio.h"
 #include "debugger.h"
+#include "timers.h"
+#include "emulate.h"
+#include "init.h"
 
 #include "ui4x/common.h"
 

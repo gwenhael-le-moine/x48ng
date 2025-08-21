@@ -3,12 +3,13 @@
 
 #include <sys/time.h>
 
+#include "emulate.h"
 #include "debugger.h" /* enter_debugger, TRAP_INSTRUCTION, ILLEGAL_INSTRUCTION */
-#include "emulator_core.h"
-#include "emulator_inner.h"
-#include "options.h" /* throttle */
-
-#include "debugger.h" /* in_debugger, enter_debugger */
+#include "options.h"  /* throttle */
+#include "timers.h"
+#include "serial.h"
+#include "registers.h"
+#include "memory.h"
 
 #include "ui4x/common.h"
 
@@ -22,6 +23,7 @@
 #define W_FIELD 7
 #define A_FIELD 15
 #define IN_FIELD 16
+#define OUT_FIELD 17
 #define OUTS_FIELD 18
 
 #define SrvcIoStart 0x3c0

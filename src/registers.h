@@ -1,55 +1,8 @@
-#ifndef _EMULATOR_INNER_H
-#define _EMULATOR_INNER_H 1
+#ifndef _REGISTERS_H
+#define _REGISTERS_H 1
 
-#include "emulator_core.h"
+#include "types.h"
 
-#define OUT_FIELD 17
-
-extern device_t device;
-
-extern int set_t1;
-
-extern long sched_adjtime;
-extern long schedule_event;
-
-extern bool device_check;
-extern bool port1_is_ram;
-extern long port1_mask;
-extern bool port2_is_ram;
-extern long port2_mask;
-
-extern bool adj_time_pending;
-
-#define NB_FIELDS 19
-extern int start_fields[ NB_FIELDS ];
-extern int end_fields[ NB_FIELDS ];
-
-/***************/
-/* emu_timer.c */
-/***************/
-extern void restart_timer( int timer );
-extern word_64 get_timer( int timer );
-
-/*****************/
-/* emu_emulate.c */
-/*****************/
-extern void do_interupt( void );
-extern void do_kbd_int( void );
-
-/********************/
-/* emu_memory.c */
-/********************/
-extern void ( *write_nibble )( long addr, int val );
-extern int ( *read_nibble_crc )( long addr );
-
-/****************/
-/* emu_memory.c */
-/****************/
-extern void dev_memory_init( void ); /*  */
-
-/******************/
-/* emu_register.c */
-/******************/
 extern int get_start( int code );
 extern int get_end( int code );
 extern void add_p_plus_one( unsigned char* r );
@@ -81,12 +34,4 @@ extern int is_less_or_equal_register( unsigned char* r1, unsigned char* r2, int 
 extern int is_greater_register( unsigned char* r1, unsigned char* r2, int code );
 extern int is_greater_or_equal_register( unsigned char* r1, unsigned char* r2, int code );
 
-/****************/
-/* emu_serial.c */
-/****************/
-extern void serial_baud( int baud );
-extern void transmit_char( void );
-extern void receive_char( void );
-extern int init_serial( void ); /* used in main.c */
-
-#endif /* _EMULATOR_INNER_H */
+#endif /* !_REGISTERS_H */

@@ -5,6 +5,10 @@
 
 #include "options.h"
 
+// LCD
+#define LCD_WIDTH 131
+#define LCD_HEIGHT 64
+
 // HP 48{G,S}X Keys
 typedef enum {
     HP48_KEY_A = 0,
@@ -127,10 +131,6 @@ typedef enum {
     ANN_IO = 0xa0,
     NB_ANNUNCIATORS = 6
 } annunciators_bits_t;
-
-// LCD
-#define LCD_WIDTH 131
-#define LCD_HEIGHT 64
 
 /*************************************************/
 /* public API: if it's there it's used elsewhere */

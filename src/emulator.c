@@ -4,9 +4,10 @@
 
 #include "romio.h"
 #include "options.h"
-#include "emulator_core.h"
-#include "emulator_inner.h"
 #include "emulator.h"
+#include "emulate.h"
+#include "memory.h"
+#include "init.h"
 
 #define KEYBOARD keyboard48
 

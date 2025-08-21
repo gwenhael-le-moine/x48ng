@@ -7,10 +7,12 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "emulator_core.h"
-#include "emulator_inner.h"
+#include "init.h"
 #include "romio.h"
 #include "options.h"
+#include "memory.h"
+#include "emulate.h"
+#include "serial.h"
 
 #define X48_MAGIC 0x48503438
 #define NB_CONFIG 8

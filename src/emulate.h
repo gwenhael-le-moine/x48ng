@@ -1,13 +1,9 @@
-#ifndef _EMULATOR_CORE_H
-#define _EMULATOR_CORE_H 1
+#ifndef _EMULATE_H
+#define _EMULATE_H 1
 
-#include <stdint.h> /* int64_t */
-#include <stdbool.h>
-
+#include "types.h"
 #include "emulator.h"
-
-#define T1_TIMER 0
-/* #define T2_TIMER 1 /\* unused? *\/ */
+#include "memory.h"
 
 #define DEC 10
 #define HEX 16
@@ -15,35 +11,6 @@
 #define NB_MCTL 6
 #define NB_RSTK 8
 #define NB_PSTAT 16
-
-#define RUN_TIMER 2
-#define IDLE_TIMER 3
-
-/* LCD refresh rate is 64Hz according to https://www.hpcalc.org/hp48/docs/faq/48faq-6.html */
-#define UI_REFRESH_RATE_Hz 64
-#define USEC_PER_FRAME ( 1000000 / UI_REFRESH_RATE_Hz )
-
-#define NIBBLES_PER_ROW 34
-#define NIBBLES_NB_BITS 4
-
-#define DISP_ROWS 64
-#define NIBS_PER_BUFFER_ROW ( NIBBLES_PER_ROW + 2 )
-
-#define KEYS_BUFFER_SIZE 9
-
-typedef unsigned char word_1;
-typedef unsigned char word_4;
-typedef unsigned char word_8;
-typedef unsigned short word_12;
-typedef unsigned short word_16;
-typedef long word_20;
-typedef long word_32;
-typedef int64_t word_64;
-
-typedef struct t1_t2_ticks {
-    unsigned long t1_ticks;
-    unsigned long t2_ticks;
-} t1_t2_ticks;
 
 typedef struct device_t {
     bool baud_touched;
@@ -56,22 +23,6 @@ typedef struct device_t {
     bool t1_touched;
     bool t2_touched;
 } device_t;
-
-typedef struct display_t {
-    int on;
-
-    long disp_start;
-    long disp_end;
-
-    int offset;
-    int lines;
-    int nibs_per_line;
-
-    int contrast;
-
-    long menu_start;
-    long menu_end;
-} display_t;
 
 typedef struct mem_cntl_t {
     unsigned short unconfigured;
@@ -183,9 +134,13 @@ typedef struct saturn_t {
     unsigned char* port2;
 } saturn_t;
 
-/*****************/
-/* emu_emulate.c */
-/*****************/
+extern device_t device;
+extern int set_t1;
+extern long schedule_event;
+extern long sched_adjtime;
+extern bool adj_time_pending;
+extern bool device_check;
+
 extern saturn_t saturn;
 extern bool sigalarm_triggered;
 extern long sched_timer1;
@@ -193,35 +148,11 @@ extern long sched_timer2;
 extern unsigned long t1_i_per_tick;
 extern unsigned long t2_i_per_tick;
 
-/***************/
-/* emu_timer.c */
-/***************/
-extern void reset_timer( int timer );
+extern void do_interupt( void );
+extern void do_kbd_int( void );
 
-/**************/
-/* emu_init.c */
-/**************/
-// extern hpkey_t keyboard[ NB_KEYS ];
-extern int annunciators_bits[ NB_ANNUNCIATORS ];
-// extern bool please_exit;
-extern bool save_before_exit;
+extern void load_addr( word_20* dat, long addr, int n ); /* used in debugger.c */
+extern void step_instruction( void );                    /* used in debugger.c */
+extern void schedule( void );                            /* used in debugger.c */
 
-extern void start_emulator( void ); /* used in main.c */
-extern void stop_emulator( void );  /* used in debugger.c; ui_*.c */
-
-/********************/
-/* emu_memory.c */
-/********************/
-extern int lcd_pixels_buffer[ LCD_WIDTH * LCD_HEIGHT ];
-extern display_t display;
-
-extern int ( *read_nibble )( long addr ); /* used in debugger.c; ui_*.c */
-
-/******************/
-/* emu_keyboard.c */
-/******************/
-extern void press_key( int hpkey );   /* used in ui_*.c */
-extern void release_key( int hpkey ); /* used in ui_*.c */
-extern void release_all_keys( void ); /* used in ui_*.c */
-
-#endif /* !_EMULATOR_CORE_H */
+#endif /* !_EMULATE_H */

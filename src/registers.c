@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "emulator_core.h"
-#include "emulator_inner.h"
+#include "registers.h"
+#include "emulate.h"
 
 extern long nibble_masks[ 16 ];
 
-int start_fields[ NB_FIELDS ] = { -1, 0, 2, 0, 15, 3, 0, 0, -1, 0, 2, 0, 15, 3, 0, 0, 0, 0, 0 };
+#define NB_FIELDS 19
+static int start_fields[ NB_FIELDS ] = { -1, 0, 2, 0, 15, 3, 0, 0, -1, 0, 2, 0, 15, 3, 0, 0, 0, 0, 0 };
 
-int end_fields[ NB_FIELDS ] = { -1, -1, 2, 2, 15, 14, 1, 15, -1, -1, 2, 2, 15, 14, 1, 4, 3, 2, 0 };
+static int end_fields[ NB_FIELDS ] = { -1, -1, 2, 2, 15, 14, 1, 15, -1, -1, 2, 2, 15, 14, 1, 4, 3, 2, 0 };
 
 int get_start( int code )
 {
