@@ -1,18 +1,19 @@
-#include <stdio.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
 #include <readline/history.h>
 #include <readline/readline.h>
 
-#include "options.h"
-#include "romio.h"
 #include "debugger.h"
-#include "timers.h"
 #include "emulate.h"
 #include "init.h"
+#include "options.h"
+#include "romio.h"
+#include "timers.h"
 
 #include "ui4x/common.h"
 

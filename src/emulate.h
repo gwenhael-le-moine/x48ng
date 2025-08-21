@@ -1,9 +1,9 @@
 #ifndef _EMULATE_H
 #define _EMULATE_H 1
 
-#include "types.h"
 #include "emulator.h"
 #include "memory.h"
+#include "types.h"
 
 #define DEC 10
 #define HEX 16

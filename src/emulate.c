@@ -3,13 +3,13 @@
 
 #include <sys/time.h>
 
-#include "emulate.h"
 #include "debugger.h" /* enter_debugger, TRAP_INSTRUCTION, ILLEGAL_INSTRUCTION */
-#include "options.h"  /* throttle */
-#include "timers.h"
-#include "serial.h"
-#include "registers.h"
+#include "emulate.h"
 #include "memory.h"
+#include "options.h" /* throttle */
+#include "registers.h"
+#include "serial.h"
+#include "timers.h"
 
 #include "ui4x/common.h"
 

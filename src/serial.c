@@ -3,13 +3,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/time.h>
 #include <termios.h>
 #include <unistd.h>
 
-#include "serial.h"
+#include <sys/time.h>
+
 #include "emulate.h"
 #include "options.h" /* config.verbose, config.useTerminal, config.useSerial */
+#include "serial.h"
 
 static int wire_fd;
 static int ir_fd;

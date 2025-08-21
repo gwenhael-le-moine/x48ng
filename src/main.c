@@ -6,13 +6,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/time.h>
 #include <unistd.h>
 
+#include <sys/time.h>
+
 #include "debugger.h"
+#include "emulate.h"
 #include "options.h"
 #include "romio.h"
-#include "emulate.h"
 #include "timers.h"
 
 #include "emulator.h"

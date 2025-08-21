@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "romio.h"
-#include "options.h"
-#include "emulator.h"
 #include "emulate.h"
-#include "memory.h"
+#include "emulator.h"
 #include "init.h"
+#include "memory.h"
+#include "options.h"
+#include "romio.h"
 
 #define KEYBOARD keyboard48
 

@@ -3,15 +3,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <unistd.h>
 
-#include "init.h"
-#include "romio.h"
-#include "options.h"
-#include "memory.h"
+#include <sys/stat.h>
+#include <sys/types.h>
+
 #include "emulate.h"
+#include "init.h"
+#include "memory.h"
+#include "options.h"
+#include "romio.h"
 #include "serial.h"
 
 #define X48_MAGIC 0x48503438

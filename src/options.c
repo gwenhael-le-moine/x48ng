@@ -1,17 +1,17 @@
+#include <assert.h>
 #include <errno.h>
+#include <getopt.h>
 #include <pwd.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
 #include <unistd.h>
-#include <stdbool.h>
-#include <assert.h>
 
-#include <getopt.h>
+#include <sys/stat.h>
 
-#include <lua.h>
 #include <lauxlib.h>
+#include <lua.h>
 
 #include "options.h"
 

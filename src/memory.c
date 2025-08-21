@@ -1,15 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/time.h>
 #include <unistd.h>
 
-#include "memory.h"
-#include "romio.h"
-#include "options.h"
-#include "types.h"
+#include <sys/time.h>
+
 #include "emulate.h"
 #include "init.h"
+#include "memory.h"
+#include "options.h"
+#include "romio.h"
+#include "types.h"
 
 #define MCTL_MMIO_SX 0
 #define MCTL_SysRAM_SX 1

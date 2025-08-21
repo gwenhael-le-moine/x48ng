@@ -1,4 +1,4 @@
-﻿---
+---
 Language: Cpp
 ColumnLimit: 140
 IndentWidth: 4
@@ -22,7 +22,7 @@ PointerAlignment: Left
 ReferenceAlignment: Left
 QualifierAlignment: Left
 
-SortIncludes: false
+SortIncludes: true
 
 SpaceBeforeAssignmentOperators: true
 SpaceBeforeParens: ControlStatements

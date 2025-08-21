@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "registers.h"
 #include "emulate.h"
+#include "registers.h"
 
 extern long nibble_masks[ 16 ];
 
