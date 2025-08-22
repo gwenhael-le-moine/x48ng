@@ -156,13 +156,11 @@ static SDL_Texture* bitmap_to_texture( unsigned int w, unsigned int h, unsigned 
     return tex;
 }
 
-static void __draw_pixel_alpha( int x, int y, int color, int alpha )
+static void __draw_pixel( int x, int y, int color )
 {
-    SDL_SetRenderDrawColor( renderer, colors[ color ].r, colors[ color ].g, colors[ color ].b, alpha );
+    SDL_SetRenderDrawColor( renderer, colors[ color ].r, colors[ color ].g, colors[ color ].b, colors[ color ].a );
     SDL_RenderPoint( renderer, x, y );
 }
-
-static void __draw_pixel( int x, int y, int color ) { __draw_pixel_alpha( x, y, color, colors[ color ].a ); }
 
 static void __draw_line( int x1, int y1, int x2, int y2, int color )
 {
@@ -982,7 +980,15 @@ static void sdl_update_annunciators( void )
     SDL_RenderPresent( renderer );
 }
 
-static void apply_contrast( void )
+static int apply_contrast( int value, int contrast )
+{
+    int max = 19;
+    int min = 3;
+
+    return ( value / ( max - min ) ) * ( max - contrast );
+}
+
+static void setup_colors( void )
 {
     int contrast = get_contrast();
 
@@ -995,35 +1001,35 @@ static void apply_contrast( void )
         contrast = 19;
 
     last_contrast = contrast;
-    int tmp_contrast = contrast;
 
     for ( unsigned i = 0; i < NB_COLORS; i++ ) {
         colors[ i ] = COLORS[ i ];
+
         if ( __config.mono ) {
             colors[ i ].r = colors[ i ].mono_rgb;
             colors[ i ].g = colors[ i ].mono_rgb;
             colors[ i ].b = colors[ i ].mono_rgb;
-        } else if ( __config.gray ) {
-            colors[ i ].r = colors[ i ].gray_rgb;
-            colors[ i ].g = colors[ i ].gray_rgb;
-            colors[ i ].b = colors[ i ].gray_rgb;
         } else {
-            colors[ i ].r = ( colors[ i ].rgb >> 16 ) & 0xff;
-            colors[ i ].g = ( colors[ i ].rgb >> 8 ) & 0xff;
-            colors[ i ].b = colors[ i ].rgb & 0xff;
+            if ( __config.gray ) {
+                colors[ i ].r = colors[ i ].gray_rgb;
+                colors[ i ].g = colors[ i ].gray_rgb;
+                colors[ i ].b = colors[ i ].gray_rgb;
+            } else {
+                if ( i == COLOR_PIXEL_ON || i == COLOR_PIXEL_GREY_2 || i == COLOR_PIXEL_GREY_1 ) {
+                    // COLOR_PIXEL_ON, COLOR_PIXEL_GREY_2 and COLOR_PIXEL_GREY_1 are
+                    // computed based on COLOR_PIXEL_OFF and contrast
+                    colors[ i ].r = apply_contrast( colors[ COLOR_PIXEL_OFF ].r, contrast );
+                    colors[ i ].g = apply_contrast( colors[ COLOR_PIXEL_OFF ].g, contrast );
 
-            if ( i == COLOR_PIXEL_ON || i == COLOR_PIXEL_GREY_2 || i == COLOR_PIXEL_GREY_1 ) {
-                tmp_contrast = contrast;
-                if ( i == COLOR_PIXEL_GREY_2 )
-                    tmp_contrast = ( contrast - 3 ) / 2;
-                if ( i == COLOR_PIXEL_GREY_1 )
-                    tmp_contrast = 3;
-                colors[ i ].r = ( 19 - tmp_contrast ) * ( colors[ i ].r / 16 );
-                colors[ i ].g = ( 19 - tmp_contrast ) * ( colors[ i ].g / 16 );
-                if ( __config.black_lcd )
-                    colors[ i ].b = ( 19 - tmp_contrast ) * ( colors[ i ].b / 16 );
-                else
-                    colors[ i ].b = 128 - ( ( 19 - tmp_contrast ) * ( ( 128 - colors[ i ].b ) / 16 ) );
+                    if ( __config.black_lcd )
+                        colors[ i ].b = apply_contrast( colors[ COLOR_PIXEL_OFF ].b, contrast );
+                    else
+                        colors[ i ].b = 128 - ( ( 19 - contrast ) * ( ( 128 - colors[ COLOR_PIXEL_OFF ].b ) / 16 ) );
+                } else {
+                    colors[ i ].r = ( colors[ i ].rgb >> 16 ) & 0xff;
+                    colors[ i ].g = ( colors[ i ].rgb >> 8 ) & 0xff;
+                    colors[ i ].b = colors[ i ].rgb & 0xff;
+                }
             }
         }
     }
@@ -1083,7 +1089,7 @@ void ui_get_event_sdl( void )
 
 void ui_update_display_sdl( void )
 {
-    apply_contrast();
+    setup_colors();
 
     get_display_buffer();
 
@@ -1173,7 +1179,7 @@ void ui_start_sdl( config_t* conf )
 
     SDL_SetRenderTarget( renderer, main_texture );
 
-    apply_contrast();
+    setup_colors();
 
     if ( !__config.chromeless ) {
         int cut = BUTTONS[ HP48_KEY_MTH ].y + OFFSET_Y_KEYBOARD - 19;
