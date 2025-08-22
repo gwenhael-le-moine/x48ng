@@ -291,7 +291,7 @@ config_t* config_init( int argc, char* argv[] )
                             "  -v --version            show version\n"
                             "     --print-config       print configuration as config file\n"
                             "  -c --config=<path>      use <path> as x48ng's config file (default: "
-                            "$XDG_CONFIG_HOME/x48ng/__config.lua)\n"
+                            "$XDG_CONFIG_HOME/x48ng/config.lua)\n"
                             "     --config-dir=<path>  use <path> as x48ng's home (default: "
                             "$XDG_CONFIG_HOME/x48ng/)\n"
                             "     --rom=<filename>     use <filename> (absolute or relative to "
@@ -429,7 +429,7 @@ config_t* config_init( int argc, char* argv[] )
         fprintf( stderr, "Configuration directory doesn't exist!\n" );
 
     /**********************/
-    /* 1. read __config.lua */
+    /* 1. read config.lua */
     /**********************/
     normalize_filename( config_file, normalized_config_file );
     if ( !config_read( normalized_config_file ) ) {
