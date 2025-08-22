@@ -50,6 +50,9 @@ static bool keyboard_state[ NB_HP49_KEYS ];
 
 static config_t __config;
 
+static WINDOW* lcd_window;
+static WINDOW* help_window;
+
 /****************************/
 /* functions implementation */
 /****************************/
@@ -110,7 +113,7 @@ static inline void ncurses_draw_lcd_tiny( void )
             wchar_t pixels = eight_bits_to_braille_char( b1, b2, b3, b4, b5, b6, b7, b8 );
             wcsncat( line, &pixels, 1 );
         }
-        mvaddwstr( LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
+        mvwaddwstr( lcd_window, LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
     }
 
     if ( !__config.mono && has_colors() )
@@ -171,7 +174,7 @@ static inline void ncurses_draw_lcd_small( void )
             wchar_t pixels = four_bits_to_quadrant_char( top_left, top_right, bottom_left, bottom_right );
             wcsncat( line, &pixels, 1 );
         }
-        mvaddwstr( LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
+        mvwaddwstr( lcd_window, LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
     }
 
     if ( !__config.mono && has_colors() )
@@ -198,7 +201,7 @@ static inline void ncurses_draw_lcd_fullsize( void )
             wchar_t pixel = bit ? L'█' : L' ';
             wcsncat( line, &pixel, 1 );
         }
-        mvaddwstr( LCD_OFFSET_Y + y, LCD_OFFSET_X, line );
+        mvwaddwstr( lcd_window, LCD_OFFSET_Y + y, LCD_OFFSET_X, line );
     }
 
     if ( !__config.mono && has_colors() )
@@ -215,6 +218,8 @@ static inline void ncurses_draw_lcd( void )
         ncurses_draw_lcd_small();
     else
         ncurses_draw_lcd_fullsize();
+
+    wrefresh( lcd_window );
 }
 
 static void ui_init_LCD( void ) { memset( lcd_pixels_buffer, 0, sizeof( lcd_pixels_buffer ) ); }
@@ -232,8 +237,35 @@ static void ncurses_update_annunciators( void )
     last_annunciators = annunciators;
 
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
-        mvaddwstr( 0, 4 + ( i * 4 ),
-                   ( ( annunciators_bits[ i ] & annunciators ) == annunciators_bits[ i ] ) ? annunciators_icons[ i ] : L" " );
+        mvwaddwstr( lcd_window, 0, 4 + ( i * 4 ),
+                    ( ( annunciators_bits[ i ] & annunciators ) == annunciators_bits[ i ] ) ? annunciators_icons[ i ] : L" " );
+}
+
+static void toggle_help_window( void )
+{
+    if ( help_window == NULL ) {
+        help_window = newwin( 7, LCD_RIGHT + 1, LCD_BOTTOM + 1, 0 );
+        refresh();
+
+        wborder( help_window, 0, 0, 0, 0, 0, 0, 0, 0 );
+
+        mvwprintw( help_window, 0, 2, "[ Help ]" );
+        mvwprintw( help_window, 1, 1, "Special keys:" );
+        mvwprintw( help_window, 2, 2, "F1: Help, F7: Quit" );
+
+        mvwprintw( help_window, 3, 1, "Calculator keys:" );
+        mvwprintw( help_window, 4, 2, "all alpha-numerical keys " );
+        mvwprintw( help_window, 5, 2, "F2: Left-Shift, F3: Right-Shift, F4: Alpha, F5: On, F6: Enter" );
+
+        wrefresh( help_window );
+    } else {
+        wclear( help_window );
+        wrefresh( help_window );
+        // delwin( help_window );
+        refresh();
+
+        help_window = NULL;
+    }
 }
 
 /**********/
@@ -436,18 +468,14 @@ void ui_get_event_ncurses( void )
                     true;
                 break;
 
-            case KEY_F( 1 ):
-            case KEY_ENTER:
-            case '\n':
-            case ',':
-            case 13:
-                new_keyboard_state[ ( ( __config.model == MODEL_49G || __config.model == MODEL_50G ) ? HP49_KEY_ENTER : HP48_KEY_ENTER ) ] =
-                    true;
-                break;
             case KEY_BACKSPACE:
             case 127:
             case '\b':
                 new_keyboard_state[ ( ( __config.model == MODEL_49G || __config.model == MODEL_50G ) ? HP49_KEY_BS : HP48_KEY_BS ) ] = true;
+                break;
+
+            case KEY_F( 1 ):
+                toggle_help_window();
                 break;
             case KEY_F( 2 ):
             case '[':
@@ -472,6 +500,14 @@ void ui_get_event_ncurses( void )
             case 27:  /* Esc */
             case 262: /* Home */
                 new_keyboard_state[ ( ( __config.model == MODEL_49G || __config.model == MODEL_50G ) ? HP49_KEY_ON : HP48_KEY_ON ) ] = true;
+                break;
+            case KEY_F( 6 ):
+            case KEY_ENTER:
+            case '\n':
+            case ',':
+            case 13:
+                new_keyboard_state[ ( ( __config.model == MODEL_49G || __config.model == MODEL_50G ) ? HP49_KEY_ENTER : HP48_KEY_ENTER ) ] =
+                    true;
                 break;
 
             case KEY_F( 7 ):
@@ -540,21 +576,18 @@ void ui_start_ncurses( config_t* conf )
         init_pair( LCD_COLORS_PAIR, LCD_COLOR_FG, LCD_COLOR_BG );
     }
 
-    mvaddch( 0, 0, ACS_ULCORNER );
-    mvaddch( LCD_BOTTOM, 0, ACS_LLCORNER );
-    mvaddch( 0, LCD_RIGHT, ACS_URCORNER );
-    mvaddch( LCD_BOTTOM, LCD_RIGHT, ACS_LRCORNER );
-    mvhline( 0, 1, ACS_HLINE, LCD_RIGHT - 1 );
-    mvhline( LCD_BOTTOM, 1, ACS_HLINE, LCD_RIGHT - 1 );
-    mvvline( 1, 0, ACS_VLINE, LCD_BOTTOM - 1 );
-    mvvline( 1, LCD_RIGHT, ACS_VLINE, LCD_BOTTOM - 1 );
+    lcd_window = newwin( LCD_BOTTOM + 1, LCD_RIGHT + 1, 0, 0 );
+    refresh();
 
-    mvprintw( 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
-    mvprintw( 0, LCD_RIGHT - 18, "< %s v%i.%i.%i >", __config.progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
+    wborder( lcd_window, 0, 0, 0, 0, 0, 0, 0, 0 );
 
-    mvprintw( LCD_BOTTOM, 2, "[ wire: %s ]-[ IR: %s ]-[ contrast: %i ]", __config.wire_name, __config.ir_name, get_contrast() );
+    mvwprintw( lcd_window, 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
+    mvwprintw( lcd_window, 0, LCD_RIGHT - 18, "< %s v%i.%i.%i >", __config.progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
 
-    mvprintw( LCD_BOTTOM + 1, 0, "F1: Enter, F2: Left-Shift, F3: Right-Shift, F4: Alpha, F5: On, F7: Quit" );
+    mvwprintw( lcd_window, LCD_BOTTOM, 2, "[ wire: %s ]-[ IR: %s ]-[ contrast: %i ]", __config.wire_name, __config.ir_name,
+               get_contrast() );
+
+    toggle_help_window();
 }
 
 void setup_frontend_ncurses( void )
