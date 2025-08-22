@@ -169,7 +169,7 @@ $(TARGETS):
 
 # Cleaning
 clean:
-	rm -f src/*.o src/legacy_tools/*.o src/*.dep.mk src/legacy_tools/*.dep.mk
+	rm -f $(OBJS) src/legacy_tools/*.o src/*.dep.mk src/legacy_tools/*.dep.mk
 
 mrproper: clean
 	rm -f $(TARGETS)
@@ -183,7 +183,7 @@ compile_commands.json: mrproper
 
 # Formatting
 pretty-code:
-	clang-format -i src/*.c src/*.h src/legacy_tools/*.c
+	clang-format -i src/*.c src/*.h src/legacy_tools/*.c src/ui4x/*.c src/ui4x/*.h
 
 # Installing
 get-roms:

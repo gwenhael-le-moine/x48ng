@@ -1,5 +1,5 @@
-#include "../options.h"
 #include "../emulator.h"
+#include "../options.h"
 #include "common.h"
 #include "inner.h"
 

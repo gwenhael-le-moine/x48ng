@@ -1,5 +1,6 @@
 #include <ctype.h>
 #include <fcntl.h>
+#include <locale.h>
 #include <pwd.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -9,13 +10,12 @@
 #include <sys/types.h>
 #include <sys/utsname.h>
 #include <unistd.h>
-#include <locale.h>
 #include <wchar.h>
 
 #include <curses.h>
 
-#include "../options.h"
 #include "../emulator.h"
+#include "../options.h"
 #include "common.h"
 #include "inner.h"
 
@@ -33,17 +33,17 @@
 #define LCD_BOTTOM LCD_OFFSET_Y + ( __config.small ? ( LCD_HEIGHT / 2 ) : __config.tiny ? ( LCD_HEIGHT / 4 ) : LCD_HEIGHT )
 #define LCD_RIGHT LCD_OFFSET_X + ( ( __config.small || __config.tiny ) ? ( LCD_WIDTH / 2 ) + 1 : LCD_WIDTH )
 
-#define LCD_COLOR_BG 48
-#define LCD_COLOR_FG 49
+typedef enum { LCD_COLOR_BG = 30, LCD_COLOR_FG_1, LCD_COLOR_FG_2, LCD_COLOR_FG_3 } nc_color_t;
 
-#define LCD_PIXEL_ON 1
-#define LCD_PIXEL_OFF 2
-#define LCD_COLORS_PAIR 3
+typedef enum { LCD_PIXEL_OFF = 60, LCD_PIXEL_ON_1, LCD_PIXEL_ON_2, LCD_PIXEL_ON_3 } nc_color_pair_t;
 
 /*************/
 /* variables */
 /*************/
-static int lcd_pixels_buffer[ LCD_WIDTH * 80 ];
+static int display_buffer_current[ LCD_WIDTH * 80 ];
+static int display_buffer_past_one[ LCD_WIDTH * 80 ];
+static int display_buffer_past_two[ LCD_WIDTH * 80 ];
+static int display_buffer_grayscale[ LCD_WIDTH * 80 ];
 static int last_annunciators = -1;
 
 static bool keyboard_state[ NB_HP49_KEYS ];
@@ -95,20 +95,20 @@ static inline void ncurses_draw_lcd_tiny( void )
     wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
 
     if ( !__config.mono && has_colors() )
-        attron( COLOR_PAIR( LCD_COLORS_PAIR ) );
+        attron( COLOR_PAIR( LCD_PIXEL_ON_3 ) );
 
     for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
         wcscpy( line, L"" );
 
         for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
-            b1 = lcd_pixels_buffer[ ( y * LCD_WIDTH ) + x ];
-            b4 = lcd_pixels_buffer[ ( y * LCD_WIDTH ) + x + 1 ];
-            b2 = lcd_pixels_buffer[ ( ( y + 1 ) * LCD_WIDTH ) + x ];
-            b5 = lcd_pixels_buffer[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ];
-            b3 = lcd_pixels_buffer[ ( ( y + 2 ) * LCD_WIDTH ) + x ];
-            b6 = lcd_pixels_buffer[ ( ( y + 2 ) * LCD_WIDTH ) + x + 1 ];
-            b7 = lcd_pixels_buffer[ ( ( y + 3 ) * LCD_WIDTH ) + x ];
-            b8 = lcd_pixels_buffer[ ( ( y + 3 ) * LCD_WIDTH ) + x + 1 ];
+            b1 = display_buffer_current[ ( y * LCD_WIDTH ) + x ];
+            b4 = display_buffer_current[ ( y * LCD_WIDTH ) + x + 1 ];
+            b2 = display_buffer_current[ ( ( y + 1 ) * LCD_WIDTH ) + x ];
+            b5 = display_buffer_current[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ];
+            b3 = display_buffer_current[ ( ( y + 2 ) * LCD_WIDTH ) + x ];
+            b6 = display_buffer_current[ ( ( y + 2 ) * LCD_WIDTH ) + x + 1 ];
+            b7 = display_buffer_current[ ( ( y + 3 ) * LCD_WIDTH ) + x ];
+            b8 = display_buffer_current[ ( ( y + 3 ) * LCD_WIDTH ) + x + 1 ];
 
             wchar_t pixels = eight_bits_to_braille_char( b1, b2, b3, b4, b5, b6, b7, b8 );
             wcsncat( line, &pixels, 1 );
@@ -117,7 +117,7 @@ static inline void ncurses_draw_lcd_tiny( void )
     }
 
     if ( !__config.mono && has_colors() )
-        attroff( COLOR_PAIR( LCD_COLORS_PAIR ) );
+        attroff( COLOR_PAIR( LCD_PIXEL_ON_3 ) );
 
     wrefresh( stdscr );
 }
@@ -160,16 +160,16 @@ static inline void ncurses_draw_lcd_small( void )
     wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
 
     if ( !__config.mono && has_colors() )
-        attron( COLOR_PAIR( LCD_COLORS_PAIR ) );
+        attron( COLOR_PAIR( LCD_PIXEL_ON_3 ) );
 
     for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
         wcscpy( line, L"" );
 
         for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
-            top_left = lcd_pixels_buffer[ ( y * LCD_WIDTH ) + x ];
-            top_right = lcd_pixels_buffer[ ( y * LCD_WIDTH ) + x + 1 ];
-            bottom_left = lcd_pixels_buffer[ ( ( y + 1 ) * LCD_WIDTH ) + x ];
-            bottom_right = lcd_pixels_buffer[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ];
+            top_left = display_buffer_current[ ( y * LCD_WIDTH ) + x ];
+            top_right = display_buffer_current[ ( y * LCD_WIDTH ) + x + 1 ];
+            bottom_left = display_buffer_current[ ( ( y + 1 ) * LCD_WIDTH ) + x ];
+            bottom_right = display_buffer_current[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ];
 
             wchar_t pixels = four_bits_to_quadrant_char( top_left, top_right, bottom_left, bottom_right );
             wcsncat( line, &pixels, 1 );
@@ -178,34 +178,48 @@ static inline void ncurses_draw_lcd_small( void )
     }
 
     if ( !__config.mono && has_colors() )
-        attroff( COLOR_PAIR( LCD_COLORS_PAIR ) );
+        attroff( COLOR_PAIR( LCD_PIXEL_ON_3 ) );
 
     wrefresh( stdscr );
 }
 
 static inline void ncurses_draw_lcd_fullsize( void )
 {
-    bool bit;
+    int val;
+    int color = LCD_PIXEL_ON_3;
+    wchar_t pixel;
 
     wchar_t line[ LCD_WIDTH ];
 
     if ( !__config.mono && has_colors() )
-        attron( COLOR_PAIR( LCD_COLORS_PAIR ) );
+        attron( COLOR_PAIR( color ) );
 
     for ( int y = 0; y < LCD_HEIGHT; ++y ) {
         wcscpy( line, L"" );
-
         for ( int x = 0; x < LCD_WIDTH; ++x ) {
-            bit = lcd_pixels_buffer[ ( y * LCD_WIDTH ) + x ];
+            val = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ];
 
-            wchar_t pixel = bit ? L'█' : L' ';
+            switch ( val ) {
+                case 0:
+                    pixel = L' ';
+                    break;
+                case 1:
+                    pixel = L'░';
+                    break;
+                case 2:
+                    pixel = L'▒';
+                    break;
+                case 3:
+                    pixel = L'█';
+                    break;
+            }
             wcsncat( line, &pixel, 1 );
         }
         mvwaddwstr( lcd_window, LCD_OFFSET_Y + y, LCD_OFFSET_X, line );
     }
 
     if ( !__config.mono && has_colors() )
-        attroff( COLOR_PAIR( LCD_COLORS_PAIR ) );
+        attroff( COLOR_PAIR( color ) );
 
     wrefresh( stdscr );
 }
@@ -222,7 +236,27 @@ static inline void ncurses_draw_lcd( void )
     wrefresh( lcd_window );
 }
 
-static void ui_init_LCD( void ) { memset( lcd_pixels_buffer, 0, sizeof( lcd_pixels_buffer ) ); }
+static void ui_init_LCD( void )
+{
+    memset( display_buffer_grayscale, 0, sizeof( display_buffer_grayscale ) );
+    memset( display_buffer_past_two, 0, sizeof( display_buffer_past_two ) );
+    memset( display_buffer_past_one, 0, sizeof( display_buffer_past_one ) );
+    memset( display_buffer_current, 0, sizeof( display_buffer_current ) );
+}
+
+static void get_display_buffer( void )
+{
+
+    if ( get_display_state() ) {
+        memcpy( &display_buffer_past_two, &display_buffer_past_one, LCD_WIDTH * 80 * sizeof( int ) );
+        memcpy( &display_buffer_past_one, &display_buffer_current, LCD_WIDTH * 80 * sizeof( int ) );
+        get_lcd_buffer( display_buffer_current );
+
+        for ( int i = 0; i < LCD_WIDTH * 80; ++i )
+            display_buffer_grayscale[ i ] = display_buffer_past_two[ i ] + display_buffer_past_one[ i ] + display_buffer_current[ i ];
+    } else
+        ui_init_LCD();
+}
 
 static void ncurses_update_annunciators( void )
 {
@@ -275,10 +309,7 @@ void ui_update_display_ncurses( void )
 {
     // apply_contrast();
 
-    if ( get_display_state() )
-        get_lcd_buffer( lcd_pixels_buffer );
-    else
-        ui_init_LCD();
+    get_display_buffer();
 
     ncurses_update_annunciators();
     ncurses_draw_lcd();
@@ -562,18 +593,28 @@ void ui_start_ncurses( config_t* conf )
         if ( __config.gray ) {
             init_color( LCD_COLOR_BG, COLORS[ UI4X_COLOR_PIXEL_OFF ].gray_rgb, COLORS[ UI4X_COLOR_PIXEL_OFF ].gray_rgb,
                         COLORS[ UI4X_COLOR_PIXEL_OFF ].gray_rgb );
-            init_color( LCD_COLOR_FG, COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb, COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb,
+            init_color( LCD_COLOR_FG_1, COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb * 0.33, COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb * 0.33,
+                        COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb * 0.33 );
+            init_color( LCD_COLOR_FG_2, COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb * 0.66, COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb * 0.66,
+                        COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb * 0.66 );
+            init_color( LCD_COLOR_FG_3, COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb, COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb,
                         COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb );
         } else {
             init_color( LCD_COLOR_BG, ( COLORS[ UI4X_COLOR_PIXEL_OFF ].rgb >> 16 ) & 0xff,
                         ( COLORS[ UI4X_COLOR_PIXEL_OFF ].rgb >> 8 ) & 0xff, COLORS[ UI4X_COLOR_PIXEL_OFF ].rgb & 0xff );
-            init_color( LCD_COLOR_BG, ( COLORS[ UI4X_COLOR_PIXEL_ON ].rgb >> 16 ) & 0xff, ( COLORS[ UI4X_COLOR_PIXEL_ON ].rgb >> 8 ) & 0xff,
-                        COLORS[ UI4X_COLOR_PIXEL_ON ].rgb & 0xff );
+            init_color( LCD_COLOR_FG_1, ( ( COLORS[ UI4X_COLOR_PIXEL_ON ].rgb / 3 ) >> 16 ) & 0xff,
+                        ( ( COLORS[ UI4X_COLOR_PIXEL_ON ].rgb / 3 ) >> 8 ) & 0xff, ( COLORS[ UI4X_COLOR_PIXEL_ON ].rgb / 3 ) & 0xff );
+            init_color( LCD_COLOR_FG_2, ( ( ( COLORS[ UI4X_COLOR_PIXEL_ON ].rgb / 3 ) * 2 ) >> 16 ) & 0xff,
+                        ( ( ( COLORS[ UI4X_COLOR_PIXEL_ON ].rgb / 3 ) * 2 ) >> 8 ) & 0xff,
+                        ( ( COLORS[ UI4X_COLOR_PIXEL_ON ].rgb / 3 ) * 2 ) & 0xff );
+            init_color( LCD_COLOR_FG_3, ( COLORS[ UI4X_COLOR_PIXEL_ON ].rgb >> 16 ) & 0xff,
+                        ( COLORS[ UI4X_COLOR_PIXEL_ON ].rgb >> 8 ) & 0xff, COLORS[ UI4X_COLOR_PIXEL_ON ].rgb & 0xff );
         }
 
         init_pair( LCD_PIXEL_OFF, LCD_COLOR_BG, LCD_COLOR_BG );
-        init_pair( LCD_PIXEL_ON, LCD_COLOR_FG, LCD_COLOR_FG );
-        init_pair( LCD_COLORS_PAIR, LCD_COLOR_FG, LCD_COLOR_BG );
+        init_pair( LCD_PIXEL_ON_1, LCD_COLOR_FG_1, LCD_COLOR_BG );
+        init_pair( LCD_PIXEL_ON_2, LCD_COLOR_FG_2, LCD_COLOR_BG );
+        init_pair( LCD_PIXEL_ON_3, LCD_COLOR_FG_3, LCD_COLOR_BG );
     }
 
     lcd_window = newwin( LCD_BOTTOM + 1, LCD_RIGHT + 1, 0, 0 );

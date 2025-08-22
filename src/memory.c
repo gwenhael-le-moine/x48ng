@@ -60,13 +60,13 @@ void disp_draw_nibble( word_20 addr, word_4 val )
         init_x = x * NIBBLES_NB_BITS;
         bit_stop = ( ( init_x + NIBBLES_NB_BITS >= LCD_WIDTH ) ? LCD_WIDTH - init_x : NIBBLES_NB_BITS );
         for ( int bit_x = 0; bit_x < bit_stop; bit_x++ )
-            lcd_pixels_buffer[ ( y * LCD_WIDTH ) + init_x + bit_x ] = ( val & ( 1 << ( bit_x & 3 ) ) );
+            lcd_pixels_buffer[ ( y * LCD_WIDTH ) + init_x + bit_x ] = ( val & ( 1 << ( bit_x & 3 ) ) ) > 0 ? 1 : 0;
     } else {
         for ( y = 0; y < display.lines; y++ ) {
             init_x = x * NIBBLES_NB_BITS;
             bit_stop = ( ( init_x + NIBBLES_NB_BITS >= LCD_WIDTH ) ? LCD_WIDTH - init_x : NIBBLES_NB_BITS );
             for ( int bit_x = 0; bit_x < bit_stop; bit_x++ )
-                lcd_pixels_buffer[ ( y * LCD_WIDTH ) + init_x + bit_x ] = ( val & ( 1 << ( bit_x & 3 ) ) );
+                lcd_pixels_buffer[ ( y * LCD_WIDTH ) + init_x + bit_x ] = ( val & ( 1 << ( bit_x & 3 ) ) ) > 0 ? 1 : 0;
         }
     }
 }
