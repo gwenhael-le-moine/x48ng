@@ -1003,21 +1003,20 @@ static void setup_colors( void )
                 colors[ i ].g = colors[ i ].gray_rgb;
                 colors[ i ].b = colors[ i ].gray_rgb;
             } else {
-                if ( i == COLOR_PIXEL_ON || i == COLOR_PIXEL_GREY_2 || i == COLOR_PIXEL_GREY_1 ) {
-                    // COLOR_PIXEL_ON, COLOR_PIXEL_GREY_2 and COLOR_PIXEL_GREY_1 are
-                    // computed based on COLOR_PIXEL_OFF and contrast
-                    colors[ i ].r = apply_contrast( colors[ COLOR_PIXEL_OFF ].r, contrast );
-                    colors[ i ].g = apply_contrast( colors[ COLOR_PIXEL_OFF ].g, contrast );
+                colors[ i ].r = ( colors[ i ].rgb >> 16 ) & 0xff;
+                colors[ i ].g = ( colors[ i ].rgb >> 8 ) & 0xff;
+                colors[ i ].b = colors[ i ].rgb & 0xff;
+            }
+            if ( i == COLOR_PIXEL_ON || i == COLOR_PIXEL_GREY_2 || i == COLOR_PIXEL_GREY_1 ) {
+                // COLOR_PIXEL_ON, COLOR_PIXEL_GREY_2 and COLOR_PIXEL_GREY_1 are
+                // computed based on COLOR_PIXEL_OFF and contrast
+                colors[ i ].r = apply_contrast( colors[ COLOR_PIXEL_OFF ].r, contrast );
+                colors[ i ].g = apply_contrast( colors[ COLOR_PIXEL_OFF ].g, contrast );
 
-                    if ( __config.black_lcd )
-                        colors[ i ].b = apply_contrast( colors[ COLOR_PIXEL_OFF ].b, contrast );
-                    else
-                        colors[ i ].b = 128 - ( ( 19 - contrast ) * ( ( 128 - colors[ COLOR_PIXEL_OFF ].b ) / 16 ) );
-                } else {
-                    colors[ i ].r = ( colors[ i ].rgb >> 16 ) & 0xff;
-                    colors[ i ].g = ( colors[ i ].rgb >> 8 ) & 0xff;
-                    colors[ i ].b = colors[ i ].rgb & 0xff;
-                }
+                if ( __config.black_lcd )
+                    colors[ i ].b = apply_contrast( colors[ COLOR_PIXEL_OFF ].b, contrast );
+                else
+                    colors[ i ].b = 128 - ( ( 19 - contrast ) * ( ( 128 - colors[ COLOR_PIXEL_OFF ].b ) / 16 ) );
             }
         }
     }
