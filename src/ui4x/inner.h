@@ -1,16 +1,16 @@
 #ifndef _UI4x_INNER_H
-#define _UI4x_INNER_H 1
+#  define _UI4x_INNER_H 1
 
-#include "../emulator_ui4x_api.h"
+#  include "../emulator_ui4x_api.h"
 
-#include "bitmaps_misc.h"
+#  include "bitmaps_misc.h"
 
 /* 4.1.1.1: When defined, this symbol represents the threshold of the long
    key pression.  When the mouse button is kept pressed on a calculator's key
    for more than LONG_PRESS_THR milliseconds, the key stays pressed after
    release.
 */
-#define LONG_PRESS_THR 750
+#  define LONG_PRESS_THR 750
 
 // Colors
 typedef enum {

@@ -108,16 +108,25 @@ color_t colors_49g[ NB_COLORS ] = {
      },
     /* UI4X_COLOR_PIXEL_GREY_1 */
     {
-     .a = 0xff, .mono_rgb = 0x00, .gray_rgb = 0xa9, .rgb = 0xdeadbeef, /* not used, computed based on UI4X_COLOR_PIXEL_OFF */
-    },
+     .a = 0xff,
+     .mono_rgb = 0x00,
+     .gray_rgb = 0xa9,
+     .rgb = 0xa5a5a5,
+     },
     /* UI4X_COLOR_PIXEL_GREY_2 */
     {
-     .a = 0xff, .mono_rgb = 0x00, .gray_rgb = 0x69, .rgb = 0xdeadbeef, /* not used, computed based on UI4X_COLOR_PIXEL_OFF */
-    },
+     .a = 0xff,
+     .mono_rgb = 0x00,
+     .gray_rgb = 0x69,
+     .rgb = 0x454545,
+     },
     /* UI4X_COLOR_PIXEL_ON */
     {
-     .a = 0xff, .mono_rgb = 0x00, .gray_rgb = 0x14, .rgb = 0xdeadbeef, /* not used, computed based on UI4X_COLOR_PIXEL_OFF */
-    },
+     .a = 0xff,
+     .mono_rgb = 0x00,
+     .gray_rgb = 0x14,
+     .rgb = 0x151515,
+     },
     /* UI4X_COLOR_BLACK_PIXEL_OFF */
     {
      .a = 0xFF,
@@ -127,16 +136,25 @@ color_t colors_49g[ NB_COLORS ] = {
      },
     /* UI4X_COLOR_BLACK_PIXEL_GREY_1 */
     {
-     .a = 0xff, .mono_rgb = 0x00, .gray_rgb = 0xa9, .rgb = 0xdeadbeef, /* not used, computed based on UI4X_COLOR_PIXEL_OFF */
-    },
+     .a = 0xff,
+     .mono_rgb = 0x00,
+     .gray_rgb = 0xa9,
+     .rgb = 0xa5a5a5,
+     },
     /* UI4X_COLOR_BLACK_PIXEL_GREY_2 */
     {
-     .a = 0xff, .mono_rgb = 0x00, .gray_rgb = 0x69, .rgb = 0xdeadbeef, /* not used, computed based on UI4X_COLOR_PIXEL_OFF */
-    },
+     .a = 0xff,
+     .mono_rgb = 0x00,
+     .gray_rgb = 0x69,
+     .rgb = 0x454545,
+     },
     /* UI4X_COLOR_BLACK_PIXEL_ON */
     {
-     .a = 0xFF, .mono_rgb = 0x0, .gray_rgb = 0x14, .rgb = 0xdeadbeef, /* not used, computed based on UI4X_COLOR_PIXEL_OFF */
-    },
+     .a = 0xFF,
+     .mono_rgb = 0x0,
+     .gray_rgb = 0x14,
+     .rgb = 0x151515,
+     },
     /* UI4X_COLOR_LABEL */
     {
      .a = 0xff,

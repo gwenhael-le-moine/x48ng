@@ -1,9 +1,9 @@
 #ifndef _INIT_H
-#define _INIT_H 1
+#  define _INIT_H 1
 
-#include <stdbool.h>
+#  include <stdbool.h>
 
-#include "emulator_ui4x_api.h"
+#  include "emulator_ui4x_api.h"
 
 extern bool port1_is_ram;
 extern long port1_mask;

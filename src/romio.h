@@ -1,7 +1,7 @@
 #ifndef _ROMIO_H
-#define _ROMIO_H 1
+#  define _ROMIO_H 1
 
-#include <stdbool.h>
+#  include <stdbool.h>
 
 extern bool opt_gx;
 extern bool opt_49;

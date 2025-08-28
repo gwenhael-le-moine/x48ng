@@ -1,15 +1,15 @@
 #ifndef _MEMORY_H
-#define _MEMORY_H 1
+#  define _MEMORY_H 1
 
-#include "emulator_ui4x_api.h"
+#  include "emulator_ui4x_api.h"
 
-#define NIBBLES_PER_ROW 34
-#define NIBBLES_NB_BITS 4
+#  define NIBBLES_PER_ROW 34
+#  define NIBBLES_NB_BITS 4
 
-#define DISP_ROWS 64
-#define NIBS_PER_BUFFER_ROW ( NIBBLES_PER_ROW + 2 )
+#  define DISP_ROWS 64
+#  define NIBS_PER_BUFFER_ROW ( NIBBLES_PER_ROW + 2 )
 
-#define KEYS_BUFFER_SIZE 9
+#  define KEYS_BUFFER_SIZE 9
 
 typedef struct display_t {
     int on;

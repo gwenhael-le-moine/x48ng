@@ -1,7 +1,7 @@
 #ifndef _UI4x_COMMON_H
-#define _UI4x_COMMON_H 1
+#  define _UI4x_COMMON_H 1
 
-#include "../options.h"
+#  include "../options.h"
 
 /*************************************************/
 /* public API: if it's there it's used elsewhere */

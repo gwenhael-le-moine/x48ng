@@ -1,16 +1,16 @@
 #ifndef _EMULATE_H
-#define _EMULATE_H 1
+#  define _EMULATE_H 1
 
-#include "emulator_ui4x_api.h"
-#include "memory.h"
-#include "types.h"
+#  include "emulator_ui4x_api.h"
+#  include "memory.h"
+#  include "types.h"
 
-#define DEC 10
-#define HEX 16
+#  define DEC 10
+#  define HEX 16
 
-#define NB_MCTL 6
-#define NB_RSTK 8
-#define NB_PSTAT 16
+#  define NB_MCTL 6
+#  define NB_RSTK 8
+#  define NB_PSTAT 16
 
 typedef struct device_t {
     bool baud_touched;
@@ -37,8 +37,8 @@ typedef struct saturn_t {
 
     word_20 d[ 2 ];
 
-#define D0 d[ 0 ]
-#define D1 d[ 1 ]
+#  define D0 d[ 0 ]
+#  define D1 d[ 1 ]
 
     word_4 P;
     word_20 PC;

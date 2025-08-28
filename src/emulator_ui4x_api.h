@@ -1,13 +1,13 @@
 #ifndef _UI4x_EMULATOR_H
-#define _UI4x_EMULATOR_H 1
+#  define _UI4x_EMULATOR_H 1
 
-#include <stdbool.h>
+#  include <stdbool.h>
 
-#include "options.h"
+#  include "options.h"
 
 // LCD
-#define LCD_WIDTH 131
-#define LCD_HEIGHT 64
+#  define LCD_WIDTH 131
+#  define LCD_HEIGHT 64
 
 // HP 48{G,S}X Keys
 typedef enum {
@@ -119,7 +119,7 @@ typedef enum {
     NB_HP49_KEYS
 } hp49_keynames_t;
 
-#define NB_KEYS NB_HP48_KEYS
+#  define NB_KEYS NB_HP48_KEYS
 
 // Annunciators
 typedef enum {

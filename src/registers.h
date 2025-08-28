@@ -1,7 +1,7 @@
 #ifndef _REGISTERS_H
-#define _REGISTERS_H 1
+#  define _REGISTERS_H 1
 
-#include "types.h"
+#  include "types.h"
 
 extern int get_start( int code );
 extern int get_end( int code );

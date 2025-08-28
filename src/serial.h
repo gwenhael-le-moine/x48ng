@@ -1,5 +1,5 @@
 #ifndef _SERIAL_H
-#define _SERIAL_H 1
+#  define _SERIAL_H 1
 
 extern void serial_baud( int baud );
 extern void transmit_char( void );

@@ -1,7 +1,7 @@
 #ifndef _OPTIONS_H
-#define _OPTIONS_H 1
+#  define _OPTIONS_H 1
 
-#include <stdbool.h>
+#  include <stdbool.h>
 
 typedef enum { FRONTEND_SDL, FRONTEND_NCURSES, FRONTEND_GTK } frontend_t;
 
@@ -44,7 +44,7 @@ typedef struct {
 } config_t;
 extern config_t config;
 
-#define MAX_LENGTH_FILENAME 2048
+#  define MAX_LENGTH_FILENAME 2048
 extern char normalized_config_path[ MAX_LENGTH_FILENAME ];
 extern char normalized_config_file[ MAX_LENGTH_FILENAME ];
 extern char normalized_rom_path[ MAX_LENGTH_FILENAME ];

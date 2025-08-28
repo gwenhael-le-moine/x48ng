@@ -88,7 +88,6 @@ void press_key( int hpkey )
 
     KEYBOARD[ hpkey ].pressed = true;
 
-    // press_key( hpkey );
     KEYBOARD[ hpkey ].pressed = true;
 
     int code = KEYBOARD[ hpkey ].code;
@@ -120,7 +119,6 @@ void release_key( int hpkey )
 
     KEYBOARD[ hpkey ].pressed = false;
 
-    // release_key( hpkey );
     KEYBOARD[ hpkey ].pressed = false;
 
     int code = KEYBOARD[ hpkey ].code;
@@ -146,7 +144,11 @@ unsigned char get_annunciators( void ) { return saturn.annunc; }
 
 bool get_display_state( void ) { return display.on; }
 
-void get_lcd_buffer( int* target ) { memcpy( target, &lcd_pixels_buffer, sizeof( lcd_pixels_buffer ) ); }
+void get_lcd_buffer( int* target )
+{
+    for ( int xy = 0; xy < ( LCD_HEIGHT * LCD_WIDTH ); ++xy )
+        target[ xy ] = lcd_pixels_buffer[ xy ] > 0 ? 3 : 0;
+}
 
 int get_contrast( void ) { return display.contrast; }
 

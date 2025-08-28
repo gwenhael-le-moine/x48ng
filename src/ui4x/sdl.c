@@ -68,9 +68,6 @@ static annunciators_ui_t annunciators_ui[ NB_ANNUNCIATORS ] = {
     {.x = 241, .y = 4, .width = ann_io_width,      .height = ann_io_height,      .bits = ann_io_bitmap     },
 };
 
-static int display_buffer_current[ LCD_WIDTH * 80 ];
-static int display_buffer_past_one[ LCD_WIDTH * 80 ];
-static int display_buffer_past_two[ LCD_WIDTH * 80 ];
 static int display_buffer_grayscale[ LCD_WIDTH * 80 ];
 static int last_annunciators = -1;
 static int last_contrast = -1;
@@ -414,6 +411,7 @@ static int sdlkey_to_hpkey( SDL_Keycode k )
         case SDLK_F10:
             close_and_exit();
             return -1;
+
         default:
             return -1;
     }
@@ -934,25 +932,14 @@ static int sdl_release_key( int hpkey )
     return hpkey;
 }
 
-static void ui_init_LCD( void )
-{
-    memset( display_buffer_grayscale, 0, sizeof( display_buffer_grayscale ) );
-    memset( display_buffer_past_two, 0, sizeof( display_buffer_past_two ) );
-    memset( display_buffer_past_one, 0, sizeof( display_buffer_past_one ) );
-    memset( display_buffer_current, 0, sizeof( display_buffer_current ) );
-}
+static void ui_init_LCD( void ) { memset( display_buffer_grayscale, 0, sizeof( display_buffer_grayscale ) ); }
 
 static void get_display_buffer( void )
 {
 
-    if ( get_display_state() ) {
-        memcpy( &display_buffer_past_two, &display_buffer_past_one, LCD_WIDTH * 80 * sizeof( int ) );
-        memcpy( &display_buffer_past_one, &display_buffer_current, LCD_WIDTH * 80 * sizeof( int ) );
-        get_lcd_buffer( display_buffer_current );
-
-        for ( int i = 0; i < LCD_WIDTH * 80; ++i )
-            display_buffer_grayscale[ i ] = display_buffer_past_two[ i ] + display_buffer_past_one[ i ] + display_buffer_current[ i ];
-    } else
+    if ( get_display_state() )
+        get_lcd_buffer( display_buffer_grayscale );
+    else
         ui_init_LCD();
 }
 
@@ -985,7 +972,8 @@ static int apply_contrast( int value, int contrast )
     int max = 19;
     int min = 3;
 
-    return ( value / ( max - min ) ) * ( max - contrast );
+    int contrasted = ( value / ( max - min ) ) * ( max - contrast );
+    return contrasted;
 }
 
 static void setup_colors( void )
@@ -1096,9 +1084,11 @@ void ui_update_display_sdl( void )
     SDL_SetRenderTarget( renderer, display_texture );
 
     int color = COLOR_PIXEL_OFF;
+    int pixel;
     for ( int y = 0; y < LCD_HEIGHT; ++y ) {
         for ( int x = 0; x < LCD_WIDTH; ++x ) {
-            switch ( display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] ) {
+            pixel = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ];
+            switch ( pixel ) {
                 case 0:
                     color = COLOR_PIXEL_OFF;
                     break;
@@ -1109,7 +1099,10 @@ void ui_update_display_sdl( void )
                     color = COLOR_PIXEL_GREY_2;
                     break;
                 case 3:
+                    color = COLOR_PIXEL_ON;
+                    break;
                 default:
+                    fprintf( stderr, "%i\n", pixel );
                     color = COLOR_PIXEL_ON;
                     break;
             }

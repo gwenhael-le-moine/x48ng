@@ -1,7 +1,7 @@
 #ifndef _TYPES_H
-#define _TYPES_H 1
+#  define _TYPES_H 1
 
-#include <stdint.h>
+#  include <stdint.h>
 
 typedef unsigned char word_1;
 typedef unsigned char word_4;

@@ -40,9 +40,6 @@ typedef enum { LCD_PIXEL_OFF = 60, LCD_PIXEL_ON_1, LCD_PIXEL_ON_2, LCD_PIXEL_ON_
 /*************/
 /* variables */
 /*************/
-static int display_buffer_current[ LCD_WIDTH * 80 ];
-static int display_buffer_past_one[ LCD_WIDTH * 80 ];
-static int display_buffer_past_two[ LCD_WIDTH * 80 ];
 static int display_buffer_grayscale[ LCD_WIDTH * 80 ];
 static int last_annunciators = -1;
 
@@ -101,14 +98,14 @@ static inline void ncurses_draw_lcd_tiny( void )
         wcscpy( line, L"" );
 
         for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
-            b1 = display_buffer_current[ ( y * LCD_WIDTH ) + x ];
-            b4 = display_buffer_current[ ( y * LCD_WIDTH ) + x + 1 ];
-            b2 = display_buffer_current[ ( ( y + 1 ) * LCD_WIDTH ) + x ];
-            b5 = display_buffer_current[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ];
-            b3 = display_buffer_current[ ( ( y + 2 ) * LCD_WIDTH ) + x ];
-            b6 = display_buffer_current[ ( ( y + 2 ) * LCD_WIDTH ) + x + 1 ];
-            b7 = display_buffer_current[ ( ( y + 3 ) * LCD_WIDTH ) + x ];
-            b8 = display_buffer_current[ ( ( y + 3 ) * LCD_WIDTH ) + x + 1 ];
+            b1 = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] > 0 ? 1 : 0;
+            b4 = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
+            b2 = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x ] > 0 ? 1 : 0;
+            b5 = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
+            b3 = display_buffer_grayscale[ ( ( y + 2 ) * LCD_WIDTH ) + x ] > 0 ? 1 : 0;
+            b6 = display_buffer_grayscale[ ( ( y + 2 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
+            b7 = display_buffer_grayscale[ ( ( y + 3 ) * LCD_WIDTH ) + x ] > 0 ? 1 : 0;
+            b8 = display_buffer_grayscale[ ( ( y + 3 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
 
             wchar_t pixels = eight_bits_to_braille_char( b1, b2, b3, b4, b5, b6, b7, b8 );
             wcsncat( line, &pixels, 1 );
@@ -166,10 +163,10 @@ static inline void ncurses_draw_lcd_small( void )
         wcscpy( line, L"" );
 
         for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
-            top_left = display_buffer_current[ ( y * LCD_WIDTH ) + x ];
-            top_right = display_buffer_current[ ( y * LCD_WIDTH ) + x + 1 ];
-            bottom_left = display_buffer_current[ ( ( y + 1 ) * LCD_WIDTH ) + x ];
-            bottom_right = display_buffer_current[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ];
+            top_left = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] > 0 ? 1 : 0;
+            top_right = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
+            bottom_left = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x ] > 0 ? 1 : 0;
+            bottom_right = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
 
             wchar_t pixels = four_bits_to_quadrant_char( top_left, top_right, bottom_left, bottom_right );
             wcsncat( line, &pixels, 1 );
@@ -236,25 +233,14 @@ static inline void ncurses_draw_lcd( void )
     wrefresh( lcd_window );
 }
 
-static void ui_init_LCD( void )
-{
-    memset( display_buffer_grayscale, 0, sizeof( display_buffer_grayscale ) );
-    memset( display_buffer_past_two, 0, sizeof( display_buffer_past_two ) );
-    memset( display_buffer_past_one, 0, sizeof( display_buffer_past_one ) );
-    memset( display_buffer_current, 0, sizeof( display_buffer_current ) );
-}
+static void ui_init_LCD( void ) { memset( display_buffer_grayscale, 0, sizeof( display_buffer_grayscale ) ); }
 
 static void get_display_buffer( void )
 {
 
-    if ( get_display_state() ) {
-        memcpy( &display_buffer_past_two, &display_buffer_past_one, LCD_WIDTH * 80 * sizeof( int ) );
-        memcpy( &display_buffer_past_one, &display_buffer_current, LCD_WIDTH * 80 * sizeof( int ) );
-        get_lcd_buffer( display_buffer_current );
-
-        for ( int i = 0; i < LCD_WIDTH * 80; ++i )
-            display_buffer_grayscale[ i ] = display_buffer_past_two[ i ] + display_buffer_past_one[ i ] + display_buffer_current[ i ];
-    } else
+    if ( get_display_state() )
+        get_lcd_buffer( display_buffer_grayscale );
+    else
         ui_init_LCD();
 }
 
