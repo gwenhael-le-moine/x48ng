@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "emulate.h"
-#include "emulator.h"
+#include "emulator_ui4x_api.h"
 #include "init.h"
 #include "memory.h"
 #include "options.h"

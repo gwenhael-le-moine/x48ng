@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#include "emulator.h"
+#include "emulator_ui4x_api.h"
 
 extern bool port1_is_ram;
 extern long port1_mask;

@@ -1,7 +1,7 @@
 #ifndef _EMULATE_H
 #define _EMULATE_H 1
 
-#include "emulator.h"
+#include "emulator_ui4x_api.h"
 #include "memory.h"
 #include "types.h"
 

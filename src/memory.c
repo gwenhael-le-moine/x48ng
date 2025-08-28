@@ -113,7 +113,7 @@ void write_dev_mem( long addr, int val )
             display.contrast &= ~0x0f;
             display.contrast |= val;
             return;
-        case 0x102: /* DISPLAY TEST */
+        case 0x102: /* CONTRAST CONTROL */
             display.contrast &= ~0xf0;
             display.contrast |= ( ( val & 0x1 ) << 4 );
             /* Fall through */

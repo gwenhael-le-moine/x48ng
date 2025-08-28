@@ -1,7 +1,7 @@
 #ifndef _MEMORY_H
 #define _MEMORY_H 1
 
-#include "emulator.h"
+#include "emulator_ui4x_api.h"
 
 #define NIBBLES_PER_ROW 34
 #define NIBBLES_NB_BITS 4

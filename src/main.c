@@ -16,7 +16,7 @@
 #include "romio.h"
 #include "timers.h"
 
-#include "emulator.h"
+#include "emulator_ui4x_api.h"
 #include "ui4x/common.h"
 
 /* #define QUERY_EVENTS_EVERY_X_FRAME 4 */

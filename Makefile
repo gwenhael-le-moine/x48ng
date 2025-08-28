@@ -72,6 +72,7 @@ HEADERS = src/debugger.h \
 	src/romio.h \
 	src/timers.h \
 	src/serial.h \
+	src/emulator_ui4x_api.h \
 	src/ui4x/bitmaps_misc.h \
 	src/ui4x/common.h \
 	src/ui4x/inner.h \
@@ -81,7 +82,7 @@ HEADERS = src/debugger.h \
 
 SRC = src/debugger.c \
 	src/emulate.c \
-	src/emulator.c \
+	src/emulator_ui4x_api.c \
 	src/init.c \
 	src/memory.c \
 	src/options.c \
