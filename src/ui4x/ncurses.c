@@ -15,6 +15,7 @@
 #include <curses.h>
 
 #include "../options.h"
+
 #include "api.h"
 #include "common.h"
 #include "inner.h"
