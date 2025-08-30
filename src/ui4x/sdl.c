@@ -5,8 +5,8 @@
 
 #include <SDL3/SDL.h>
 
-#include "../emulator_ui4x_api.h"
 #include "../options.h"
+#include "api.h"
 #include "common.h"
 #include "inner.h"
 

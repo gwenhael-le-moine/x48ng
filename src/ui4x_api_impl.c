@@ -2,12 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "emulate.h"
-#include "emulator_ui4x_api.h"
-#include "init.h"
-#include "memory.h"
+#include "core/emulate.h"
+#include "core/init.h"
+#include "core/memory.h"
 #include "options.h"
 #include "romio.h"
+#include "ui4x/api.h"
 
 #define KEYBOARD keyboard48
 

@@ -10,16 +10,14 @@
 
 #include <sys/time.h>
 
-#include "debugger.h"
-#include "emulate.h"
+#include "core/debugger.h"
+#include "core/emulate.h"
+#include "core/timers.h"
+
 #include "options.h"
-#include "romio.h"
-#include "timers.h"
 
-#include "emulator_ui4x_api.h"
+#include "ui4x/api.h"
 #include "ui4x/common.h"
-
-/* #define QUERY_EVENTS_EVERY_X_FRAME 4 */
 
 config_t config;
 
@@ -32,15 +30,6 @@ void signal_handler( int sig )
             enter_debugger |= USER_INTERRUPT;
             break;
         case SIGALRM:
-            /* if ( nb_refreshes_since_last_checking_events > QUERY_EVENTS_EVERY_X_FRAME ) { */
-            /*     nb_refreshes_since_last_checking_events = 0; */
-            /*     ui_get_event(); */
-            /* } */
-
-            /* ui_update_display(); */
-
-            /* nb_refreshes_since_last_checking_events++; */
-
             sigalarm_triggered = true;
             break;
         case SIGPIPE:

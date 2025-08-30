@@ -3,7 +3,7 @@
 
 #  include <stdbool.h>
 
-#  include "options.h"
+#  include "../options.h"
 
 // LCD
 #  define LCD_WIDTH 131
