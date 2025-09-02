@@ -39,8 +39,6 @@
 
 #define NB_SAMPLES 10
 
-extern long nibble_masks[ 16 ];
-
 device_t device;
 int set_t1;
 long schedule_event = 0;

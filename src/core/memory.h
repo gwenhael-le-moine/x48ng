@@ -27,6 +27,8 @@ typedef struct display_t {
     long menu_end;
 } display_t;
 
+extern long nibble_masks[ 16 ];
+
 extern int lcd_pixels_buffer[ LCD_WIDTH * LCD_HEIGHT ];
 extern display_t display;
 
