@@ -32,7 +32,6 @@ long nibble_masks[ 16 ] = { 0x0000000f, 0x000000f0, 0x00000f00, 0x0000f000, 0x00
                             0x0000000f, 0x000000f0, 0x00000f00, 0x0000f000, 0x000f0000, 0x00f00000, 0x0f000000, 0xf0000000 };
 
 int lcd_pixels_buffer[ LCD_WIDTH * LCD_HEIGHT ];
-
 display_t display;
 
 void ( *write_nibble )( long addr, int val );
@@ -41,7 +40,7 @@ int ( *read_nibble_crc )( long addr );
 
 static int line_counter = -1;
 
-void disp_draw_nibble( word_20 addr, word_4 val )
+static void disp_draw_nibble( word_20 addr, word_4 val )
 {
     long offset = ( addr - display.disp_start );
     int x = offset % display.nibs_per_line;
@@ -89,7 +88,7 @@ static inline int calc_crc( int nib )
     return nib;
 }
 
-void write_dev_mem( long addr, int val )
+static void write_dev_mem( long addr, int val )
 {
     static int old_line_offset = -1;
 
@@ -304,7 +303,7 @@ void write_dev_mem( long addr, int val )
     }
 }
 
-int read_dev_mem( long addr )
+static int read_dev_mem( long addr )
 {
     switch ( ( int )addr ) {
         case 0x100: /* DISPLAY IO */
@@ -419,7 +418,7 @@ int read_dev_mem( long addr )
     }
 }
 
-void write_nibble_sx( long addr, int val )
+static void write_nibble_sx( long addr, int val )
 {
     addr &= 0xfffff;
     val &= 0x0f;
@@ -510,7 +509,7 @@ void write_nibble_sx( long addr, int val )
         menu_draw_nibble( addr, val );
 }
 
-void write_nibble_gx( long addr, int val )
+static void write_nibble_gx( long addr, int val )
 {
     addr &= 0xfffff;
     val &= 0x0f;
@@ -657,7 +656,7 @@ void write_nibble_gx( long addr, int val )
         menu_draw_nibble( addr, val );
 }
 
-int read_nibble_sx( long addr )
+static int read_nibble_sx( long addr )
 {
     addr &= 0xfffff;
     switch ( ( int )( addr >> 16 ) & 0x0f ) {
@@ -721,7 +720,7 @@ int read_nibble_sx( long addr )
     return 0x00;
 }
 
-int read_nibble_gx( long addr )
+static int read_nibble_gx( long addr )
 {
     addr &= 0xfffff;
     switch ( ( int )( addr >> 16 ) & 0x0f ) {
@@ -863,7 +862,7 @@ int read_nibble_gx( long addr )
     return 0x00;
 }
 
-int read_nibble_crc_sx( long addr )
+static int read_nibble_crc_sx( long addr )
 {
     addr &= 0xfffff;
     switch ( ( int )( addr >> 16 ) & 0x0f ) {
@@ -927,7 +926,7 @@ int read_nibble_crc_sx( long addr )
     return 0x00;
 }
 
-int read_nibble_crc_gx( long addr )
+static int read_nibble_crc_gx( long addr )
 {
     addr &= 0xfffff;
     switch ( ( int )( addr >> 16 ) & 0x0f ) {

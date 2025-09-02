@@ -41,20 +41,17 @@
 
 extern long nibble_masks[ 16 ];
 
-saturn_t saturn;
 device_t device;
-
-bool sigalarm_triggered = false;
-bool device_check = false;
-bool adj_time_pending = false;
-
 int set_t1;
-
 long schedule_event = 0;
 long sched_adjtime = SCHED_ADJTIME;
+bool adj_time_pending = false;
+bool device_check = false;
+
+saturn_t saturn;
+bool sigalarm_triggered = false;
 long sched_timer1 = SCHED_TIMER1;
 long sched_timer2 = SCHED_TIMER2;
-
 unsigned long t1_i_per_tick;
 unsigned long t2_i_per_tick;
 
@@ -147,22 +144,6 @@ static inline void clear_register_bit( unsigned char* reg, int n ) { reg[ n / 4 
 
 static inline int get_register_bit( unsigned char* reg, int n ) { return ( ( int )( reg[ n / 4 ] & ( 1 << ( n % 4 ) ) ) > 0 ) ? 1 : 0; }
 
-void do_interupt( void )
-{
-    interrupt_called = true;
-    if ( saturn.interruptable ) {
-        push_return_addr( saturn.PC );
-        saturn.PC = 0xf;
-        saturn.interruptable = false;
-    }
-}
-
-void do_kbd_int( void )
-{
-    do_interupt();
-    if ( !saturn.interruptable )
-        saturn.int_pending = true;
-}
 
 static inline void load_constant( unsigned char* reg, int n, long addr )
 {
@@ -241,14 +222,6 @@ static inline void recall_n( unsigned char* reg, word_20 dat, int n )
 {
     for ( int i = 0; i < n; i++ )
         reg[ i ] = read_nibble_crc( dat++ );
-}
-
-void load_addr( word_20* dat, long addr, int n )
-{
-    for ( int i = 0; i < n; i++ ) {
-        *dat &= ~nibble_masks[ i ];
-        *dat |= read_nibble( addr + i ) << ( i * 4 );
-    }
 }
 
 static bool step_instruction_00e( void )
@@ -2709,6 +2682,34 @@ static bool step_instruction_0f( void )
     }
 
     return illegal_instruction;
+}
+
+/**********/
+/* public */
+/**********/
+void do_interupt( void )
+{
+    interrupt_called = true;
+    if ( saturn.interruptable ) {
+        push_return_addr( saturn.PC );
+        saturn.PC = 0xf;
+        saturn.interruptable = false;
+    }
+}
+
+void do_kbd_int( void )
+{
+    do_interupt();
+    if ( !saturn.interruptable )
+        saturn.int_pending = true;
+}
+
+void load_addr( word_20* dat, long addr, int n )
+{
+    for ( int i = 0; i < n; i++ ) {
+        *dat &= ~nibble_masks[ i ];
+        *dat |= read_nibble( addr + i ) << ( i * 4 );
+    }
 }
 
 void step_instruction( void )

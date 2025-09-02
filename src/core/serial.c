@@ -16,10 +16,7 @@ static int wire_fd;
 static int ir_fd;
 static int ttyp;
 
-/* char* wire_name = ( char* )0; */
-/* char* config.ir_name = ( char* )0; */
-
-void update_connection_display( void )
+static void update_connection_display( void )
 {
     if ( wire_fd == -1 ) {
         if ( config.wire_name )
