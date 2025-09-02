@@ -21,20 +21,21 @@
 #define RAM_SIZE_SX 0x10000
 #define RAM_SIZE_GX 0x40000
 
-// bool please_exit = false;
-bool save_before_exit = true;
+static bool rom_is_new = true;
+static long port1_size;
+static long port2_size;
 
-bool rom_is_new = true;
-long port1_size;
 long port1_mask;
 bool port1_is_ram;
-long port2_size;
 long port2_mask;
 bool port2_is_ram;
 
 int annunciators_bits[ NB_ANNUNCIATORS ] = { ANN_LEFT, ANN_RIGHT, ANN_ALPHA, ANN_BATTERY, ANN_BUSY, ANN_IO };
 
-void saturn_config_init( void )
+// bool please_exit = false;
+bool save_before_exit = true;
+
+static void saturn_config_init( void )
 {
     saturn.version[ 0 ] = VERSION_MAJOR;
     saturn.version[ 1 ] = VERSION_MINOR;
@@ -46,7 +47,7 @@ void saturn_config_init( void )
     saturn.lbr = 0x0;
 }
 
-void init_saturn( void )
+static void init_saturn( void )
 {
     memset( &saturn, 0, sizeof( saturn ) - 4 * sizeof( unsigned char* ) );
     saturn.PC = 0x00000;
@@ -82,7 +83,7 @@ void init_saturn( void )
 /* READING ~/.config/x48ng/{rom,ram,state,port1,port2} */
 /***********************************************/
 
-int read_8( FILE* fp, word_8* var )
+static int read_8( FILE* fp, word_8* var )
 {
     unsigned char tmp;
 
@@ -95,7 +96,7 @@ int read_8( FILE* fp, word_8* var )
     return 1;
 }
 
-int read_char( FILE* fp, char* var )
+static int read_char( FILE* fp, char* var )
 {
     char tmp;
 
@@ -108,7 +109,7 @@ int read_char( FILE* fp, char* var )
     return 1;
 }
 
-int read_16( FILE* fp, word_16* var )
+static int read_16( FILE* fp, word_16* var )
 {
     unsigned char tmp[ 2 ];
 
@@ -122,7 +123,7 @@ int read_16( FILE* fp, word_16* var )
     return 1;
 }
 
-int read_32( FILE* fp, word_32* var )
+static int read_32( FILE* fp, word_32* var )
 {
     unsigned char tmp[ 4 ];
 
@@ -138,7 +139,7 @@ int read_32( FILE* fp, word_32* var )
     return 1;
 }
 
-int read_u_long( FILE* fp, unsigned long* var )
+static int read_u_long( FILE* fp, unsigned long* var )
 {
     unsigned char tmp[ 4 ];
 
@@ -154,7 +155,7 @@ int read_u_long( FILE* fp, unsigned long* var )
     return 1;
 }
 
-int read_state_file( FILE* fp )
+static int read_state_file( FILE* fp )
 {
     int i;
 
@@ -320,7 +321,7 @@ int read_state_file( FILE* fp )
     return 1;
 }
 
-int read_mem_file( char* name, word_4* mem, int size )
+static int read_mem_file( char* name, word_4* mem, int size )
 {
     struct stat st;
     FILE* fp;
@@ -399,6 +400,308 @@ int read_mem_file( char* name, word_4* mem, int size )
     return 1;
 }
 
+/***********************************************/
+/* WRITING ~/.x48ng/{rom,ram,state,port1,port2} */
+/***********************************************/
+
+static int write_8( FILE* fp, word_8* var )
+{
+    unsigned char tmp;
+
+    tmp = *var;
+    if ( fwrite( &tmp, 1, 1, fp ) != 1 ) {
+        if ( config.verbose )
+            fprintf( stderr, "can\'t write word_8\n" );
+        return 0;
+    }
+    return 1;
+}
+
+static int write_char( FILE* fp, char* var )
+{
+    char tmp;
+
+    tmp = *var;
+    if ( fwrite( &tmp, 1, 1, fp ) != 1 ) {
+        if ( config.verbose )
+            fprintf( stderr, "can\'t write char\n" );
+        return 0;
+    }
+    return 1;
+}
+
+static int write_16( FILE* fp, word_16* var )
+{
+    unsigned char tmp[ 2 ];
+
+    tmp[ 0 ] = ( *var >> 8 ) & 0xff;
+    tmp[ 1 ] = *var & 0xff;
+    if ( fwrite( &tmp[ 0 ], 1, 2, fp ) != 2 ) {
+        if ( config.verbose )
+            fprintf( stderr, "can\'t write word_16\n" );
+        return 0;
+    }
+    return 1;
+}
+
+static int write_32( FILE* fp, word_32* var )
+{
+    unsigned char tmp[ 4 ];
+
+    tmp[ 0 ] = ( *var >> 24 ) & 0xff;
+    tmp[ 1 ] = ( *var >> 16 ) & 0xff;
+    tmp[ 2 ] = ( *var >> 8 ) & 0xff;
+    tmp[ 3 ] = *var & 0xff;
+    if ( fwrite( &tmp[ 0 ], 1, 4, fp ) != 4 ) {
+        if ( config.verbose )
+            fprintf( stderr, "can\'t write word_32\n" );
+        return 0;
+    }
+    return 1;
+}
+
+static int write_u_long( FILE* fp, unsigned long* var )
+{
+    unsigned char tmp[ 4 ];
+
+    tmp[ 0 ] = ( *var >> 24 ) & 0xff;
+    tmp[ 1 ] = ( *var >> 16 ) & 0xff;
+    tmp[ 2 ] = ( *var >> 8 ) & 0xff;
+    tmp[ 3 ] = *var & 0xff;
+    if ( fwrite( &tmp[ 0 ], 1, 4, fp ) != 4 ) {
+        if ( config.verbose )
+            fprintf( stderr, "can\'t write unsigned long\n" );
+        return 0;
+    }
+    return 1;
+}
+
+static int write_mem_file( char* name, word_4* mem, int size )
+{
+    FILE* fp;
+    word_8* tmp_mem;
+    word_8 byte;
+    int i, j;
+
+    if ( NULL == ( fp = fopen( name, "w" ) ) ) {
+        if ( config.verbose )
+            fprintf( stderr, "can\'t open %s\n", name );
+        return 0;
+    }
+
+    if ( NULL == ( tmp_mem = ( word_8* )malloc( ( size_t )size / 2 ) ) ) {
+        for ( i = 0, j = 0; i < size / 2; i++ ) {
+            byte = ( mem[ j++ ] & 0x0f );
+            byte |= ( mem[ j++ ] << 4 ) & 0xf0;
+            if ( 1 != fwrite( &byte, 1, 1, fp ) ) {
+                if ( config.verbose )
+                    fprintf( stderr, "can\'t write %s\n", name );
+                fclose( fp );
+                return 0;
+            }
+        }
+    } else {
+        for ( i = 0, j = 0; i < size / 2; i++ ) {
+            tmp_mem[ i ] = ( mem[ j++ ] & 0x0f );
+            tmp_mem[ i ] |= ( mem[ j++ ] << 4 ) & 0xf0;
+        }
+
+        if ( fwrite( tmp_mem, 1, ( size_t )size / 2, fp ) != ( unsigned long )size / 2 ) {
+            if ( config.verbose )
+                fprintf( stderr, "can\'t write %s\n", name );
+            fclose( fp );
+            free( tmp_mem );
+            return 0;
+        }
+
+        free( tmp_mem );
+    }
+
+    fclose( fp );
+
+    if ( config.verbose )
+        printf( "wrote %s\n", name );
+
+    return 1;
+}
+
+static int write_state_file( char* filename )
+{
+    int i;
+    FILE* fp;
+
+    if ( ( fp = fopen( filename, "w" ) ) == NULL ) {
+        if ( config.verbose )
+            fprintf( stderr, "can\'t open %s, no saving done\n", filename );
+        return 0;
+    }
+
+    /*
+     * write the state config file
+     */
+    write_32( fp, ( word_32* )&saturn.magic );
+    for ( i = 0; i < 3; i++ )
+        write_char( fp, &saturn.version[ i ] );
+    for ( i = 0; i < 16; i++ )
+        write_8( fp, &saturn.A[ i ] );
+    for ( i = 0; i < 16; i++ )
+        write_8( fp, &saturn.B[ i ] );
+    for ( i = 0; i < 16; i++ )
+        write_8( fp, &saturn.C[ i ] );
+    for ( i = 0; i < 16; i++ )
+        write_8( fp, &saturn.D[ i ] );
+    write_32( fp, &saturn.d[ 0 ] );
+    write_32( fp, &saturn.d[ 1 ] );
+    write_8( fp, &saturn.P );
+    write_32( fp, &saturn.PC );
+    for ( i = 0; i < 16; i++ )
+        write_8( fp, &saturn.R0[ i ] );
+    for ( i = 0; i < 16; i++ )
+        write_8( fp, &saturn.R1[ i ] );
+    for ( i = 0; i < 16; i++ )
+        write_8( fp, &saturn.R2[ i ] );
+    for ( i = 0; i < 16; i++ )
+        write_8( fp, &saturn.R3[ i ] );
+    for ( i = 0; i < 16; i++ )
+        write_8( fp, &saturn.R4[ i ] );
+    for ( i = 0; i < 4; i++ )
+        write_8( fp, &saturn.IN[ i ] );
+    for ( i = 0; i < 3; i++ )
+        write_8( fp, &saturn.OUT[ i ] );
+    write_8( fp, &saturn.CARRY );
+    for ( i = 0; i < NB_PSTAT; i++ )
+        write_8( fp, &saturn.PSTAT[ i ] );
+    write_8( fp, &saturn.XM );
+    write_8( fp, &saturn.SB );
+    write_8( fp, &saturn.SR );
+    write_8( fp, &saturn.MP );
+    write_8( fp, &saturn.hexmode );
+    for ( i = 0; i < NB_RSTK; i++ )
+        write_32( fp, &saturn.RSTK[ i ] );
+    write_16( fp, ( word_16* )&saturn.rstkp );
+    for ( i = 0; i < KEYS_BUFFER_SIZE; i++ )
+        write_16( fp, ( word_16* )&saturn.keybuf[ i ] );
+    write_8( fp, &saturn.interruptable );
+    write_8( fp, &saturn.int_pending );
+    write_8( fp, &saturn.kbd_ien );
+    write_8( fp, &saturn.disp_io );
+    write_8( fp, &saturn.contrast_ctrl );
+    write_8( fp, &saturn.disp_test );
+    write_16( fp, &saturn.crc );
+    write_8( fp, &saturn.power_status );
+    write_8( fp, &saturn.power_ctrl );
+    write_8( fp, &saturn.mode );
+    write_8( fp, &saturn.annunc );
+    write_8( fp, &saturn.baud );
+    write_8( fp, &saturn.card_ctrl );
+    write_8( fp, &saturn.card_status );
+    write_8( fp, &saturn.io_ctrl );
+    write_8( fp, &saturn.rcs );
+    write_8( fp, &saturn.tcs );
+    write_8( fp, &saturn.rbr );
+    write_8( fp, &saturn.tbr );
+    write_8( fp, &saturn.sreq );
+    write_8( fp, &saturn.ir_ctrl );
+    write_8( fp, &saturn.base_off );
+    write_8( fp, &saturn.lcr );
+    write_8( fp, &saturn.lbr );
+    write_8( fp, &saturn.scratch );
+    write_8( fp, &saturn.base_nibble );
+    write_32( fp, &saturn.disp_addr );
+    write_16( fp, &saturn.line_offset );
+    write_8( fp, &saturn.line_count );
+    write_16( fp, &saturn.unknown );
+    write_8( fp, &saturn.t1_ctrl );
+    write_8( fp, &saturn.t2_ctrl );
+    write_32( fp, &saturn.menu_addr );
+    write_8( fp, &saturn.unknown2 );
+    write_char( fp, &saturn.timer1 );
+    write_32( fp, &saturn.timer2 );
+    write_32( fp, &saturn.t1_instr );
+    write_32( fp, &saturn.t2_instr );
+    write_16( fp, ( word_16* )&saturn.t1_tick );
+    write_16( fp, ( word_16* )&saturn.t2_tick );
+    write_32( fp, &saturn.i_per_s );
+    write_16( fp, &saturn.bank_switch );
+    for ( i = 0; i < NB_MCTL; i++ ) {
+        write_16( fp, &saturn.mem_cntl[ i ].unconfigured );
+        write_32( fp, &saturn.mem_cntl[ i ].config[ 0 ] );
+        write_32( fp, &saturn.mem_cntl[ i ].config[ 1 ] );
+    }
+
+    fclose( fp );
+
+    if ( config.verbose )
+        printf( "wrote %s\n", filename );
+
+    return 1;
+}
+
+static int read_rom( const char* fname )
+{
+    int ram_size;
+
+    if ( !read_rom_file( fname, &saturn.rom, &rom_size ) )
+        return 0;
+
+    if ( config.verbose )
+        printf( "read %s\n", fname );
+
+    dev_memory_init();
+
+    ram_size = opt_gx ? RAM_SIZE_GX : RAM_SIZE_SX;
+
+    if ( NULL == ( saturn.ram = ( word_4* )malloc( ram_size ) ) ) {
+        if ( config.verbose )
+            fprintf( stderr, "can\'t malloc RAM\n" );
+        return 0;
+    }
+
+    memset( saturn.ram, 0, ram_size );
+
+    port1_size = 0;
+    port1_mask = 0;
+    port1_is_ram = false;
+    saturn.port1 = ( unsigned char* )0;
+
+    port2_size = 0;
+    port2_mask = 0;
+    port2_is_ram = false;
+    saturn.port2 = ( unsigned char* )0;
+
+    saturn.card_status = 0;
+
+    return 1;
+}
+
+static void init_display( void )
+{
+    display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
+
+    display.disp_start = ( saturn.disp_addr & 0xffffe );
+    display.offset = ( saturn.disp_io & 0x7 );
+
+    display.lines = ( saturn.line_count & 0x3f );
+    if ( display.lines == 0 )
+        display.lines = 63;
+
+    if ( display.offset > 3 )
+        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset + 2 ) & 0xfff;
+    else
+        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset ) & 0xfff;
+
+    display.disp_end = display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
+
+    display.menu_start = saturn.menu_addr;
+    display.menu_end = saturn.menu_addr + 0x110;
+
+    display.contrast = saturn.contrast_ctrl;
+    display.contrast |= ( ( saturn.disp_test & 0x1 ) << 4 );
+}
+
+/**********/
+/* public */
+/**********/
 int read_files( void )
 {
     /* unsigned long v1, v2; */
@@ -576,243 +879,6 @@ int read_files( void )
     return 1;
 }
 
-/***********************************************/
-/* WRITING ~/.x48ng/{rom,ram,state,port1,port2} */
-/***********************************************/
-
-int write_8( FILE* fp, word_8* var )
-{
-    unsigned char tmp;
-
-    tmp = *var;
-    if ( fwrite( &tmp, 1, 1, fp ) != 1 ) {
-        if ( config.verbose )
-            fprintf( stderr, "can\'t write word_8\n" );
-        return 0;
-    }
-    return 1;
-}
-
-int write_char( FILE* fp, char* var )
-{
-    char tmp;
-
-    tmp = *var;
-    if ( fwrite( &tmp, 1, 1, fp ) != 1 ) {
-        if ( config.verbose )
-            fprintf( stderr, "can\'t write char\n" );
-        return 0;
-    }
-    return 1;
-}
-
-int write_16( FILE* fp, word_16* var )
-{
-    unsigned char tmp[ 2 ];
-
-    tmp[ 0 ] = ( *var >> 8 ) & 0xff;
-    tmp[ 1 ] = *var & 0xff;
-    if ( fwrite( &tmp[ 0 ], 1, 2, fp ) != 2 ) {
-        if ( config.verbose )
-            fprintf( stderr, "can\'t write word_16\n" );
-        return 0;
-    }
-    return 1;
-}
-
-int write_32( FILE* fp, word_32* var )
-{
-    unsigned char tmp[ 4 ];
-
-    tmp[ 0 ] = ( *var >> 24 ) & 0xff;
-    tmp[ 1 ] = ( *var >> 16 ) & 0xff;
-    tmp[ 2 ] = ( *var >> 8 ) & 0xff;
-    tmp[ 3 ] = *var & 0xff;
-    if ( fwrite( &tmp[ 0 ], 1, 4, fp ) != 4 ) {
-        if ( config.verbose )
-            fprintf( stderr, "can\'t write word_32\n" );
-        return 0;
-    }
-    return 1;
-}
-
-int write_u_long( FILE* fp, unsigned long* var )
-{
-    unsigned char tmp[ 4 ];
-
-    tmp[ 0 ] = ( *var >> 24 ) & 0xff;
-    tmp[ 1 ] = ( *var >> 16 ) & 0xff;
-    tmp[ 2 ] = ( *var >> 8 ) & 0xff;
-    tmp[ 3 ] = *var & 0xff;
-    if ( fwrite( &tmp[ 0 ], 1, 4, fp ) != 4 ) {
-        if ( config.verbose )
-            fprintf( stderr, "can\'t write unsigned long\n" );
-        return 0;
-    }
-    return 1;
-}
-
-int write_mem_file( char* name, word_4* mem, int size )
-{
-    FILE* fp;
-    word_8* tmp_mem;
-    word_8 byte;
-    int i, j;
-
-    if ( NULL == ( fp = fopen( name, "w" ) ) ) {
-        if ( config.verbose )
-            fprintf( stderr, "can\'t open %s\n", name );
-        return 0;
-    }
-
-    if ( NULL == ( tmp_mem = ( word_8* )malloc( ( size_t )size / 2 ) ) ) {
-        for ( i = 0, j = 0; i < size / 2; i++ ) {
-            byte = ( mem[ j++ ] & 0x0f );
-            byte |= ( mem[ j++ ] << 4 ) & 0xf0;
-            if ( 1 != fwrite( &byte, 1, 1, fp ) ) {
-                if ( config.verbose )
-                    fprintf( stderr, "can\'t write %s\n", name );
-                fclose( fp );
-                return 0;
-            }
-        }
-    } else {
-        for ( i = 0, j = 0; i < size / 2; i++ ) {
-            tmp_mem[ i ] = ( mem[ j++ ] & 0x0f );
-            tmp_mem[ i ] |= ( mem[ j++ ] << 4 ) & 0xf0;
-        }
-
-        if ( fwrite( tmp_mem, 1, ( size_t )size / 2, fp ) != ( unsigned long )size / 2 ) {
-            if ( config.verbose )
-                fprintf( stderr, "can\'t write %s\n", name );
-            fclose( fp );
-            free( tmp_mem );
-            return 0;
-        }
-
-        free( tmp_mem );
-    }
-
-    fclose( fp );
-
-    if ( config.verbose )
-        printf( "wrote %s\n", name );
-
-    return 1;
-}
-
-int write_state_file( char* filename )
-{
-    int i;
-    FILE* fp;
-
-    if ( ( fp = fopen( filename, "w" ) ) == NULL ) {
-        if ( config.verbose )
-            fprintf( stderr, "can\'t open %s, no saving done\n", filename );
-        return 0;
-    }
-
-    /*
-     * write the state config file
-     */
-    write_32( fp, ( word_32* )&saturn.magic );
-    for ( i = 0; i < 4; i++ )
-        write_char( fp, &saturn.version[ i ] );
-    for ( i = 0; i < 16; i++ )
-        write_8( fp, &saturn.A[ i ] );
-    for ( i = 0; i < 16; i++ )
-        write_8( fp, &saturn.B[ i ] );
-    for ( i = 0; i < 16; i++ )
-        write_8( fp, &saturn.C[ i ] );
-    for ( i = 0; i < 16; i++ )
-        write_8( fp, &saturn.D[ i ] );
-    write_32( fp, &saturn.d[ 0 ] );
-    write_32( fp, &saturn.d[ 1 ] );
-    write_8( fp, &saturn.P );
-    write_32( fp, &saturn.PC );
-    for ( i = 0; i < 16; i++ )
-        write_8( fp, &saturn.R0[ i ] );
-    for ( i = 0; i < 16; i++ )
-        write_8( fp, &saturn.R1[ i ] );
-    for ( i = 0; i < 16; i++ )
-        write_8( fp, &saturn.R2[ i ] );
-    for ( i = 0; i < 16; i++ )
-        write_8( fp, &saturn.R3[ i ] );
-    for ( i = 0; i < 16; i++ )
-        write_8( fp, &saturn.R4[ i ] );
-    for ( i = 0; i < 4; i++ )
-        write_8( fp, &saturn.IN[ i ] );
-    for ( i = 0; i < 3; i++ )
-        write_8( fp, &saturn.OUT[ i ] );
-    write_8( fp, &saturn.CARRY );
-    for ( i = 0; i < NB_PSTAT; i++ )
-        write_8( fp, &saturn.PSTAT[ i ] );
-    write_8( fp, &saturn.XM );
-    write_8( fp, &saturn.SB );
-    write_8( fp, &saturn.SR );
-    write_8( fp, &saturn.MP );
-    write_8( fp, &saturn.hexmode );
-    for ( i = 0; i < NB_RSTK; i++ )
-        write_32( fp, &saturn.RSTK[ i ] );
-    write_16( fp, ( word_16* )&saturn.rstkp );
-    for ( i = 0; i < KEYS_BUFFER_SIZE; i++ )
-        write_16( fp, ( word_16* )&saturn.keybuf[ i ] );
-    write_8( fp, &saturn.interruptable );
-    write_8( fp, &saturn.int_pending );
-    write_8( fp, &saturn.kbd_ien );
-    write_8( fp, &saturn.disp_io );
-    write_8( fp, &saturn.contrast_ctrl );
-    write_8( fp, &saturn.disp_test );
-    write_16( fp, &saturn.crc );
-    write_8( fp, &saturn.power_status );
-    write_8( fp, &saturn.power_ctrl );
-    write_8( fp, &saturn.mode );
-    write_8( fp, &saturn.annunc );
-    write_8( fp, &saturn.baud );
-    write_8( fp, &saturn.card_ctrl );
-    write_8( fp, &saturn.card_status );
-    write_8( fp, &saturn.io_ctrl );
-    write_8( fp, &saturn.rcs );
-    write_8( fp, &saturn.tcs );
-    write_8( fp, &saturn.rbr );
-    write_8( fp, &saturn.tbr );
-    write_8( fp, &saturn.sreq );
-    write_8( fp, &saturn.ir_ctrl );
-    write_8( fp, &saturn.base_off );
-    write_8( fp, &saturn.lcr );
-    write_8( fp, &saturn.lbr );
-    write_8( fp, &saturn.scratch );
-    write_8( fp, &saturn.base_nibble );
-    write_32( fp, &saturn.disp_addr );
-    write_16( fp, &saturn.line_offset );
-    write_8( fp, &saturn.line_count );
-    write_16( fp, &saturn.unknown );
-    write_8( fp, &saturn.t1_ctrl );
-    write_8( fp, &saturn.t2_ctrl );
-    write_32( fp, &saturn.menu_addr );
-    write_8( fp, &saturn.unknown2 );
-    write_char( fp, &saturn.timer1 );
-    write_32( fp, &saturn.timer2 );
-    write_32( fp, &saturn.t1_instr );
-    write_32( fp, &saturn.t2_instr );
-    write_16( fp, ( word_16* )&saturn.t1_tick );
-    write_16( fp, ( word_16* )&saturn.t2_tick );
-    write_32( fp, &saturn.i_per_s );
-    write_16( fp, &saturn.bank_switch );
-    for ( i = 0; i < NB_MCTL; i++ ) {
-        write_16( fp, &saturn.mem_cntl[ i ].unconfigured );
-        write_32( fp, &saturn.mem_cntl[ i ].config[ 0 ] );
-        write_32( fp, &saturn.mem_cntl[ i ].config[ 1 ] );
-    }
-
-    fclose( fp );
-
-    if ( config.verbose )
-        printf( "wrote %s\n", filename );
-
-    return 1;
-}
-
 int write_files( void )
 {
     struct stat st;
@@ -874,68 +940,6 @@ int write_files( void )
     }
 
     return 1;
-}
-
-int read_rom( const char* fname )
-{
-    int ram_size;
-
-    if ( !read_rom_file( fname, &saturn.rom, &rom_size ) )
-        return 0;
-
-    if ( config.verbose )
-        printf( "read %s\n", fname );
-
-    dev_memory_init();
-
-    ram_size = opt_gx ? RAM_SIZE_GX : RAM_SIZE_SX;
-
-    if ( NULL == ( saturn.ram = ( word_4* )malloc( ram_size ) ) ) {
-        if ( config.verbose )
-            fprintf( stderr, "can\'t malloc RAM\n" );
-        return 0;
-    }
-
-    memset( saturn.ram, 0, ram_size );
-
-    port1_size = 0;
-    port1_mask = 0;
-    port1_is_ram = false;
-    saturn.port1 = ( unsigned char* )0;
-
-    port2_size = 0;
-    port2_mask = 0;
-    port2_is_ram = false;
-    saturn.port2 = ( unsigned char* )0;
-
-    saturn.card_status = 0;
-
-    return 1;
-}
-
-static void init_display( void )
-{
-    display.on = ( int )( saturn.disp_io & 0x8 ) >> 3;
-
-    display.disp_start = ( saturn.disp_addr & 0xffffe );
-    display.offset = ( saturn.disp_io & 0x7 );
-
-    display.lines = ( saturn.line_count & 0x3f );
-    if ( display.lines == 0 )
-        display.lines = 63;
-
-    if ( display.offset > 3 )
-        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset + 2 ) & 0xfff;
-    else
-        display.nibs_per_line = ( NIBBLES_PER_ROW + saturn.line_offset ) & 0xfff;
-
-    display.disp_end = display.disp_start + ( display.nibs_per_line * ( display.lines + 1 ) );
-
-    display.menu_start = saturn.menu_addr;
-    display.menu_end = saturn.menu_addr + 0x110;
-
-    display.contrast = saturn.contrast_ctrl;
-    display.contrast |= ( ( saturn.disp_test & 0x1 ) << 4 );
 }
 
 void start_emulator( void )
