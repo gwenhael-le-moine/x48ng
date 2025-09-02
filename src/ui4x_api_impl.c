@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "emulate.h"
-#include "emulator_ui4x_api.h"
-#include "init.h"
-#include "memory.h"
 #include "options.h"
 #include "romio.h"
+
+#include "core/emulate.h"
+#include "core/init.h"
+#include "core/memory.h"
+
+#include "ui4x/api.h"
 
 #define KEYBOARD keyboard48
 
@@ -77,6 +79,8 @@ static hpkey_t keyboard48[ NB_HP48_KEYS ] = {
     {0x01,   false, ( char* )"0/02"},
     {0x00,   false, ( char* )"0/01"},
 };
+
+static config_t __config;
 
 void press_key( int hpkey )
 {
@@ -154,7 +158,10 @@ int get_contrast( void ) { return display.contrast; }
 
 void init_emulator( config_t* conf )
 {
+    __config = *conf;
+
     start_emulator();
+
     conf->model = opt_gx ? MODEL_48GX : MODEL_48SX;
 }
 

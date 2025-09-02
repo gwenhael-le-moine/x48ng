@@ -63,16 +63,16 @@ LIBS = -lm \
 	$(SDL_LIBS) \
 	$(GTK_LIBS)
 
-HEADERS = src/debugger.h \
-	src/emulate.h \
-	src/init.h \
-	src/memory.h \
-	src/options.h \
-	src/registers.h \
+HEADERS = src/options.h \
 	src/romio.h \
-	src/timers.h \
-	src/serial.h \
-	src/emulator_ui4x_api.h \
+	src/core/debugger.h \
+	src/core/emulate.h \
+	src/core/init.h \
+	src/core/memory.h \
+	src/core/registers.h \
+	src/core/timers.h \
+	src/core/serial.h \
+	src/ui4x/api.h \
 	src/ui4x/bitmaps_misc.h \
 	src/ui4x/common.h \
 	src/ui4x/inner.h \
@@ -80,17 +80,17 @@ HEADERS = src/debugger.h \
 	$(SDL_HEADERS) \
 	$(GTK_HEADERS)
 
-SRC = src/debugger.c \
-	src/emulate.c \
-	src/emulator_ui4x_api.c \
-	src/init.c \
-	src/memory.c \
-	src/options.c \
-	src/registers.c \
+SRC = src/options.c \
 	src/romio.c \
-	src/timers.c \
-	src/serial.c \
 	src/main.c \
+	src/core/debugger.c \
+	src/core/emulate.c \
+	src/core/init.c \
+	src/core/memory.c \
+	src/core/registers.c \
+	src/core/timers.c \
+	src/core/serial.c \
+	src/ui4x_api_impl.c \
 	src/ui4x/48gx.c \
 	src/ui4x/48sx.c \
 	src/ui4x/49g.c \

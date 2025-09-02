@@ -3,7 +3,6 @@
 
 #  include <stdbool.h>
 
-#  include "debugger.h"
 #  include "types.h"
 
 #  define USER_INTERRUPT 1
