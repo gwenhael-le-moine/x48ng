@@ -12,6 +12,7 @@
 #include "emulate.h"
 #include "init.h"
 #include "options.h"
+#include "persistence.h"
 #include "romio.h"
 #include "timers.h"
 

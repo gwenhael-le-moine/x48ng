@@ -1,12 +1,11 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
 #include <sys/time.h>
 
 #include "emulate.h"
-#include "init.h"
+#include "persistence.h"
 #include "memory.h"
 #include "options.h"
 #include "romio.h"

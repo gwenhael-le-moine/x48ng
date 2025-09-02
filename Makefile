@@ -69,6 +69,7 @@ HEADERS = src/options.h \
 	src/core/emulate.h \
 	src/core/init.h \
 	src/core/memory.h \
+	src/core/persistence.h \
 	src/core/registers.h \
 	src/core/timers.h \
 	src/core/serial.h \
@@ -86,6 +87,7 @@ SRC = src/options.c \
 	src/core/debugger.c \
 	src/core/emulate.c \
 	src/core/init.c \
+	src/core/persistence.c \
 	src/core/memory.c \
 	src/core/registers.c \
 	src/core/timers.c \
