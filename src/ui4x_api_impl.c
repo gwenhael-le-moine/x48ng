@@ -13,6 +13,9 @@
 
 #define KEYBOARD keyboard48
 
+#define IN_VAL( keycode ) ( 1 << ( keycode & 0xf ) )
+#define OUT_BIT( keycode ) ( keycode >> 4 )
+
 typedef struct hpkey_t {
     int code;
     bool pressed;
@@ -80,9 +83,6 @@ static hpkey_t keyboard48[ NB_HP48_KEYS ] = {
 };
 
 static config_t __config;
-
-#define IN_VAL( keycode ) ( 1 << ( keycode & 0xf ) )
-#define OUT_BIT( keycode ) ( keycode >> 4 )
 
 void press_key( int hpkey )
 {
