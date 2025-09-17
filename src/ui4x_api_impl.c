@@ -81,6 +81,9 @@ static hpkey_t keyboard48[ NB_HP48_KEYS ] = {
 
 static config_t __config;
 
+#define IN_VAL( keycode ) ( 1 << ( keycode & 0xf ) )
+#define OUT_BIT( keycode ) ( keycode >> 4 )
+
 void press_key( int hpkey )
 {
     if ( hpkey < 0 || hpkey > NB_KEYS )
@@ -91,23 +94,18 @@ void press_key( int hpkey )
 
     KEYBOARD[ hpkey ].pressed = true;
 
-    KEYBOARD[ hpkey ].pressed = true;
-
-    int code = KEYBOARD[ hpkey ].code;
-    if ( code == 0x8000 ) { /* HPKEY_ON */
+    if ( KEYBOARD[ hpkey ].code == 0x8000 ) { /* HPKEY_ON */
         for ( int i = 0; i < KEYS_BUFFER_SIZE; i++ )
             saturn.keybuf[ i ] |= 0x8000;
         do_kbd_int();
     } else {
-        int r = code >> 4;
-        int c = 1 << ( code & 0xf );
-        if ( ( saturn.keybuf[ r ] & c ) == 0 ) {
+        if ( ( saturn.keybuf[ OUT_BIT( KEYBOARD[ hpkey ].code ) ] & IN_VAL( KEYBOARD[ hpkey ].code ) ) == 0 ) {
             if ( saturn.kbd_ien )
                 do_kbd_int();
-            if ( ( saturn.keybuf[ r ] & c ) )
+            if ( ( saturn.keybuf[ OUT_BIT( KEYBOARD[ hpkey ].code ) ] & IN_VAL( KEYBOARD[ hpkey ].code ) ) )
                 fprintf( stderr, "bug\n" );
 
-            saturn.keybuf[ r ] |= c;
+            saturn.keybuf[ OUT_BIT( KEYBOARD[ hpkey ].code ) ] |= IN_VAL( KEYBOARD[ hpkey ].code );
         }
     }
 }
@@ -122,17 +120,11 @@ void release_key( int hpkey )
 
     KEYBOARD[ hpkey ].pressed = false;
 
-    KEYBOARD[ hpkey ].pressed = false;
-
-    int code = KEYBOARD[ hpkey ].code;
-    if ( code == 0x8000 ) {
+    if ( KEYBOARD[ hpkey ].code == 0x8000 ) {
         for ( int i = 0; i < KEYS_BUFFER_SIZE; i++ )
             saturn.keybuf[ i ] &= ~0x8000;
-    } else {
-        int r = code >> 4;
-        int c = 1 << ( code & 0xf );
-        saturn.keybuf[ r ] &= ~c;
-    }
+    } else
+        saturn.keybuf[ OUT_BIT( KEYBOARD[ hpkey ].code ) ] &= ~( IN_VAL( KEYBOARD[ hpkey ].code ) );
 }
 
 bool is_key_pressed( int hpkey )
