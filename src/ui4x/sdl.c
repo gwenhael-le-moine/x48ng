@@ -890,11 +890,6 @@ static void _draw_serial_devices_path( void )
 {
     char text[ 1024 ] = "";
 
-    if ( __config.verbose ) {
-        fprintf( stderr, "wire_name: %s\n", __config.wire_name );
-        fprintf( stderr, "ir_name: %s\n", __config.ir_name );
-    }
-
     if ( __config.wire_name ) {
         strcat( text, "wire: " );
         strcat( text, __config.wire_name );
