@@ -1099,10 +1099,7 @@ void ui_update_display_sdl( void )
                     color = COLOR_PIXEL_GREY_2;
                     break;
                 case 3:
-                    color = COLOR_PIXEL_ON;
-                    break;
                 default:
-                    fprintf( stderr, "%i\n", pixel );
                     color = COLOR_PIXEL_ON;
                     break;
             }

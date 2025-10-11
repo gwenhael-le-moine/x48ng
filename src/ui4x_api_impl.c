@@ -139,11 +139,7 @@ unsigned char get_annunciators( void ) { return saturn.annunc; }
 
 bool get_display_state( void ) { return display.on; }
 
-void get_lcd_buffer( int* target )
-{
-    for ( int xy = 0; xy < ( LCD_HEIGHT * LCD_WIDTH ); ++xy )
-        target[ xy ] = lcd_pixels_buffer[ xy ] > 0 ? 3 : 0;
-}
+void get_lcd_buffer( int* target ) { memcpy( target, lcd_pixels_buffer, LCD_HEIGHT * LCD_WIDTH * sizeof( int ) ); }
 
 int get_contrast( void ) { return display.contrast; }
 
