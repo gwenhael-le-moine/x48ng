@@ -9,7 +9,7 @@
 TARGETS = dist/x48ng dist/x48ng-checkrom dist/x48ng-dump2rom
 
 VERSION_MAJOR = 0
-VERSION_MINOR = 69
+VERSION_MINOR = 50
 PATCHLEVEL = 0
 
 PREFIX ?= /usr
