@@ -236,6 +236,9 @@ static void create_annunciators_textures( void )
 // Returns -1 is no key is pressed
 static int mouse_click_to_hpkey( int x, int y )
 {
+    x /= __config.scale;
+    y /= __config.scale;
+
     /* return immediatly if the click isn't even in the keyboard area */
     if ( y < OFFSET_Y_KEYBOARD )
         return -1;
@@ -244,8 +247,8 @@ static int mouse_click_to_hpkey( int x, int y )
     y -= OFFSET_Y_KEYBOARD;
 
     for ( int i = 0; i < NB_KEYS; i++ )
-        if ( ( BUTTONS[ i ].x < x && ( BUTTONS[ i ].x + BUTTONS[ i ].w ) > x ) &&
-             ( BUTTONS[ i ].y < y && ( BUTTONS[ i ].y + BUTTONS[ i ].h ) > y ) )
+        if ( ( BUTTONS[ i ].x < x && x < ( BUTTONS[ i ].x + BUTTONS[ i ].w ) ) &&
+             ( BUTTONS[ i ].y < y && y < ( BUTTONS[ i ].y + BUTTONS[ i ].h ) ) )
             return i;
 
     return -1;
