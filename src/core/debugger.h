@@ -34,7 +34,7 @@ extern int exec_flags;
 /**************/
 /* debugger.c */
 /**************/
-extern int check_breakpoint( int type, word_20 addr );
+extern int check_breakpoint( int type, address_t addr );
 extern int debug( void );
 
 #endif /* !_DEBUGGER_H */

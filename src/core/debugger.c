@@ -96,8 +96,8 @@ static char instr[ 100 ];
 int num_bkpts;
 
 struct breakpoint {
-    word_20 addr;
-    word_20 end_addr;
+    address_t addr;
+    address_t end_addr;
     int flags;
 } bkpt_tbl[ MAX_BREAKPOINTS + 1 ];
 
@@ -329,18 +329,18 @@ static char* hst_bits[ 8 ] = {
 };
 
 typedef struct hp_real {
-    word_20 x;
+    address_t x;
     word_32 ml;
     word_32 mh;
-    word_4 m;
-    word_1 s;
+    nibble_t m;
+    bit_t s;
 } hp_real;
 
 typedef struct objfunc {
     char* name;
     short length;
-    word_20 prolog;
-    char* ( *func )( word_20* addr, char* string );
+    address_t prolog;
+    char* ( *func )( address_t* addr, char* string );
 } objfunc_t;
 
 objfunc_t objects[];
@@ -629,7 +629,7 @@ static char* append_tab( char* buf )
     return p;
 }
 
-static int read_int( word_20* addr, int n )
+static int read_int( address_t* addr, int n )
 {
     int i, t;
 
@@ -651,13 +651,13 @@ static char* append_tab_16( char* buf )
     return p;
 }
 
-static char* append_field( char* buf, word_4 fn )
+static char* append_field( char* buf, nibble_t fn )
 {
     buf = append_str( buf, field_tbl[ fn + 16 * disassembler_mode ] );
     return buf;
 }
 
-static char* append_imm_nibble( char* buf, word_20* addr, int n )
+static char* append_imm_nibble( char* buf, address_t* addr, int n )
 {
     int i;
     char t[ 16 ];
@@ -681,7 +681,7 @@ static char* append_imm_nibble( char* buf, word_20* addr, int n )
     return buf;
 }
 
-static char* append_addr( char* buf, word_20 addr )
+static char* append_addr( char* buf, address_t addr )
 {
     int shift;
     long mask;
@@ -695,7 +695,7 @@ static char* append_addr( char* buf, word_20 addr )
     return buf;
 }
 
-static char* append_r_addr( char* buf, word_20* pc, long disp, int n, int offset )
+static char* append_r_addr( char* buf, address_t* pc, long disp, int n, int offset )
 {
     long sign;
 
@@ -732,7 +732,7 @@ static char* append_r_addr( char* buf, word_20* pc, long disp, int n, int offset
     return buf;
 }
 
-static char* append_pc_comment( char* buf, word_20 pc )
+static char* append_pc_comment( char* buf, address_t pc )
 {
     char* p = buf;
 
@@ -792,10 +792,10 @@ static char* append_hst_bits( char* buf, int n )
     return p;
 }
 
-static char* disasm_1( word_20* addr, char* out )
+static char* disasm_1( address_t* addr, char* out )
 {
-    word_4 n;
-    word_4 fn;
+    nibble_t n;
+    nibble_t fn;
     char* p;
     char buf[ 20 ];
     char c;
@@ -1022,14 +1022,14 @@ static char* disasm_1( word_20* addr, char* out )
     return p;
 }
 
-static char* disasm_8( word_20* addr, char* out )
+static char* disasm_8( address_t* addr, char* out )
 {
-    word_4 n;
-    word_4 fn;
+    nibble_t n;
+    nibble_t fn;
     char* p = out;
     char c;
     char buf[ 20 ];
-    word_20 disp, pc;
+    address_t disp, pc;
 
     fn = read_nibble( ( *addr )++ );
     switch ( fn ) {
@@ -1571,14 +1571,14 @@ static char* disasm_8( word_20* addr, char* out )
     return p;
 }
 
-static word_20 disassemble( word_20 addr, char* out )
+static address_t disassemble( address_t addr, char* out )
 {
-    word_4 n;
-    word_4 fn;
+    nibble_t n;
+    nibble_t fn;
     char* p = out;
     char c;
     char buf[ 20 ];
-    word_20 disp, pc;
+    address_t disp, pc;
 
     switch ( n = read_nibble( addr++ ) ) {
         case 0:
@@ -2012,9 +2012,9 @@ static word_20 disassemble( word_20 addr, char* out )
     return addr;
 }
 
-static char* skip_ob( word_20* addr, char* string )
+static char* skip_ob( address_t* addr, char* string )
 {
-    word_20 size, type;
+    address_t size, type;
     char* p = string;
     struct objfunc* op;
 
@@ -2048,10 +2048,10 @@ static long hxs2real( long hxs )
     return n;
 }
 
-static char* dec_bin_int( word_20* addr, char* string )
+static char* dec_bin_int( address_t* addr, char* string )
 {
     char* p = string;
-    word_20 n = 0;
+    address_t n = 0;
 
     n = read_nibbles( *addr, 5 );
     *addr += 5;
@@ -2060,7 +2060,7 @@ static char* dec_bin_int( word_20* addr, char* string )
     return p;
 }
 
-static char* real_number( word_20* addr, char* string, int ml, int xl )
+static char* real_number( address_t* addr, char* string, int ml, int xl )
 {
     hp_real r;
     long re, xs;
@@ -2160,11 +2160,11 @@ static char* real_number( word_20* addr, char* string, int ml, int xl )
     return p;
 }
 
-static char* dec_real( word_20* addr, char* string ) { return real_number( addr, string, 11, 3 ); }
+static char* dec_real( address_t* addr, char* string ) { return real_number( addr, string, 11, 3 ); }
 
-static char* dec_long_real( word_20* addr, char* string ) { return real_number( addr, string, 14, 5 ); }
+static char* dec_long_real( address_t* addr, char* string ) { return real_number( addr, string, 14, 5 ); }
 
-static char* dec_complex( word_20* addr, char* string )
+static char* dec_complex( address_t* addr, char* string )
 {
     char* p = string;
 
@@ -2177,7 +2177,7 @@ static char* dec_complex( word_20* addr, char* string )
     return p;
 }
 
-static char* dec_long_complex( word_20* addr, char* string )
+static char* dec_long_complex( address_t* addr, char* string )
 {
     char* p = string;
 
@@ -2190,9 +2190,9 @@ static char* dec_long_complex( word_20* addr, char* string )
     return p;
 }
 
-static char* dec_string( word_20* addr, char* string )
+static char* dec_string( address_t* addr, char* string )
 {
-    word_20 len;
+    address_t len;
     unsigned char c;
     char* p = string;
     int i, n;
@@ -2228,7 +2228,7 @@ static char* dec_string( word_20* addr, char* string )
     return p;
 }
 
-static char* dec_hex_string( word_20* addr, char* string )
+static char* dec_hex_string( address_t* addr, char* string )
 {
     int len, lead, i, n;
     char* p = string;
@@ -2288,10 +2288,10 @@ static char* xlib_name( int lib, int command, char* string )
     int n, len;
     int i, lib_n = 0;
     unsigned char c;
-    word_20 romptab, acptr;
-    word_20 offset, hash_end;
-    word_20 lib_addr, name_addr;
-    word_20 type, ram_base, ram_mask;
+    address_t romptab, acptr;
+    address_t offset, hash_end;
+    address_t lib_addr, name_addr;
+    address_t type, ram_base, ram_mask;
     short present = 0;
     char* p = string;
 
@@ -2442,14 +2442,14 @@ static char* xlib_name( int lib, int command, char* string )
     return p;
 }
 
-static short check_xlib( word_20 addr, char* string )
+static short check_xlib( address_t addr, char* string )
 {
     int n, lib, command;
-    word_20 romptab;
-    word_20 offset, link_end;
-    word_20 acptr;
-    word_20 lib_addr;
-    word_20 type, ram_base, ram_mask;
+    address_t romptab;
+    address_t offset, link_end;
+    address_t acptr;
+    address_t lib_addr;
+    address_t type, ram_base, ram_mask;
     char* p = string;
 
     /*
@@ -2584,10 +2584,10 @@ static short check_xlib( word_20 addr, char* string )
     return 0;
 }
 
-static char* dec_rpl_obj( word_20* addr, char* string )
+static char* dec_rpl_obj( address_t* addr, char* string )
 {
-    word_20 prolog = 0;
-    word_20 prolog_2;
+    address_t prolog = 0;
+    address_t prolog_2;
     char* p = string;
     char tmp_str[ 80 ];
     struct objfunc* op;
@@ -2623,9 +2623,9 @@ static char* dec_rpl_obj( word_20* addr, char* string )
     return p;
 }
 
-static char* dec_list( word_20* addr, char* string )
+static char* dec_list( address_t* addr, char* string )
 {
-    word_20 semi;
+    address_t semi;
     char* p = string;
 
     *p++ = '{';
@@ -2647,9 +2647,9 @@ static char* dec_list( word_20* addr, char* string )
     return p;
 }
 
-static char* dec_symb( word_20* addr, char* string )
+static char* dec_symb( address_t* addr, char* string )
 {
-    word_20 semi;
+    address_t semi;
     char* p = string;
 
     semi = read_nibbles( *addr, 5 );
@@ -2669,9 +2669,9 @@ static char* dec_symb( word_20* addr, char* string )
     return p;
 }
 
-static char* dec_unit( word_20* addr, char* string )
+static char* dec_unit( address_t* addr, char* string )
 {
-    word_20 semi;
+    address_t semi;
     char* p = string;
 
     semi = read_nibbles( *addr, 5 );
@@ -2687,9 +2687,9 @@ static char* dec_unit( word_20* addr, char* string )
     return p;
 }
 
-static char* dec_unit_op( word_20* addr, char* string )
+static char* dec_unit_op( address_t* addr, char* string )
 {
-    word_20 op;
+    address_t op;
     char* p = string;
 
     op = read_nibbles( *addr - 5, 5 );
@@ -2716,12 +2716,12 @@ static char* dec_unit_op( word_20* addr, char* string )
     return p;
 }
 
-static char* dec_library( word_20* addr, char* string )
+static char* dec_library( address_t* addr, char* string )
 {
-    word_20 libsize, libidsize;
+    address_t libsize, libidsize;
     /*
-      word_20        hashoff, mesgoff, linkoff, cfgoff;
-      word_20        mesgloc, cfgloc;
+      address_t        hashoff, mesgoff, linkoff, cfgoff;
+      address_t        mesgloc, cfgloc;
     */
     int i, libnum;
     unsigned char c;
@@ -2749,9 +2749,9 @@ static char* dec_library( word_20* addr, char* string )
     return p;
 }
 
-static char* dec_library_data( word_20* addr, char* string )
+static char* dec_library_data( address_t* addr, char* string )
 {
-    word_20 size;
+    address_t size;
     char* p = string;
 
     size = read_nibbles( *addr, 5 );
@@ -2765,9 +2765,9 @@ static char* dec_library_data( word_20* addr, char* string )
     return p;
 }
 
-static char* dec_acptr( word_20* addr, char* string )
+static char* dec_acptr( address_t* addr, char* string )
 {
-    word_20 size;
+    address_t size;
     char* p = string;
     int i;
 
@@ -2792,9 +2792,9 @@ static char* dec_acptr( word_20* addr, char* string )
     return p;
 }
 
-static char* dec_prog( word_20* addr, char* string )
+static char* dec_prog( address_t* addr, char* string )
 {
-    word_20 semi;
+    address_t semi;
     char* p = string;
 
     semi = read_nibbles( *addr, 5 );
@@ -2810,10 +2810,10 @@ static char* dec_prog( word_20* addr, char* string )
     return p;
 }
 
-static char* dec_code( word_20* addr, char* string )
+static char* dec_code( address_t* addr, char* string )
 {
     char* p = string;
-    word_20 n, len;
+    address_t n, len;
 
     len = read_nibbles( *addr, 5 );
     sprintf( p, "Code" );
@@ -2831,7 +2831,7 @@ static char* dec_code( word_20* addr, char* string )
     return p;
 }
 
-static char* dec_local_ident( word_20* addr, char* string )
+static char* dec_local_ident( address_t* addr, char* string )
 {
     int len, i, n;
     char* p = string;
@@ -2864,7 +2864,7 @@ static char* dec_local_ident( word_20* addr, char* string )
     return p;
 }
 
-static char* dec_global_ident( word_20* addr, char* string )
+static char* dec_global_ident( address_t* addr, char* string )
 {
     int len, i, n;
     char* p = string;
@@ -2897,7 +2897,7 @@ static char* dec_global_ident( word_20* addr, char* string )
     return p;
 }
 
-static char* dec_xlib_name( word_20* addr, char* string )
+static char* dec_xlib_name( address_t* addr, char* string )
 {
     int lib, command;
 
@@ -2909,11 +2909,11 @@ static char* dec_xlib_name( word_20* addr, char* string )
     return xlib_name( lib, command, string );
 }
 
-static char* any_array( word_20* addr, char* string, short lnk_flag )
+static char* any_array( address_t* addr, char* string, short lnk_flag )
 {
-    word_20 len, type, dim;
-    word_20 *dim_lens, *dims;
-    word_20 array_addr, elem_addr;
+    address_t len, type, dim;
+    address_t *dim_lens, *dims;
+    address_t array_addr, elem_addr;
     long elems;
     int d, i;
     char* p = string;
@@ -2932,8 +2932,8 @@ static char* any_array( word_20* addr, char* string, short lnk_flag )
             break;
     }
 
-    dim_lens = ( word_20* )malloc( dim * sizeof( word_20 ) );
-    dims = ( word_20* )malloc( dim * sizeof( word_20 ) );
+    dim_lens = ( address_t* )malloc( dim * sizeof( address_t ) );
+    dims = ( address_t* )malloc( dim * sizeof( address_t ) );
     elems = 1;
     for ( i = 0; i < dim; i++ ) {
         dim_lens[ i ] = read_nibbles( *addr, 5 );
@@ -2995,11 +2995,11 @@ static char* any_array( word_20* addr, char* string, short lnk_flag )
     return p;
 }
 
-static char* dec_array( word_20* addr, char* string ) { return any_array( addr, string, 0 ); }
+static char* dec_array( address_t* addr, char* string ) { return any_array( addr, string, 0 ); }
 
-static char* dec_lnk_array( word_20* addr, char* string ) { return any_array( addr, string, 1 ); }
+static char* dec_lnk_array( address_t* addr, char* string ) { return any_array( addr, string, 1 ); }
 
-static char* dec_char( word_20* addr, char* string )
+static char* dec_char( address_t* addr, char* string )
 {
     char* p = string;
     unsigned char c;
@@ -3056,9 +3056,9 @@ objfunc_t objects[] = {
     {0,                        0, 0,         0               }
 };
 
-static char* decode_rpl_obj( word_20 addr, char* buf )
+static char* decode_rpl_obj( address_t addr, char* buf )
 {
-    word_20 prolog = 0;
+    address_t prolog = 0;
     int len;
     char* p = buf;
     char tmp_str[ 80 ];
@@ -3194,7 +3194,7 @@ cmd_tbl[] = {
     {0,        0,            0                                                                    }
 };
 
-int check_breakpoint( int type, word_20 addr )
+int check_breakpoint( int type, address_t addr )
 {
     struct breakpoint* bp;
     int i, n;
@@ -3282,7 +3282,7 @@ static int decode_dec( int* num, char* arg )
     return 1;
 }
 
-static int decode_20( word_20* addr, char* arg )
+static int decode_20( address_t* addr, char* arg )
 {
     if ( arg == ( char* )0 ) {
         printf( "Command requires an argument.\n" );
@@ -3352,7 +3352,7 @@ static int decode_64( word_64* addr, char* arg )
     return 1;
 }
 
-static char* str_nibbles( word_20 addr, int n )
+static char* str_nibbles( address_t addr, int n )
 {
     static char str[ 1025 ];
     char* cp;
@@ -3396,7 +3396,7 @@ static int confirm( const char* prompt )
 static void cmd_break( int argc, char** argv )
 {
     int i;
-    word_20 addr;
+    address_t addr;
 
     if ( argc == 1 ) {
         for ( i = 0; i < MAX_BREAKPOINTS; i++ ) {
@@ -3484,7 +3484,7 @@ static void cmd_delete( int argc, char** argv )
 
 static void cmd_go( int argc, char** argv )
 {
-    word_20 addr;
+    address_t addr;
 
     str_to_upper( argv[ 1 ] );
     if ( decode_20( &addr, argv[ 1 ] ) ) {
@@ -3810,24 +3810,24 @@ static void cmd_regs( int argc, char** argv )
                 set_reg( val, 16, saturn.D );
                 dump_reg( "     D", 16, saturn.D );
             } else if ( !strcmp( "D0", argv[ 1 ] ) ) {
-                saturn.D0 = ( word_20 )( val & 0xfffff );
+                saturn.D0 = ( address_t )( val & 0xfffff );
                 printf( "    D0:\t%.5lX ->", saturn.D0 );
                 for ( i = 0; i < 20; i += 5 ) {
                     printf( " %s", str_nibbles( saturn.D0 + i, 5 ) );
                 }
                 printf( "\n" );
             } else if ( !strcmp( "D1", argv[ 1 ] ) ) {
-                saturn.D1 = ( word_20 )( val & 0xfffff );
+                saturn.D1 = ( address_t )( val & 0xfffff );
                 printf( "    D1:\t%.5lX ->", saturn.D1 );
                 for ( i = 0; i < 20; i += 5 ) {
                     printf( " %s", str_nibbles( saturn.D1 + i, 5 ) );
                 }
                 printf( "\n" );
             } else if ( !strcmp( "P", argv[ 1 ] ) ) {
-                saturn.P = ( word_4 )( val & 0xf );
+                saturn.P = ( nibble_t )( val & 0xf );
                 printf( "     P:\t%.1X\n", saturn.P );
             } else if ( !strcmp( "PC", argv[ 1 ] ) ) {
-                saturn.PC = ( word_20 )( val & 0xfffff );
+                saturn.PC = ( address_t )( val & 0xfffff );
                 disassemble( saturn.PC, instr );
                 printf( "    PC:\t%.5lX -> %s\n", saturn.PC, instr );
             } else if ( !strcmp( "R0", argv[ 1 ] ) ) {
@@ -3852,10 +3852,10 @@ static void cmd_regs( int argc, char** argv )
                 set_reg( val, 3, saturn.OUT );
                 dump_reg( "   OUT", 3, saturn.OUT );
             } else if ( !strcmp( "CARRY", argv[ 1 ] ) ) {
-                saturn.CARRY = ( word_1 )( val & 0x1 );
+                saturn.CARRY = ( bit_t )( val & 0x1 );
                 printf( " CARRY:\t%.1d\n", saturn.CARRY );
             } else if ( !strcmp( "CY", argv[ 1 ] ) ) {
-                saturn.CARRY = ( word_1 )( val & 0x1 );
+                saturn.CARRY = ( bit_t )( val & 0x1 );
                 printf( " CARRY:\t%.1d\n", saturn.CARRY );
             } else if ( !strcmp( "ST", argv[ 1 ] ) ) {
                 set_st( val );
@@ -3881,15 +3881,15 @@ static void cmd_save( int argc, char** argv )
 
 struct se {
     int se_n;
-    word_20 se_p;
+    address_t se_p;
     struct se* se_next;
 };
 
 static void cmd_stack( int argc, char** argv )
 {
-    word_20 dsktop, dskbot;
-    word_20 sp = 0, end = 0, ent = 0;
-    word_20 ram_base, ram_mask;
+    address_t dsktop, dskbot;
+    address_t sp = 0, end = 0, ent = 0;
+    address_t ram_base, ram_mask;
     char buf[ 65536 ];
     struct se *stack, *se;
     int n;
@@ -3965,7 +3965,7 @@ static void cmd_stat( int argc, char** argv )
 
 static void cmd_step( int argc, char** argv )
 {
-    word_20 next_instr;
+    address_t next_instr;
     word_32 n;
     int leave;
 

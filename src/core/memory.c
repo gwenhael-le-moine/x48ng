@@ -39,17 +39,18 @@ int ( *read_nibble_crc )( long addr );
 
 static int line_counter = -1;
 
-static void disp_draw_nibble( word_20 addr, word_4 val )
+static void disp_draw_nibble( address_t addr, nibble_t val )
 {
     long offset = ( addr - display.disp_start );
     int x = offset % display.nibs_per_line;
+
+    if ( x < 0 || x > 35 )
+        return;
 
     int bit_stop;
     int init_x;
     int y;
 
-    if ( x < 0 || x > 35 )
-        return;
     if ( display.nibs_per_line != 0 ) {
         y = offset / display.nibs_per_line;
         if ( y < 0 || y > 63 )
@@ -58,18 +59,18 @@ static void disp_draw_nibble( word_20 addr, word_4 val )
         init_x = x * NIBBLES_NB_BITS;
         bit_stop = ( ( init_x + NIBBLES_NB_BITS >= LCD_WIDTH ) ? LCD_WIDTH - init_x : NIBBLES_NB_BITS );
         for ( int bit_x = 0; bit_x < bit_stop; bit_x++ )
-            lcd_pixels_buffer[ ( y * LCD_WIDTH ) + init_x + bit_x ] = ( val & ( 1 << ( bit_x & 3 ) ) ) > 0 ? 1 : 0;
+            lcd_pixels_buffer[ ( y * LCD_WIDTH ) + init_x + bit_x ] = ( val & ( 1 << ( bit_x & 3 ) ) ); // > 0 ? 1 : 0;
     } else {
         for ( y = 0; y < display.lines; y++ ) {
             init_x = x * NIBBLES_NB_BITS;
             bit_stop = ( ( init_x + NIBBLES_NB_BITS >= LCD_WIDTH ) ? LCD_WIDTH - init_x : NIBBLES_NB_BITS );
             for ( int bit_x = 0; bit_x < bit_stop; bit_x++ )
-                lcd_pixels_buffer[ ( y * LCD_WIDTH ) + init_x + bit_x ] = ( val & ( 1 << ( bit_x & 3 ) ) ) > 0 ? 1 : 0;
+                lcd_pixels_buffer[ ( y * LCD_WIDTH ) + init_x + bit_x ] = ( val & ( 1 << ( bit_x & 3 ) ) ); // > 0 ? 1 : 0;
         }
     }
 }
 
-static void menu_draw_nibble( word_20 addr, word_4 val )
+static void menu_draw_nibble( address_t addr, nibble_t val )
 {
     long offset = ( addr - display.menu_start );
     int x = offset % display.nibs_per_line;
@@ -78,7 +79,7 @@ static void menu_draw_nibble( word_20 addr, word_4 val )
     int init_x = x * NIBBLES_NB_BITS;
     int bit_stop = ( init_x + NIBBLES_NB_BITS >= LCD_WIDTH ) ? LCD_WIDTH - init_x : NIBBLES_NB_BITS;
     for ( int bit_x = 0; bit_x < bit_stop; bit_x++ )
-        lcd_pixels_buffer[ ( y * LCD_WIDTH ) + init_x + bit_x ] = ( val & ( 1 << ( bit_x & 3 ) ) );
+        lcd_pixels_buffer[ ( y * LCD_WIDTH ) + init_x + bit_x ] = ( val & ( 1 << ( bit_x & 3 ) ) ); // > 0 ? 1 : 0;
 }
 
 static inline int calc_crc( int nib )

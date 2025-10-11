@@ -29,13 +29,13 @@ static long port2_size;
 /* READING ~/.config/x48ng/{rom,ram,state,port1,port2} */
 /***********************************************/
 
-static int read_8( FILE* fp, word_8* var )
+static int read_8( FILE* fp, byte_t* var )
 {
     unsigned char tmp;
 
     if ( fread( &tmp, 1, 1, fp ) != 1 ) {
         if ( config.verbose )
-            fprintf( stderr, "can\'t read word_8\n" );
+            fprintf( stderr, "can\'t read byte_t\n" );
         return 0;
     }
     *var = tmp;
@@ -267,12 +267,12 @@ static int read_state_file( FILE* fp )
     return 1;
 }
 
-static int read_mem_file( char* name, word_4* mem, int size )
+static int read_mem_file( char* name, nibble_t* mem, int size )
 {
     struct stat st;
     FILE* fp;
-    word_8* tmp_mem;
-    word_8 byte;
+    byte_t* tmp_mem;
+    byte_t byte;
     int i, j;
 
     if ( NULL == ( fp = fopen( name, "r" ) ) ) {
@@ -309,7 +309,7 @@ static int read_mem_file( char* name, word_4* mem, int size )
             return 0;
         }
 
-        if ( NULL == ( tmp_mem = ( word_8* )malloc( ( size_t )st.st_size ) ) ) {
+        if ( NULL == ( tmp_mem = ( byte_t* )malloc( ( size_t )st.st_size ) ) ) {
             for ( i = 0, j = 0; i < size / 2; i++ ) {
                 if ( 1 != fread( &byte, 1, 1, fp ) ) {
                     if ( config.verbose )
@@ -317,8 +317,8 @@ static int read_mem_file( char* name, word_4* mem, int size )
                     fclose( fp );
                     return 0;
                 }
-                mem[ j++ ] = ( word_4 )( ( int )byte & 0xf );
-                mem[ j++ ] = ( word_4 )( ( ( int )byte >> 4 ) & 0xf );
+                mem[ j++ ] = ( nibble_t )( ( int )byte & 0xf );
+                mem[ j++ ] = ( nibble_t )( ( ( int )byte >> 4 ) & 0xf );
             }
         } else {
             if ( fread( tmp_mem, 1, ( size_t )size / 2, fp ) != ( unsigned long )( size / 2 ) ) {
@@ -330,8 +330,8 @@ static int read_mem_file( char* name, word_4* mem, int size )
             }
 
             for ( i = 0, j = 0; i < size / 2; i++ ) {
-                mem[ j++ ] = ( word_4 )( ( int )tmp_mem[ i ] & 0xf );
-                mem[ j++ ] = ( word_4 )( ( ( int )tmp_mem[ i ] >> 4 ) & 0xf );
+                mem[ j++ ] = ( nibble_t )( ( int )tmp_mem[ i ] & 0xf );
+                mem[ j++ ] = ( nibble_t )( ( ( int )tmp_mem[ i ] >> 4 ) & 0xf );
             }
 
             free( tmp_mem );
@@ -350,14 +350,14 @@ static int read_mem_file( char* name, word_4* mem, int size )
 /* WRITING ~/.x48ng/{rom,ram,state,port1,port2} */
 /***********************************************/
 
-static int write_8( FILE* fp, word_8* var )
+static int write_8( FILE* fp, byte_t* var )
 {
     unsigned char tmp;
 
     tmp = *var;
     if ( fwrite( &tmp, 1, 1, fp ) != 1 ) {
         if ( config.verbose )
-            fprintf( stderr, "can\'t write word_8\n" );
+            fprintf( stderr, "can\'t write byte_t\n" );
         return 0;
     }
     return 1;
@@ -422,11 +422,11 @@ static int write_u_long( FILE* fp, unsigned long* var )
     return 1;
 }
 
-static int write_mem_file( char* name, word_4* mem, int size )
+static int write_mem_file( char* name, nibble_t* mem, int size )
 {
     FILE* fp;
-    word_8* tmp_mem;
-    word_8 byte;
+    byte_t* tmp_mem;
+    byte_t byte;
     int i, j;
 
     if ( NULL == ( fp = fopen( name, "w" ) ) ) {
@@ -435,7 +435,7 @@ static int write_mem_file( char* name, word_4* mem, int size )
         return 0;
     }
 
-    if ( NULL == ( tmp_mem = ( word_8* )malloc( ( size_t )size / 2 ) ) ) {
+    if ( NULL == ( tmp_mem = ( byte_t* )malloc( ( size_t )size / 2 ) ) ) {
         for ( i = 0, j = 0; i < size / 2; i++ ) {
             byte = ( mem[ j++ ] & 0x0f );
             byte |= ( mem[ j++ ] << 4 ) & 0xf0;
@@ -601,7 +601,7 @@ int read_rom( const char* fname )
 
     ram_size = opt_gx ? RAM_SIZE_GX : RAM_SIZE_SX;
 
-    if ( NULL == ( saturn.ram = ( word_4* )malloc( ram_size ) ) ) {
+    if ( NULL == ( saturn.ram = ( nibble_t* )malloc( ram_size ) ) ) {
         if ( config.verbose )
             fprintf( stderr, "can\'t malloc RAM\n" );
         return 0;
@@ -636,7 +636,7 @@ int read_files( void )
     /*************************************************/
     /* 1. read ROM from ~/.x48ng/rom into saturn.rom */
     /*************************************************/
-    saturn.rom = ( word_4* )NULL;
+    saturn.rom = ( nibble_t* )NULL;
     if ( !read_rom_file( normalized_rom_path, &saturn.rom, &rom_size ) )
         return 0;
 
@@ -707,8 +707,8 @@ int read_files( void )
 
     ram_size = opt_gx ? RAM_SIZE_GX : RAM_SIZE_SX;
 
-    saturn.ram = ( word_4* )NULL;
-    if ( NULL == ( saturn.ram = ( word_4* )malloc( ram_size ) ) ) {
+    saturn.ram = ( nibble_t* )NULL;
+    if ( NULL == ( saturn.ram = ( nibble_t* )malloc( ram_size ) ) ) {
         if ( config.verbose )
             fprintf( stderr, "can\'t malloc RAM[%d]\n", ram_size );
         exit( 1 );
@@ -741,7 +741,7 @@ int read_files( void )
     if ( stat( normalized_port1_path, &st ) >= 0 ) {
         port1_size = 2 * st.st_size;
         if ( ( port1_size == 0x10000 ) || ( port1_size == 0x40000 ) ) {
-            if ( NULL == ( saturn.port1 = ( word_4* )malloc( port1_size ) ) ) {
+            if ( NULL == ( saturn.port1 = ( nibble_t* )malloc( port1_size ) ) ) {
                 if ( config.verbose )
                     fprintf( stderr, "can\'t malloc PORT1[%ld]\n", port1_size );
             } else if ( !read_mem_file( normalized_port1_path, saturn.port1, port1_size ) ) {
@@ -774,7 +774,7 @@ int read_files( void )
         port2_size = 2 * st.st_size;
         if ( ( opt_gx && ( ( port2_size % 0x40000 ) == 0 ) ) ||
              ( !opt_gx && ( ( port2_size == 0x10000 ) || ( port2_size == 0x40000 ) ) ) ) {
-            if ( NULL == ( saturn.port2 = ( word_4* )malloc( port2_size ) ) ) {
+            if ( NULL == ( saturn.port2 = ( nibble_t* )malloc( port2_size ) ) ) {
                 if ( config.verbose )
                     fprintf( stderr, "can\'t malloc PORT2[%ld]\n", port2_size );
             } else if ( !read_mem_file( normalized_port2_path, saturn.port2, port2_size ) ) {

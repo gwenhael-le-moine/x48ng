@@ -19,7 +19,7 @@ extern void or_register( unsigned char* res, unsigned char* r1, unsigned char* r
 extern void and_register( unsigned char* res, unsigned char* r1, unsigned char* r2, int code );
 extern void copy_register( unsigned char* to, unsigned char* from, int code );
 extern void exchange_register( unsigned char* r1, unsigned char* r2, int code );
-extern void exchange_reg( unsigned char* r, word_20* d, int code );
+extern void exchange_reg( unsigned char* r, address_t* d, int code );
 extern void shift_left_register( unsigned char* r, int code );
 extern void shift_left_circ_register( unsigned char* r, int code );
 extern void shift_right_register( unsigned char* r, int code );

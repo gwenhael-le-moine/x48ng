@@ -71,7 +71,7 @@ static long sched_receive = SCHED_RECEIVE;
 static long sched_statistics = SCHED_STATISTICS;
 
 /* used in step_instruction_* */
-static word_20 jumpmasks[] = { 0xffffffff, 0xfffffff0, 0xffffff00, 0xfffff000, 0xffff0000, 0xfff00000, 0xff000000, 0xf0000000 };
+static address_t jumpmasks[] = { 0xffffffff, 0xfffffff0, 0xffffff00, 0xfffff000, 0xffff0000, 0xfff00000, 0xff000000, 0xf0000000 };
 static short conf_tab[] = { 1, 2, 2, 2, 2, 0 };
 
 static inline void push_return_addr( long addr )
@@ -153,7 +153,7 @@ static inline void load_constant( unsigned char* reg, int n, long addr )
     }
 }
 
-static inline void register_to_address( unsigned char* reg, word_20* dat, int s )
+static inline void register_to_address( unsigned char* reg, address_t* dat, int s )
 {
     int n = ( s ) ? 4 : 5;
 
@@ -183,16 +183,16 @@ static inline void addr_to_dat( long addr, unsigned char* dat )
     }
 }
 
-static inline void add_address( word_20* dat, int add )
+static inline void add_address( address_t* dat, int add )
 {
     *dat += add;
 
-    saturn.CARRY = ( *dat & ( word_20 )0xfff00000 ) ? 1 : 0;
+    saturn.CARRY = ( *dat & ( address_t )0xfff00000 ) ? 1 : 0;
 
     *dat &= 0xfffff;
 }
 
-static inline void store( word_20 dat, unsigned char* reg, int code )
+static inline void store( address_t dat, unsigned char* reg, int code )
 {
     int s = get_start( code );
     int e = get_end( code );
@@ -201,13 +201,13 @@ static inline void store( word_20 dat, unsigned char* reg, int code )
         write_nibble( dat++, reg[ i ] );
 }
 
-static inline void store_n( word_20 dat, unsigned char* reg, int n )
+static inline void store_n( address_t dat, unsigned char* reg, int n )
 {
     for ( int i = 0; i < n; i++ )
         write_nibble( dat++, reg[ i ] );
 }
 
-static inline void recall( unsigned char* reg, word_20 dat, int code )
+static inline void recall( unsigned char* reg, address_t dat, int code )
 {
     int s = get_start( code );
     int e = get_end( code );
@@ -216,7 +216,7 @@ static inline void recall( unsigned char* reg, word_20 dat, int code )
         reg[ i ] = read_nibble_crc( dat++ );
 }
 
-static inline void recall_n( unsigned char* reg, word_20 dat, int n )
+static inline void recall_n( unsigned char* reg, address_t dat, int n )
 {
     for ( int i = 0; i < n; i++ )
         reg[ i ] = read_nibble_crc( dat++ );
@@ -2702,7 +2702,7 @@ void do_kbd_int( void )
         saturn.int_pending = true;
 }
 
-void load_addr( word_20* dat, long addr, int n )
+void load_addr( address_t* dat, long addr, int n )
 {
     for ( int i = 0; i < n; i++ ) {
         *dat &= ~nibble_masks[ i ];
