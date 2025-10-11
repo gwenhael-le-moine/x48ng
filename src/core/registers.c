@@ -262,7 +262,7 @@ void exchange_register( unsigned char* r1, unsigned char* r2, int code )
     }
 }
 
-void exchange_reg( unsigned char* r, address_t* d, int code )
+void exchange_reg( unsigned char* r, Address* d, int code )
 {
     int t;
     int s = get_start( code );

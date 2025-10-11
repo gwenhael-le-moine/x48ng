@@ -71,10 +71,10 @@ static long sched_receive = SCHED_RECEIVE;
 static long sched_statistics = SCHED_STATISTICS;
 
 /* used in step_instruction_* */
-static address_t jumpmasks[] = { 0xffffffff, 0xfffffff0, 0xffffff00, 0xfffff000, 0xffff0000, 0xfff00000, 0xff000000, 0xf0000000 };
+static Address jumpmasks[] = { 0xffffffff, 0xfffffff0, 0xffffff00, 0xfffff000, 0xffff0000, 0xfff00000, 0xff000000, 0xf0000000 };
 static short conf_tab[] = { 1, 2, 2, 2, 2, 0 };
 
-static inline void push_return_addr( long addr )
+static inline void push_return_addr( Address addr )
 {
     if ( ++saturn.rstkp >= NB_RSTK ) {
         for ( int i = 1; i < NB_RSTK; i++ )
@@ -143,17 +143,17 @@ static inline void clear_register_bit( unsigned char* reg, int n ) { reg[ n / 4 
 static inline int get_register_bit( unsigned char* reg, int n ) { return ( ( int )( reg[ n / 4 ] & ( 1 << ( n % 4 ) ) ) > 0 ) ? 1 : 0; }
 
 
-static inline void load_constant( unsigned char* reg, int n, long addr )
+static inline void load_constant( unsigned char* reg, int n, Address addr )
 {
     int p = saturn.P;
 
     for ( int i = 0; i < n; i++ ) {
-        reg[ p ] = read_nibble( addr + i );
+        reg[ p ] = bus_fetch_nibble( addr + i );
         p = ( p + 1 ) & 0xf;
     }
 }
 
-static inline void register_to_address( unsigned char* reg, address_t* dat, int s )
+static inline void register_to_address( unsigned char* reg, Address* dat, int s )
 {
     int n = ( s ) ? 4 : 5;
 
@@ -165,7 +165,7 @@ static inline void register_to_address( unsigned char* reg, address_t* dat, int 
 
 static inline long dat_to_addr( unsigned char* dat )
 {
-    long addr = 0;
+    Address addr = 0;
 
     for ( int i = 4; i >= 0; i-- ) {
         addr <<= 4;
@@ -175,7 +175,7 @@ static inline long dat_to_addr( unsigned char* dat )
     return addr;
 }
 
-static inline void addr_to_dat( long addr, unsigned char* dat )
+static inline void addr_to_dat( Address addr, unsigned char* dat )
 {
     for ( int i = 0; i < 5; i++ ) {
         dat[ i ] = ( addr & 0xf );
@@ -183,31 +183,31 @@ static inline void addr_to_dat( long addr, unsigned char* dat )
     }
 }
 
-static inline void add_address( address_t* dat, int add )
+static inline void add_address( Address* dat, int add )
 {
     *dat += add;
 
-    saturn.CARRY = ( *dat & ( address_t )0xfff00000 ) ? 1 : 0;
+    saturn.CARRY = ( *dat & ( Address )0xfff00000 ) ? 1 : 0;
 
     *dat &= 0xfffff;
 }
 
-static inline void store( address_t dat, unsigned char* reg, int code )
+static inline void store( Address dat, unsigned char* reg, int code )
 {
     int s = get_start( code );
     int e = get_end( code );
 
     for ( int i = s; i <= e; i++ )
-        write_nibble( dat++, reg[ i ] );
+        bus_write_nibble( dat++, reg[ i ] );
 }
 
-static inline void store_n( address_t dat, unsigned char* reg, int n )
+static inline void store_n( Address dat, unsigned char* reg, int n )
 {
     for ( int i = 0; i < n; i++ )
-        write_nibble( dat++, reg[ i ] );
+        bus_write_nibble( dat++, reg[ i ] );
 }
 
-static inline void recall( unsigned char* reg, address_t dat, int code )
+static inline void recall( unsigned char* reg, Address dat, int code )
 {
     int s = get_start( code );
     int e = get_end( code );
@@ -216,7 +216,7 @@ static inline void recall( unsigned char* reg, address_t dat, int code )
         reg[ i ] = read_nibble_crc( dat++ );
 }
 
-static inline void recall_n( unsigned char* reg, address_t dat, int n )
+static inline void recall_n( unsigned char* reg, Address dat, int n )
 {
     for ( int i = 0; i < n; i++ )
         reg[ i ] = read_nibble_crc( dat++ );
@@ -226,9 +226,9 @@ static bool step_instruction_00e( void )
 {
     bool illegal_instruction = false;
 
-    int op2 = read_nibble( saturn.PC + 2 );
+    int op2 = bus_fetch_nibble( saturn.PC + 2 );
 
-    switch ( read_nibble( saturn.PC + 3 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 3 ) ) {
         case 0: /* A=A&B */
             saturn.PC += 4;
             and_register( saturn.A, saturn.A, saturn.B, op2 );
@@ -304,7 +304,7 @@ static bool step_instruction_00( void )
 {
     bool illegal_instruction = false;
 
-    switch ( read_nibble( saturn.PC + 1 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 1 ) ) {
         case 0: /* RTNSXM */
             saturn.XM = 1;
             saturn.PC = pop_return_addr();
@@ -418,7 +418,7 @@ static bool step_instruction_010( void )
 {
     bool illegal_instruction = false;
 
-    switch ( read_nibble( saturn.PC + 2 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 2 ) ) {
         case 0: /* saturn.R0=A */
             saturn.PC += 3;
             copy_register( saturn.R0, saturn.A, W_FIELD );
@@ -476,7 +476,7 @@ static bool step_instruction_011( void )
 {
     bool illegal_instruction = false;
 
-    switch ( read_nibble( saturn.PC + 2 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 2 ) ) {
         case 0: /* A=R0 */
             saturn.PC += 3;
             copy_register( saturn.A, saturn.R0, W_FIELD );
@@ -534,7 +534,7 @@ static bool step_instruction_012( void )
 {
     bool illegal_instruction = false;
 
-    switch ( read_nibble( saturn.PC + 2 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 2 ) ) {
         case 0: /* AR0EX */
             saturn.PC += 3;
             exchange_register( saturn.A, saturn.R0, W_FIELD );
@@ -592,7 +592,7 @@ static bool step_instruction_013( void )
 {
     bool illegal_instruction = false;
 
-    switch ( read_nibble( saturn.PC + 2 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 2 ) ) {
         case 0: /* D0=A */
             saturn.PC += 3;
             register_to_address( saturn.A, &saturn.D0, 0 );
@@ -668,7 +668,7 @@ static bool step_instruction_014( void )
 {
     bool illegal_instruction = false;
 
-    int op3 = read_nibble( saturn.PC + 2 );
+    int op3 = bus_fetch_nibble( saturn.PC + 2 );
     int opX = op3 < 8 ? 0xf : 6;
     switch ( op3 & 7 ) {
         case 0: /* DAT0=A */
@@ -714,8 +714,8 @@ static bool step_instruction_015( void )
 {
     bool illegal_instruction = false;
 
-    int op3 = read_nibble( saturn.PC + 2 );
-    int op4 = read_nibble( saturn.PC + 3 );
+    int op3 = bus_fetch_nibble( saturn.PC + 2 );
+    int op4 = bus_fetch_nibble( saturn.PC + 3 );
     if ( op3 >= 8 ) {
         switch ( op3 & 7 ) {
             case 0: /* DAT0=A */
@@ -800,7 +800,7 @@ static bool step_instruction_01( void )
     bool illegal_instruction = false;
     int op3;
 
-    switch ( read_nibble( saturn.PC + 1 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 1 ) ) {
         case 0:
             illegal_instruction = step_instruction_010();
             break;
@@ -820,17 +820,17 @@ static bool step_instruction_01( void )
             illegal_instruction = step_instruction_015();
             break;
         case 6:
-            op3 = read_nibble( saturn.PC + 2 );
+            op3 = bus_fetch_nibble( saturn.PC + 2 );
             saturn.PC += 3;
             add_address( &saturn.D0, op3 + 1 );
             break;
         case 7:
-            op3 = read_nibble( saturn.PC + 2 );
+            op3 = bus_fetch_nibble( saturn.PC + 2 );
             saturn.PC += 3;
             add_address( &saturn.D1, op3 + 1 );
             break;
         case 8:
-            op3 = read_nibble( saturn.PC + 2 );
+            op3 = bus_fetch_nibble( saturn.PC + 2 );
             saturn.PC += 3;
             add_address( &saturn.D0, -( op3 + 1 ) );
             break;
@@ -847,7 +847,7 @@ static bool step_instruction_01( void )
             saturn.PC += 7;
             break;
         case 0xc:
-            op3 = read_nibble( saturn.PC + 2 );
+            op3 = bus_fetch_nibble( saturn.PC + 2 );
             saturn.PC += 3;
             add_address( &saturn.D1, -( op3 + 1 ) );
             break;
@@ -874,7 +874,7 @@ static bool step_instruction_02( void )
 {
     bool illegal_instruction = false;
 
-    int op2 = read_nibble( saturn.PC + 1 );
+    int op2 = bus_fetch_nibble( saturn.PC + 1 );
     saturn.PC += 2;
     saturn.P = op2;
 
@@ -885,7 +885,7 @@ static bool step_instruction_03( void )
 {
     bool illegal_instruction = false;
 
-    int op2 = read_nibble( saturn.PC + 1 );
+    int op2 = bus_fetch_nibble( saturn.PC + 1 );
     load_constant( saturn.C, op2 + 1, saturn.PC + 2 );
     saturn.PC += 3 + op2;
 
@@ -975,7 +975,7 @@ static bool step_instruction_08a( void )
 {
     bool illegal_instruction = false;
 
-    switch ( read_nibble( saturn.PC + 2 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 2 ) ) {
         case 0: /* ?A=B */
             saturn.CARRY = is_equal_register( saturn.A, saturn.B, A_FIELD );
             break;
@@ -1048,7 +1048,7 @@ static bool step_instruction_0808( void )
 {
     bool illegal_instruction = false;
 
-    int op4 = read_nibble( saturn.PC + 3 );
+    int op4 = bus_fetch_nibble( saturn.PC + 3 );
     int op5;
 
     switch ( op4 ) {
@@ -1057,7 +1057,7 @@ static bool step_instruction_0808( void )
             saturn.kbd_ien = true;
             break;
         case 1: /* RSI... */
-            op5 = read_nibble( saturn.PC + 4 );
+            op5 = bus_fetch_nibble( saturn.PC + 4 );
             saturn.PC += 5;
             {
                 saturn.kbd_ien = true;
@@ -1073,7 +1073,7 @@ static bool step_instruction_0808( void )
             }
             break;
         case 2: /* LA... */
-            op5 = read_nibble( saturn.PC + 4 );
+            op5 = bus_fetch_nibble( saturn.PC + 4 );
             load_constant( saturn.A, op5 + 1, saturn.PC + 5 );
             saturn.PC += 6 + op5;
             break;
@@ -1081,22 +1081,22 @@ static bool step_instruction_0808( void )
             saturn.PC += 4;
             break;
         case 4: /* ABIT=0 */
-            op5 = read_nibble( saturn.PC + 4 );
+            op5 = bus_fetch_nibble( saturn.PC + 4 );
             saturn.PC += 5;
             clear_register_bit( saturn.A, op5 );
             break;
         case 5: /* ABIT=1 */
-            op5 = read_nibble( saturn.PC + 4 );
+            op5 = bus_fetch_nibble( saturn.PC + 4 );
             saturn.PC += 5;
             set_register_bit( saturn.A, op5 );
             break;
         case 8: /* CBIT=0 */
-            op5 = read_nibble( saturn.PC + 4 );
+            op5 = bus_fetch_nibble( saturn.PC + 4 );
             saturn.PC += 5;
             clear_register_bit( saturn.C, op5 );
             break;
         case 9: /* CBIT=1 */
-            op5 = read_nibble( saturn.PC + 4 );
+            op5 = bus_fetch_nibble( saturn.PC + 4 );
             saturn.PC += 5;
             set_register_bit( saturn.C, op5 );
             break;
@@ -1104,7 +1104,7 @@ static bool step_instruction_0808( void )
         case 7:   /* ?ABIT=1 */
         case 0xa: /* ?CBIT=0 */
         case 0xb: /* ?CBIT=1 */
-            op5 = read_nibble( saturn.PC + 4 );
+            op5 = bus_fetch_nibble( saturn.PC + 4 );
             saturn.CARRY = ( get_register_bit( ( op4 < 8 ) ? saturn.A : saturn.C, op5 ) == ( ( op4 == 6 || op4 == 0xa ) ? 0 : 1 ) ) ? 1 : 0;
             if ( saturn.CARRY ) {
                 saturn.PC += 5;
@@ -1144,7 +1144,7 @@ static bool step_instruction_080( void )
 
     int op4;
 
-    switch ( read_nibble( saturn.PC + 2 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 2 ) ) {
         case 0: /* OUT=CS */
             saturn.PC += 3;
             copy_register( saturn.OUT, saturn.C, OUTS_FIELD );
@@ -1319,12 +1319,12 @@ static bool step_instruction_080( void )
             saturn.PC += 3;
             break;
         case 0xc: /* C=P n */
-            op4 = read_nibble( saturn.PC + 3 );
+            op4 = bus_fetch_nibble( saturn.PC + 3 );
             saturn.PC += 4;
             set_register_nibble( saturn.C, op4, saturn.P );
             break;
         case 0xd: /* P=C n */
-            op4 = read_nibble( saturn.PC + 3 );
+            op4 = bus_fetch_nibble( saturn.PC + 3 );
             saturn.PC += 4;
             saturn.P = get_register_nibble( saturn.C, op4 );
             break;
@@ -1334,7 +1334,7 @@ static bool step_instruction_080( void )
             saturn.SR = 0;
             break;
         case 0xf: /* CPEX n */
-            op4 = read_nibble( saturn.PC + 3 );
+            op4 = bus_fetch_nibble( saturn.PC + 3 );
             saturn.PC += 4;
             {
                 int tmp = get_register_nibble( saturn.C, op4 );
@@ -1353,10 +1353,10 @@ static bool step_instruction_0818( void )
 {
     bool illegal_instruction = false;
 
-    int op3 = read_nibble( saturn.PC + 3 );
-    int op5 = read_nibble( saturn.PC + 5 );
+    int op3 = bus_fetch_nibble( saturn.PC + 3 );
+    int op5 = bus_fetch_nibble( saturn.PC + 5 );
 
-    int op4 = read_nibble( saturn.PC + 4 );
+    int op4 = bus_fetch_nibble( saturn.PC + 4 );
     if ( op4 < 8 ) { /* PLUS */
         switch ( op4 & 3 ) {
             case 0: /* A=A+CON */
@@ -1408,8 +1408,8 @@ static bool step_instruction_0819( void )
 {
     bool illegal_instruction = false;
 
-    int op3 = read_nibble( saturn.PC + 3 );
-    int op4 = read_nibble( saturn.PC + 4 );
+    int op3 = bus_fetch_nibble( saturn.PC + 3 );
+    int op4 = bus_fetch_nibble( saturn.PC + 4 );
     switch ( op4 & 3 ) {
         case 0:
             saturn.PC += 5;
@@ -1437,9 +1437,9 @@ static bool step_instruction_0819( void )
 static bool step_instruction_081a0( void )
 {
     bool illegal_instruction = false;
-    int op3 = read_nibble( saturn.PC + 3 );
+    int op3 = bus_fetch_nibble( saturn.PC + 3 );
 
-    switch ( read_nibble( saturn.PC + 5 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 5 ) ) {
         case 0: /* saturn.R0=A */
             saturn.PC += 6;
             copy_register( saturn.R0, saturn.A, op3 );
@@ -1496,9 +1496,9 @@ static bool step_instruction_081a0( void )
 static bool step_instruction_081a1( void )
 {
     bool illegal_instruction = false;
-    int op3 = read_nibble( saturn.PC + 3 );
+    int op3 = bus_fetch_nibble( saturn.PC + 3 );
 
-    switch ( read_nibble( saturn.PC + 5 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 5 ) ) {
         case 0: /* A=R0 */
             saturn.PC += 6;
             copy_register( saturn.A, saturn.R0, op3 );
@@ -1555,9 +1555,9 @@ static bool step_instruction_081a1( void )
 static bool step_instruction_081a2( void )
 {
     bool illegal_instruction = false;
-    int op3 = read_nibble( saturn.PC + 3 );
+    int op3 = bus_fetch_nibble( saturn.PC + 3 );
 
-    switch ( read_nibble( saturn.PC + 5 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 5 ) ) {
         case 0: /* AR0EX */
             saturn.PC += 6;
             exchange_register( saturn.A, saturn.R0, op3 );
@@ -1615,7 +1615,7 @@ static bool step_instruction_081a( void )
 {
     bool illegal_instruction = false;
 
-    switch ( read_nibble( saturn.PC + 4 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 4 ) ) {
         case 0:
             illegal_instruction = step_instruction_081a0();
             break;
@@ -1636,7 +1636,7 @@ static bool step_instruction_081b( void )
 {
     bool illegal_instruction = false;
 
-    switch ( read_nibble( saturn.PC + 3 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 3 ) ) {
         case 2: /* PC=A */
             saturn.PC = dat_to_addr( saturn.A );
             break;
@@ -1672,7 +1672,7 @@ static bool step_instruction_081( void )
 {
     bool illegal_instruction = false;
 
-    switch ( read_nibble( saturn.PC + 2 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 2 ) ) {
         case 0: /* ASLC */
             saturn.PC += 3;
             shift_left_circ_register( saturn.A, W_FIELD );
@@ -1744,7 +1744,7 @@ static bool step_instruction_08b( void )
 {
     bool illegal_instruction = false;
 
-    switch ( read_nibble( saturn.PC + 2 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 2 ) ) {
         case 0: /* ?A>B */
             saturn.CARRY = is_greater_register( saturn.A, saturn.B, A_FIELD );
             break;
@@ -1816,7 +1816,7 @@ static bool step_instruction_08b( void )
 static bool step_instruction_08( void )
 {
     bool illegal_instruction = false;
-    int op1 = read_nibble( saturn.PC + 1 );
+    int op1 = bus_fetch_nibble( saturn.PC + 1 );
     int op2, op3;
 
     switch ( op1 ) {
@@ -1827,7 +1827,7 @@ static bool step_instruction_08( void )
             illegal_instruction = step_instruction_081();
             break;
         case 2:
-            op2 = read_nibble( saturn.PC + 2 );
+            op2 = bus_fetch_nibble( saturn.PC + 2 );
             saturn.PC += 3;
             if ( op2 & 1 )
                 saturn.XM = 0;
@@ -1839,7 +1839,7 @@ static bool step_instruction_08( void )
                 saturn.MP = 0;
             break;
         case 3:
-            op2 = read_nibble( saturn.PC + 2 );
+            op2 = bus_fetch_nibble( saturn.PC + 2 );
             saturn.CARRY = 1;
             if ( op2 & 1 )
                 if ( saturn.XM != 0 )
@@ -1868,13 +1868,13 @@ static bool step_instruction_08( void )
             break;
         case 4:
         case 5:
-            op2 = read_nibble( saturn.PC + 2 );
+            op2 = bus_fetch_nibble( saturn.PC + 2 );
             saturn.PC += 3;
             saturn.PSTAT[ op2 ] = ( op1 == 4 ) ? 0 : 1;
             break;
         case 6:
         case 7:
-            op2 = read_nibble( saturn.PC + 2 );
+            op2 = bus_fetch_nibble( saturn.PC + 2 );
             if ( op1 == 6 )
                 saturn.CARRY = ( get_program_stat( op2 ) == 0 ) ? 1 : 0;
             else
@@ -1893,7 +1893,7 @@ static bool step_instruction_08( void )
             break;
         case 8:
         case 9:
-            op2 = read_nibble( saturn.PC + 2 );
+            op2 = bus_fetch_nibble( saturn.PC + 2 );
             if ( op1 == 8 )
                 saturn.CARRY = ( saturn.P != op2 ) ? 1 : 0;
             else
@@ -1948,8 +1948,8 @@ static bool step_instruction_08( void )
 static bool step_instruction_09( void )
 {
     bool illegal_instruction = false;
-    int op1 = read_nibble( saturn.PC + 1 );
-    int op2 = read_nibble( saturn.PC + 2 );
+    int op1 = bus_fetch_nibble( saturn.PC + 1 );
+    int op2 = bus_fetch_nibble( saturn.PC + 2 );
 
     if ( op1 < 8 ) {
         switch ( op2 ) {
@@ -2081,8 +2081,8 @@ static bool step_instruction_09( void )
 static bool step_instruction_0a( void )
 {
     bool illegal_instruction = false;
-    int op1 = read_nibble( saturn.PC + 1 );
-    int op2 = read_nibble( saturn.PC + 2 );
+    int op1 = bus_fetch_nibble( saturn.PC + 1 );
+    int op2 = bus_fetch_nibble( saturn.PC + 2 );
 
     if ( op1 < 8 ) {
         switch ( op2 ) {
@@ -2231,8 +2231,8 @@ static bool step_instruction_0a( void )
 static bool step_instruction_0b( void )
 {
     bool illegal_instruction = false;
-    int op1 = read_nibble( saturn.PC + 1 );
-    int op2 = read_nibble( saturn.PC + 2 );
+    int op1 = bus_fetch_nibble( saturn.PC + 1 );
+    int op2 = bus_fetch_nibble( saturn.PC + 2 );
 
     if ( op1 < 8 ) {
         switch ( op2 ) {
@@ -2382,7 +2382,7 @@ static bool step_instruction_0c( void )
 {
     bool illegal_instruction = false;
 
-    switch ( read_nibble( saturn.PC + 1 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 1 ) ) {
         case 0: /* A=A+B */
             saturn.PC += 2;
             add_register( saturn.A, saturn.A, saturn.B, A_FIELD );
@@ -2458,7 +2458,7 @@ static bool step_instruction_0d( void )
 {
     bool illegal_instruction = false;
 
-    switch ( read_nibble( saturn.PC + 1 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 1 ) ) {
         case 0: /* A=0 */
             saturn.PC += 2;
             zero_register( saturn.A, A_FIELD );
@@ -2534,7 +2534,7 @@ static bool step_instruction_0e( void )
 {
     bool illegal_instruction = false;
 
-    switch ( read_nibble( saturn.PC + 1 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 1 ) ) {
         case 0: /* A=A-B */
             saturn.PC += 2;
             sub_register( saturn.A, saturn.A, saturn.B, A_FIELD );
@@ -2610,7 +2610,7 @@ static bool step_instruction_0f( void )
 {
     bool illegal_instruction = false;
 
-    switch ( read_nibble( saturn.PC + 1 ) ) {
+    switch ( bus_fetch_nibble( saturn.PC + 1 ) ) {
         case 0: /* ASL */
             saturn.PC += 2;
             shift_left_register( saturn.A, A_FIELD );
@@ -2702,11 +2702,11 @@ void do_kbd_int( void )
         saturn.int_pending = true;
 }
 
-void load_addr( address_t* dat, long addr, int n )
+void load_addr( Address* dat, Address addr, int n )
 {
     for ( int i = 0; i < n; i++ ) {
         *dat &= ~nibble_masks[ i ];
-        *dat |= read_nibble( addr + i ) << ( i * 4 );
+        *dat |= bus_fetch_nibble( addr + i ) << ( i * 4 );
     }
 }
 
@@ -2714,7 +2714,7 @@ void step_instruction( void )
 {
     bool illegal_instruction = false;
 
-    switch ( read_nibble( saturn.PC ) ) {
+    switch ( bus_fetch_nibble( saturn.PC ) ) {
         case 0:
             illegal_instruction = step_instruction_00();
             break;

@@ -3,12 +3,12 @@
 
 #  include <stdint.h>
 
-typedef unsigned char bit_t;
-typedef unsigned char nibble_t;
-typedef unsigned char byte_t;
+typedef unsigned char Bit;
+typedef unsigned char Nibble;
+typedef unsigned char Byte;
 typedef unsigned short word_12;
 typedef unsigned short word_16;
-typedef long address_t;
+typedef long Address;
 typedef long word_32;
 typedef int64_t word_64;
 

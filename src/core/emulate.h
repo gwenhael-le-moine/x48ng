@@ -25,7 +25,7 @@ typedef struct device_t {
 
 typedef struct mem_cntl_t {
     unsigned short unconfigured;
-    address_t config[ 2 ];
+    Address config[ 2 ];
 } mem_cntl_t;
 
 typedef struct saturn_t {
@@ -34,26 +34,26 @@ typedef struct saturn_t {
 
     unsigned char A[ 16 ], B[ 16 ], C[ 16 ], D[ 16 ];
 
-    address_t d[ 2 ];
+    Address d[ 2 ];
 
 #  define D0 d[ 0 ]
 #  define D1 d[ 1 ]
 
-    nibble_t P;
-    address_t PC;
+    Nibble P;
+    Address PC;
 
     unsigned char R0[ 16 ], R1[ 16 ], R2[ 16 ], R3[ 16 ], R4[ 16 ];
     unsigned char IN[ 4 ];
     unsigned char OUT[ 3 ];
 
-    bit_t CARRY;
+    Bit CARRY;
 
     unsigned char PSTAT[ NB_PSTAT ];
     unsigned char XM, SB, SR, MP;
 
-    nibble_t hexmode;
+    Nibble hexmode;
 
-    address_t RSTK[ NB_RSTK ];
+    Address RSTK[ NB_RSTK ];
     short rstkp;
 
     short keybuf[ KEYS_BUFFER_SIZE ];
@@ -62,57 +62,57 @@ typedef struct saturn_t {
     unsigned char int_pending;   /* bool */
     unsigned char kbd_ien;       /* bool */
 
-    nibble_t disp_io;
+    Nibble disp_io;
 
-    nibble_t contrast_ctrl;
-    byte_t disp_test;
+    Nibble contrast_ctrl;
+    Byte disp_test;
 
     word_16 crc;
 
-    nibble_t power_status;
-    nibble_t power_ctrl;
+    Nibble power_status;
+    Nibble power_ctrl;
 
-    nibble_t mode;
+    Nibble mode;
 
-    byte_t annunc;
+    Byte annunc;
 
-    nibble_t baud;
+    Nibble baud;
 
-    nibble_t card_ctrl;
-    nibble_t card_status;
+    Nibble card_ctrl;
+    Nibble card_status;
 
-    nibble_t io_ctrl;
-    nibble_t rcs;
-    nibble_t tcs;
+    Nibble io_ctrl;
+    Nibble rcs;
+    Nibble tcs;
 
-    byte_t rbr;
-    byte_t tbr;
+    Byte rbr;
+    Byte tbr;
 
-    byte_t sreq;
+    Byte sreq;
 
-    nibble_t ir_ctrl;
+    Nibble ir_ctrl;
 
-    nibble_t base_off;
+    Nibble base_off;
 
-    nibble_t lcr;
-    nibble_t lbr;
+    Nibble lcr;
+    Nibble lbr;
 
-    nibble_t scratch;
+    Nibble scratch;
 
-    nibble_t base_nibble;
+    Nibble base_nibble;
 
-    address_t disp_addr;
+    Address disp_addr;
     word_12 line_offset;
-    byte_t line_count;
+    Byte line_count;
 
     word_16 unknown;
 
-    nibble_t t1_ctrl;
-    nibble_t t2_ctrl;
+    Nibble t1_ctrl;
+    Nibble t2_ctrl;
 
-    address_t menu_addr;
+    Address menu_addr;
 
-    byte_t unknown2;
+    Byte unknown2;
 
     char timer1; /* may NOT be unsigned !!! */
     word_32 timer2;
@@ -150,7 +150,7 @@ extern unsigned long t2_i_per_tick;
 extern void do_interupt( void );
 extern void do_kbd_int( void );
 
-extern void load_addr( address_t* dat, long addr, int n ); /* used in debugger.c */
+extern void load_addr( Address* dat, Address addr, int n ); /* used in debugger.c */
 extern void step_instruction( void );                    /* used in debugger.c */
 extern void schedule( void );                            /* used in debugger.c */
 

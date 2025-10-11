@@ -1,7 +1,9 @@
 #ifndef _MEMORY_H
 #  define _MEMORY_H 1
 
-#  include "ui4x/api.h"
+#  include "../ui4x/api.h"
+
+#  include "types.h"
 
 #  define NIBBLES_PER_ROW 34
 #  define NIBBLES_NB_BITS 4
@@ -29,14 +31,13 @@ typedef struct display_t {
 
 extern long nibble_masks[ 16 ];
 
-extern int lcd_pixels_buffer[ LCD_WIDTH * LCD_HEIGHT ];
 extern display_t display;
 
-extern void ( *write_nibble )( long addr, int val );
-extern int ( *read_nibble_crc )( long addr );
+extern void ( *bus_write_nibble )( Address addr, Nibble val );
+extern int ( *read_nibble_crc )( Address addr );
 extern void dev_memory_init( void ); /*  */
 
-extern int ( *read_nibble )( long addr );       /* used in debugger.c; ui_*.c */
-extern long read_nibbles( long addr, int len ); /* used in debugger.c */
+extern Nibble ( *bus_fetch_nibble )( Address addr );       /* used in debugger.c; ui_*.c */
+extern long read_nibbles( Address addr, int len ); /* used in debugger.c */
 
 #endif /* !_MEMORY_H */

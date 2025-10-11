@@ -10,11 +10,9 @@
 #include "emulate.h"
 #include "init.h"
 #include "memory.h"
-#include "options.h"
+#include "../options.h"
 #include "persistence.h"
 #include "serial.h"
-
-int annunciators_bits[ NB_ANNUNCIATORS ] = { ANN_LEFT, ANN_RIGHT, ANN_ALPHA, ANN_BATTERY, ANN_BUSY, ANN_IO };
 
 // bool please_exit = false;
 bool save_before_exit = true;

@@ -3,11 +3,8 @@
 
 #  include <stdbool.h>
 
-#  include "ui4x/api.h"
-
 #define X48_MAGIC 0x48503438
 
-extern int annunciators_bits[ NB_ANNUNCIATORS ];
 extern bool save_before_exit;
 
 extern void init_saturn( void );

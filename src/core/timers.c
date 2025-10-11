@@ -28,7 +28,7 @@
 #define calc_crc( nib ) ( crc = ( crc >> 4 ) ^ ( ( ( crc ^ ( nib ) ) & 0xf ) * 0x1081 ) )
 
 typedef struct x48_timer_t {
-    bit_t run;
+    Bit run;
     word_64 start;
     word_64 stop;
     word_64 value;
@@ -75,10 +75,10 @@ void set_accesstime( void )
     struct timezone tz;
 
     word_64 ticks, timeout, timer2;
-    address_t accesstime_loc, timeout_loc;
-    address_t accesscrc_loc, timeoutclk_loc;
+    Address accesstime_loc, timeout_loc;
+    Address accesscrc_loc, timeoutclk_loc;
     word_16 crc;
-    nibble_t val;
+    Nibble val;
     int i;
     time_t gmt;
     struct tm* ltm;
@@ -292,7 +292,7 @@ t1_t2_ticks get_t1_t2( void )
     word_64 adj_time;
     word_64 diff_time;
     word_64 delta;
-    address_t accesstime_loc;
+    Address accesstime_loc;
     int i;
 
     gettimeofday( &tv, &tz );

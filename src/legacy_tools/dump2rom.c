@@ -5,9 +5,11 @@
 #include <string.h>
 #include <unistd.h>
 
-unsigned char* core;
+#include "../core/types.h"
 
 #define DEFAULT_ROM_FILE "rom.dump"
+
+unsigned char* core;
 
 bool write_mem_file( const char* name, unsigned char* mem, size_t size )
 {
@@ -54,7 +56,7 @@ bool write_mem_file( const char* name, unsigned char* mem, size_t size )
 int main( int argc, char** argv )
 {
     FILE* dump;
-    long addr;
+    Address addr;
     size_t size;
     int ch, i;
     bool gx, error;

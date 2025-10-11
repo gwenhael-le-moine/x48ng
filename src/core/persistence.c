@@ -29,13 +29,13 @@ static long port2_size;
 /* READING ~/.config/x48ng/{rom,ram,state,port1,port2} */
 /***********************************************/
 
-static int read_8( FILE* fp, byte_t* var )
+static int read_Byte( FILE* fp, Byte* var )
 {
     unsigned char tmp;
 
     if ( fread( &tmp, 1, 1, fp ) != 1 ) {
         if ( config.verbose )
-            fprintf( stderr, "can\'t read byte_t\n" );
+            fprintf( stderr, "can\'t read Byte\n" );
         return 0;
     }
     *var = tmp;
@@ -109,60 +109,60 @@ static int read_state_file( FILE* fp )
      * version 0.4.x, read in the saturn_t struct
      */
     for ( i = 0; i < 16; i++ )
-        if ( !read_8( fp, &saturn.A[ i ] ) )
+        if ( !read_Byte( fp, &saturn.A[ i ] ) )
             return 0;
     for ( i = 0; i < 16; i++ )
-        if ( !read_8( fp, &saturn.B[ i ] ) )
+        if ( !read_Byte( fp, &saturn.B[ i ] ) )
             return 0;
     for ( i = 0; i < 16; i++ )
-        if ( !read_8( fp, &saturn.C[ i ] ) )
+        if ( !read_Byte( fp, &saturn.C[ i ] ) )
             return 0;
     for ( i = 0; i < 16; i++ )
-        if ( !read_8( fp, &saturn.D[ i ] ) )
+        if ( !read_Byte( fp, &saturn.D[ i ] ) )
             return 0;
     if ( !read_32( fp, &saturn.d[ 0 ] ) )
         return 0;
     if ( !read_32( fp, &saturn.d[ 1 ] ) )
         return 0;
-    if ( !read_8( fp, &saturn.P ) )
+    if ( !read_Byte( fp, &saturn.P ) )
         return 0;
     if ( !read_32( fp, &saturn.PC ) )
         return 0;
     for ( i = 0; i < 16; i++ )
-        if ( !read_8( fp, &saturn.R0[ i ] ) )
+        if ( !read_Byte( fp, &saturn.R0[ i ] ) )
             return 0;
     for ( i = 0; i < 16; i++ )
-        if ( !read_8( fp, &saturn.R1[ i ] ) )
+        if ( !read_Byte( fp, &saturn.R1[ i ] ) )
             return 0;
     for ( i = 0; i < 16; i++ )
-        if ( !read_8( fp, &saturn.R2[ i ] ) )
+        if ( !read_Byte( fp, &saturn.R2[ i ] ) )
             return 0;
     for ( i = 0; i < 16; i++ )
-        if ( !read_8( fp, &saturn.R3[ i ] ) )
+        if ( !read_Byte( fp, &saturn.R3[ i ] ) )
             return 0;
     for ( i = 0; i < 16; i++ )
-        if ( !read_8( fp, &saturn.R4[ i ] ) )
+        if ( !read_Byte( fp, &saturn.R4[ i ] ) )
             return 0;
     for ( i = 0; i < 4; i++ )
-        if ( !read_8( fp, &saturn.IN[ i ] ) )
+        if ( !read_Byte( fp, &saturn.IN[ i ] ) )
             return 0;
     for ( i = 0; i < 3; i++ )
-        if ( !read_8( fp, &saturn.OUT[ i ] ) )
+        if ( !read_Byte( fp, &saturn.OUT[ i ] ) )
             return 0;
-    if ( !read_8( fp, &saturn.CARRY ) )
+    if ( !read_Byte( fp, &saturn.CARRY ) )
         return 0;
     for ( i = 0; i < NB_PSTAT; i++ )
-        if ( !read_8( fp, &saturn.PSTAT[ i ] ) )
+        if ( !read_Byte( fp, &saturn.PSTAT[ i ] ) )
             return 0;
-    if ( !read_8( fp, &saturn.XM ) )
+    if ( !read_Byte( fp, &saturn.XM ) )
         return 0;
-    if ( !read_8( fp, &saturn.SB ) )
+    if ( !read_Byte( fp, &saturn.SB ) )
         return 0;
-    if ( !read_8( fp, &saturn.SR ) )
+    if ( !read_Byte( fp, &saturn.SR ) )
         return 0;
-    if ( !read_8( fp, &saturn.MP ) )
+    if ( !read_Byte( fp, &saturn.MP ) )
         return 0;
-    if ( !read_8( fp, &saturn.hexmode ) )
+    if ( !read_Byte( fp, &saturn.hexmode ) )
         return 0;
     for ( i = 0; i < NB_RSTK; i++ )
         if ( !read_32( fp, &saturn.RSTK[ i ] ) )
@@ -172,73 +172,73 @@ static int read_state_file( FILE* fp )
     for ( i = 0; i < KEYS_BUFFER_SIZE; i++ )
         if ( !read_16( fp, ( word_16* )&saturn.keybuf[ i ] ) )
             return 0;
-    if ( !read_8( fp, &saturn.interruptable ) )
+    if ( !read_Byte( fp, &saturn.interruptable ) )
         return 0;
-    if ( !read_8( fp, &saturn.int_pending ) )
+    if ( !read_Byte( fp, &saturn.int_pending ) )
         return 0;
-    if ( !read_8( fp, &saturn.kbd_ien ) )
+    if ( !read_Byte( fp, &saturn.kbd_ien ) )
         return 0;
-    if ( !read_8( fp, &saturn.disp_io ) )
+    if ( !read_Byte( fp, &saturn.disp_io ) )
         return 0;
-    if ( !read_8( fp, &saturn.contrast_ctrl ) )
+    if ( !read_Byte( fp, &saturn.contrast_ctrl ) )
         return 0;
-    if ( !read_8( fp, &saturn.disp_test ) )
+    if ( !read_Byte( fp, &saturn.disp_test ) )
         return 0;
     if ( !read_16( fp, &saturn.crc ) )
         return 0;
-    if ( !read_8( fp, &saturn.power_status ) )
+    if ( !read_Byte( fp, &saturn.power_status ) )
         return 0;
-    if ( !read_8( fp, &saturn.power_ctrl ) )
+    if ( !read_Byte( fp, &saturn.power_ctrl ) )
         return 0;
-    if ( !read_8( fp, &saturn.mode ) )
+    if ( !read_Byte( fp, &saturn.mode ) )
         return 0;
-    if ( !read_8( fp, &saturn.annunc ) )
+    if ( !read_Byte( fp, &saturn.annunc ) )
         return 0;
-    if ( !read_8( fp, &saturn.baud ) )
+    if ( !read_Byte( fp, &saturn.baud ) )
         return 0;
-    if ( !read_8( fp, &saturn.card_ctrl ) )
+    if ( !read_Byte( fp, &saturn.card_ctrl ) )
         return 0;
-    if ( !read_8( fp, &saturn.card_status ) )
+    if ( !read_Byte( fp, &saturn.card_status ) )
         return 0;
-    if ( !read_8( fp, &saturn.io_ctrl ) )
+    if ( !read_Byte( fp, &saturn.io_ctrl ) )
         return 0;
-    if ( !read_8( fp, &saturn.rcs ) )
+    if ( !read_Byte( fp, &saturn.rcs ) )
         return 0;
-    if ( !read_8( fp, &saturn.tcs ) )
+    if ( !read_Byte( fp, &saturn.tcs ) )
         return 0;
-    if ( !read_8( fp, &saturn.rbr ) )
+    if ( !read_Byte( fp, &saturn.rbr ) )
         return 0;
-    if ( !read_8( fp, &saturn.tbr ) )
+    if ( !read_Byte( fp, &saturn.tbr ) )
         return 0;
-    if ( !read_8( fp, &saturn.sreq ) )
+    if ( !read_Byte( fp, &saturn.sreq ) )
         return 0;
-    if ( !read_8( fp, &saturn.ir_ctrl ) )
+    if ( !read_Byte( fp, &saturn.ir_ctrl ) )
         return 0;
-    if ( !read_8( fp, &saturn.base_off ) )
+    if ( !read_Byte( fp, &saturn.base_off ) )
         return 0;
-    if ( !read_8( fp, &saturn.lcr ) )
+    if ( !read_Byte( fp, &saturn.lcr ) )
         return 0;
-    if ( !read_8( fp, &saturn.lbr ) )
+    if ( !read_Byte( fp, &saturn.lbr ) )
         return 0;
-    if ( !read_8( fp, &saturn.scratch ) )
+    if ( !read_Byte( fp, &saturn.scratch ) )
         return 0;
-    if ( !read_8( fp, &saturn.base_nibble ) )
+    if ( !read_Byte( fp, &saturn.base_nibble ) )
         return 0;
     if ( !read_32( fp, &saturn.disp_addr ) )
         return 0;
     if ( !read_16( fp, &saturn.line_offset ) )
         return 0;
-    if ( !read_8( fp, &saturn.line_count ) )
+    if ( !read_Byte( fp, &saturn.line_count ) )
         return 0;
     if ( !read_16( fp, &saturn.unknown ) )
         return 0;
-    if ( !read_8( fp, &saturn.t1_ctrl ) )
+    if ( !read_Byte( fp, &saturn.t1_ctrl ) )
         return 0;
-    if ( !read_8( fp, &saturn.t2_ctrl ) )
+    if ( !read_Byte( fp, &saturn.t2_ctrl ) )
         return 0;
     if ( !read_32( fp, &saturn.menu_addr ) )
         return 0;
-    if ( !read_8( fp, &saturn.unknown2 ) )
+    if ( !read_Byte( fp, &saturn.unknown2 ) )
         return 0;
     if ( !read_char( fp, &saturn.timer1 ) )
         return 0;
@@ -267,12 +267,12 @@ static int read_state_file( FILE* fp )
     return 1;
 }
 
-static int read_mem_file( char* name, nibble_t* mem, int size )
+static int read_mem_file( char* name, Nibble* mem, int size )
 {
     struct stat st;
     FILE* fp;
-    byte_t* tmp_mem;
-    byte_t byte;
+    Byte* tmp_mem;
+    Byte byte;
     int i, j;
 
     if ( NULL == ( fp = fopen( name, "r" ) ) ) {
@@ -309,7 +309,7 @@ static int read_mem_file( char* name, nibble_t* mem, int size )
             return 0;
         }
 
-        if ( NULL == ( tmp_mem = ( byte_t* )malloc( ( size_t )st.st_size ) ) ) {
+        if ( NULL == ( tmp_mem = ( Byte* )malloc( ( size_t )st.st_size ) ) ) {
             for ( i = 0, j = 0; i < size / 2; i++ ) {
                 if ( 1 != fread( &byte, 1, 1, fp ) ) {
                     if ( config.verbose )
@@ -317,8 +317,8 @@ static int read_mem_file( char* name, nibble_t* mem, int size )
                     fclose( fp );
                     return 0;
                 }
-                mem[ j++ ] = ( nibble_t )( ( int )byte & 0xf );
-                mem[ j++ ] = ( nibble_t )( ( ( int )byte >> 4 ) & 0xf );
+                mem[ j++ ] = ( Nibble )( ( int )byte & 0xf );
+                mem[ j++ ] = ( Nibble )( ( ( int )byte >> 4 ) & 0xf );
             }
         } else {
             if ( fread( tmp_mem, 1, ( size_t )size / 2, fp ) != ( unsigned long )( size / 2 ) ) {
@@ -330,8 +330,8 @@ static int read_mem_file( char* name, nibble_t* mem, int size )
             }
 
             for ( i = 0, j = 0; i < size / 2; i++ ) {
-                mem[ j++ ] = ( nibble_t )( ( int )tmp_mem[ i ] & 0xf );
-                mem[ j++ ] = ( nibble_t )( ( ( int )tmp_mem[ i ] >> 4 ) & 0xf );
+                mem[ j++ ] = ( Nibble )( ( int )tmp_mem[ i ] & 0xf );
+                mem[ j++ ] = ( Nibble )( ( ( int )tmp_mem[ i ] >> 4 ) & 0xf );
             }
 
             free( tmp_mem );
@@ -350,14 +350,14 @@ static int read_mem_file( char* name, nibble_t* mem, int size )
 /* WRITING ~/.x48ng/{rom,ram,state,port1,port2} */
 /***********************************************/
 
-static int write_8( FILE* fp, byte_t* var )
+static int write_Byte( FILE* fp, Byte* var )
 {
     unsigned char tmp;
 
     tmp = *var;
     if ( fwrite( &tmp, 1, 1, fp ) != 1 ) {
         if ( config.verbose )
-            fprintf( stderr, "can\'t write byte_t\n" );
+            fprintf( stderr, "can\'t write Byte\n" );
         return 0;
     }
     return 1;
@@ -422,11 +422,11 @@ static int write_u_long( FILE* fp, unsigned long* var )
     return 1;
 }
 
-static int write_mem_file( char* name, nibble_t* mem, int size )
+static int write_mem_file( char* name, Nibble* mem, int size )
 {
     FILE* fp;
-    byte_t* tmp_mem;
-    byte_t byte;
+    Byte* tmp_mem;
+    Byte byte;
     int i, j;
 
     if ( NULL == ( fp = fopen( name, "w" ) ) ) {
@@ -435,7 +435,7 @@ static int write_mem_file( char* name, nibble_t* mem, int size )
         return 0;
     }
 
-    if ( NULL == ( tmp_mem = ( byte_t* )malloc( ( size_t )size / 2 ) ) ) {
+    if ( NULL == ( tmp_mem = ( Byte* )malloc( ( size_t )size / 2 ) ) ) {
         for ( i = 0, j = 0; i < size / 2; i++ ) {
             byte = ( mem[ j++ ] & 0x0f );
             byte |= ( mem[ j++ ] << 4 ) & 0xf0;
@@ -489,78 +489,78 @@ static int write_state_file( char* filename )
     for ( i = 0; i < 3; i++ )
         write_char( fp, &saturn.version[ i ] );
     for ( i = 0; i < 16; i++ )
-        write_8( fp, &saturn.A[ i ] );
+        write_Byte( fp, &saturn.A[ i ] );
     for ( i = 0; i < 16; i++ )
-        write_8( fp, &saturn.B[ i ] );
+        write_Byte( fp, &saturn.B[ i ] );
     for ( i = 0; i < 16; i++ )
-        write_8( fp, &saturn.C[ i ] );
+        write_Byte( fp, &saturn.C[ i ] );
     for ( i = 0; i < 16; i++ )
-        write_8( fp, &saturn.D[ i ] );
+        write_Byte( fp, &saturn.D[ i ] );
     write_32( fp, &saturn.d[ 0 ] );
     write_32( fp, &saturn.d[ 1 ] );
-    write_8( fp, &saturn.P );
+    write_Byte( fp, &saturn.P );
     write_32( fp, &saturn.PC );
     for ( i = 0; i < 16; i++ )
-        write_8( fp, &saturn.R0[ i ] );
+        write_Byte( fp, &saturn.R0[ i ] );
     for ( i = 0; i < 16; i++ )
-        write_8( fp, &saturn.R1[ i ] );
+        write_Byte( fp, &saturn.R1[ i ] );
     for ( i = 0; i < 16; i++ )
-        write_8( fp, &saturn.R2[ i ] );
+        write_Byte( fp, &saturn.R2[ i ] );
     for ( i = 0; i < 16; i++ )
-        write_8( fp, &saturn.R3[ i ] );
+        write_Byte( fp, &saturn.R3[ i ] );
     for ( i = 0; i < 16; i++ )
-        write_8( fp, &saturn.R4[ i ] );
+        write_Byte( fp, &saturn.R4[ i ] );
     for ( i = 0; i < 4; i++ )
-        write_8( fp, &saturn.IN[ i ] );
+        write_Byte( fp, &saturn.IN[ i ] );
     for ( i = 0; i < 3; i++ )
-        write_8( fp, &saturn.OUT[ i ] );
-    write_8( fp, &saturn.CARRY );
+        write_Byte( fp, &saturn.OUT[ i ] );
+    write_Byte( fp, &saturn.CARRY );
     for ( i = 0; i < NB_PSTAT; i++ )
-        write_8( fp, &saturn.PSTAT[ i ] );
-    write_8( fp, &saturn.XM );
-    write_8( fp, &saturn.SB );
-    write_8( fp, &saturn.SR );
-    write_8( fp, &saturn.MP );
-    write_8( fp, &saturn.hexmode );
+        write_Byte( fp, &saturn.PSTAT[ i ] );
+    write_Byte( fp, &saturn.XM );
+    write_Byte( fp, &saturn.SB );
+    write_Byte( fp, &saturn.SR );
+    write_Byte( fp, &saturn.MP );
+    write_Byte( fp, &saturn.hexmode );
     for ( i = 0; i < NB_RSTK; i++ )
         write_32( fp, &saturn.RSTK[ i ] );
     write_16( fp, ( word_16* )&saturn.rstkp );
     for ( i = 0; i < KEYS_BUFFER_SIZE; i++ )
         write_16( fp, ( word_16* )&saturn.keybuf[ i ] );
-    write_8( fp, &saturn.interruptable );
-    write_8( fp, &saturn.int_pending );
-    write_8( fp, &saturn.kbd_ien );
-    write_8( fp, &saturn.disp_io );
-    write_8( fp, &saturn.contrast_ctrl );
-    write_8( fp, &saturn.disp_test );
+    write_Byte( fp, &saturn.interruptable );
+    write_Byte( fp, &saturn.int_pending );
+    write_Byte( fp, &saturn.kbd_ien );
+    write_Byte( fp, &saturn.disp_io );
+    write_Byte( fp, &saturn.contrast_ctrl );
+    write_Byte( fp, &saturn.disp_test );
     write_16( fp, &saturn.crc );
-    write_8( fp, &saturn.power_status );
-    write_8( fp, &saturn.power_ctrl );
-    write_8( fp, &saturn.mode );
-    write_8( fp, &saturn.annunc );
-    write_8( fp, &saturn.baud );
-    write_8( fp, &saturn.card_ctrl );
-    write_8( fp, &saturn.card_status );
-    write_8( fp, &saturn.io_ctrl );
-    write_8( fp, &saturn.rcs );
-    write_8( fp, &saturn.tcs );
-    write_8( fp, &saturn.rbr );
-    write_8( fp, &saturn.tbr );
-    write_8( fp, &saturn.sreq );
-    write_8( fp, &saturn.ir_ctrl );
-    write_8( fp, &saturn.base_off );
-    write_8( fp, &saturn.lcr );
-    write_8( fp, &saturn.lbr );
-    write_8( fp, &saturn.scratch );
-    write_8( fp, &saturn.base_nibble );
+    write_Byte( fp, &saturn.power_status );
+    write_Byte( fp, &saturn.power_ctrl );
+    write_Byte( fp, &saturn.mode );
+    write_Byte( fp, &saturn.annunc );
+    write_Byte( fp, &saturn.baud );
+    write_Byte( fp, &saturn.card_ctrl );
+    write_Byte( fp, &saturn.card_status );
+    write_Byte( fp, &saturn.io_ctrl );
+    write_Byte( fp, &saturn.rcs );
+    write_Byte( fp, &saturn.tcs );
+    write_Byte( fp, &saturn.rbr );
+    write_Byte( fp, &saturn.tbr );
+    write_Byte( fp, &saturn.sreq );
+    write_Byte( fp, &saturn.ir_ctrl );
+    write_Byte( fp, &saturn.base_off );
+    write_Byte( fp, &saturn.lcr );
+    write_Byte( fp, &saturn.lbr );
+    write_Byte( fp, &saturn.scratch );
+    write_Byte( fp, &saturn.base_nibble );
     write_32( fp, &saturn.disp_addr );
     write_16( fp, &saturn.line_offset );
-    write_8( fp, &saturn.line_count );
+    write_Byte( fp, &saturn.line_count );
     write_16( fp, &saturn.unknown );
-    write_8( fp, &saturn.t1_ctrl );
-    write_8( fp, &saturn.t2_ctrl );
+    write_Byte( fp, &saturn.t1_ctrl );
+    write_Byte( fp, &saturn.t2_ctrl );
     write_32( fp, &saturn.menu_addr );
-    write_8( fp, &saturn.unknown2 );
+    write_Byte( fp, &saturn.unknown2 );
     write_char( fp, &saturn.timer1 );
     write_32( fp, &saturn.timer2 );
     write_32( fp, &saturn.t1_instr );
@@ -601,7 +601,7 @@ int read_rom( const char* fname )
 
     ram_size = opt_gx ? RAM_SIZE_GX : RAM_SIZE_SX;
 
-    if ( NULL == ( saturn.ram = ( nibble_t* )malloc( ram_size ) ) ) {
+    if ( NULL == ( saturn.ram = ( Nibble* )malloc( ram_size ) ) ) {
         if ( config.verbose )
             fprintf( stderr, "can\'t malloc RAM\n" );
         return 0;
@@ -636,7 +636,7 @@ int read_files( void )
     /*************************************************/
     /* 1. read ROM from ~/.x48ng/rom into saturn.rom */
     /*************************************************/
-    saturn.rom = ( nibble_t* )NULL;
+    saturn.rom = ( Nibble* )NULL;
     if ( !read_rom_file( normalized_rom_path, &saturn.rom, &rom_size ) )
         return 0;
 
@@ -707,8 +707,8 @@ int read_files( void )
 
     ram_size = opt_gx ? RAM_SIZE_GX : RAM_SIZE_SX;
 
-    saturn.ram = ( nibble_t* )NULL;
-    if ( NULL == ( saturn.ram = ( nibble_t* )malloc( ram_size ) ) ) {
+    saturn.ram = ( Nibble* )NULL;
+    if ( NULL == ( saturn.ram = ( Nibble* )malloc( ram_size ) ) ) {
         if ( config.verbose )
             fprintf( stderr, "can\'t malloc RAM[%d]\n", ram_size );
         exit( 1 );
@@ -741,7 +741,7 @@ int read_files( void )
     if ( stat( normalized_port1_path, &st ) >= 0 ) {
         port1_size = 2 * st.st_size;
         if ( ( port1_size == 0x10000 ) || ( port1_size == 0x40000 ) ) {
-            if ( NULL == ( saturn.port1 = ( nibble_t* )malloc( port1_size ) ) ) {
+            if ( NULL == ( saturn.port1 = ( Nibble* )malloc( port1_size ) ) ) {
                 if ( config.verbose )
                     fprintf( stderr, "can\'t malloc PORT1[%ld]\n", port1_size );
             } else if ( !read_mem_file( normalized_port1_path, saturn.port1, port1_size ) ) {
@@ -774,7 +774,7 @@ int read_files( void )
         port2_size = 2 * st.st_size;
         if ( ( opt_gx && ( ( port2_size % 0x40000 ) == 0 ) ) ||
              ( !opt_gx && ( ( port2_size == 0x10000 ) || ( port2_size == 0x40000 ) ) ) ) {
-            if ( NULL == ( saturn.port2 = ( nibble_t* )malloc( port2_size ) ) ) {
+            if ( NULL == ( saturn.port2 = ( Nibble* )malloc( port2_size ) ) ) {
                 if ( config.verbose )
                     fprintf( stderr, "can\'t malloc PORT2[%ld]\n", port2_size );
             } else if ( !read_mem_file( normalized_port2_path, saturn.port2, port2_size ) ) {
