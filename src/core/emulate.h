@@ -28,39 +28,36 @@ typedef struct mem_cntl_t {
     Address config[ 2 ];
 } mem_cntl_t;
 
+enum RegisterNames { A, B, C, D };
+enum StatusRegisterNames { XM, SB, SR, MP };
+
 typedef struct saturn_t {
     unsigned long magic;
     char version[ 3 ];
 
-    unsigned char A[ 16 ], B[ 16 ], C[ 16 ], D[ 16 ];
-
+    Nibble reg[ 4 ][ 16 ];
+    Nibble reg_r[ 5 ][ 16 ];
     Address d[ 2 ];
 
-#  define D0 d[ 0 ]
-#  define D1 d[ 1 ]
+    Nibble p;
+    Address pc;
 
-    Nibble P;
-    Address PC;
+    Nibble in[ 4 ];
+    Nibble out[ 3 ];
+    Nibble st[ 4 ];
 
-    unsigned char R0[ 16 ], R1[ 16 ], R2[ 16 ], R3[ 16 ], R4[ 16 ];
-    unsigned char IN[ 4 ];
-    unsigned char OUT[ 3 ];
+    Address rstk[ NB_RSTK ];
+    short rstk_ptr;
 
-    Bit CARRY;
+    Bit hexmode;
+    Bit carry;
+    Bit kbd_ien;       /* bool */
+    Bit interruptable; /* bool */
+    Bit int_pending;   /* bool */
 
-    unsigned char PSTAT[ NB_PSTAT ];
-    unsigned char XM, SB, SR, MP;
-
-    Nibble hexmode;
-
-    Address RSTK[ NB_RSTK ];
-    short rstkp;
+    unsigned char pstat[ NB_PSTAT ];
 
     short keybuf[ KEYS_BUFFER_SIZE ];
-
-    unsigned char interruptable; /* bool */
-    unsigned char int_pending;   /* bool */
-    unsigned char kbd_ien;       /* bool */
 
     Nibble disp_io;
 

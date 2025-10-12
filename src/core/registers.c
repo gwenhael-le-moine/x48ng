@@ -12,7 +12,7 @@ int get_start( int code )
     int s;
 
     if ( ( s = start_fields[ code ] ) == -1 )
-        s = saturn.P;
+        s = saturn.p;
 
     return s; /* FIXME: potentially return uninitialized s ? */
 }
@@ -22,7 +22,7 @@ int get_end( int code )
     int e;
 
     if ( ( e = end_fields[ code ] ) == -1 )
-        e = saturn.P;
+        e = saturn.p;
 
     return e; /* FIXME: potentially return uninitialized e ? */
 }
@@ -45,7 +45,7 @@ void add_register( unsigned char* res, unsigned char* r1, unsigned char* r2, int
         }
     }
 
-    saturn.CARRY = c ? 1 : 0;
+    saturn.carry = c ? 1 : 0;
 }
 
 void add_p_plus_one( unsigned char* r )
@@ -53,7 +53,7 @@ void add_p_plus_one( unsigned char* r )
     int t;
     int s = 0;
     int e = 4;
-    int c = saturn.P + 1;
+    int c = saturn.p + 1;
 
     for ( int i = s; i <= e; i++ ) {
         t = r[ i ] + c;
@@ -66,7 +66,7 @@ void add_p_plus_one( unsigned char* r )
         }
     }
 
-    saturn.CARRY = c ? 1 : 0;
+    saturn.carry = c ? 1 : 0;
 }
 
 void sub_register( unsigned char* res, unsigned char* r1, unsigned char* r2, int code )
@@ -86,7 +86,7 @@ void sub_register( unsigned char* res, unsigned char* r1, unsigned char* r2, int
             c = 1;
         }
     }
-    saturn.CARRY = c ? 1 : 0;
+    saturn.carry = c ? 1 : 0;
 }
 
 void complement_2_register( unsigned char* r, int code )
@@ -109,7 +109,7 @@ void complement_2_register( unsigned char* r, int code )
         carry += r[ i ];
     }
 
-    saturn.CARRY = carry ? 1 : 0;
+    saturn.carry = carry ? 1 : 0;
 }
 
 void complement_1_register( unsigned char* r, int code )
@@ -122,7 +122,7 @@ void complement_1_register( unsigned char* r, int code )
         t = ( saturn.hexmode - 1 ) - r[ i ];
         r[ i ] = t & 0xf;
     }
-    saturn.CARRY = 0;
+    saturn.carry = 0;
 }
 
 void inc_register( unsigned char* r, int code )
@@ -144,7 +144,7 @@ void inc_register( unsigned char* r, int code )
         }
     }
 
-    saturn.CARRY = c ? 1 : 0;
+    saturn.carry = c ? 1 : 0;
 }
 
 void add_register_constant( unsigned char* r, int code, int val )
@@ -166,7 +166,7 @@ void add_register_constant( unsigned char* r, int code, int val )
         }
     }
 
-    saturn.CARRY = c ? 1 : 0;
+    saturn.carry = c ? 1 : 0;
 }
 
 void dec_register( unsigned char* r, int code )
@@ -188,7 +188,7 @@ void dec_register( unsigned char* r, int code )
         }
     }
 
-    saturn.CARRY = c ? 1 : 0;
+    saturn.carry = c ? 1 : 0;
 }
 
 void sub_register_constant( unsigned char* r, int code, int val )
@@ -210,7 +210,7 @@ void sub_register_constant( unsigned char* r, int code, int val )
         }
     }
 
-    saturn.CARRY = c ? 1 : 0;
+    saturn.carry = c ? 1 : 0;
 }
 
 void zero_register( unsigned char* r, int code )
@@ -305,7 +305,7 @@ void shift_right_register( unsigned char* r, int code )
     int e = get_end( code );
 
     if ( r[ s ] & 0x0f )
-        saturn.SB = 1;
+        saturn.st[ SB ] = 1;
 
     for ( int i = s; i < e; i++ )
         r[ i ] = r[ i + 1 ] & 0x0f;
@@ -324,7 +324,7 @@ void shift_right_circ_register( unsigned char* r, int code )
 
     r[ e ] = t;
     if ( t )
-        saturn.SB = 1;
+        saturn.st[ SB ] = 1;
 }
 
 void shift_right_bit_register( unsigned char* r, int code )
@@ -340,7 +340,7 @@ void shift_right_bit_register( unsigned char* r, int code )
         r[ i ] = t;
     }
     if ( sb )
-        saturn.SB = 1;
+        saturn.st[ SB ] = 1;
 }
 
 int is_zero_register( unsigned char* r, int code )

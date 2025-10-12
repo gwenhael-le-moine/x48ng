@@ -105,7 +105,7 @@ static void write_dev_mem( Address addr, int val )
         case 0x10e: /* CARD CONTROL */
             saturn.card_ctrl = val;
             if ( saturn.card_ctrl & 0x02 )
-                saturn.MP = 1;
+                saturn.st[ MP ] = 1;
             if ( saturn.card_ctrl & 0x01 )
                 do_interupt();
             /* device.card_ctrl_touched = true; */
@@ -255,7 +255,7 @@ static void write_dev_mem( Address addr, int val )
             return;
         default:
             if ( config.verbose )
-                fprintf( stderr, "%.5lx: UNKNOWN DEVICE WRITE AT 0x%lx !!!\n", saturn.PC, addr );
+                fprintf( stderr, "%.5lx: UNKNOWN DEVICE WRITE AT 0x%lx !!!\n", saturn.pc, addr );
             return;
     }
 }
@@ -370,7 +370,7 @@ static int read_dev_mem( Address addr )
             return ( saturn.timer2 >> ( ( addr - 0x138 ) * 4 ) ) & 0xf;
         default:
             if ( config.verbose )
-                fprintf( stderr, "%.5lx: UNKNOWN DEVICE READ AT 0x%lx !!!\n", saturn.PC, addr );
+                fprintf( stderr, "%.5lx: UNKNOWN DEVICE READ AT 0x%lx !!!\n", saturn.pc, addr );
             return 0x00;
     }
 }

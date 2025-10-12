@@ -109,65 +109,65 @@ static int read_state_file( FILE* fp )
      * version 0.4.x, read in the saturn_t struct
      */
     for ( i = 0; i < 16; i++ )
-        if ( !read_Byte( fp, &saturn.A[ i ] ) )
+        if ( !read_Byte( fp, &saturn.reg[ A ][ i ] ) )
             return 0;
     for ( i = 0; i < 16; i++ )
-        if ( !read_Byte( fp, &saturn.B[ i ] ) )
+        if ( !read_Byte( fp, &saturn.reg[ B ][ i ] ) )
             return 0;
     for ( i = 0; i < 16; i++ )
-        if ( !read_Byte( fp, &saturn.C[ i ] ) )
+        if ( !read_Byte( fp, &saturn.reg[ C ][ i ] ) )
             return 0;
     for ( i = 0; i < 16; i++ )
-        if ( !read_Byte( fp, &saturn.D[ i ] ) )
+        if ( !read_Byte( fp, &saturn.reg[ D ][ i ] ) )
             return 0;
     if ( !read_32( fp, &saturn.d[ 0 ] ) )
         return 0;
     if ( !read_32( fp, &saturn.d[ 1 ] ) )
         return 0;
-    if ( !read_Byte( fp, &saturn.P ) )
+    if ( !read_Byte( fp, &saturn.p ) )
         return 0;
-    if ( !read_32( fp, &saturn.PC ) )
+    if ( !read_32( fp, &saturn.pc ) )
         return 0;
     for ( i = 0; i < 16; i++ )
-        if ( !read_Byte( fp, &saturn.R0[ i ] ) )
+        if ( !read_Byte( fp, &saturn.reg_r[ 0 ][ i ] ) )
             return 0;
     for ( i = 0; i < 16; i++ )
-        if ( !read_Byte( fp, &saturn.R1[ i ] ) )
+        if ( !read_Byte( fp, &saturn.reg_r[ 1 ][ i ] ) )
             return 0;
     for ( i = 0; i < 16; i++ )
-        if ( !read_Byte( fp, &saturn.R2[ i ] ) )
+        if ( !read_Byte( fp, &saturn.reg_r[ 2 ][ i ] ) )
             return 0;
     for ( i = 0; i < 16; i++ )
-        if ( !read_Byte( fp, &saturn.R3[ i ] ) )
+        if ( !read_Byte( fp, &saturn.reg_r[ 3 ][ i ] ) )
             return 0;
     for ( i = 0; i < 16; i++ )
-        if ( !read_Byte( fp, &saturn.R4[ i ] ) )
+        if ( !read_Byte( fp, &saturn.reg_r[ 4 ][ i ] ) )
             return 0;
     for ( i = 0; i < 4; i++ )
-        if ( !read_Byte( fp, &saturn.IN[ i ] ) )
+        if ( !read_Byte( fp, &saturn.in[ i ] ) )
             return 0;
     for ( i = 0; i < 3; i++ )
-        if ( !read_Byte( fp, &saturn.OUT[ i ] ) )
+        if ( !read_Byte( fp, &saturn.out[ i ] ) )
             return 0;
-    if ( !read_Byte( fp, &saturn.CARRY ) )
+    if ( !read_Byte( fp, &saturn.carry ) )
         return 0;
     for ( i = 0; i < NB_PSTAT; i++ )
-        if ( !read_Byte( fp, &saturn.PSTAT[ i ] ) )
+        if ( !read_Byte( fp, &saturn.pstat[ i ] ) )
             return 0;
-    if ( !read_Byte( fp, &saturn.XM ) )
+    if ( !read_Byte( fp, &saturn.st[ XM ] ) )
         return 0;
-    if ( !read_Byte( fp, &saturn.SB ) )
+    if ( !read_Byte( fp, &saturn.st[ SB ] ) )
         return 0;
-    if ( !read_Byte( fp, &saturn.SR ) )
+    if ( !read_Byte( fp, &saturn.st[ SR ] ) )
         return 0;
-    if ( !read_Byte( fp, &saturn.MP ) )
+    if ( !read_Byte( fp, &saturn.st[ MP ] ) )
         return 0;
     if ( !read_Byte( fp, &saturn.hexmode ) )
         return 0;
     for ( i = 0; i < NB_RSTK; i++ )
-        if ( !read_32( fp, &saturn.RSTK[ i ] ) )
+        if ( !read_32( fp, &saturn.rstk[ i ] ) )
             return 0;
-    if ( !read_16( fp, ( word_16* )&saturn.rstkp ) )
+    if ( !read_16( fp, ( word_16* )&saturn.rstk_ptr ) )
         return 0;
     for ( i = 0; i < KEYS_BUFFER_SIZE; i++ )
         if ( !read_16( fp, ( word_16* )&saturn.keybuf[ i ] ) )
@@ -489,42 +489,42 @@ static int write_state_file( char* filename )
     for ( i = 0; i < 3; i++ )
         write_char( fp, &saturn.version[ i ] );
     for ( i = 0; i < 16; i++ )
-        write_Byte( fp, &saturn.A[ i ] );
+        write_Byte( fp, &saturn.reg[ A ][ i ] );
     for ( i = 0; i < 16; i++ )
-        write_Byte( fp, &saturn.B[ i ] );
+        write_Byte( fp, &saturn.reg[ B ][ i ] );
     for ( i = 0; i < 16; i++ )
-        write_Byte( fp, &saturn.C[ i ] );
+        write_Byte( fp, &saturn.reg[ C ][ i ] );
     for ( i = 0; i < 16; i++ )
-        write_Byte( fp, &saturn.D[ i ] );
+        write_Byte( fp, &saturn.reg[ D ][ i ] );
     write_32( fp, &saturn.d[ 0 ] );
     write_32( fp, &saturn.d[ 1 ] );
-    write_Byte( fp, &saturn.P );
-    write_32( fp, &saturn.PC );
+    write_Byte( fp, &saturn.p );
+    write_32( fp, &saturn.pc );
     for ( i = 0; i < 16; i++ )
-        write_Byte( fp, &saturn.R0[ i ] );
+        write_Byte( fp, &saturn.reg_r[ 0 ][ i ] );
     for ( i = 0; i < 16; i++ )
-        write_Byte( fp, &saturn.R1[ i ] );
+        write_Byte( fp, &saturn.reg_r[ 1 ][ i ] );
     for ( i = 0; i < 16; i++ )
-        write_Byte( fp, &saturn.R2[ i ] );
+        write_Byte( fp, &saturn.reg_r[ 2 ][ i ] );
     for ( i = 0; i < 16; i++ )
-        write_Byte( fp, &saturn.R3[ i ] );
+        write_Byte( fp, &saturn.reg_r[ 3 ][ i ] );
     for ( i = 0; i < 16; i++ )
-        write_Byte( fp, &saturn.R4[ i ] );
+        write_Byte( fp, &saturn.reg_r[ 4 ][ i ] );
     for ( i = 0; i < 4; i++ )
-        write_Byte( fp, &saturn.IN[ i ] );
+        write_Byte( fp, &saturn.in[ i ] );
     for ( i = 0; i < 3; i++ )
-        write_Byte( fp, &saturn.OUT[ i ] );
-    write_Byte( fp, &saturn.CARRY );
+        write_Byte( fp, &saturn.out[ i ] );
+    write_Byte( fp, &saturn.carry );
     for ( i = 0; i < NB_PSTAT; i++ )
-        write_Byte( fp, &saturn.PSTAT[ i ] );
-    write_Byte( fp, &saturn.XM );
-    write_Byte( fp, &saturn.SB );
-    write_Byte( fp, &saturn.SR );
-    write_Byte( fp, &saturn.MP );
+        write_Byte( fp, &saturn.pstat[ i ] );
+    write_Byte( fp, &saturn.st[ XM ] );
+    write_Byte( fp, &saturn.st[ SB ] );
+    write_Byte( fp, &saturn.st[ SR ] );
+    write_Byte( fp, &saturn.st[ MP ] );
     write_Byte( fp, &saturn.hexmode );
     for ( i = 0; i < NB_RSTK; i++ )
-        write_32( fp, &saturn.RSTK[ i ] );
-    write_16( fp, ( word_16* )&saturn.rstkp );
+        write_32( fp, &saturn.rstk[ i ] );
+    write_16( fp, ( word_16* )&saturn.rstk_ptr );
     for ( i = 0; i < KEYS_BUFFER_SIZE; i++ )
         write_16( fp, ( word_16* )&saturn.keybuf[ i ] );
     write_Byte( fp, &saturn.interruptable );

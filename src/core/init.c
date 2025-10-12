@@ -61,7 +61,7 @@ void saturn_config_init( void )
 void init_saturn( void )
 {
     memset( &saturn, 0, sizeof( saturn ) - 4 * sizeof( unsigned char* ) );
-    saturn.PC = 0x00000;
+    saturn.pc = 0x00000;
     saturn.magic = X48_MAGIC;
     saturn.t1_tick = 8192;
     saturn.t2_tick = 16;
@@ -70,7 +70,7 @@ void init_saturn( void )
     saturn.version[ 1 ] = VERSION_MINOR;
     saturn.version[ 2 ] = PATCHLEVEL;
     saturn.hexmode = HEX;
-    saturn.rstkp = -1;
+    saturn.rstk_ptr = -1;
     saturn.interruptable = true;
     saturn.int_pending = false;
     saturn.kbd_ien = true;
@@ -98,7 +98,7 @@ void start_emulator( void )
     /* If files are successfully read => return and let's go */
     if ( read_files() ) {
         if ( config.resetOnStartup )
-            saturn.PC = 0x00000;
+            saturn.pc = 0x00000;
     } else {
         /* if files were not readable => initialize */
         if ( config.verbose )
