@@ -29,7 +29,7 @@
           ? buttons_48gx                                                                                                                   \
           : ( __config.model == MODEL_48SX ? buttons_48sx : ( __config.model == MODEL_49G ? buttons_49g : buttons_50g ) ) )
 
-#define LCD_OFFSET_X 1
+#define LCD_OFFSET_X ( __config.chromeless ? 0 : 1 )
 #define LCD_OFFSET_Y 1
 #define LCD_BOTTOM LCD_OFFSET_Y + ( __config.small ? ( LCD_HEIGHT / 2 ) : __config.tiny ? ( LCD_HEIGHT / 4 ) : LCD_HEIGHT )
 #define LCD_RIGHT LCD_OFFSET_X + ( ( __config.small || __config.tiny ) ? ( LCD_WIDTH / 2 ) + 1 : LCD_WIDTH )
@@ -264,19 +264,22 @@ static void ncurses_update_annunciators( void )
 
 static void toggle_help_window( void )
 {
+    int border_width = __config.chromeless ? 0 : 1;
+
     if ( help_window == NULL ) {
-        help_window = newwin( 7, LCD_RIGHT + 1, LCD_BOTTOM + 1, 0 );
+        help_window = newwin( 7, LCD_RIGHT + border_width, LCD_BOTTOM + 1, 0 );
         refresh();
 
-        wborder( help_window, 0, 0, 0, 0, 0, 0, 0, 0 );
+        if ( ! __config.chromeless )
+            wborder( help_window, 0, 0, 0, 0, 0, 0, 0, 0 );
 
-        mvwprintw( help_window, 0, 2, "[ Help ]" );
-        mvwprintw( help_window, 1, 1, "Special keys:" );
-        mvwprintw( help_window, 2, 2, "F1: Help, F7: Quit" );
+        mvwprintw( help_window, 0, 1 + border_width, "[ Help ]" );
+        mvwprintw( help_window, 1, border_width, "Special keys:" );
+        mvwprintw( help_window, 2, 1 + border_width, "F1: Help, F7: Quit" );
 
-        mvwprintw( help_window, 3, 1, "Calculator keys:" );
-        mvwprintw( help_window, 4, 2, "all alpha-numerical keys " );
-        mvwprintw( help_window, 5, 2, "F2: Left-Shift, F3: Right-Shift, F4: Alpha, F5: On, F6: Enter" );
+        mvwprintw( help_window, 3, border_width, "Calculator keys:" );
+        mvwprintw( help_window, 4, 1 + border_width, "all alpha-numerical keys " );
+        mvwprintw( help_window, 5, 1 + border_width, "F2: Left-Shift, F3: Right-Shift, F4: Alpha, F5: On, F6: Enter" );
 
         wrefresh( help_window );
     } else {
@@ -607,15 +610,17 @@ void ui_start_ncurses( config_t* conf )
     lcd_window = newwin( LCD_BOTTOM + 1, LCD_RIGHT + 1, 0, 0 );
     refresh();
 
-    wborder( lcd_window, 0, 0, 0, 0, 0, 0, 0, 0 );
+    if ( !__config.chromeless ) {
+        wborder( lcd_window, 0, 0, 0, 0, 0, 0, 0, 0 );
+
+        toggle_help_window();
+    }
 
     mvwprintw( lcd_window, 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
-    mvwprintw( lcd_window, 0, LCD_RIGHT - 18, "< %s v%i.%i.%i >", __config.progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
+    mvwprintw( lcd_window, 0, LCD_RIGHT / 2, "< %s v%i.%i.%i >", __config.progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
 
     mvwprintw( lcd_window, LCD_BOTTOM, 2, "[ wire: %s ]-[ IR: %s ]-[ contrast: %i ]", __config.wire_name, __config.ir_name,
                get_contrast() );
-
-    toggle_help_window();
 }
 
 void setup_frontend_ncurses( void )
