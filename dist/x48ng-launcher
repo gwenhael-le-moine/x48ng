@@ -42,10 +42,15 @@ if [ ! -e "$CONFIGDIR"/rom ]; then
     cp "$CONFIGDIR"/ROMs/"$ROM" "$CONFIGDIR"/rom
 fi
 
+PORT1_SIZE=128
+PORT2_SIZE=4096
+if echo "$ROM" | grep -q "sxrom"; then
+    PORT2_SIZE=128
+fi
 # create a 128K RAM car to plug in port1
-[ ! -e "$CONFIGDIR"/port1 ] && dd if=/dev/zero of="$CONFIGDIR"/port1 bs=1k count=128
-# create a 4MB RAM car to plug in port2
-[ ! -e "$CONFIGDIR"/port2 ] && dd if=/dev/zero of="$CONFIGDIR"/port2 bs=1k count=4096
+[ ! -e "$CONFIGDIR/port1" ] && dd if=/dev/zero of="$CONFIGDIR/port1" bs=1k count=$PORT1_SIZE
+# create a 4MB or 128K RAM car to plug in port2
+[ ! -e "$CONFIGDIR/port2" ] && dd if=/dev/zero of="$CONFIGDIR/port2" bs=1k count=$PORT2_SIZE
 
 RESET=
 if [ ! -e "$CONFIGDIR"/ram ]; then
@@ -55,7 +60,7 @@ fi
 
 if [ ! -e "$CONFIGDIR"/config.lua ]; then
     # let's create a default config.lua file
-    "$BINNAME" --rom="$ROM" --ram="$RAM" --state="$STATE" --port1="$PORT1" --port2="$PORT2" --print-config > "$CONFIGDIR"/config.lua
+    "$BINNAME" --print-config > "$CONFIGDIR"/config.lua
 fi
 
 "$BINNAME" $RESET "$@"
