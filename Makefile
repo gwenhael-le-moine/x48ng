@@ -198,6 +198,7 @@ dist/config.lua: dist/x48ng
 install: all dist/config.lua
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/bin
 	install -c -m 755 dist/x48ng $(DESTDIR)$(PREFIX)/bin/x48ng
+	install -c -m 755 dist/x48ng-launcher $(DESTDIR)$(PREFIX)/bin/x48ng-launcher
 
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/share/x48ng
 	install -c -m 644 dist/hplogo.png $(DESTDIR)$(PREFIX)/share/x48ng/hplogo.png
@@ -221,6 +222,7 @@ install: all dist/config.lua
 
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/x48ng
+	rm -f $(DESTDIR)$(PREFIX)/bin/x48ng-launcher
 	rm -f $(DESTDIR)$(PREFIX)/libexec/x48ng-dump2rom
 	rm -f $(DESTDIR)$(PREFIX)/libexec/x48ng-checkrom
 	rm -f $(DESTDIR)$(MANDIR)/man1/x48ng.1

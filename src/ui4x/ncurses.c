@@ -270,7 +270,7 @@ static void toggle_help_window( void )
         help_window = newwin( 7, LCD_RIGHT + border_width, LCD_BOTTOM + 1, 0 );
         refresh();
 
-        if ( ! __config.chromeless )
+        if ( !__config.chromeless )
             wborder( help_window, 0, 0, 0, 0, 0, 0, 0, 0 );
 
         mvwprintw( help_window, 0, 1 + border_width, "[ Help ]" );

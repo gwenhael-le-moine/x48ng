@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+
+set -eu
+
+cd "$(dirname "$0")" || exit 1
+
+BINNAME=${BINNAME:-x48ng}
+CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
+CONFIGDIR=${CONFIGDIR:-$CONFIG_HOME/$BINNAME}
+
+# possible values: "gxrom-l" "gxrom-m" "gxrom-p" "gxrom-r" "sxrom-a" "sxrom-b"s"xrom-c" "sxrom-d" "sxrom-e" "sxrom-j"
+ROM=${ROM:-"gxrom-r"}
+
+mkdir -p "$CONFIGDIR"
+if [ ! -e "$CONFIGDIR"/rom ]; then
+    # there's no rom file, let's find one
+
+    if [ -d ../share/"$BINNAME"/ROMs/ ]; then
+        # If we're installed then copy /usr/share/x48ng/ROMs/ in ~/.config/x48g/
+        # We copy it there because we may not have write permission in /usr to download the ROMs
+        cp -r ../share/"$BINNAME"/ROMs/ "$CONFIGDIR"/ROMs
+    elif [ -d ./ROMs/ ]; then
+        # We're not installed, guess we're running from dist/ ?
+        cp -r ./ROMs/ "$CONFIGDIR"/ROMs
+    fi
+    if [ ! -d "$CONFIGDIR"/ROMs ]; then
+        # What's going on?! Give up.
+        echo "Error: No ROMs/ dir found"
+        exit 1
+    fi
+
+    if [ ! -e "$CONFIGDIR"/ROMs/"$ROM" ]; then
+        # We have the ROMs/ directory but not the ROM itself. Let's download it.
+        echo "The next step will download a ROM from https://hpcalc.org where \"HP graciously began allowing this to be downloaded in mid-2000.\""
+        echo "You can hit Ctrl-C now if you do not wish to download them."
+        read -r
+
+        make -C "$CONFIGDIR"/ROMs "$ROM"
+    fi
+
+    # Finally install the ROM for x48ng
+    cp "$CONFIGDIR"/ROMs/"$ROM" "$CONFIGDIR"/rom
+fi
+
+# create a 128K RAM car to plug in port1
+[ ! -e "$CONFIGDIR"/port1 ] && dd if=/dev/zero of="$CONFIGDIR"/port1 bs=1k count=128
+# create a 4MB RAM car to plug in port2
+[ ! -e "$CONFIGDIR"/port2 ] && dd if=/dev/zero of="$CONFIGDIR"/port2 bs=1k count=4096
+
+RESET=
+if [ ! -e "$CONFIGDIR"/ram ]; then
+    # no ram file exists so force reset
+    RESET=--reset
+fi
+
+if [ ! -e "$CONFIGDIR"/config.lua ]; then
+    # let's create a default config.lua file
+    "$BINNAME" --rom="$ROM" --ram="$RAM" --state="$STATE" --port1="$PORT1" --port2="$PORT2" --print-config > "$CONFIGDIR"/config.lua
+fi
+
+"$BINNAME" $RESET "$@"

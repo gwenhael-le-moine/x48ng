@@ -45,13 +45,24 @@ You can use the script `setup-x48ng-home.sh` or simply run `x48ng --rom=<romfile
 ### Ncurses UI (`--tui`)
 
 I had to be a bit 'creative' mapping keys there:
-- `Enter`: `F1`
-- `Left Shift`: `F2` or `PgUp` or `[`
-- `Right Shift`: `F3` or `PgDn` or `]`
-- `Alpha`: `F4` or `Ins` or `;`
-- `On`: `F5` or `Esc` or `Home` or `\`
+```
+┌─[ Help ]─────────────────────────────────────────────────────────┐
+│Special keys:                                                     │
+│ F1: Help, F7: Quit                                               │
+│Calculator keys:                                                  │
+│ all alpha-numerical keys                                         │
+│ F2: Left-Shift, F3: Right-Shift, F4: Alpha, F5: On, F6: Enter    │
+└──────────────────────────────────────────────────────────────────┘
+```
 
-_To quit `x48ng` use `F7`
+There's also additional _hidden_ shortcuts that might work and/or come handy:
+
+- *Left-Shift*: `[` or `PgUp`
+- *Right-Shift*: `]` or `PgDn`
+- *Alpha*: `;` or `Ins`
+- *On*: `Esc` or `Home`
+- *Enter*: `,`
+- quit: `|` or `Shift + End` or `F10`
 
 ## What have I done:
 
@@ -88,20 +99,21 @@ Ncurses front-end is always built-in.
 - Lua
 - readline
 
+for Ncurses:
+
+- ncursesw
+
 for SDL version:
 
 - SDL3
 - SDL3_gfx
 
-for Ncurses:
-
-- ncursesw
-
 ## Installation
 
+0. Run `make get-roms` unless you have a good reason not to. (ROMs licenses are unclear so they're not bundled by default.)
 1. Run `sudo make install PREFIX=/usr` (see the Makefile to see what variables your can override.)
-2. once installed run `/usr/share/x48ng/setup-x48ng-home.sh` to setup your ~/.x48ng/. It sets up a HP 48GX with a 128KB card in port 1 and a 4MB card in port 2
-3. run `x48ng` and enjoy
+2. Run `x48ng-launcher`. On first launch or if no ~/.config/x48ng/ exists it will be created and populated.
+   By default it sets up a HP 48GX with ROM `R` with a 128KB card in port 1 and a 4MB card in port 2. You can change the ROM by setting the ROM environment variable (`ROM=sxrom-j x48ng-launcher` for example.)
 
 ## Development
 
@@ -116,3 +128,6 @@ for Ncurses:
 - https://hp.giesselink.com/emu48.htm (The Emu48)
 - https://github.com/dgis/emu48android (Emu48 ported to Android)
 - https://github.com/gwenhael-le-moine/jsEmu48 (another HP 48 emulator)
+- [x50ng](https://codeberg.org/gwh/x50ng)
+- [saturnng](https://codeberg.org/gwh/saturnng)
+- [hpemung](https://codeberg.org/gwh/hpemung)
