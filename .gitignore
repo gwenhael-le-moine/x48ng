@@ -1,4 +1,5 @@
 *.o
 
+dist/ROMs/?xrom-?
 dist/x48ng*
 /compile_commands.json
