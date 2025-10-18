@@ -89,6 +89,7 @@ static inline void ncurses_draw_lcd_tiny( void )
     bool b1, b2, b3, b4, b5, b6, b7, b8;
     int step_x = 2;
     int step_y = 4;
+    bool last_column = false;
 
     wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
 
@@ -99,14 +100,21 @@ static inline void ncurses_draw_lcd_tiny( void )
         wcscpy( line, L"" );
 
         for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
+            last_column = x == ( LCD_WIDTH - 1 );
+
             b1 = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] > 0 ? 1 : 0;
-            b4 = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
             b2 = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x ] > 0 ? 1 : 0;
-            b5 = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
             b3 = display_buffer_grayscale[ ( ( y + 2 ) * LCD_WIDTH ) + x ] > 0 ? 1 : 0;
-            b6 = display_buffer_grayscale[ ( ( y + 2 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
             b7 = display_buffer_grayscale[ ( ( y + 3 ) * LCD_WIDTH ) + x ] > 0 ? 1 : 0;
-            b8 = display_buffer_grayscale[ ( ( y + 3 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
+
+            if ( last_column )
+                b4 = b5 = b6 = b8 = 0;
+            else {
+                b4 = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
+                b5 = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
+                b6 = display_buffer_grayscale[ ( ( y + 2 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
+                b8 = display_buffer_grayscale[ ( ( y + 3 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
+            }
 
             wchar_t pixels = eight_bits_to_braille_char( b1, b2, b3, b4, b5, b6, b7, b8 );
             wcsncat( line, &pixels, 1 );
@@ -154,6 +162,7 @@ static inline void ncurses_draw_lcd_small( void )
     bool top_left, top_right, bottom_left, bottom_right;
     int step_x = 2;
     int step_y = 2;
+    bool last_column = false;
 
     wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
 
@@ -164,10 +173,17 @@ static inline void ncurses_draw_lcd_small( void )
         wcscpy( line, L"" );
 
         for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
+            last_column = x == ( LCD_WIDTH - 1 );
+
             top_left = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] > 0 ? 1 : 0;
-            top_right = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
             bottom_left = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x ] > 0 ? 1 : 0;
-            bottom_right = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
+
+            if ( last_column )
+                top_right = bottom_right = 0;
+            else {
+                top_right = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
+                bottom_right = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
+            }
 
             wchar_t pixels = four_bits_to_quadrant_char( top_left, top_right, bottom_left, bottom_right );
             wcsncat( line, &pixels, 1 );
