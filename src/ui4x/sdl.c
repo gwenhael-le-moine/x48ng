@@ -801,7 +801,8 @@ static void _draw_keypad( void )
 
         // draw the right labels ( .highlight never have one )
         if ( BUTTONS[ i ].right != ( char* )0 )
-            write_with_small_font( xr, y, BUTTONS[ i ].right, UI4X_COLOR_SHIFT_RIGHT, BUTTONS[ i ].highlight ? UI4X_COLOR_KEYPAD_HIGHLIGHT : UI4X_COLOR_FACEPLATE );
+            write_with_small_font( xr, y, BUTTONS[ i ].right, UI4X_COLOR_SHIFT_RIGHT,
+                                   BUTTONS[ i ].highlight ? UI4X_COLOR_KEYPAD_HIGHLIGHT : UI4X_COLOR_FACEPLATE );
     }
 
     for ( int i = 0; i < NB_KEYS; i++ )
