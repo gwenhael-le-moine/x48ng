@@ -756,41 +756,52 @@ static void _draw_keypad( void )
 
         total_top_labels_width = 0;
         // Draw the left labels
-        if ( BUTTONS[ i ].left != ( char* )0 ) {
-            x = OFFSET_X_KEYBOARD + BUTTONS[ i ].x;
-            y = OFFSET_Y_KEYBOARD + BUTTONS[ i ].y - SMALL_DESCENT;
+        x = xr = OFFSET_X_KEYBOARD + BUTTONS[ i ].x;
+        y = OFFSET_Y_KEYBOARD + BUTTONS[ i ].y - SMALL_DESCENT;
 
+        if ( BUTTONS[ i ].left != ( char* )0 )
             left_label_width = SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) );
-            total_top_labels_width = left_label_width;
+        else
+            left_label_width = 0;
 
-            if ( BUTTONS[ i ].right != ( char* )0 ) {
-                // label to the left
-                right_label_width = SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) );
-                total_top_labels_width += space_char_width + right_label_width;
+        if ( BUTTONS[ i ].right != ( char* )0 )
+            right_label_width = SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) );
+        else
+            right_label_width = 0;
 
-                xr = OFFSET_X_KEYBOARD + BUTTONS[ i ].x;
-            }
-            if ( total_top_labels_width > BUTTONS[ i ].w || BUTTONS[ i ].right == ( char* )0 ) {
+        total_top_labels_width = left_label_width + right_label_width;
+        if ( left_label_width > 0 && right_label_width > 0 )
+            total_top_labels_width += space_char_width;
+
+        if ( BUTTONS[ i ].left != ( char* )0 && BUTTONS[ i ].right != ( char* )0 ) {
+            // should draw both labels
+            if ( total_top_labels_width > BUTTONS[ i ].w ) {
+                // combination of labels are wider than the button
                 x += ( 1 + BUTTONS[ i ].w - total_top_labels_width ) / 2;
 
-                if ( BUTTONS[ i ].right != ( char* )0 ) {
-                    xr += space_char_width + left_label_width;
-                    xr += ( 1 + BUTTONS[ i ].w - total_top_labels_width ) / 2;
-                }
+                xr += space_char_width + left_label_width;
+                xr += ( 1 + BUTTONS[ i ].w - total_top_labels_width ) / 2;
             } else {
+                // combination of labels are smaller than the button
                 x += 2;
 
-                if ( BUTTONS[ i ].right != ( char* )0 )
-                    xr = ( OFFSET_X_KEYBOARD + BUTTONS[ i ].x + BUTTONS[ i ].w ) - right_label_width;
+                xr = ( OFFSET_X_KEYBOARD + BUTTONS[ i ].x + BUTTONS[ i ].w ) - right_label_width;
             }
+        } else if ( BUTTONS[ i ].left != ( char* )0 && BUTTONS[ i ].right == ( char* )0 ) {
+            // draw only left label
+            x += ( BUTTONS[ i ].w - total_top_labels_width ) / 2;
+        } else if ( BUTTONS[ i ].left == ( char* )0 && BUTTONS[ i ].right != ( char* )0 ) {
+            // draw only right label
+            xr += ( BUTTONS[ i ].w - total_top_labels_width ) / 2;
+        }
 
+        if ( BUTTONS[ i ].left != ( char* )0 )
             write_with_small_font( x, y, BUTTONS[ i ].left, UI4X_COLOR_SHIFT_LEFT,
                                    BUTTONS[ i ].highlight ? UI4X_COLOR_KEYPAD_HIGHLIGHT : UI4X_COLOR_FACEPLATE );
 
-            // draw the right labels ( .highlight never have one )
-            if ( BUTTONS[ i ].right != ( char* )0 )
-                write_with_small_font( xr, y, BUTTONS[ i ].right, UI4X_COLOR_SHIFT_RIGHT, UI4X_COLOR_FACEPLATE );
-        }
+        // draw the right labels ( .highlight never have one )
+        if ( BUTTONS[ i ].right != ( char* )0 )
+            write_with_small_font( xr, y, BUTTONS[ i ].right, UI4X_COLOR_SHIFT_RIGHT, BUTTONS[ i ].highlight ? UI4X_COLOR_KEYPAD_HIGHLIGHT : UI4X_COLOR_FACEPLATE );
     }
 
     for ( int i = 0; i < NB_KEYS; i++ )
