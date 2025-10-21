@@ -754,53 +754,42 @@ static void _draw_keypad( void )
             write_with_small_font( x, y, BUTTONS[ i ].sub, UI4X_COLOR_LABEL, UI4X_COLOR_FACEPLATE );
         }
 
-        total_top_labels_width = 0;
-        // Draw the left labels
-        x = xr = OFFSET_X_KEYBOARD + BUTTONS[ i ].x;
-        y = OFFSET_Y_KEYBOARD + BUTTONS[ i ].y - SMALL_DESCENT;
-
-        if ( BUTTONS[ i ].left != ( char* )0 )
-            left_label_width = SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) );
-        else
-            left_label_width = 0;
-
-        if ( BUTTONS[ i ].right != ( char* )0 )
-            right_label_width = SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) );
-        else
-            right_label_width = 0;
-
+        // Draw top labels
+        left_label_width = ( BUTTONS[ i ].left == ( char* )0 ) ? 0 : SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) );
+        right_label_width = ( BUTTONS[ i ].right == ( char* )0 ) ? 0 : SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) );
         total_top_labels_width = left_label_width + right_label_width;
         if ( left_label_width > 0 && right_label_width > 0 )
             total_top_labels_width += space_char_width;
 
-        if ( BUTTONS[ i ].left != ( char* )0 && BUTTONS[ i ].right != ( char* )0 ) {
+        // Calculate both labels' x
+        x = xr = OFFSET_X_KEYBOARD + BUTTONS[ i ].x;
+        if ( left_label_width > 0 && right_label_width > 0 ) {
             // should draw both labels
             if ( total_top_labels_width > BUTTONS[ i ].w ) {
-                // combination of labels are wider than the button
-                x += ( 1 + BUTTONS[ i ].w - total_top_labels_width ) / 2;
-
-                xr += space_char_width + left_label_width;
-                xr += ( 1 + BUTTONS[ i ].w - total_top_labels_width ) / 2;
+                // combination of labels are wider than the button so they'll be centered above it
+                int xoffset = ( 1 + BUTTONS[ i ].w - total_top_labels_width ) / 2;
+                x += xoffset;
+                xr += xoffset + left_label_width + space_char_width;
             } else {
-                // combination of labels are smaller than the button
+                // combination of labels are smaller than the button so they'll hug the sides
                 x += 2;
-
-                xr = ( OFFSET_X_KEYBOARD + BUTTONS[ i ].x + BUTTONS[ i ].w ) - right_label_width;
+                xr += BUTTONS[ i ].w - right_label_width;
             }
-        } else if ( BUTTONS[ i ].left != ( char* )0 && BUTTONS[ i ].right == ( char* )0 ) {
-            // draw only left label
+        } else if ( left_label_width > 0 && right_label_width == 0 )
+            // draw only left label so center it
             x += ( BUTTONS[ i ].w - total_top_labels_width ) / 2;
-        } else if ( BUTTONS[ i ].left == ( char* )0 && BUTTONS[ i ].right != ( char* )0 ) {
-            // draw only right label
+        else if ( left_label_width == 0 && right_label_width > 0 )
+            // draw only right label so center it
             xr += ( BUTTONS[ i ].w - total_top_labels_width ) / 2;
-        }
 
-        if ( BUTTONS[ i ].left != ( char* )0 )
+        // y is easier
+        y = OFFSET_Y_KEYBOARD + BUTTONS[ i ].y - SMALL_DESCENT;
+
+        // finally draw labels
+        if ( left_label_width > 0 )
             write_with_small_font( x, y, BUTTONS[ i ].left, UI4X_COLOR_SHIFT_LEFT,
                                    BUTTONS[ i ].highlight ? UI4X_COLOR_KEYPAD_HIGHLIGHT : UI4X_COLOR_FACEPLATE );
-
-        // draw the right labels ( .highlight never have one )
-        if ( BUTTONS[ i ].right != ( char* )0 )
+        if ( right_label_width > 0 )
             write_with_small_font( xr, y, BUTTONS[ i ].right, UI4X_COLOR_SHIFT_RIGHT,
                                    BUTTONS[ i ].highlight ? UI4X_COLOR_KEYPAD_HIGHLIGHT : UI4X_COLOR_FACEPLATE );
     }
