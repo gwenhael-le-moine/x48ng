@@ -10,7 +10,7 @@ TARGETS = dist/x48ng dist/x48ng-checkrom dist/x48ng-dump2rom
 
 VERSION_MAJOR = 0
 VERSION_MINOR = 51
-PATCHLEVEL = 1
+PATCHLEVEL = 2
 
 PREFIX ?= /usr
 DOCDIR ?= $(PREFIX)/doc/x48ng
