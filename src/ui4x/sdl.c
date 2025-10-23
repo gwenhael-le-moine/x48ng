@@ -3,7 +3,68 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <SDL3/SDL.h>
+#ifdef HAS_SDL2
+#  include <SDL2/SDL.h>
+
+#  define SDL_DestroySurface SDL_FreeSurface
+#  define SDL_RenderPoint SDL_RenderDrawPoint
+#  define SDL_RenderLine SDL_RenderDrawLine
+#  define SDL_FRect SDL_Rect
+#  define SDL_RenderTexture SDL_RenderCopy
+
+#  define SDLK_A SDLK_a
+#  define SDLK_B SDLK_b
+#  define SDLK_C SDLK_c
+#  define SDLK_D SDLK_d
+#  define SDLK_E SDLK_e
+#  define SDLK_F SDLK_f
+#  define SDLK_G SDLK_g
+#  define SDLK_H SDLK_h
+#  define SDLK_I SDLK_i
+#  define SDLK_J SDLK_j
+#  define SDLK_K SDLK_k
+#  define SDLK_L SDLK_l
+#  define SDLK_M SDLK_m
+#  define SDLK_N SDLK_n
+#  define SDLK_O SDLK_o
+#  define SDLK_P SDLK_p
+#  define SDLK_Q SDLK_q
+#  define SDLK_R SDLK_r
+#  define SDLK_S SDLK_s
+#  define SDLK_T SDLK_t
+#  define SDLK_U SDLK_u
+#  define SDLK_V SDLK_v
+#  define SDLK_W SDLK_w
+#  define SDLK_X SDLK_x
+#  define SDLK_Y SDLK_y
+#  define SDLK_Z SDLK_z
+
+#  define SDL_EVENT_QUIT SDL_QUIT
+#  define SDL_EVENT_MOUSE_BUTTON_DOWN SDL_MOUSEBUTTONDOWN
+#  define SDL_EVENT_MOUSE_BUTTON_UP SDL_MOUSEBUTTONUP
+#  define SDL_EVENT_KEY_DOWN SDL_KEYDOWN
+#  define SDL_EVENT_KEY_UP SDL_KEYUP
+
+#  define SDL_WINDOW_HIGH_PIXEL_DENSITY SDL_WINDOW_ALLOW_HIGHDPI
+#  define SDL_WINDOW_FULLSCREEN SDL_WINDOW_FULLSCREEN_DESKTOP
+
+#  define SDL_SetTextureScaleMode( t, m )
+#  define SDL_Init !SDL_Init
+
+#  define CREATE_SURFACE( w, h, a, b, c, d, e ) SDL_CreateRGBSurface( SDL_SWSURFACE, w, h, a, b, c, d, e )
+#  define EVENT_KEY( e ) e.key.keysym.sym
+#  define CREATE_WINDOW( n, w, h, flags ) SDL_CreateWindow( n, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, flags )
+#  define CREATE_RENDERER( w ) SDL_CreateRenderer( w, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE )
+#  define SET_RENDER_LOGICAL_PRESENTATION( r, w, h ) SDL_RenderSetLogicalSize( r, w, h )
+#else
+#  include <SDL3/SDL.h>
+
+#  define CREATE_SURFACE( w, h, a, b, c, d, e ) SDL_CreateSurface( w, h, SDL_GetPixelFormatForMasks( a, b, c, d, e ) )
+#  define EVENT_KEY( e ) e.key.key
+#  define CREATE_WINDOW( n, w, h, flags ) SDL_CreateWindow( n, w, h, flags )
+#  define CREATE_RENDERER( w ) SDL_CreateRenderer( w, NULL )
+#  define SET_RENDER_LOGICAL_PRESENTATION( r, w, h ) SDL_SetRenderLogicalPresentation( r, w, h, SDL_LOGICAL_PRESENTATION_INTEGER_SCALE )
+#endif
 
 #include "../options.h"
 
@@ -124,7 +185,7 @@ static inline unsigned color2bgra( int color )
 */
 static SDL_Texture* bitmap_to_texture( unsigned int w, unsigned int h, unsigned char* data, int color_fg, int color_bg )
 {
-    SDL_Surface* surf = SDL_CreateSurface( w, h, SDL_GetPixelFormatForMasks( 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 ) );
+    SDL_Surface* surf = CREATE_SURFACE( w, h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000 );
 
     SDL_LockSurface( surf );
 
@@ -1065,10 +1126,10 @@ void ui_get_event_sdl( void )
                 break;
 
             case SDL_EVENT_KEY_DOWN:
-                sdl_press_key( sdlkey_to_hpkey( event.key.key ) );
+                sdl_press_key( sdlkey_to_hpkey( EVENT_KEY( event ) ) );
                 break;
             case SDL_EVENT_KEY_UP:
-                sdl_release_key( sdlkey_to_hpkey( event.key.key ) );
+                sdl_release_key( sdlkey_to_hpkey( EVENT_KEY( event ) ) );
                 break;
         }
     }
@@ -1149,18 +1210,18 @@ void ui_start_sdl( config_t* conf )
     else
         window_flags |= SDL_WINDOW_RESIZABLE;
 
-    window = SDL_CreateWindow( __config.progname, width * __config.scale, height * __config.scale, window_flags );
+    window = CREATE_WINDOW( __config.progname, width * __config.scale, height * __config.scale, window_flags );
     if ( window == NULL ) {
         printf( "Couldn't create window: %s\n", SDL_GetError() );
         exit( 1 );
     }
 
-    renderer = SDL_CreateRenderer( window, NULL );
+    renderer = CREATE_RENDERER( window );
     if ( renderer == NULL )
         exit( 2 );
 
     // SDL_SetRenderLogicalPresentation( renderer, width, height, SDL_LOGICAL_PRESENTATION_INTEGER_SCALE );
-    SDL_SetRenderLogicalPresentation( renderer, width, height, SDL_LOGICAL_PRESENTATION_LETTERBOX );
+    SET_RENDER_LOGICAL_PRESENTATION( renderer, width, height );
 
     main_texture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height );
 

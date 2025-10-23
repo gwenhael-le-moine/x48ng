@@ -22,7 +22,7 @@ PKG_CONFIG ?= pkg-config
 OPTIM ?= 2
 FULL_WARNINGS ?= no
 WITH_SDL ?= yes
-WITH_GTK ?= no					#disabled for now, no real code yet
+WITH_SDL2 = no
 
 makeflags +=-j$(NUM_CORES) -l$(NUM_CORES)
 
@@ -49,11 +49,11 @@ ifeq ($(WITH_SDL), yes)
 	SDL_HEADERS = src/ui4x/sdl.h
 endif
 
-ifeq ($(WITH_GTK), yes)
-	GTK_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags gtk4) -DHAS_GTK=1
-	GTK_LIBS = $(shell "$(PKG_CONFIG)" --libs gtk4)
-	GTK_SRC = src/ui4x/gtk.c
-	GTK_HEADERS = src/ui4x/gtk.h
+ifeq ($(WITH_SDL2), yes)
+	SDL_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags sdl2) -DHAS_SDL=1 -DHAS_SDL2=1
+	SDL_LIBS = $(shell "$(PKG_CONFIG)" --libs sdl2)
+	SDL_SRC = src/ui4x/sdl.c
+	SDL_HEADERS = src/ui4x/sdl.h
 endif
 
 LIBS = -lm \
