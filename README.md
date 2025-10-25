@@ -13,9 +13,7 @@ This is my fork of x48-0.6.4 where I deviate from the original code and do my ow
 
 ## Usage
 
-`x48ng --help`
-
-You can use the script `setup-x48ng-home.sh` or simply run `x48ng --rom=<romfilename>`
+`x48ng-launcher --help`
 
 ## Screenshots
 
