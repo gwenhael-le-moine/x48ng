@@ -124,8 +124,6 @@ static inline void ncurses_draw_lcd_tiny( void )
 
     if ( !__config.mono && has_colors() )
         attroff( COLOR_PAIR( LCD_PIXEL_ON_3 ) );
-
-    wrefresh( stdscr );
 }
 
 static inline wchar_t four_bits_to_quadrant_char( bool top_left, bool top_right, bool bottom_left, bool bottom_right )
@@ -193,8 +191,6 @@ static inline void ncurses_draw_lcd_small( void )
 
     if ( !__config.mono && has_colors() )
         attroff( COLOR_PAIR( LCD_PIXEL_ON_3 ) );
-
-    wrefresh( stdscr );
 }
 
 static inline void ncurses_draw_lcd_fullsize( void )
@@ -234,8 +230,6 @@ static inline void ncurses_draw_lcd_fullsize( void )
 
     if ( !__config.mono && has_colors() )
         attroff( COLOR_PAIR( color ) );
-
-    wrefresh( stdscr );
 }
 
 static inline void ncurses_draw_lcd( void )
