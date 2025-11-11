@@ -1,3 +1,4 @@
+#include <SDL3/SDL_render.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -63,7 +64,7 @@
 #  define EVENT_KEY( e ) e.key.key
 #  define CREATE_WINDOW( n, w, h, flags ) SDL_CreateWindow( n, w, h, flags )
 #  define CREATE_RENDERER( w ) SDL_CreateRenderer( w, NULL )
-#  define SET_RENDER_LOGICAL_PRESENTATION( r, w, h ) SDL_SetRenderLogicalPresentation( r, w, h, SDL_LOGICAL_PRESENTATION_INTEGER_SCALE )
+#  define SET_RENDER_LOGICAL_PRESENTATION( r, w, h ) SDL_SetRenderLogicalPresentation( r, w, h, SDL_LOGICAL_PRESENTATION_LETTERBOX )
 #endif
 
 #include "../options.h"
@@ -1261,7 +1262,18 @@ void ui_start_sdl( config_t* conf )
 
 void ui_stop_sdl( void )
 {
+    for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
+        SDL_DestroyTexture( annunciators_textures[ i ].up );
+        SDL_DestroyTexture( annunciators_textures[ i ].down );
+    }
+
+    for ( int i = 0; i < NB_HP49_KEYS; i++ ) {
+        SDL_DestroyTexture( buttons_textures[ i ].up );
+        SDL_DestroyTexture( buttons_textures[ i ].down );
+    }
+
     SDL_DestroyTexture( main_texture );
+    SDL_DestroyTexture( display_texture );
     SDL_DestroyRenderer( renderer );
     SDL_DestroyWindow( window );
 }
