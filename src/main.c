@@ -14,10 +14,10 @@
 #include "core/emulate.h"
 #include "core/timers.h"
 
-#include "options.h"
-
 #include "ui4x/api.h"
-#include "ui4x/common.h"
+
+#include "emulator_api.h"
+#include "options.h"
 
 config_t config;
 
@@ -55,7 +55,8 @@ int main( int argc, char** argv )
     init_emulator( &config );
 
     /* (G)UI */
-    setup_ui( &config );
+    setup_ui( &config, press_key, release_key, is_key_pressed, get_annunciators, get_display_state, get_lcd_buffer, get_contrast,
+              exit_emulator );
     ui_start( &config );
 
     /*****************************************/

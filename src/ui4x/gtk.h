@@ -1,6 +1,11 @@
 #ifndef _UI4x_GTK_H
 #  define _UI4x_GTK_H 1
 
-extern void setup_frontend_gtk( void );
+#  include <stdbool.h>
+
+extern void setup_frontend_gtk( void ( *emulator_api_press_key )( int hpkey ), void ( *emulator_api_release_key )( int hpkey ),
+                                bool ( *emulator_api_is_key_pressed )( int hpkey ),
+                                unsigned char ( *emulator_api_get_annunciators )( void ), bool ( *emulator_api_get_display_state )( void ),
+                                void ( *emulator_api_get_lcd_buffer )( int* target ), int ( *emulator_api_get_contrast )( void ) );
 
 #endif /* _UI4x_GTK_H */

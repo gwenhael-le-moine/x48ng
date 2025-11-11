@@ -65,6 +65,7 @@ LIBS = -lm \
 
 HEADERS = src/options.h \
 	src/romio.h \
+	src/emulator_api.h \
 	src/core/debugger.h \
 	src/core/emulate.h \
 	src/core/init.h \
@@ -75,7 +76,7 @@ HEADERS = src/options.h \
 	src/core/serial.h \
 	src/ui4x/api.h \
 	src/ui4x/bitmaps_misc.h \
-	src/ui4x/common.h \
+	src/ui4x/api.h \
 	src/ui4x/inner.h \
 	src/ui4x/ncurses.h \
 	$(SDL_HEADERS) \
@@ -92,12 +93,12 @@ SRC = src/options.c \
 	src/core/registers.c \
 	src/core/timers.c \
 	src/core/serial.c \
-	src/ui4x_api_impl.c \
+	src/emulator_api.c \
 	src/ui4x/48gx.c \
 	src/ui4x/48sx.c \
 	src/ui4x/49g.c \
 	src/ui4x/50g.c \
-	src/ui4x/common.c \
+	src/ui4x/api.c \
 	src/ui4x/fonts.c \
 	src/ui4x/ncurses.c \
 	$(SDL_SRC) \

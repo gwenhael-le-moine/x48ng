@@ -69,7 +69,6 @@
 #include "../options.h"
 
 #include "api.h"
-#include "common.h"
 #include "inner.h"
 
 #define COLORS                                                                                                                             \
@@ -121,6 +120,16 @@ typedef struct annunciators_ui_t {
 /*************/
 /* variables */
 /*************/
+static config_t __config;
+static void ( *press_key )( int hpkey );
+static void ( *release_key )( int hpkey );
+static bool ( *is_key_pressed )( int hpkey );
+
+static unsigned char ( *get_annunciators )( void );
+static bool ( *get_display_state )( void );
+static void ( *get_lcd_buffer )( int* target );
+static int ( *get_contrast )( void );
+
 static annunciators_ui_t annunciators_ui[ NB_ANNUNCIATORS ] = {
     {.x = 16,  .y = 4, .width = ann_left_width,    .height = ann_left_height,    .bits = ann_left_bitmap   },
     {.x = 61,  .y = 4, .width = ann_right_width,   .height = ann_right_height,   .bits = ann_right_bitmap  },
@@ -142,8 +151,6 @@ static SDL_Window* window;
 static SDL_Renderer* renderer;
 static SDL_Texture* main_texture;
 static SDL_Texture* display_texture;
-
-static config_t __config;
 
 /****************************/
 /* functions implementation */
@@ -1259,8 +1266,19 @@ void ui_stop_sdl( void )
     SDL_DestroyWindow( window );
 }
 
-void setup_frontend_sdl( void )
+void setup_frontend_sdl( void ( *emulator_api_press_key )( int hpkey ), void ( *emulator_api_release_key )( int hpkey ),
+                         bool ( *emulator_api_is_key_pressed )( int hpkey ), unsigned char ( *emulator_api_get_annunciators )( void ),
+                         bool ( *emulator_api_get_display_state )( void ), void ( *emulator_api_get_lcd_buffer )( int* target ),
+                         int ( *emulator_api_get_contrast )( void ) )
 {
+    press_key = emulator_api_press_key;
+    release_key = emulator_api_release_key;
+    is_key_pressed = emulator_api_is_key_pressed;
+    get_annunciators = emulator_api_get_annunciators;
+    get_display_state = emulator_api_get_display_state;
+    get_lcd_buffer = emulator_api_get_lcd_buffer;
+    get_contrast = emulator_api_get_contrast;
+
     ui_get_event = ui_get_event_sdl;
     ui_update_display = ui_update_display_sdl;
     ui_start = ui_start_sdl;

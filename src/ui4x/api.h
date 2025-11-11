@@ -1,9 +1,12 @@
-#ifndef _UI4x_EMULATOR_H
-#  define _UI4x_EMULATOR_H 1
-
-#  include <stdbool.h>
+#ifndef _UI4x_API_H
+#  define _UI4x_API_H 1
 
 #  include "../options.h"
+
+// LCD
+#  define NIBBLES_PER_ROW 34
+#  define LCD_WIDTH 131
+#  define LCD_HEIGHT ( __config.big_screen ? 80 : 64 )
 
 // HP 48{G,S}X Keys
 typedef enum {
@@ -117,38 +120,19 @@ typedef enum {
 
 #  define NB_KEYS ( __config.model == MODEL_48GX || __config.model == MODEL_48SX ? NB_HP48_KEYS : NB_HP49_KEYS )
 
-#  define KEYS_BUFFER_SIZE 9
-
-// Annunciators
-typedef enum {
-    ANN_LEFT = 0x81,
-    ANN_RIGHT = 0x82,
-    ANN_ALPHA = 0x84,
-    ANN_BATTERY = 0x88,
-    ANN_BUSY = 0x90,
-    ANN_IO = 0xa0,
-    NB_ANNUNCIATORS = 6
-} annunciators_bits_t;
-
-// LCD
-#  define NIBBLES_PER_ROW 34
-#  define LCD_WIDTH 131
-// #define LCD_HEIGHT ( __config.big_screen ? 80 : 64 )
-#  define LCD_HEIGHT 64
-
 /*************************************************/
 /* public API: if it's there it's used elsewhere */
 /*************************************************/
-extern void press_key( int hpkey );
-extern void release_key( int hpkey );
-extern bool is_key_pressed( int hpkey );
+extern void ( *ui_get_event )( void );
+extern void ( *ui_update_display )( void );
 
-extern void init_emulator( config_t* conf );
-extern void exit_emulator( void );
+extern void ( *ui_start )( config_t* conf );
+extern void ( *ui_stop )( void );
 
-extern unsigned char get_annunciators( void );
-extern bool get_display_state( void );
-extern void get_lcd_buffer( int* target );
-extern int get_contrast( void );
+extern void setup_ui( config_t* conf, void ( *emulator_api_press_key )( int hpkey ), void ( *emulator_api_release_key )( int hpkey ),
+                      bool ( *emulator_api_is_key_pressed )( int hpkey ), unsigned char ( *emulator_api_get_annunciators )( void ),
+                      bool ( *emulator_api_get_display_state )( void ), void ( *emulator_api_get_lcd_buffer )( int* target ),
+                      int ( *emulator_api_get_contrast )( void ), void ( *exit_emulator )( void ) );
+extern void close_and_exit( void );
 
-#endif /* !_UI4x_EMULATOR_H */
+#endif /* !_UI4x_API_H */

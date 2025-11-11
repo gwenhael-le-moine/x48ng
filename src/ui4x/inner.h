@@ -1,8 +1,11 @@
 #ifndef _UI4x_INNER_H
 #  define _UI4x_INNER_H 1
 
-#  include "api.h"
+#  include <stdbool.h>
 
+#  include "../options.h"
+
+#  include "api.h"
 #  include "bitmaps_misc.h"
 
 /* 4.1.1.1: When defined, this symbol represents the threshold of the long
@@ -11,6 +14,19 @@
    release.
 */
 #  define LONG_PRESS_THR 750
+
+#  define KEYS_BUFFER_SIZE 9
+
+// Annunciators
+typedef enum {
+    ANN_LEFT = 0x81,
+    ANN_RIGHT = 0x82,
+    ANN_ALPHA = 0x84,
+    ANN_BATTERY = 0x88,
+    ANN_BUSY = 0x90,
+    ANN_IO = 0xa0,
+    NB_ANNUNCIATORS = 6
+} annunciators_bits_t;
 
 // Colors
 typedef enum {
