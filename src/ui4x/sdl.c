@@ -1,4 +1,3 @@
-#include <SDL3/SDL_render.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
