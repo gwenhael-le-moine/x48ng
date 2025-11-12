@@ -11,16 +11,20 @@
 
 void ( *ui_get_event )( void );
 void ( *ui_update_display )( void );
-void ( *ui_start )( config_t* conf );
+void ( *ui_start )( void );
 void ( *ui_stop )( void );
+
+ui4x_config_t ui4x_config;
 
 static void ( *emulator_exit )( void );
 
-void setup_ui( config_t* conf, void ( *emulator_api_press_key )( int hpkey ), void ( *emulator_api_release_key )( int hpkey ),
+void setup_ui( ui4x_config_t* conf, void ( *emulator_api_press_key )( int hpkey ), void ( *emulator_api_release_key )( int hpkey ),
                bool ( *emulator_api_is_key_pressed )( int hpkey ), unsigned char ( *emulator_api_get_annunciators )( void ),
                bool ( *emulator_api_get_display_state )( void ), void ( *emulator_api_get_lcd_buffer )( int* target ),
                int ( *emulator_api_get_contrast )( void ), void ( *exit_emulator )( void ) )
 {
+    ui4x_config = *conf;
+
     emulator_exit = exit_emulator;
 
     switch ( conf->frontend ) {

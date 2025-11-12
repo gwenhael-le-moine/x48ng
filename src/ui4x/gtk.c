@@ -2,7 +2,6 @@
 
 #include "api.h"
 
-static config_t __config;
 static void ( *press_key )( int hpkey );
 static void ( *release_key )( int hpkey );
 static bool ( *is_key_pressed )( int hpkey );
@@ -16,7 +15,7 @@ void ui_get_event_gtk( void ) {}
 
 void ui_update_display_gtk( void ) {}
 
-void ui_start_gtk( config_t* conf ) { __config = *conf; }
+void ui_start_gtk( void ) {}
 
 void ui_stop_gtk( void ) {}
 

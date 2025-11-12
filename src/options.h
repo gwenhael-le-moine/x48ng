@@ -3,20 +3,18 @@
 
 #  include <stdbool.h>
 
-typedef enum { FRONTEND_SDL, FRONTEND_NCURSES, FRONTEND_GTK } frontend_t;
-
-typedef enum { MODEL_48SX = 485, MODEL_48GX = 486, MODEL_40G = 406, MODEL_49G = 496, MODEL_50G = 506 } model_t;
+#  include "ui4x/api.h"
 
 typedef struct {
+    /* duplicating ui4x_config_t here so that config_init can return one big struct */
     char* progname;
 
-    model_t model;
-    bool verbose;
+    ui4x_model_t model;
     bool shiftless;
     bool big_screen;
     bool black_lcd;
 
-    frontend_t frontend;
+    ui4x_frontend_t frontend;
     bool mono;
     bool gray;
 
@@ -32,6 +30,9 @@ typedef struct {
     char* wire_name;
     char* ir_name;
 
+    bool verbose;
+
+    /* options below are specific to x48ng */
     bool print_config;
     bool useTerminal;
     bool useSerial;

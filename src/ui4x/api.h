@@ -1,12 +1,12 @@
 #ifndef _UI4x_API_H
 #  define _UI4x_API_H 1
 
-#  include "../options.h"
+#  include <stdbool.h>
 
 // LCD
 #  define NIBBLES_PER_ROW 34
 #  define LCD_WIDTH 131
-#  define LCD_HEIGHT ( __config.big_screen ? 80 : 64 )
+#  define LCD_HEIGHT ( ui4x_config.big_screen ? 80 : 64 )
 
 // HP 48{G,S}X Keys
 typedef enum {
@@ -118,7 +118,37 @@ typedef enum {
     NB_HP49_KEYS
 } hp49_keynames_t;
 
-#  define NB_KEYS ( __config.model == MODEL_48GX || __config.model == MODEL_48SX ? NB_HP48_KEYS : NB_HP49_KEYS )
+#  define NB_KEYS ( ui4x_config.model == MODEL_48GX || ui4x_config.model == MODEL_48SX ? NB_HP48_KEYS : NB_HP49_KEYS )
+
+typedef enum { FRONTEND_SDL, FRONTEND_NCURSES, FRONTEND_GTK } ui4x_frontend_t;
+
+typedef enum { MODEL_48SX = 485, MODEL_48GX = 486, MODEL_40G = 406, MODEL_49G = 496, MODEL_50G = 506 } ui4x_model_t;
+
+typedef struct ui4x_config_t {
+    ui4x_model_t model;
+    bool shiftless;
+    bool big_screen;
+    bool black_lcd;
+
+    ui4x_frontend_t frontend;
+    bool mono;
+    bool gray;
+
+    bool chromeless;
+    bool fullscreen;
+    double scale;
+
+    bool tiny;
+    bool small;
+
+    bool verbose;
+
+    char* progname;
+    char* wire_name;
+    char* ir_name;
+} ui4x_config_t;
+
+extern ui4x_config_t ui4x_config;
 
 /*************************************************/
 /* public API: if it's there it's used elsewhere */
@@ -126,10 +156,10 @@ typedef enum {
 extern void ( *ui_get_event )( void );
 extern void ( *ui_update_display )( void );
 
-extern void ( *ui_start )( config_t* conf );
+extern void ( *ui_start )( void );
 extern void ( *ui_stop )( void );
 
-extern void setup_ui( config_t* conf, void ( *emulator_api_press_key )( int hpkey ), void ( *emulator_api_release_key )( int hpkey ),
+extern void setup_ui( ui4x_config_t* conf, void ( *emulator_api_press_key )( int hpkey ), void ( *emulator_api_release_key )( int hpkey ),
                       bool ( *emulator_api_is_key_pressed )( int hpkey ), unsigned char ( *emulator_api_get_annunciators )( void ),
                       bool ( *emulator_api_get_display_state )( void ), void ( *emulator_api_get_lcd_buffer )( int* target ),
                       int ( *emulator_api_get_contrast )( void ), void ( *exit_emulator )( void ) );

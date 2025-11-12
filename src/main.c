@@ -55,9 +55,33 @@ int main( int argc, char** argv )
     init_emulator( &config );
 
     /* (G)UI */
-    setup_ui( &config, press_key, release_key, is_key_pressed, get_annunciators, get_display_state, get_lcd_buffer, get_contrast,
+    ui4x_config_t config_ui = {
+        .model = config.model,
+        .shiftless = config.shiftless,
+        .big_screen = config.big_screen,
+        .black_lcd = config.black_lcd,
+
+        .frontend = config.frontend,
+
+        .mono = config.mono,
+        .gray = config.gray,
+
+        .chromeless = config.chromeless,
+        .fullscreen = config.fullscreen,
+        .scale = config.scale,
+
+        .tiny = config.tiny,
+        .small = config.small,
+
+        .verbose = config.verbose,
+
+        .progname = config.progname,
+        .wire_name = config.wire_name,
+        .ir_name = config.ir_name,
+    };
+    setup_ui( &config_ui, press_key, release_key, is_key_pressed, get_annunciators, get_display_state, get_lcd_buffer, get_contrast,
               exit_emulator );
-    ui_start( &config );
+    ui_start();
 
     /*****************************************/
     /* handlers for SIGALRM, SIGPIPE */
