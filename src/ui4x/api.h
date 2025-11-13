@@ -159,10 +159,12 @@ extern void ( *ui_update_display )( void );
 extern void ( *ui_start )( void );
 extern void ( *ui_stop )( void );
 
-extern void setup_ui( ui4x_config_t* conf, void ( *emulator_api_press_key )( int hpkey ), void ( *emulator_api_release_key )( int hpkey ),
-                      bool ( *emulator_api_is_key_pressed )( int hpkey ), unsigned char ( *emulator_api_get_annunciators )( void ),
-                      bool ( *emulator_api_get_display_state )( void ), void ( *emulator_api_get_lcd_buffer )( int* target ),
-                      int ( *emulator_api_get_contrast )( void ), void ( *exit_emulator )( void ) );
+extern void setup_ui( ui4x_config_t* conf, void ( *emulator_api_emulator_press_key )( int hpkey ),
+                      void ( *emulator_api_emulator_release_key )( int hpkey ), bool ( *emulator_api_emulator_is_key_pressed )( int hpkey ),
+                      unsigned char ( *emulator_api_emulator_get_annunciators )( void ),
+                      bool ( *emulator_api_emulator_get_display_state )( void ),
+                      void ( *emulator_api_emulator_get_lcd_buffer )( int* target ), int ( *emulator_api_emulator_get_contrast )( void ),
+                      void ( *exit_emulator )( void ) );
 extern void close_and_exit( void );
 
 #endif /* !_UI4x_API_H */

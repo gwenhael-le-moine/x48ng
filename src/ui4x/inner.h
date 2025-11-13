@@ -82,7 +82,7 @@ typedef struct button_t {
 
     /* label on the button (text or bitmap) */
     int label_color;
-    const char* label_text;
+    const char* label;
     unsigned char* label_graphic;
     unsigned int label_graphic_w, label_graphic_h;
 
@@ -90,10 +90,7 @@ typedef struct button_t {
     const char* letter;
     const char* left;
     const char* right;
-    const char* sub;
-
-    /* unused */
-    short font_size;
+    const char* below;
 } button_t;
 
 /*************/
@@ -111,6 +108,17 @@ extern button_t buttons_48sx[ NB_HP48_KEYS ];
 extern button_t buttons_48gx[ NB_HP48_KEYS ];
 extern button_t buttons_49g[ NB_HP49_KEYS ];
 extern button_t buttons_50g[ NB_HP49_KEYS ];
+
+/******************/
+/* emulator's API */
+/******************/
+extern void ( *emulator_press_key )( int hpkey );
+extern void ( *emulator_release_key )( int hpkey );
+extern bool ( *emulator_is_key_pressed )( int hpkey );
+extern unsigned char ( *emulator_get_annunciators )( void );
+extern bool ( *emulator_get_display_state )( void );
+extern void ( *emulator_get_lcd_buffer )( int* target );
+extern int ( *emulator_get_contrast )( void );
 
 /*************/
 /* functions */

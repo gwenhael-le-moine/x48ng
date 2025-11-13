@@ -25,8 +25,8 @@
 
 #define LCD_OFFSET_X ( ui4x_config.chromeless ? 0 : 1 )
 #define LCD_OFFSET_Y 1
-#define LCD_BOTTOM LCD_OFFSET_Y + ( ui4x_config.small ? ( LCD_HEIGHT / 2 ) : ui4x_config.tiny ? ( LCD_HEIGHT / 4 ) : LCD_HEIGHT )
-#define LCD_RIGHT LCD_OFFSET_X + ( ( ui4x_config.small || ui4x_config.tiny ) ? ( LCD_WIDTH / 2 ) + 1 : LCD_WIDTH )
+#define LCD_BOTTOM LCD_OFFSET_Y + ( LCD_HEIGHT / ( ui4x_config.tiny ? 4 : ( ui4x_config.small ? 2 : 1 ) ) )
+#define LCD_RIGHT LCD_OFFSET_X + ( LCD_WIDTH / ( ui4x_config.small || ui4x_config.tiny ? 2 : 1 ) ) + 1
 
 typedef enum { LCD_COLOR_BG = 30, LCD_COLOR_FG_1, LCD_COLOR_FG_2, LCD_COLOR_FG_3 } nc_color_t;
 
@@ -35,15 +35,6 @@ typedef enum { LCD_PIXEL_OFF = 60, LCD_PIXEL_ON_1, LCD_PIXEL_ON_2, LCD_PIXEL_ON_
 /*************/
 /* variables */
 /*************/
-static void ( *press_key )( int hpkey );
-static void ( *release_key )( int hpkey );
-static bool ( *is_key_pressed )( int hpkey );
-
-static unsigned char ( *get_annunciators )( void );
-static bool ( *get_display_state )( void );
-static void ( *get_lcd_buffer )( int* target );
-static int ( *get_contrast )( void );
-
 static int display_buffer_grayscale[ LCD_WIDTH * 80 ];
 static int last_annunciators = -1;
 
@@ -66,21 +57,21 @@ static inline wchar_t eight_bits_to_braille_char( bool b1, bool b2, bool b3, boo
     wchar_t chr = 0x2800;
 
     if ( b1 )
-        chr |= 1; // 0b0000000000000001;
+        chr |= 0b0000000000000001;
     if ( b2 )
-        chr |= 2; // 0b0000000000000010;
+        chr |= 0b0000000000000010;
     if ( b3 )
-        chr |= 4; // 0b0000000000000100;
+        chr |= 0b0000000000000100;
     if ( b4 )
-        chr |= 8; // 0b0000000000001000;
+        chr |= 0b0000000000001000;
     if ( b5 )
-        chr |= 16; // 0b0000000000010000;
+        chr |= 0b0000000000010000;
     if ( b6 )
-        chr |= 32; // 0b0000000000100000;
+        chr |= 0b0000000000100000;
     if ( b7 )
-        chr |= 64; // 0b0000000001000000;
+        chr |= 0b0000000001000000;
     if ( b8 )
-        chr |= 128; // 0b0000000010000000;
+        chr |= 0b0000000010000000;
 
     return chr;
 }
@@ -164,6 +155,7 @@ static inline void ncurses_draw_lcd_small( void )
     bool last_column = false;
 
     wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
+    wchar_t pixels;
 
     if ( !ui4x_config.mono && has_colors() )
         attron( COLOR_PAIR( LCD_PIXEL_ON_3 ) );
@@ -184,7 +176,7 @@ static inline void ncurses_draw_lcd_small( void )
                 bottom_right = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
             }
 
-            wchar_t pixels = four_bits_to_quadrant_char( top_left, top_right, bottom_left, bottom_right );
+            pixels = four_bits_to_quadrant_char( top_left, top_right, bottom_left, bottom_right );
             wcsncat( line, &pixels, 1 );
         }
         mvwaddwstr( lcd_window, LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
@@ -233,46 +225,6 @@ static inline void ncurses_draw_lcd_fullsize( void )
         attroff( COLOR_PAIR( color ) );
 }
 
-static inline void ncurses_draw_lcd( void )
-{
-    if ( ui4x_config.tiny )
-        ncurses_draw_lcd_tiny();
-    else if ( ui4x_config.small )
-        ncurses_draw_lcd_small();
-    else
-        ncurses_draw_lcd_fullsize();
-
-    wrefresh( lcd_window );
-}
-
-static void ui_init_LCD( void ) { memset( display_buffer_grayscale, 0, sizeof( display_buffer_grayscale ) ); }
-
-static void get_display_buffer( void )
-{
-
-    if ( get_display_state() )
-        get_lcd_buffer( display_buffer_grayscale );
-    else
-        ui_init_LCD();
-}
-
-static void ncurses_update_annunciators( void )
-{
-    const wchar_t* annunciators_icons[ 6 ] = { L"↰", L"↱", L"α", L"🪫", L"⌛", L"⇄" };
-    const int annunciators_bits[ NB_ANNUNCIATORS ] = { ANN_LEFT, ANN_RIGHT, ANN_ALPHA, ANN_BATTERY, ANN_BUSY, ANN_IO };
-
-    int annunciators = get_annunciators();
-
-    if ( last_annunciators == annunciators )
-        return;
-
-    last_annunciators = annunciators;
-
-    for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
-        mvwaddwstr( lcd_window, 0, 4 + ( i * 4 ),
-                    ( ( annunciators_bits[ i ] & annunciators ) == annunciators_bits[ i ] ) ? annunciators_icons[ i ] : L" " );
-}
-
 static void toggle_help_window( void )
 {
     int border_width = ui4x_config.chromeless ? 0 : 1;
@@ -296,27 +248,54 @@ static void toggle_help_window( void )
     } else {
         wclear( help_window );
         wrefresh( help_window );
-        // delwin( help_window );
         refresh();
 
         help_window = NULL;
     }
 }
 
+static void ncurses_refresh_annunciators( void )
+{
+    const wchar_t* annunciators_icons[ 6 ] = { L"↰", L"↱", L"α", L"🪫", L"⌛", L"⇄" };
+    const int annunciators_bits[ NB_ANNUNCIATORS ] = { ANN_LEFT, ANN_RIGHT, ANN_ALPHA, ANN_BATTERY, ANN_BUSY, ANN_IO };
+
+    int annunciators = emulator_get_annunciators();
+
+    if ( last_annunciators == annunciators )
+        return;
+
+    last_annunciators = annunciators;
+
+    for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
+        mvwaddwstr( lcd_window, 0, 4 + ( i * 4 ),
+                    ( ( annunciators_bits[ i ] & annunciators ) == annunciators_bits[ i ] ) ? annunciators_icons[ i ] : L" " );
+}
+
 /**********/
 /* public */
 /**********/
-void ui_update_display_ncurses( void )
+void ncurses_refresh_lcd( void )
 {
+    if ( !emulator_get_display_state() )
+        return;
+
     // apply_contrast();
 
-    get_display_buffer();
+    ncurses_refresh_annunciators();
 
-    ncurses_update_annunciators();
-    ncurses_draw_lcd();
+    emulator_get_lcd_buffer( display_buffer_grayscale );
+
+    if ( ui4x_config.small )
+        ncurses_draw_lcd_small();
+    else if ( ui4x_config.tiny )
+        ncurses_draw_lcd_tiny();
+    else
+        ncurses_draw_lcd_fullsize();
+
+    wrefresh( lcd_window );
 }
 
-void ui_get_event_ncurses( void )
+void ncurses_handle_pending_inputs( void )
 {
     bool new_keyboard_state[ NB_HP49_KEYS ];
     uint32_t k;
@@ -579,24 +558,30 @@ void ui_get_event_ncurses( void )
         if ( keyboard_state[ key ] == new_keyboard_state[ key ] )
             continue; /* key hasn't changed state */
 
-        if ( !keyboard_state[ key ] && new_keyboard_state[ key ] && !is_key_pressed( key ) )
-            press_key( key );
-        else if ( keyboard_state[ key ] && !new_keyboard_state[ key ] && is_key_pressed( key ) )
-            release_key( key );
+        if ( !keyboard_state[ key ] && new_keyboard_state[ key ] && !emulator_is_key_pressed( key ) )
+            emulator_press_key( key );
+        else if ( keyboard_state[ key ] && !new_keyboard_state[ key ] && emulator_is_key_pressed( key ) )
+            emulator_release_key( key );
 
         keyboard_state[ key ] = new_keyboard_state[ key ];
     }
 }
 
-void ui_stop_ncurses( void )
+void ncurses_exit( void )
 {
+    delwin( lcd_window );
+    delwin( help_window );
+
     nodelay( stdscr, FALSE );
     echo();
     endwin();
 }
 
-void ui_start_ncurses( void )
+void ncurses_init( void )
 {
+    for ( int i = 0; i < NB_KEYS; ++i )
+        keyboard_state[ i ] = false;
+
     setlocale( LC_ALL, "" );
     initscr();              /* initialize the curses library */
     keypad( stdscr, TRUE ); /* enable keyboard mapping */
@@ -646,27 +631,16 @@ void ui_start_ncurses( void )
     }
 
     mvwprintw( lcd_window, 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
-    mvwprintw( lcd_window, 0, LCD_RIGHT / 2, "< %s v%i.%i.%i >", ui4x_config.progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
+    mvwprintw( lcd_window, 0, 32, "< %s v%i.%i.%i >", ui4x_config.progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
 
     mvwprintw( lcd_window, LCD_BOTTOM, 2, "[ wire: %s ]-[ IR: %s ]-[ contrast: %i ]", ui4x_config.wire_name, ui4x_config.ir_name,
-               get_contrast() );
+               emulator_get_contrast() );
 }
 
-void setup_frontend_ncurses( void ( *emulator_api_press_key )( int hpkey ), void ( *emulator_api_release_key )( int hpkey ),
-                             bool ( *emulator_api_is_key_pressed )( int hpkey ), unsigned char ( *emulator_api_get_annunciators )( void ),
-                             bool ( *emulator_api_get_display_state )( void ), void ( *emulator_api_get_lcd_buffer )( int* target ),
-                             int ( *emulator_api_get_contrast )( void ) )
+void setup_frontend_ncurses( void )
 {
-    press_key = emulator_api_press_key;
-    release_key = emulator_api_release_key;
-    is_key_pressed = emulator_api_is_key_pressed;
-    get_annunciators = emulator_api_get_annunciators;
-    get_display_state = emulator_api_get_display_state;
-    get_lcd_buffer = emulator_api_get_lcd_buffer;
-    get_contrast = emulator_api_get_contrast;
-
-    ui_get_event = ui_get_event_ncurses;
-    ui_update_display = ui_update_display_ncurses;
-    ui_start = ui_start_ncurses;
-    ui_stop = ui_stop_ncurses;
+    ui_get_event = ncurses_handle_pending_inputs;
+    ui_update_display = ncurses_refresh_lcd;
+    ui_start = ncurses_init;
+    ui_stop = ncurses_exit;
 }

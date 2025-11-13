@@ -120,15 +120,6 @@ typedef struct annunciators_ui_t {
 /*************/
 /* variables */
 /*************/
-static void ( *press_key )( int hpkey );
-static void ( *release_key )( int hpkey );
-static bool ( *is_key_pressed )( int hpkey );
-
-static unsigned char ( *get_annunciators )( void );
-static bool ( *get_display_state )( void );
-static void ( *get_lcd_buffer )( int* target );
-static int ( *get_contrast )( void );
-
 static annunciators_ui_t annunciators_ui[ NB_ANNUNCIATORS ] = {
     {.x = 16,  .y = 4, .width = ann_left_width,    .height = ann_left_height,    .bits = ann_left_bitmap   },
     {.x = 61,  .y = 4, .width = ann_right_width,   .height = ann_right_height,   .bits = ann_right_bitmap  },
@@ -667,15 +658,15 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
     int label_color = BUTTONS[ hpkey ].label_color;
     /* if ( ui4x_config.model == MODEL_49G && ( hpkey == HP49_KEY_ALPHA || hpkey == HP49_KEY_SHL || hpkey == HP49_KEY_SHR ) ) */
     /*     label_color = UI4X_COLOR_LABEL; */
-    if ( BUTTONS[ hpkey ].label_text != ( char* )0 ) {
+    if ( BUTTONS[ hpkey ].label != ( char* )0 ) {
         /* Button has a text label */
-        x = strlen( BUTTONS[ hpkey ].label_text ) - 1;
-        x += ( ( BUTTONS[ hpkey ].w - BigTextWidth( BUTTONS[ hpkey ].label_text, strlen( BUTTONS[ hpkey ].label_text ) ) ) / 2 );
+        x = strlen( BUTTONS[ hpkey ].label ) - 1;
+        x += ( ( BUTTONS[ hpkey ].w - BigTextWidth( BUTTONS[ hpkey ].label, strlen( BUTTONS[ hpkey ].label ) ) ) / 2 );
         y = ( BUTTONS[ hpkey ].h + 1 ) / 2 - 6;
         if ( is_down )
             y -= 1;
 
-        write_with_big_font( x, y, BUTTONS[ hpkey ].label_text, label_color, inner_color );
+        write_with_big_font( x, y, BUTTONS[ hpkey ].label, label_color, inner_color );
     } else if ( BUTTONS[ hpkey ].label_graphic != ( unsigned char* )0 ) {
         /* Button has a texture */
         x = ( 1 + BUTTONS[ hpkey ].w - BUTTONS[ hpkey ].label_graphic_w ) / 2;
@@ -766,7 +757,7 @@ static void create_buttons_textures( void )
 static void _draw_key( int hpkey )
 {
     __draw_texture( OFFSET_X_KEYBOARD + BUTTONS[ hpkey ].x, OFFSET_Y_KEYBOARD + BUTTONS[ hpkey ].y, BUTTONS[ hpkey ].w, BUTTONS[ hpkey ].h,
-                    is_key_pressed( hpkey ) ? buttons_textures[ hpkey ].down : buttons_textures[ hpkey ].up );
+                    emulator_is_key_pressed( hpkey ) ? buttons_textures[ hpkey ].down : buttons_textures[ hpkey ].up );
 }
 
 #define SMALL_ASCENT 8
@@ -813,12 +804,12 @@ static void _draw_keypad( void )
         }
 
         // Bottom label: the only one is the cancel button
-        if ( BUTTONS[ i ].sub != ( char* )0 ) {
+        if ( BUTTONS[ i ].below != ( char* )0 ) {
             x = OFFSET_X_KEYBOARD + BUTTONS[ i ].x +
-                ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].sub, strlen( BUTTONS[ i ].sub ) ) ) / 2;
+                ( 1 + BUTTONS[ i ].w - SmallTextWidth( BUTTONS[ i ].below, strlen( BUTTONS[ i ].below ) ) ) / 2;
             y = OFFSET_Y_KEYBOARD + BUTTONS[ i ].y + BUTTONS[ i ].h + SMALL_ASCENT + 1;
 
-            write_with_small_font( x, y, BUTTONS[ i ].sub, UI4X_COLOR_LABEL, UI4X_COLOR_FACEPLATE );
+            write_with_small_font( x, y, BUTTONS[ i ].below, UI4X_COLOR_LABEL, UI4X_COLOR_FACEPLATE );
         }
 
         // Draw top labels
@@ -977,23 +968,23 @@ static void _draw_serial_devices_path( void )
             COLOR_PIXEL_OFF, UI4X_COLOR_UPPER_FACEPLATE );
 }
 
-static int sdl_press_key( int hpkey )
+static int sdl_emulator_press_key( int hpkey )
 {
-    if ( hpkey == -1 || is_key_pressed( hpkey ) )
+    if ( hpkey == -1 || emulator_is_key_pressed( hpkey ) )
         return -1;
 
-    press_key( hpkey );
+    emulator_press_key( hpkey );
     _show_key( hpkey );
 
     return hpkey;
 }
 
-static int sdl_release_key( int hpkey )
+static int sdl_emulator_release_key( int hpkey )
 {
-    if ( hpkey == -1 || !is_key_pressed( hpkey ) )
+    if ( hpkey == -1 || !emulator_is_key_pressed( hpkey ) )
         return -1;
 
-    release_key( hpkey );
+    emulator_release_key( hpkey );
     _show_key( hpkey );
 
     return hpkey;
@@ -1001,11 +992,11 @@ static int sdl_release_key( int hpkey )
 
 static void ui_init_LCD( void ) { memset( display_buffer_grayscale, 0, sizeof( display_buffer_grayscale ) ); }
 
-static void get_display_buffer( void )
+static void emulator_get_display_buffer( void )
 {
 
-    if ( get_display_state() )
-        get_lcd_buffer( display_buffer_grayscale );
+    if ( emulator_get_display_state() )
+        emulator_get_lcd_buffer( display_buffer_grayscale );
     else
         ui_init_LCD();
 }
@@ -1013,7 +1004,7 @@ static void get_display_buffer( void )
 static void sdl_update_annunciators( void )
 {
     const int annunciators_bits[ NB_ANNUNCIATORS ] = { ANN_LEFT, ANN_RIGHT, ANN_ALPHA, ANN_BATTERY, ANN_BUSY, ANN_IO };
-    int annunciators = get_annunciators();
+    int annunciators = emulator_get_annunciators();
 
     if ( last_annunciators == annunciators )
         return;
@@ -1045,7 +1036,7 @@ static int apply_contrast( int value, int contrast )
 
 static void setup_colors( void )
 {
-    int contrast = get_contrast();
+    int contrast = emulator_get_contrast();
 
     if ( last_contrast == contrast )
         return;
@@ -1113,7 +1104,7 @@ void ui_get_event_sdl( void )
 
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
                 hpkey = mouse_click_to_hpkey( event.button.x, event.button.y );
-                if ( sdl_press_key( hpkey ) != -1 ) {
+                if ( sdl_emulator_press_key( hpkey ) != -1 ) {
                     if ( lasthpkey == -1 ) {
                         lasthpkey = hpkey;
                         // Start timer
@@ -1126,16 +1117,16 @@ void ui_get_event_sdl( void )
             case SDL_EVENT_MOUSE_BUTTON_UP:
                 hpkey = mouse_click_to_hpkey( event.button.x, event.button.y );
                 if ( lasthpkey != hpkey || lastticks == -1 || ( SDL_GetTicks() - lastticks < LONG_PRESS_THR ) )
-                    sdl_release_key( hpkey );
+                    sdl_emulator_release_key( hpkey );
 
                 lasthpkey = lastticks = -1;
                 break;
 
             case SDL_EVENT_KEY_DOWN:
-                sdl_press_key( sdlkey_to_hpkey( EVENT_KEY( event ) ) );
+                sdl_emulator_press_key( sdlkey_to_hpkey( EVENT_KEY( event ) ) );
                 break;
             case SDL_EVENT_KEY_UP:
-                sdl_release_key( sdlkey_to_hpkey( EVENT_KEY( event ) ) );
+                sdl_emulator_release_key( sdlkey_to_hpkey( EVENT_KEY( event ) ) );
                 break;
         }
     }
@@ -1145,7 +1136,7 @@ void ui_update_display_sdl( void )
 {
     setup_colors();
 
-    get_display_buffer();
+    emulator_get_display_buffer();
 
     SDL_SetRenderTarget( renderer, display_texture );
 
@@ -1274,19 +1265,8 @@ void ui_stop_sdl( void )
     SDL_DestroyWindow( window );
 }
 
-void setup_frontend_sdl( void ( *emulator_api_press_key )( int hpkey ), void ( *emulator_api_release_key )( int hpkey ),
-                         bool ( *emulator_api_is_key_pressed )( int hpkey ), unsigned char ( *emulator_api_get_annunciators )( void ),
-                         bool ( *emulator_api_get_display_state )( void ), void ( *emulator_api_get_lcd_buffer )( int* target ),
-                         int ( *emulator_api_get_contrast )( void ) )
+void setup_frontend_sdl( void )
 {
-    press_key = emulator_api_press_key;
-    release_key = emulator_api_release_key;
-    is_key_pressed = emulator_api_is_key_pressed;
-    get_annunciators = emulator_api_get_annunciators;
-    get_display_state = emulator_api_get_display_state;
-    get_lcd_buffer = emulator_api_get_lcd_buffer;
-    get_contrast = emulator_api_get_contrast;
-
     ui_get_event = ui_get_event_sdl;
     ui_update_display = ui_update_display_sdl;
     ui_start = ui_start_sdl;
