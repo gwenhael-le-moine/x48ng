@@ -66,8 +66,6 @@
 #  define SET_RENDER_LOGICAL_PRESENTATION( r, w, h ) SDL_SetRenderLogicalPresentation( r, w, h, SDL_LOGICAL_PRESENTATION_LETTERBOX )
 #endif
 
-#include "../options.h"
-
 #include "api.h"
 #include "inner.h"
 
@@ -75,15 +73,8 @@
     ( ui4x_config.model == MODEL_48GX                                                                                                      \
           ? colors_48gx                                                                                                                    \
           : ( ui4x_config.model == MODEL_48SX ? colors_48sx : ( ui4x_config.model == MODEL_49G ? colors_49g : colors_50g ) ) )
-#define BUTTONS                                                                                                                            \
-    ( ui4x_config.model == MODEL_48GX                                                                                                      \
-          ? buttons_48gx                                                                                                                   \
-          : ( ui4x_config.model == MODEL_48SX ? buttons_48sx : ( ui4x_config.model == MODEL_49G ? buttons_49g : buttons_50g ) ) )
 
 #define COLOR_PIXEL_OFF ( ui4x_config.black_lcd ? UI4X_COLOR_BLACK_PIXEL_OFF : UI4X_COLOR_PIXEL_OFF )
-#define COLOR_PIXEL_GREY_1 ( ui4x_config.black_lcd ? UI4X_COLOR_BLACK_PIXEL_GREY_1 : UI4X_COLOR_PIXEL_GREY_1 )
-#define COLOR_PIXEL_GREY_2 ( ui4x_config.black_lcd ? UI4X_COLOR_BLACK_PIXEL_GREY_2 : UI4X_COLOR_PIXEL_GREY_2 )
-#define COLOR_PIXEL_ON ( ui4x_config.black_lcd ? UI4X_COLOR_BLACK_PIXEL_ON : UI4X_COLOR_PIXEL_ON )
 
 #define PADDING_TOP ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? 48 : 65 )
 #define PADDING_SIDE 20
@@ -134,7 +125,7 @@ static int last_annunciators = -1;
 static int last_contrast = -1;
 
 static color_t colors[ NB_COLORS ];
-static on_off_sdl_textures_struct_t buttons_textures[ NB_HP49_KEYS ];
+static on_off_sdl_textures_struct_t buttons_textures[ NB_HP4950_KEYS ];
 static on_off_sdl_textures_struct_t annunciators_textures[ NB_ANNUNCIATORS ];
 
 static SDL_Window* window;
@@ -212,10 +203,15 @@ static SDL_Texture* bitmap_to_texture( unsigned int w, unsigned int h, unsigned 
     return tex;
 }
 
+static void __draw_pixel_rgba( int x, int y, int r, int g, int b, int a )
+{
+    SDL_SetRenderDrawColor( renderer, r, g, b, a );
+    SDL_RenderPoint( renderer, x, y );
+}
+
 static void __draw_pixel( int x, int y, int color )
 {
-    SDL_SetRenderDrawColor( renderer, colors[ color ].r, colors[ color ].g, colors[ color ].b, colors[ color ].a );
-    SDL_RenderPoint( renderer, x, y );
+    __draw_pixel_rgba( x, y, colors[ color ].r, colors[ color ].g, colors[ color ].b, colors[ color ].a );
 }
 
 static void __draw_line( int x1, int y1, int x2, int y2, int color )
@@ -284,7 +280,7 @@ static void create_annunciators_textures( void )
 {
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
         annunciators_textures[ i ].up = bitmap_to_texture( annunciators_ui[ i ].width, annunciators_ui[ i ].height,
-                                                           annunciators_ui[ i ].bits, COLOR_PIXEL_ON, COLOR_PIXEL_OFF );
+                                                           annunciators_ui[ i ].bits, UI4X_COLOR_ANNUNCIATOR, COLOR_PIXEL_OFF );
         annunciators_textures[ i ].down = bitmap_to_texture( annunciators_ui[ i ].width, annunciators_ui[ i ].height,
                                                              annunciators_ui[ i ].bits, COLOR_PIXEL_OFF, COLOR_PIXEL_OFF );
     }
@@ -294,8 +290,8 @@ static void create_annunciators_textures( void )
 // Returns -1 is no key is pressed
 static int mouse_click_to_hpkey( int x, int y )
 {
-    x /= ui4x_config.scale;
-    y /= ui4x_config.scale;
+    x /= ui4x_config.zoom;
+    y /= ui4x_config.zoom;
 
     /* return immediatly if the click isn't even in the keyboard area */
     if ( y < OFFSET_Y_KEYBOARD )
@@ -318,160 +314,150 @@ static int sdlkey_to_hpkey( SDL_Keycode k )
 {
     switch ( k ) {
         case SDLK_0:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_0 : HP48_KEY_0 );
-        case SDLK_1:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_1 : HP48_KEY_1 );
-        case SDLK_2:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_2 : HP48_KEY_2 );
-        case SDLK_3:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_3 : HP48_KEY_3 );
-        case SDLK_4:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_4 : HP48_KEY_4 );
-        case SDLK_5:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_5 : HP48_KEY_5 );
-        case SDLK_6:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_6 : HP48_KEY_6 );
-        case SDLK_7:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_7 : HP48_KEY_7 );
-        case SDLK_8:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_8 : HP48_KEY_8 );
-        case SDLK_9:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_9 : HP48_KEY_9 );
         case SDLK_KP_0:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_0 : HP48_KEY_0 );
+            return UI4X_KEY_0;
+        case SDLK_1:
         case SDLK_KP_1:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_1 : HP48_KEY_1 );
+            return UI4X_KEY_1;
+        case SDLK_2:
         case SDLK_KP_2:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_2 : HP48_KEY_2 );
+            return UI4X_KEY_2;
+        case SDLK_3:
         case SDLK_KP_3:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_3 : HP48_KEY_3 );
+            return UI4X_KEY_3;
+        case SDLK_4:
         case SDLK_KP_4:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_4 : HP48_KEY_4 );
+            return UI4X_KEY_4;
+        case SDLK_5:
         case SDLK_KP_5:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_5 : HP48_KEY_5 );
+            return UI4X_KEY_5;
+        case SDLK_6:
         case SDLK_KP_6:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_6 : HP48_KEY_6 );
+            return UI4X_KEY_6;
+        case SDLK_7:
         case SDLK_KP_7:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_7 : HP48_KEY_7 );
+            return UI4X_KEY_7;
+        case SDLK_8:
         case SDLK_KP_8:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_8 : HP48_KEY_8 );
+            return UI4X_KEY_8;
+        case SDLK_9:
         case SDLK_KP_9:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_9 : HP48_KEY_9 );
+            return UI4X_KEY_9;
         case SDLK_A:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_A : HP48_KEY_A );
+            return UI4X_KEY_A;
         case SDLK_B:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_B : HP48_KEY_B );
+            return UI4X_KEY_B;
         case SDLK_C:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_C : HP48_KEY_C );
+            return UI4X_KEY_C;
         case SDLK_D:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_D : HP48_KEY_D );
+            return UI4X_KEY_D;
         case SDLK_E:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_E : HP48_KEY_E );
+            return UI4X_KEY_E;
         case SDLK_F:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_F : HP48_KEY_F );
+            return UI4X_KEY_F;
         case SDLK_G:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_APPS : HP48_KEY_MTH );
+            return UI4X_KEY_G;
         case SDLK_H:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_MODE : HP48_KEY_PRG );
+            return UI4X_KEY_H;
         case SDLK_I:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_TOOL : HP48_KEY_CST );
+            return UI4X_KEY_I;
         case SDLK_J:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_VAR : HP48_KEY_VAR );
+            return UI4X_KEY_J;
         case SDLK_K:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_STO : HP48_KEY_UP );
+            return UI4X_KEY_K;
         case SDLK_UP:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_UP : HP48_KEY_UP );
+            return UI4X_KEY_UP;
         case SDLK_L:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_NXT : HP48_KEY_NXT );
+            return UI4X_KEY_L;
         case SDLK_M:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_HIST : HP48_KEY_QUOTE );
+            return UI4X_KEY_M;
         case SDLK_N:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_CAT : HP48_KEY_STO );
+            return UI4X_KEY_N;
         case SDLK_O:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_EQW : HP48_KEY_EVAL );
+            return UI4X_KEY_O;
         case SDLK_P:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_SYMB : HP48_KEY_LEFT );
+            return UI4X_KEY_P;
         case SDLK_LEFT:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_LEFT : HP48_KEY_LEFT );
+            return UI4X_KEY_LEFT;
         case SDLK_Q:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_POWER : HP48_KEY_DOWN );
+            return UI4X_KEY_Q;
         case SDLK_DOWN:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_DOWN : HP48_KEY_DOWN );
+            return UI4X_KEY_DOWN;
         case SDLK_R:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_SQRT : HP48_KEY_RIGHT );
+            return UI4X_KEY_R;
         case SDLK_RIGHT:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_RIGHT : HP48_KEY_RIGHT );
+            return UI4X_KEY_RIGHT;
         case SDLK_S:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_SIN : HP48_KEY_SIN );
+            return UI4X_KEY_S;
         case SDLK_T:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_COS : HP48_KEY_COS );
+            return UI4X_KEY_T;
         case SDLK_U:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_TAN : HP48_KEY_TAN );
+            return UI4X_KEY_U;
         case SDLK_V:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_EEX : HP48_KEY_SQRT );
+            return UI4X_KEY_V;
         case SDLK_W:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_NEG : HP48_KEY_POWER );
+            return UI4X_KEY_W;
         case SDLK_X:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_X : HP48_KEY_INV );
+            return UI4X_KEY_X;
         case SDLK_Y:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_INV : HP48_KEY_NEG );
+            return UI4X_KEY_Y;
         case SDLK_Z:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_DIV : HP48_KEY_EEX );
+            return UI4X_KEY_Z;
         case SDLK_SPACE:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_SPC : HP48_KEY_SPC );
+            return UI4X_KEY_SPACE;
         case SDLK_F1:
         case SDLK_RETURN:
         case SDLK_KP_ENTER:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_ENTER : HP48_KEY_ENTER );
+            return UI4X_KEY_ENTER;
         case SDLK_BACKSPACE:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_BS : HP48_KEY_BS );
+            return UI4X_KEY_BACKSPACE;
         case SDLK_DELETE:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? -1 : HP48_KEY_DEL );
+            return UI4X_KEY_DELETE;
         case SDLK_PERIOD:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_PERIOD : HP48_KEY_PERIOD );
         case SDLK_KP_PERIOD:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_PERIOD : HP48_KEY_PERIOD );
+            return UI4X_KEY_PERIOD;
         case SDLK_PLUS:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_PLUS : HP48_KEY_PLUS );
         case SDLK_KP_PLUS:
         case SDLK_EQUALS:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_PLUS : HP48_KEY_PLUS );
+            return UI4X_KEY_PLUS;
         case SDLK_MINUS:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_MINUS : HP48_KEY_MINUS );
         case SDLK_KP_MINUS:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_MINUS : HP48_KEY_MINUS );
+            return UI4X_KEY_MINUS;
         case SDLK_ASTERISK:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_MUL : HP48_KEY_MUL );
         case SDLK_KP_MULTIPLY:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_MUL : HP48_KEY_MUL );
+            return UI4X_KEY_MULTIPLY;
         case SDLK_SLASH:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_DIV : HP48_KEY_DIV );
         case SDLK_KP_DIVIDE:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_DIV : HP48_KEY_DIV );
+            return UI4X_KEY_Z;
         case SDLK_F5:
         case SDLK_ESCAPE:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_ON : HP48_KEY_ON );
+            return UI4X_KEY_ON;
         case SDLK_LSHIFT:
             if ( !ui4x_config.shiftless )
-                return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_SHL : HP48_KEY_SHL );
+                return UI4X_KEY_LSHIFT;
             break;
         case SDLK_RSHIFT:
             if ( !ui4x_config.shiftless )
-                return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_SHR : HP48_KEY_SHR );
+                return UI4X_KEY_RSHIFT;
             break;
         case SDLK_F2:
         case SDLK_RCTRL:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_SHL : HP48_KEY_SHL );
+            return UI4X_KEY_LSHIFT;
         case SDLK_F3:
         case SDLK_LCTRL:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_SHR : HP48_KEY_SHR );
+            return UI4X_KEY_RSHIFT;
         case SDLK_F4:
         case SDLK_LALT:
         case SDLK_RALT:
-            return ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_ALPHA : HP48_KEY_ALPHA );
+            return UI4X_KEY_ALPHA;
+
         case SDLK_F7:
         case SDLK_F10:
-            close_and_exit();
+            ui4x_emulator_api.do_stop();
+            return -1;
+        case SDLK_F12:
+            if ( ui4x_emulator_api.do_reset != NULL )
+                ui4x_emulator_api.do_reset();
             return -1;
 
         default:
@@ -603,7 +589,7 @@ static void _draw_header( void )
 
         x = OFFSET_X_DISPLAY + WIDTH_DISPLAY - gx_128K_ram_width + gx_green_x_hot + 2;
         y = 10 + gx_green_y_hot;
-        __draw_bitmap( x, y, gx_green_width, gx_green_height, gx_green_bitmap, UI4X_COLOR_SHIFT_RIGHT, UI4X_COLOR_UPPER_FACEPLATE );
+        __draw_bitmap( x, y, gx_green_width, gx_green_height, gx_green_bitmap, UI4X_COLOR_RIGHTSHIFT, UI4X_COLOR_UPPER_FACEPLATE );
 
         x = OFFSET_X_DISPLAY + WIDTH_DISPLAY - gx_128K_ram_width + gx_silver_x_hot + 2;
         y = 10 + gx_silver_y_hot;
@@ -630,7 +616,7 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
 {
     bool is_down = !is_up;
     int x, y;
-    int on_key_offset_y = ( hpkey == HP48_KEY_ON || hpkey == HP49_KEY_ON ) ? 1 : 0;
+    int on_key_offset_y = ( hpkey == UI4X_KEY_ON ) ? 1 : 0;
     SDL_Texture* texture =
         SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, BUTTONS[ hpkey ].w, BUTTONS[ hpkey ].h );
     SDL_SetRenderTarget( renderer, texture );
@@ -640,12 +626,13 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
     int outer_color = UI4X_COLOR_FACEPLATE;
     if ( BUTTONS[ hpkey ].highlight )
         outer_color = UI4X_COLOR_KEYPAD_HIGHLIGHT;
-    if ( ( ui4x_config.model == MODEL_48GX || ui4x_config.model == MODEL_48SX ) && hpkey < HP48_KEY_MTH )
+    if ( ( ui4x_config.model == MODEL_48GX || ui4x_config.model == MODEL_48SX ) && hpkey < HP48_KEY_G )
         outer_color = UI4X_COLOR_UPPER_FACEPLATE;
     int inner_color = UI4X_COLOR_BUTTON;
     int edge_top_color = UI4X_COLOR_BUTTON_EDGE_TOP;
     int edge_bottom_color = UI4X_COLOR_BUTTON_EDGE_BOTTOM;
-    if ( ui4x_config.model == MODEL_49G && ( hpkey == HP49_KEY_ALPHA || hpkey == HP49_KEY_SHL || hpkey == HP49_KEY_SHR ) ) {
+    if ( ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ) &&
+         ( hpkey == HP4950_KEY_ALPHA || hpkey == HP4950_KEY_LEFTSHIFT || hpkey == HP4950_KEY_RIGHTSHIFT ) ) {
         // inner_color = BUTTONS[ hpkey ].label_color;
         edge_top_color = BUTTONS[ hpkey ].label_color;
         edge_bottom_color = BUTTONS[ hpkey ].label_color;
@@ -658,16 +645,7 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
     int label_color = BUTTONS[ hpkey ].label_color;
     /* if ( ui4x_config.model == MODEL_49G && ( hpkey == HP49_KEY_ALPHA || hpkey == HP49_KEY_SHL || hpkey == HP49_KEY_SHR ) ) */
     /*     label_color = UI4X_COLOR_LABEL; */
-    if ( BUTTONS[ hpkey ].label != ( char* )0 ) {
-        /* Button has a text label */
-        x = strlen( BUTTONS[ hpkey ].label ) - 1;
-        x += ( ( BUTTONS[ hpkey ].w - BigTextWidth( BUTTONS[ hpkey ].label, strlen( BUTTONS[ hpkey ].label ) ) ) / 2 );
-        y = ( BUTTONS[ hpkey ].h + 1 ) / 2 - 6;
-        if ( is_down )
-            y -= 1;
-
-        write_with_big_font( x, y, BUTTONS[ hpkey ].label, label_color, inner_color );
-    } else if ( BUTTONS[ hpkey ].label_graphic != ( unsigned char* )0 ) {
+    if ( BUTTONS[ hpkey ].label_graphic != NULL ) {
         /* Button has a texture */
         x = ( 1 + BUTTONS[ hpkey ].w - BUTTONS[ hpkey ].label_graphic_w ) / 2;
         y = ( 1 + BUTTONS[ hpkey ].h - BUTTONS[ hpkey ].label_graphic_h ) / 2;
@@ -676,6 +654,15 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
 
         __draw_bitmap( x, y, BUTTONS[ hpkey ].label_graphic_w, BUTTONS[ hpkey ].label_graphic_h, BUTTONS[ hpkey ].label_graphic,
                        label_color, inner_color );
+    } else if ( BUTTONS[ hpkey ].label_sdl != NULL ) {
+        /* Button has a text label */
+        x = strlen( BUTTONS[ hpkey ].label_sdl ) - 1;
+        x += ( ( BUTTONS[ hpkey ].w - BigTextWidth( BUTTONS[ hpkey ].label_sdl, strlen( BUTTONS[ hpkey ].label_sdl ) ) ) / 2 );
+        y = ( BUTTONS[ hpkey ].h + 1 ) / 2 - 6;
+        if ( is_down )
+            y -= 1;
+
+        write_with_big_font( x, y, BUTTONS[ hpkey ].label_sdl, label_color, inner_color );
     }
 
     // draw edge of button
@@ -718,7 +705,7 @@ static SDL_Texture* create_button_texture( int hpkey, bool is_up )
     __draw_pixel( 1, BUTTONS[ hpkey ].h - 2, UI4X_COLOR_FRAME );
     // bottom-right
     __draw_pixel( BUTTONS[ hpkey ].w - 2, BUTTONS[ hpkey ].h - 2, UI4X_COLOR_FRAME );
-    if ( ( ui4x_config.model == MODEL_49G && hpkey == HP49_KEY_ON ) || hpkey == HP48_KEY_ON ) {
+    if ( hpkey == UI4X_KEY_ON ) {
         // top
         __draw_line( 2, 1, BUTTONS[ hpkey ].w - 3, 1, UI4X_COLOR_FRAME );
         // top-left
@@ -757,7 +744,7 @@ static void create_buttons_textures( void )
 static void _draw_key( int hpkey )
 {
     __draw_texture( OFFSET_X_KEYBOARD + BUTTONS[ hpkey ].x, OFFSET_Y_KEYBOARD + BUTTONS[ hpkey ].y, BUTTONS[ hpkey ].w, BUTTONS[ hpkey ].h,
-                    emulator_is_key_pressed( hpkey ) ? buttons_textures[ hpkey ].down : buttons_textures[ hpkey ].up );
+                    ui4x_emulator_api.is_key_pressed( hpkey ) ? buttons_textures[ hpkey ].down : buttons_textures[ hpkey ].up );
 }
 
 #define SMALL_ASCENT 8
@@ -798,7 +785,7 @@ static void _draw_keypad( void )
                 y -= 2;
 
             write_with_small_font( x, y, BUTTONS[ i ].letter, UI4X_COLOR_ALPHA,
-                                   ( ( ui4x_config.model == MODEL_48GX || ui4x_config.model == MODEL_48SX ) && i < HP48_KEY_MTH )
+                                   ( ( ui4x_config.model == MODEL_48GX || ui4x_config.model == MODEL_48SX ) && i < HP48_KEY_G )
                                        ? UI4X_COLOR_UPPER_FACEPLATE
                                        : UI4X_COLOR_FACEPLATE );
         }
@@ -813,8 +800,10 @@ static void _draw_keypad( void )
         }
 
         // Draw top labels
-        left_label_width = ( BUTTONS[ i ].left == ( char* )0 ) ? 0 : SmallTextWidth( BUTTONS[ i ].left, strlen( BUTTONS[ i ].left ) );
-        right_label_width = ( BUTTONS[ i ].right == ( char* )0 ) ? 0 : SmallTextWidth( BUTTONS[ i ].right, strlen( BUTTONS[ i ].right ) );
+        left_label_width =
+            ( BUTTONS[ i ].left_sdl == ( char* )0 ) ? 0 : SmallTextWidth( BUTTONS[ i ].left_sdl, strlen( BUTTONS[ i ].left_sdl ) );
+        right_label_width =
+            ( BUTTONS[ i ].right_sdl == ( char* )0 ) ? 0 : SmallTextWidth( BUTTONS[ i ].right_sdl, strlen( BUTTONS[ i ].right_sdl ) );
         total_top_labels_width = left_label_width + right_label_width;
         if ( left_label_width > 0 && right_label_width > 0 )
             total_top_labels_width += space_char_width;
@@ -845,10 +834,10 @@ static void _draw_keypad( void )
 
         // finally draw labels
         if ( left_label_width > 0 )
-            write_with_small_font( x, y, BUTTONS[ i ].left, UI4X_COLOR_SHIFT_LEFT,
+            write_with_small_font( x, y, BUTTONS[ i ].left_sdl, UI4X_COLOR_LEFTSHIFT,
                                    BUTTONS[ i ].highlight ? UI4X_COLOR_KEYPAD_HIGHLIGHT : UI4X_COLOR_FACEPLATE );
         if ( right_label_width > 0 )
-            write_with_small_font( xr, y, BUTTONS[ i ].right, UI4X_COLOR_SHIFT_RIGHT,
+            write_with_small_font( xr, y, BUTTONS[ i ].right_sdl, UI4X_COLOR_RIGHTSHIFT,
                                    BUTTONS[ i ].highlight ? UI4X_COLOR_KEYPAD_HIGHLIGHT : UI4X_COLOR_FACEPLATE );
     }
 
@@ -970,10 +959,10 @@ static void _draw_serial_devices_path( void )
 
 static int sdl_emulator_press_key( int hpkey )
 {
-    if ( hpkey == -1 || emulator_is_key_pressed( hpkey ) )
+    if ( hpkey == -1 || ui4x_emulator_api.is_key_pressed( hpkey ) )
         return -1;
 
-    emulator_press_key( hpkey );
+    ui4x_emulator_api.press_key( hpkey );
     _show_key( hpkey );
 
     return hpkey;
@@ -981,30 +970,20 @@ static int sdl_emulator_press_key( int hpkey )
 
 static int sdl_emulator_release_key( int hpkey )
 {
-    if ( hpkey == -1 || !emulator_is_key_pressed( hpkey ) )
+    if ( hpkey == -1 || !ui4x_emulator_api.is_key_pressed( hpkey ) )
         return -1;
 
-    emulator_release_key( hpkey );
+    ui4x_emulator_api.release_key( hpkey );
     _show_key( hpkey );
 
     return hpkey;
 }
 
-static void ui_init_LCD( void ) { memset( display_buffer_grayscale, 0, sizeof( display_buffer_grayscale ) ); }
-
-static void emulator_get_display_buffer( void )
-{
-
-    if ( emulator_get_display_state() )
-        emulator_get_lcd_buffer( display_buffer_grayscale );
-    else
-        ui_init_LCD();
-}
+static void blank_lcd( void ) { memset( display_buffer_grayscale, 0, sizeof( display_buffer_grayscale ) ); }
 
 static void sdl_update_annunciators( void )
 {
-    const int annunciators_bits[ NB_ANNUNCIATORS ] = { ANN_LEFT, ANN_RIGHT, ANN_ALPHA, ANN_BATTERY, ANN_BUSY, ANN_IO };
-    int annunciators = emulator_get_annunciators();
+    int annunciators = ui4x_emulator_api.get_annunciators();
 
     if ( last_annunciators == annunciators )
         return;
@@ -1016,8 +995,7 @@ static void sdl_update_annunciators( void )
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
         __draw_texture( OFFSET_X_DISPLAY + annunciators_ui[ i ].x, OFFSET_Y_DISPLAY + annunciators_ui[ i ].y, annunciators_ui[ i ].width,
                         annunciators_ui[ i ].height,
-                        ( ( ( annunciators_bits[ i ] & annunciators ) == annunciators_bits[ i ] ) ) ? annunciators_textures[ i ].up
-                                                                                                    : annunciators_textures[ i ].down );
+                        ( ( annunciators >> i ) & 0x01 ) ? annunciators_textures[ i ].up : annunciators_textures[ i ].down );
 
     // Always immediately update annunciators
     SDL_SetRenderTarget( renderer, NULL );
@@ -1025,18 +1003,18 @@ static void sdl_update_annunciators( void )
     SDL_RenderPresent( renderer );
 }
 
-static int apply_contrast( int value, int contrast )
-{
-    int max = 19;
-    int min = 3;
+/* static int apply_contrast( int value, int contrast ) */
+/* { */
+/*     int max = 19; */
+/*     int min = 3; */
 
-    int contrasted = ( value / ( max - min ) ) * ( max - contrast );
-    return contrasted;
-}
+/*     int contrasted = ( value / ( max - min ) ) * ( max - contrast ); */
+/*     return contrasted; */
+/* } */
 
 static void setup_colors( void )
 {
-    int contrast = emulator_get_contrast();
+    int contrast = ui4x_emulator_api.get_contrast();
 
     if ( last_contrast == contrast )
         return;
@@ -1065,17 +1043,17 @@ static void setup_colors( void )
                 colors[ i ].g = ( colors[ i ].rgb >> 8 ) & 0xff;
                 colors[ i ].b = colors[ i ].rgb & 0xff;
             }
-            if ( i == COLOR_PIXEL_ON || i == COLOR_PIXEL_GREY_2 || i == COLOR_PIXEL_GREY_1 ) {
-                // COLOR_PIXEL_ON, COLOR_PIXEL_GREY_2 and COLOR_PIXEL_GREY_1 are
-                // computed based on COLOR_PIXEL_OFF and contrast
-                colors[ i ].r = apply_contrast( colors[ COLOR_PIXEL_OFF ].r, contrast );
-                colors[ i ].g = apply_contrast( colors[ COLOR_PIXEL_OFF ].g, contrast );
+            /* if ( i == COLOR_PIXEL_ON || i == COLOR_PIXEL_GREY_2 || i == COLOR_PIXEL_GREY_1 ) { */
+            /*     // COLOR_PIXEL_ON, COLOR_PIXEL_GREY_2 and COLOR_PIXEL_GREY_1 are */
+            /*     // computed based on COLOR_PIXEL_OFF and contrast */
+            /*     colors[ i ].r = apply_contrast( colors[ COLOR_PIXEL_OFF ].r, contrast ); */
+            /*     colors[ i ].g = apply_contrast( colors[ COLOR_PIXEL_OFF ].g, contrast ); */
 
-                if ( ui4x_config.black_lcd )
-                    colors[ i ].b = apply_contrast( colors[ COLOR_PIXEL_OFF ].b, contrast );
-                else
-                    colors[ i ].b = 128 - ( ( 19 - contrast ) * ( ( 128 - colors[ COLOR_PIXEL_OFF ].b ) / 16 ) );
-            }
+            /*     if ( ui4x_config.black_lcd ) */
+            /*         colors[ i ].b = apply_contrast( colors[ COLOR_PIXEL_OFF ].b, contrast ); */
+            /*     else */
+            /*         colors[ i ].b = 128 - ( ( 19 - contrast ) * ( ( 128 - colors[ COLOR_PIXEL_OFF ].b ) / 16 ) ); */
+            /* } */
         }
     }
 
@@ -1087,7 +1065,7 @@ static void setup_colors( void )
 /**********/
 /* public */
 /**********/
-void ui_get_event_sdl( void )
+void sdl_ui_handle_pending_inputs( void )
 {
     SDL_Event event;
     int hpkey = -1;
@@ -1099,7 +1077,7 @@ void ui_get_event_sdl( void )
         switch ( event.type ) {
             case SDL_EVENT_QUIT:
                 // please_exit = true;
-                close_and_exit();
+                ui4x_emulator_api.do_stop();
                 break;
 
             case SDL_EVENT_MOUSE_BUTTON_DOWN:
@@ -1132,36 +1110,28 @@ void ui_get_event_sdl( void )
     }
 }
 
-void ui_update_display_sdl( void )
+void sdl_ui_refresh_lcd( void )
 {
     setup_colors();
 
-    emulator_get_display_buffer();
+    if ( ui4x_emulator_api.is_display_on() )
+        ui4x_emulator_api.get_lcd_buffer( display_buffer_grayscale );
+    else
+        blank_lcd();
 
     SDL_SetRenderTarget( renderer, display_texture );
 
-    int color = COLOR_PIXEL_OFF;
-    int pixel;
+    int n_levels_of_gray = ( ui4x_config.model == MODEL_50G ) ? 16 : 4;
+    int pixel, r, g, b, a;
     for ( int y = 0; y < LCD_HEIGHT; ++y ) {
         for ( int x = 0; x < LCD_WIDTH; ++x ) {
             pixel = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ];
-            switch ( pixel ) {
-                case 0:
-                    color = COLOR_PIXEL_OFF;
-                    break;
-                case 1:
-                    color = COLOR_PIXEL_GREY_1;
-                    break;
-                case 2:
-                    color = COLOR_PIXEL_GREY_2;
-                    break;
-                case 3:
-                default:
-                    color = COLOR_PIXEL_ON;
-                    break;
-            }
+            r = 0xff - ( pixel * ( colors[ COLOR_PIXEL_OFF ].r / n_levels_of_gray ) );
+            g = 0xff - ( pixel * ( colors[ COLOR_PIXEL_OFF ].g / n_levels_of_gray ) );
+            b = 0xff - ( pixel * ( colors[ COLOR_PIXEL_OFF ].b / n_levels_of_gray ) );
+            a = 0xff;
 
-            __draw_pixel( x, y, color );
+            __draw_pixel_rgba( x, y, r, g, b, a );
         }
     }
 
@@ -1180,9 +1150,9 @@ void ui_update_display_sdl( void )
     sdl_update_annunciators();
 }
 
-void ui_start_sdl( void )
+void sdl_init_ui( void )
 {
-    ui_init_LCD();
+    blank_lcd();
 
     // Initialize SDL
     if ( !SDL_Init( SDL_INIT_VIDEO ) ) {
@@ -1205,7 +1175,7 @@ void ui_start_sdl( void )
     else
         window_flags |= SDL_WINDOW_RESIZABLE;
 
-    window = CREATE_WINDOW( ui4x_config.progname, width * ui4x_config.scale, height * ui4x_config.scale, window_flags );
+    window = CREATE_WINDOW( ui4x_config.progname, width * ui4x_config.zoom, height * ui4x_config.zoom, window_flags );
     if ( window == NULL ) {
         printf( "Couldn't create window: %s\n", SDL_GetError() );
         exit( 1 );
@@ -1227,7 +1197,7 @@ void ui_start_sdl( void )
     setup_colors();
 
     if ( !ui4x_config.chromeless ) {
-        int cut = BUTTONS[ HP48_KEY_MTH ].y + OFFSET_Y_KEYBOARD - 19;
+        int cut = BUTTONS[ HP48_KEY_G ].y + OFFSET_Y_KEYBOARD - 19;
 
         create_buttons_textures();
 
@@ -1247,14 +1217,14 @@ void ui_start_sdl( void )
     SDL_RenderPresent( renderer );
 }
 
-void ui_stop_sdl( void )
+void sdl_exit_ui( void )
 {
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
         SDL_DestroyTexture( annunciators_textures[ i ].up );
         SDL_DestroyTexture( annunciators_textures[ i ].down );
     }
 
-    for ( int i = 0; i < NB_HP49_KEYS; i++ ) {
+    for ( int i = 0; i < NB_KEYS; i++ ) {
         SDL_DestroyTexture( buttons_textures[ i ].up );
         SDL_DestroyTexture( buttons_textures[ i ].down );
     }
@@ -1263,12 +1233,4 @@ void ui_stop_sdl( void )
     SDL_DestroyTexture( display_texture );
     SDL_DestroyRenderer( renderer );
     SDL_DestroyWindow( window );
-}
-
-void setup_frontend_sdl( void )
-{
-    ui_get_event = ui_get_event_sdl;
-    ui_update_display = ui_update_display_sdl;
-    ui_start = ui_start_sdl;
-    ui_stop = ui_stop_sdl;
 }

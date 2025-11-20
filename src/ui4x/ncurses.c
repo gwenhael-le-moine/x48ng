@@ -1,12 +1,4 @@
-#include <fcntl.h>
 #include <locale.h>
-#include <pwd.h>
-#include <stdbool.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/utsname.h>
-#include <unistd.h>
 #include <wchar.h>
 
 #include <curses.h>
@@ -14,31 +6,56 @@
 #include "api.h"
 #include "inner.h"
 
-#define COLORS                                                                                                                             \
-    ( ui4x_config.model == MODEL_48GX                                                                                                      \
-          ? colors_48gx                                                                                                                    \
-          : ( ui4x_config.model == MODEL_48SX ? colors_48sx : ( ui4x_config.model == MODEL_49G ? colors_49g : colors_50g ) ) )
-#define BUTTONS                                                                                                                            \
-    ( ui4x_config.model == MODEL_48GX                                                                                                      \
-          ? buttons_48gx                                                                                                                   \
-          : ( ui4x_config.model == MODEL_48SX ? buttons_48sx : ( ui4x_config.model == MODEL_49G ? buttons_49g : buttons_50g ) ) )
-
 #define LCD_OFFSET_X ( ui4x_config.chromeless ? 0 : 1 )
 #define LCD_OFFSET_Y 1
 #define LCD_BOTTOM LCD_OFFSET_Y + ( LCD_HEIGHT / ( ui4x_config.tiny ? 4 : ( ui4x_config.small ? 2 : 1 ) ) )
 #define LCD_RIGHT LCD_OFFSET_X + ( LCD_WIDTH / ( ui4x_config.small || ui4x_config.tiny ? 2 : 1 ) ) + 1
 
-typedef enum { LCD_COLOR_BG = 30, LCD_COLOR_FG_1, LCD_COLOR_FG_2, LCD_COLOR_FG_3 } nc_color_t;
+/* typedef enum { */
+/*     LCD_COLOR_BG = 30, */
+/*     LCD_COLOR_FG_0x1, */
+/*     LCD_COLOR_FG_0x2, */
+/*     LCD_COLOR_FG_0x3, */
+/*     LCD_COLOR_FG_0x4, */
+/*     LCD_COLOR_FG_0x5, */
+/*     LCD_COLOR_FG_0x6, */
+/*     LCD_COLOR_FG_0x7, */
+/*     LCD_COLOR_FG_0x8, */
+/*     LCD_COLOR_FG_0x9, */
+/*     LCD_COLOR_FG_0xA, */
+/*     LCD_COLOR_FG_0xB, */
+/*     LCD_COLOR_FG_0xC, */
+/*     LCD_COLOR_FG_0xD, */
+/*     LCD_COLOR_FG_0xE, */
+/*     LCD_COLOR_FG_0xF */
+/* } nc_color_t; */
 
-typedef enum { LCD_PIXEL_OFF = 60, LCD_PIXEL_ON_1, LCD_PIXEL_ON_2, LCD_PIXEL_ON_3 } nc_color_pair_t;
+/* typedef enum { */
+/*     LCD_PIXEL_OFF = 60, */
+/*     LCD_PIXEL_ON_0x1, */
+/*     LCD_PIXEL_ON_0x2, */
+/*     LCD_PIXEL_ON_0x3, */
+/*     LCD_PIXEL_ON_0x4, */
+/*     LCD_PIXEL_ON_0x5, */
+/*     LCD_PIXEL_ON_0x6, */
+/*     LCD_PIXEL_ON_0x7, */
+/*     LCD_PIXEL_ON_0x8, */
+/*     LCD_PIXEL_ON_0x9, */
+/*     LCD_PIXEL_ON_0xA, */
+/*     LCD_PIXEL_ON_0xB, */
+/*     LCD_PIXEL_ON_0xC, */
+/*     LCD_PIXEL_ON_0xD, */
+/*     LCD_PIXEL_ON_0xE, */
+/*     LCD_PIXEL_ON_0xF */
+/* } nc_color_pair_t; */
 
 /*************/
 /* variables */
 /*************/
 static int display_buffer_grayscale[ LCD_WIDTH * 80 ];
-static int last_annunciators = -1;
+static char last_annunciators = -1;
 
-static bool keyboard_state[ NB_HP49_KEYS ];
+static bool keyboard_state[ NB_HP4950_KEYS ];
 
 static WINDOW* lcd_window;
 static WINDOW* help_window;
@@ -84,9 +101,10 @@ static inline void ncurses_draw_lcd_tiny( void )
     bool last_column = false;
 
     wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
+    wchar_t pixels;
 
-    if ( !ui4x_config.mono && has_colors() )
-        attron( COLOR_PAIR( LCD_PIXEL_ON_3 ) );
+    /* if ( !ui4x_config.mono && has_colors() ) */
+    /*     attron( COLOR_PAIR( COLOR_RED ) ); */
 
     for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
         wcscpy( line, L"" );
@@ -94,10 +112,10 @@ static inline void ncurses_draw_lcd_tiny( void )
         for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
             last_column = x == ( LCD_WIDTH - 1 );
 
-            b1 = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] > 0 ? 1 : 0;
-            b2 = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x ] > 0 ? 1 : 0;
-            b3 = display_buffer_grayscale[ ( ( y + 2 ) * LCD_WIDTH ) + x ] > 0 ? 1 : 0;
-            b7 = display_buffer_grayscale[ ( ( y + 3 ) * LCD_WIDTH ) + x ] > 0 ? 1 : 0;
+            b1 = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ] > 0;
+            b2 = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x ] > 0;
+            b3 = display_buffer_grayscale[ ( ( y + 2 ) * LCD_WIDTH ) + x ] > 0;
+            b7 = display_buffer_grayscale[ ( ( y + 3 ) * LCD_WIDTH ) + x ] > 0;
 
             if ( last_column )
                 b4 = b5 = b6 = b8 = 0;
@@ -108,14 +126,14 @@ static inline void ncurses_draw_lcd_tiny( void )
                 b8 = display_buffer_grayscale[ ( ( y + 3 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
             }
 
-            wchar_t pixels = eight_bits_to_braille_char( b1, b2, b3, b4, b5, b6, b7, b8 );
+            pixels = eight_bits_to_braille_char( b1, b2, b3, b4, b5, b6, b7, b8 );
             wcsncat( line, &pixels, 1 );
         }
         mvwaddwstr( lcd_window, LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
     }
 
-    if ( !ui4x_config.mono && has_colors() )
-        attroff( COLOR_PAIR( LCD_PIXEL_ON_3 ) );
+    /* if ( !ui4x_config.mono && has_colors() ) */
+    /*     attroff( COLOR_PAIR( COLOR_RED ) ); */
 }
 
 static inline wchar_t four_bits_to_quadrant_char( bool top_left, bool top_right, bool bottom_left, bool bottom_right )
@@ -157,8 +175,8 @@ static inline void ncurses_draw_lcd_small( void )
     wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
     wchar_t pixels;
 
-    if ( !ui4x_config.mono && has_colors() )
-        attron( COLOR_PAIR( LCD_PIXEL_ON_3 ) );
+    /* if ( !ui4x_config.mono && has_colors() ) */
+    /*     attron( COLOR_PAIR( COLOR_RED ) ); */
 
     for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
         wcscpy( line, L"" );
@@ -182,25 +200,29 @@ static inline void ncurses_draw_lcd_small( void )
         mvwaddwstr( lcd_window, LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
     }
 
-    if ( !ui4x_config.mono && has_colors() )
-        attroff( COLOR_PAIR( LCD_PIXEL_ON_3 ) );
+    /* if ( !ui4x_config.mono && has_colors() ) */
+    /*     attroff( COLOR_PAIR( COLOR_RED ) ); */
 }
 
 static inline void ncurses_draw_lcd_fullsize( void )
 {
     int val;
-    int color = LCD_PIXEL_ON_3;
+    /* int color = COLOR_RED; */
     wchar_t pixel;
 
     wchar_t line[ LCD_WIDTH ];
 
-    if ( !ui4x_config.mono && has_colors() )
-        attron( COLOR_PAIR( color ) );
+    /* if ( !ui4x_config.mono && has_colors() ) */
+    /*     attron( COLOR_PAIR( color ) ); */
 
-    for ( int y = 0; y < LCD_HEIGHT; ++y ) {
+    for ( int y = 0; y < LCD_HEIGHT; y++ ) {
         wcscpy( line, L"" );
-        for ( int x = 0; x < LCD_WIDTH; ++x ) {
+        for ( int x = 0; x < LCD_WIDTH; x++ ) {
             val = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ];
+            if ( ui4x_config.model == MODEL_50G )
+                val /= 3;
+            else if ( val == 3 )
+                val = 4;
 
             switch ( val ) {
                 case 0:
@@ -213,16 +235,21 @@ static inline void ncurses_draw_lcd_fullsize( void )
                     pixel = L'▒';
                     break;
                 case 3:
+                    pixel = L'▓';
+                    break;
+                case 4:
+                default:
                     pixel = L'█';
                     break;
             }
+
             wcsncat( line, &pixel, 1 );
         }
         mvwaddwstr( lcd_window, LCD_OFFSET_Y + y, LCD_OFFSET_X, line );
     }
 
-    if ( !ui4x_config.mono && has_colors() )
-        attroff( COLOR_PAIR( color ) );
+    /* if ( !ui4x_config.mono && has_colors() ) */
+    /*     attroff( COLOR_PAIR( color ) ); */
 }
 
 static void toggle_help_window( void )
@@ -256,10 +283,7 @@ static void toggle_help_window( void )
 
 static void ncurses_refresh_annunciators( void )
 {
-    const wchar_t* annunciators_icons[ 6 ] = { L"↰", L"↱", L"α", L"🪫", L"⌛", L"⇄" };
-    const int annunciators_bits[ NB_ANNUNCIATORS ] = { ANN_LEFT, ANN_RIGHT, ANN_ALPHA, ANN_BATTERY, ANN_BUSY, ANN_IO };
-
-    int annunciators = emulator_get_annunciators();
+    int annunciators = ui4x_emulator_api.get_annunciators();
 
     if ( last_annunciators == annunciators )
         return;
@@ -267,23 +291,20 @@ static void ncurses_refresh_annunciators( void )
     last_annunciators = annunciators;
 
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
-        mvwaddwstr( lcd_window, 0, 4 + ( i * 4 ),
-                    ( ( annunciators_bits[ i ] & annunciators ) == annunciators_bits[ i ] ) ? annunciators_icons[ i ] : L" " );
+        mvwaddstr( lcd_window, 0, 4 + ( i * 4 ), ( ( annunciators >> i ) & 0x01 ) ? ui_annunciators[ i ] : " " );
 }
 
 /**********/
-/* public */
+/* Public */
 /**********/
 void ncurses_refresh_lcd( void )
 {
-    if ( !emulator_get_display_state() )
+    if ( !ui4x_emulator_api.is_display_on() )
         return;
-
-    // apply_contrast();
 
     ncurses_refresh_annunciators();
 
-    emulator_get_lcd_buffer( display_buffer_grayscale );
+    ui4x_emulator_api.get_lcd_buffer( display_buffer_grayscale );
 
     if ( ui4x_config.small )
         ncurses_draw_lcd_small();
@@ -297,12 +318,15 @@ void ncurses_refresh_lcd( void )
 
 void ncurses_handle_pending_inputs( void )
 {
-    bool new_keyboard_state[ NB_HP49_KEYS ];
+    bool new_keyboard_state[ NB_HP4950_KEYS ];
     uint32_t k;
 
+    // each run records the state of the keyboard (pressed keys)
+    // This allow to diff with previous state and issue PRESS and RELEASE calls
     for ( int key = 0; key < NB_KEYS; key++ )
         new_keyboard_state[ key ] = false;
 
+    // READ KB STATE
     /* Iterate over all currently pressed keys and mark them as pressed */
     while ( ( k = getch() ) ) {
         if ( k == ( uint32_t )ERR )
@@ -310,246 +334,190 @@ void ncurses_handle_pending_inputs( void )
 
         switch ( k ) {
             case '0':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_0 : HP48_KEY_0 ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_0 ] = true;
                 break;
             case '1':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_1 : HP48_KEY_1 ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_1 ] = true;
                 break;
             case '2':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_2 : HP48_KEY_2 ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_2 ] = true;
                 break;
             case '3':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_3 : HP48_KEY_3 ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_3 ] = true;
                 break;
             case '4':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_4 : HP48_KEY_4 ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_4 ] = true;
                 break;
             case '5':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_5 : HP48_KEY_5 ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_5 ] = true;
                 break;
             case '6':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_6 : HP48_KEY_6 ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_6 ] = true;
                 break;
             case '7':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_7 : HP48_KEY_7 ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_7 ] = true;
                 break;
             case '8':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_8 : HP48_KEY_8 ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_8 ] = true;
                 break;
             case '9':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_9 : HP48_KEY_9 ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_9 ] = true;
                 break;
             case 'a':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_A : HP48_KEY_A ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_A ] = true;
                 break;
             case 'b':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_B : HP48_KEY_B ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_B ] = true;
                 break;
             case 'c':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_C : HP48_KEY_C ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_C ] = true;
                 break;
             case 'd':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_D : HP48_KEY_D ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_D ] = true;
                 break;
             case 'e':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_E : HP48_KEY_E ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_E ] = true;
                 break;
             case 'f':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_F : HP48_KEY_F ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_F ] = true;
                 break;
             case 'g':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_APPS
-                                                                                                           : HP48_KEY_MTH ) ] = true;
+                new_keyboard_state[ UI4X_KEY_G ] = true;
                 break;
             case 'h':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_MODE
-                                                                                                           : HP48_KEY_PRG ) ] = true;
+                new_keyboard_state[ UI4X_KEY_H ] = true;
                 break;
             case 'i':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_TOOL
-                                                                                                           : HP48_KEY_CST ) ] = true;
+                new_keyboard_state[ UI4X_KEY_I ] = true;
                 break;
             case 'j':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_VAR
-                                                                                                           : HP48_KEY_VAR ) ] = true;
+                new_keyboard_state[ UI4X_KEY_J ] = true;
                 break;
             case 'k':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_STO
-                                                                                                           : HP48_KEY_UP ) ] = true;
+                new_keyboard_state[ UI4X_KEY_K ] = true;
                 break;
             case KEY_UP:
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_UP : HP48_KEY_UP ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_UP ] = true;
                 break;
             case 'l':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_NXT
-                                                                                                           : HP48_KEY_NXT ) ] = true;
+                new_keyboard_state[ UI4X_KEY_L ] = true;
                 break;
             case 'm':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_HIST
-                                                                                                           : HP48_KEY_QUOTE ) ] = true;
+                new_keyboard_state[ UI4X_KEY_M ] = true;
                 break;
             case 'n':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_CAT
-                                                                                                           : HP48_KEY_STO ) ] = true;
+                new_keyboard_state[ UI4X_KEY_N ] = true;
                 break;
             case 'o':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_EQW
-                                                                                                           : HP48_KEY_EVAL ) ] = true;
+                new_keyboard_state[ UI4X_KEY_O ] = true;
                 break;
             case 'p':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_SYMB
-                                                                                                           : HP48_KEY_LEFT ) ] = true;
+                new_keyboard_state[ UI4X_KEY_P ] = true;
                 break;
             case KEY_LEFT:
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_LEFT
-                                                                                                           : HP48_KEY_LEFT ) ] = true;
+                new_keyboard_state[ UI4X_KEY_LEFT ] = true;
                 break;
             case 'q':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_POWER
-                                                                                                           : HP48_KEY_DOWN ) ] = true;
+                new_keyboard_state[ UI4X_KEY_Q ] = true;
                 break;
             case KEY_DOWN:
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_DOWN
-                                                                                                           : HP48_KEY_DOWN ) ] = true;
+                new_keyboard_state[ UI4X_KEY_DOWN ] = true;
                 break;
             case 'r':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_SQRT
-                                                                                                           : HP48_KEY_RIGHT ) ] = true;
+                new_keyboard_state[ UI4X_KEY_R ] = true;
                 break;
             case KEY_RIGHT:
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_RIGHT
-                                                                                                           : HP48_KEY_RIGHT ) ] = true;
+                new_keyboard_state[ UI4X_KEY_RIGHT ] = true;
                 break;
             case 's':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_SIN
-                                                                                                           : HP48_KEY_SIN ) ] = true;
+                new_keyboard_state[ UI4X_KEY_S ] = true;
                 break;
             case 't':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_COS
-                                                                                                           : HP48_KEY_COS ) ] = true;
+                new_keyboard_state[ UI4X_KEY_T ] = true;
                 break;
             case 'u':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_TAN
-                                                                                                           : HP48_KEY_TAN ) ] = true;
+                new_keyboard_state[ UI4X_KEY_U ] = true;
                 break;
             case 'v':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_EEX
-                                                                                                           : HP48_KEY_SQRT ) ] = true;
+                new_keyboard_state[ UI4X_KEY_V ] = true;
                 break;
             case 'w':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_NEG
-                                                                                                           : HP48_KEY_POWER ) ] = true;
+                new_keyboard_state[ UI4X_KEY_W ] = true;
                 break;
             case 'x':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_X : HP48_KEY_INV ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_X ] = true;
                 break;
             case 'y':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_INV
-                                                                                                           : HP48_KEY_NEG ) ] = true;
+                new_keyboard_state[ UI4X_KEY_Y ] = true;
                 break;
             case 'z':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_DIV
-                                                                                                           : HP48_KEY_EEX ) ] = true;
+            case '/':
+                new_keyboard_state[ UI4X_KEY_Z ] = true;
                 break;
             case ' ':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_SPC
-                                                                                                           : HP48_KEY_SPC ) ] = true;
+                new_keyboard_state[ UI4X_KEY_SPACE ] = true;
                 break;
             case KEY_DC:
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? -1 : HP48_KEY_DEL ) ] = true;
-                break;
-            case '.':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_PERIOD
-                                                                                                           : HP48_KEY_PERIOD ) ] = true;
-                break;
-            case '+':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_PLUS
-                                                                                                           : HP48_KEY_PLUS ) ] = true;
-                break;
-            case '-':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_MINUS
-                                                                                                           : HP48_KEY_MINUS ) ] = true;
-                break;
-            case '*':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_MUL
-                                                                                                           : HP48_KEY_MUL ) ] = true;
-                break;
-            case '/':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_DIV
-                                                                                                           : HP48_KEY_DIV ) ] = true;
-                break;
-
             case KEY_BACKSPACE:
             case 127:
             case '\b':
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_BS : HP48_KEY_BS ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_BACKSPACE ] = true;
+                break;
+            case '.':
+                new_keyboard_state[ UI4X_KEY_PERIOD ] = true;
+                break;
+            case '+':
+                new_keyboard_state[ UI4X_KEY_PLUS ] = true;
+                break;
+            case '-':
+                new_keyboard_state[ UI4X_KEY_MINUS ] = true;
+                break;
+            case '*':
+                new_keyboard_state[ UI4X_KEY_MULTIPLY ] = true;
                 break;
 
-            case KEY_F( 1 ):
-                toggle_help_window();
-                break;
             case KEY_F( 2 ):
             case '[':
             case 339: /* PgUp */
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_SHL
-                                                                                                           : HP48_KEY_SHL ) ] = true;
+                new_keyboard_state[ UI4X_KEY_LSHIFT ] = true;
                 break;
             case KEY_F( 3 ):
             case ']':
             case 338: /* PgDn */
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_SHR
-                                                                                                           : HP48_KEY_SHR ) ] = true;
+                new_keyboard_state[ UI4X_KEY_RSHIFT ] = true;
                 break;
             case KEY_F( 4 ):
             case ';':
             case KEY_IC: /* Ins */
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_ALPHA
-                                                                                                           : HP48_KEY_ALPHA ) ] = true;
+                new_keyboard_state[ UI4X_KEY_ALPHA ] = true;
                 break;
             case KEY_F( 5 ):
             case '\\':
             case 27:  /* Esc */
             case 262: /* Home */
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_ON : HP48_KEY_ON ) ] =
-                    true;
+                new_keyboard_state[ UI4X_KEY_ON ] = true;
                 break;
             case KEY_F( 6 ):
             case KEY_ENTER:
             case '\n':
             case ',':
             case 13:
-                new_keyboard_state[ ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? HP49_KEY_ENTER
-                                                                                                           : HP48_KEY_ENTER ) ] = true;
+                new_keyboard_state[ UI4X_KEY_ENTER ] = true;
+                break;
+
+            case KEY_F( 1 ):
+                toggle_help_window();
                 break;
 
             case KEY_F( 7 ):
             case '|':      /* Shift+\ */
             case KEY_SEND: /* Shift+End */
             case KEY_F( 10 ):
-                // please_exit = true;
-                close_and_exit();
+                ui4x_emulator_api.do_stop();
                 break;
 
-            default:
+            case KEY_F( 12 ):
+                ui4x_emulator_api.do_reset();
                 break;
         }
     }
@@ -558,10 +526,10 @@ void ncurses_handle_pending_inputs( void )
         if ( keyboard_state[ key ] == new_keyboard_state[ key ] )
             continue; /* key hasn't changed state */
 
-        if ( !keyboard_state[ key ] && new_keyboard_state[ key ] && !emulator_is_key_pressed( key ) )
-            emulator_press_key( key );
-        else if ( keyboard_state[ key ] && !new_keyboard_state[ key ] && emulator_is_key_pressed( key ) )
-            emulator_release_key( key );
+        if ( !keyboard_state[ key ] && new_keyboard_state[ key ] && !ui4x_emulator_api.is_key_pressed( key ) )
+            ui4x_emulator_api.press_key( key );
+        else if ( keyboard_state[ key ] && !new_keyboard_state[ key ] && ui4x_emulator_api.is_key_pressed( key ) )
+            ui4x_emulator_api.release_key( key );
 
         keyboard_state[ key ] = new_keyboard_state[ key ];
     }
@@ -591,35 +559,18 @@ void ncurses_init( void )
     noecho();
     nonl(); /* tell curses not to do NL->CR/NL on output */
 
-    if ( !ui4x_config.mono && has_colors() ) {
-        start_color();
+    /* if ( !ui4x_config.mono && has_colors() ) { */
+    /*     start_color(); */
 
-        if ( ui4x_config.gray ) {
-            init_color( LCD_COLOR_BG, COLORS[ UI4X_COLOR_PIXEL_OFF ].gray_rgb, COLORS[ UI4X_COLOR_PIXEL_OFF ].gray_rgb,
-                        COLORS[ UI4X_COLOR_PIXEL_OFF ].gray_rgb );
-            init_color( LCD_COLOR_FG_1, COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb * 0.33, COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb * 0.33,
-                        COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb * 0.33 );
-            init_color( LCD_COLOR_FG_2, COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb * 0.66, COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb * 0.66,
-                        COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb * 0.66 );
-            init_color( LCD_COLOR_FG_3, COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb, COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb,
-                        COLORS[ UI4X_COLOR_PIXEL_ON ].gray_rgb );
-        } else {
-            init_color( LCD_COLOR_BG, ( COLORS[ UI4X_COLOR_PIXEL_OFF ].rgb >> 16 ) & 0xff,
-                        ( COLORS[ UI4X_COLOR_PIXEL_OFF ].rgb >> 8 ) & 0xff, COLORS[ UI4X_COLOR_PIXEL_OFF ].rgb & 0xff );
-            init_color( LCD_COLOR_FG_1, ( ( COLORS[ UI4X_COLOR_PIXEL_ON ].rgb / 3 ) >> 16 ) & 0xff,
-                        ( ( COLORS[ UI4X_COLOR_PIXEL_ON ].rgb / 3 ) >> 8 ) & 0xff, ( COLORS[ UI4X_COLOR_PIXEL_ON ].rgb / 3 ) & 0xff );
-            init_color( LCD_COLOR_FG_2, ( ( ( COLORS[ UI4X_COLOR_PIXEL_ON ].rgb / 3 ) * 2 ) >> 16 ) & 0xff,
-                        ( ( ( COLORS[ UI4X_COLOR_PIXEL_ON ].rgb / 3 ) * 2 ) >> 8 ) & 0xff,
-                        ( ( COLORS[ UI4X_COLOR_PIXEL_ON ].rgb / 3 ) * 2 ) & 0xff );
-            init_color( LCD_COLOR_FG_3, ( COLORS[ UI4X_COLOR_PIXEL_ON ].rgb >> 16 ) & 0xff,
-                        ( COLORS[ UI4X_COLOR_PIXEL_ON ].rgb >> 8 ) & 0xff, COLORS[ UI4X_COLOR_PIXEL_ON ].rgb & 0xff );
-        }
+    /*     int step = 1000 / 15; */
+    /*     int rgb = 0; */
+    /*     for ( int i = 0; i < 16; i++ ) { */
+    /*         rgb = ( i * step ); */
+    /*         init_color( LCD_COLOR_BG + i, 0, rgb, 0 ); */
 
-        init_pair( LCD_PIXEL_OFF, LCD_COLOR_BG, LCD_COLOR_BG );
-        init_pair( LCD_PIXEL_ON_1, LCD_COLOR_FG_1, LCD_COLOR_BG );
-        init_pair( LCD_PIXEL_ON_2, LCD_COLOR_FG_2, LCD_COLOR_BG );
-        init_pair( LCD_PIXEL_ON_3, LCD_COLOR_FG_3, LCD_COLOR_BG );
-    }
+    /*         init_pair( LCD_PIXEL_OFF + i, LCD_COLOR_BG + i, COLOR_BLACK ); */
+    /*     } */
+    /* } */
 
     lcd_window = newwin( LCD_BOTTOM + 1, LCD_RIGHT + 1, 0, 0 );
     refresh();
@@ -631,16 +582,7 @@ void ncurses_init( void )
     }
 
     mvwprintw( lcd_window, 0, 2, "[   |   |   |   |   |   ]" ); /* annunciators */
-    mvwprintw( lcd_window, 0, 32, "< %s v%i.%i.%i >", ui4x_config.progname, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
+    mvwprintw( lcd_window, 0, 32, "< %s v%i.%i.%i >", ui4x_config.name, VERSION_MAJOR, VERSION_MINOR, PATCHLEVEL );
 
-    mvwprintw( lcd_window, LCD_BOTTOM, 2, "[ wire: %s ]-[ IR: %s ]-[ contrast: %i ]", ui4x_config.wire_name, ui4x_config.ir_name,
-               emulator_get_contrast() );
-}
-
-void setup_frontend_ncurses( void )
-{
-    ui_get_event = ncurses_handle_pending_inputs;
-    ui_update_display = ncurses_refresh_lcd;
-    ui_start = ncurses_init;
-    ui_stop = ncurses_exit;
+    wrefresh( lcd_window );
 }

@@ -22,6 +22,7 @@ PKG_CONFIG ?= pkg-config
 OPTIM ?= 2
 FULL_WARNINGS ?= no
 WITH_SDL ?= yes
+WITH_GTK ?= yes
 WITH_SDL2 = no
 
 makeflags +=-j$(NUM_CORES) -l$(NUM_CORES)
@@ -56,6 +57,13 @@ ifeq ($(WITH_SDL2), yes)
 	SDL_HEADERS = src/ui4x/sdl.h
 endif
 
+ifeq ($(WITH_GTK), yes)
+	GTK_CFLAGS = -DHAS_GTK=1 $(shell "$(PKG_CONFIG)" --cflags gtk4)
+	GTK_LIBS = $(shell "$(PKG_CONFIG)" --libs gtk4)
+	GTK_SRC = src/ui4x/gtk.c
+	GTK_HEADERS = src/ui4x/gtk.h
+endif
+
 LIBS = -lm \
 	$(LUA_LIBS) \
 	$(DEBUG_LIBS) \
@@ -75,6 +83,7 @@ HEADERS = src/options.h \
 	src/core/timers.h \
 	src/core/serial.h \
 	src/ui4x/api.h \
+	src/ui4x/fonts.h \
 	src/ui4x/bitmaps_misc.h \
 	src/ui4x/api.h \
 	src/ui4x/inner.h \
@@ -100,6 +109,7 @@ SRC = src/options.c \
 	src/ui4x/50g.c \
 	src/ui4x/api.c \
 	src/ui4x/fonts.c \
+	src/ui4x/bitmaps_misc.c \
 	src/ui4x/ncurses.c \
 	$(SDL_SRC) \
 	$(GTK_SRC)

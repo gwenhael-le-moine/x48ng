@@ -12,6 +12,7 @@
 
 #include "core/debugger.h"
 #include "core/emulate.h"
+#include "core/init.h"
 #include "core/timers.h"
 
 #include "ui4x/api.h"
@@ -33,8 +34,8 @@ void signal_handler( int sig )
             sigalarm_triggered = true;
             break;
         case SIGPIPE:
-            ui_stop();
-            exit_emulator();
+            exit_ui();
+            stop_emulator();
             exit( EXIT_SUCCESS );
         default:
             break;
@@ -58,7 +59,6 @@ int main( int argc, char** argv )
     ui4x_config_t config_ui = {
         .model = config.model,
         .shiftless = config.shiftless,
-        .big_screen = config.big_screen,
         .black_lcd = config.black_lcd,
 
         .frontend = config.frontend,
@@ -68,20 +68,30 @@ int main( int argc, char** argv )
 
         .chromeless = config.chromeless,
         .fullscreen = config.fullscreen,
-        .scale = config.scale,
+        .zoom = config.scale,
 
         .tiny = config.tiny,
         .small = config.small,
 
         .verbose = config.verbose,
 
+        .name = config.progname,
         .progname = config.progname,
         .wire_name = config.wire_name,
         .ir_name = config.ir_name,
+
+        .style_filename = NULL /* FIXME */
     };
-    setup_ui( &config_ui, press_key, release_key, is_key_pressed, get_annunciators, get_display_state, get_lcd_buffer, get_contrast,
-              exit_emulator );
-    ui_start();
+
+    ui4x_emulator_api_t emulator_api = { .press_key = press_key,
+                                         .release_key = release_key,
+                                         .is_key_pressed = is_key_pressed,
+                                         .is_display_on = get_display_state,
+                                         .get_annunciators = get_annunciators,
+                                         .get_lcd_buffer = get_lcd_buffer,
+                                         .get_contrast = get_contrast,
+                                         .do_stop = exit_emulator };
+    init_ui( &config_ui, &emulator_api );
 
     /*****************************************/
     /* handlers for SIGALRM, SIGPIPE */
@@ -195,8 +205,8 @@ int main( int argc, char** argv )
     } while ( true /* !please_exit */ );
 
     /* Never reached when not using please_exit */
-    ui_stop();
-    exit_emulator();
+    exit_ui();
+    stop_emulator();
 
     return 0;
 }

@@ -264,6 +264,7 @@ config_t* config_init( int argc, char* argv[] )
 
         {"sdl2",             no_argument,       &clopt_frontend,                  FRONTEND_SDL}, /* DEPRECATED */
         {"sdl",              no_argument,       &clopt_frontend,                  FRONTEND_SDL},
+        {"gtk",              no_argument,       &clopt_frontend,                  FRONTEND_GTK},
         {"no-chrome",        no_argument,       &clopt_chromeless,                true        }, /* DEPRECATED */
         {"chromeless",       no_argument,       &clopt_chromeless,                true        },
         {"fullscreen",       no_argument,       &clopt_fullscreen,                true        },

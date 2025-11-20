@@ -86,7 +86,7 @@ static config_t __config;
 
 void press_key( int hpkey )
 {
-    if ( hpkey < 0 || hpkey > NB_KEYS )
+    if ( hpkey < 0 || hpkey > ui_get_nb_keys() )
         return;
     // Check not already pressed (may be important: avoids a useless do_kbd_int)
     if ( KEYBOARD[ hpkey ].pressed )
@@ -112,7 +112,7 @@ void press_key( int hpkey )
 
 void release_key( int hpkey )
 {
-    if ( hpkey < 0 || hpkey > NB_KEYS )
+    if ( hpkey < 0 || hpkey > ui_get_nb_keys() )
         return;
     // Check not already released (not critical)
     if ( !KEYBOARD[ hpkey ].pressed )
@@ -129,13 +129,33 @@ void release_key( int hpkey )
 
 bool is_key_pressed( int hpkey )
 {
-    if ( hpkey < 0 || hpkey > NB_KEYS )
+    if ( hpkey < 0 || hpkey > ui_get_nb_keys() )
         return false;
 
     return KEYBOARD[ hpkey ].pressed;
 }
 
-unsigned char get_annunciators( void ) { return saturn.annunc; }
+// unsigned char get_annunciators( void ) { return saturn.annunc; }
+
+typedef enum {
+    ANN_LEFT = 0x81,
+    ANN_RIGHT = 0x82,
+    ANN_ALPHA = 0x84,
+    ANN_BATTERY = 0x88,
+    ANN_BUSY = 0x90,
+    ANN_IO = 0xa0,
+} annunciators_bits_t;
+unsigned char get_annunciators( void )
+{
+    const int annunciators_bits[ NB_ANNUNCIATORS ] = { ANN_LEFT, ANN_RIGHT, ANN_ALPHA, ANN_BATTERY, ANN_BUSY, ANN_IO };
+    char annunciators = 0;
+
+    for ( int i = 0; i < NB_ANNUNCIATORS; i++ )
+        if ( ( annunciators_bits[ i ] & saturn.annunc ) == annunciators_bits[ i ] )
+            annunciators |= 0x01 << i;
+
+    return annunciators;
+}
 
 bool get_display_state( void ) { return display.on; }
 
@@ -161,7 +181,7 @@ void get_lcd_buffer( int* target )
 
     /* Scan menu display rows */
     addr = display.menu_start; // mod_status.hdw.lcd_menu_addr;
-    for ( ; y < LCD_HEIGHT; y++ ) {
+    for ( ; y < ui_get_lcd_height(); y++ ) {
         /* Scan columns */
         for ( x = 0; x < NIBBLES_PER_ROW; x++ ) {
             v = bus_fetch_nibble( addr++ );
@@ -184,4 +204,11 @@ void init_emulator( config_t* conf )
     conf->model = opt_gx ? MODEL_48GX : MODEL_48SX;
 }
 
-void exit_emulator( void ) { stop_emulator(); }
+void exit_emulator( void )
+{
+    stop_emulator();
+
+    exit_ui();
+
+    exit( EXIT_SUCCESS );
+}

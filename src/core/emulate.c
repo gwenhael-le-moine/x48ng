@@ -1246,7 +1246,7 @@ static bool step_instruction_080( void )
                     if ( sigalarm_triggered ) {
                         sigalarm_triggered = false;
 
-                        ui_update_display();
+                        ui_refresh_output();
 
                         ticks = get_t1_t2();
                         if ( saturn.t2_ctrl & 0x01 )
@@ -1256,7 +1256,7 @@ static bool step_instruction_080( void )
                         set_t1 = ticks.t1_ticks;
 
                         interrupt_called = false;
-                        ui_get_event();
+                        ui_handle_pending_inputs();
                         if ( interrupt_called )
                             wake = true;
 
@@ -2937,7 +2937,7 @@ void schedule( void )
     if ( sigalarm_triggered ) {
         sigalarm_triggered = false;
 
-        ui_update_display();
-        ui_get_event();
+        ui_refresh_output();
+        ui_handle_pending_inputs();
     }
 }

@@ -3533,7 +3533,7 @@ static void cmd_load( int argc, char** argv )
             free( tmp_saturn.port2 );
 
         /* After reloading state we need to refresh the UI's LCD */
-        ui_update_display();
+        ui_refresh_output();
     } else {
         printf( "Loading emulator-state from files failed.\n" );
         if ( saturn.rom )
@@ -3576,7 +3576,8 @@ static void cmd_exit( int argc, char** argv )
 
         save_before_exit = false;
         // please_exit = true;
-        close_and_exit();
+        exit_ui();
+        stop_emulator();
     }
 }
 
@@ -3587,7 +3588,8 @@ static void cmd_quit( int argc, char** argv )
 
         save_before_exit = true;
         // please_exit = true;
-        close_and_exit();
+        exit_ui();
+        stop_emulator();
     }
 }
 
