@@ -16,7 +16,7 @@ jobs:
     - name: update deps
       run: sudo apt-get -y update
     - name: install deps
-      run: sudo apt install pkgconf libreadline-dev liblua5.4-dev libsdl2-dev
+      run: sudo apt install pkgconf libreadline-dev liblua5.4-dev libsdl2-dev libgtk-4-dev
     - name: make standard
       run: make clean-all && make WITH_SDL2=yes
     - name: make without SDL GUI
