@@ -62,11 +62,11 @@
 #  define UI4X_KEY_PERIOD ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_PERIOD : HP48_KEY_PERIOD )
 #  define UI4X_KEY_PLUS ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_PLUS : HP48_KEY_PLUS )
 #  define UI4X_KEY_MINUS ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_MINUS : HP48_KEY_MINUS )
-#  define UI4X_KEY_MULTIPLY ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_MULTIPLY : HP48_KEY_MUL )
+#  define UI4X_KEY_MULTIPLY ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_MULTIPLY : HP48_KEY_MULTIPLY )
 #  define UI4X_KEY_DIVIDE ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_Z : HP48_KEY_DIVIDE )
 #  define UI4X_KEY_LSHIFT ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_LEFTSHIFT : HP48_KEY_LEFTSHIFT )
 #  define UI4X_KEY_RSHIFT ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_RIGHTSHIFT : HP48_KEY_RIGHTSHIFT )
-#  define UI4X_KEY_ALPHA ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_SPACE : HP48_KEY_SPACE )
+#  define UI4X_KEY_ALPHA ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_ALPHA : HP48_KEY_ALPHA )
 #  define UI4X_KEY_ON ( ui4x_config.model == MODEL_50G || ui4x_config.model == MODEL_49G ? HP4950_KEY_ON : HP48_KEY_ON )
 
 /* 4.1.1.1: When defined, this symbol represents the threshold of the long

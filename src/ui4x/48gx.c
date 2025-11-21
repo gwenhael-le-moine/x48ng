@@ -1066,7 +1066,7 @@ button_t buttons_48gx[ NB_HP48_KEYS ] = {
      .below = NULL,
      .css_class = "core",
      .css_id = "MULTIPLY",
-     .hpkey = HP48_KEY_MUL,
+     .hpkey = HP48_KEY_MULTIPLY,
      },
 
     {

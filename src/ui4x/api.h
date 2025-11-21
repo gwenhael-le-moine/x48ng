@@ -53,7 +53,7 @@ typedef enum {
     HP48_KEY_4,
     HP48_KEY_5,
     HP48_KEY_6,
-    HP48_KEY_MUL,
+    HP48_KEY_MULTIPLY,
 
     HP48_KEY_RIGHTSHIFT,
     HP48_KEY_1,
