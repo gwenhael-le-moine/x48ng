@@ -31,7 +31,7 @@
 /* } nc_color_t; */
 
 /* typedef enum { */
-/*     LCD_PIXEL_OFF = 60, */
+/*     LCD_LCD_BG = 60, */
 /*     LCD_PIXEL_ON_0x1, */
 /*     LCD_PIXEL_ON_0x2, */
 /*     LCD_PIXEL_ON_0x3, */
@@ -568,7 +568,7 @@ void ncurses_init( void )
     /*         rgb = ( i * step ); */
     /*         init_color( LCD_COLOR_BG + i, 0, rgb, 0 ); */
 
-    /*         init_pair( LCD_PIXEL_OFF + i, LCD_COLOR_BG + i, COLOR_BLACK ); */
+    /*         init_pair( LCD_LCD_BG + i, LCD_COLOR_BG + i, COLOR_BLACK ); */
     /*     } */
     /* } */
 

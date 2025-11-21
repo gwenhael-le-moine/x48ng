@@ -74,7 +74,8 @@
           ? colors_48gx                                                                                                                    \
           : ( ui4x_config.model == MODEL_48SX ? colors_48sx : ( ui4x_config.model == MODEL_49G ? colors_49g : colors_50g ) ) )
 
-#define COLOR_PIXEL_OFF ( ui4x_config.black_lcd ? UI4X_COLOR_BLACK_PIXEL_OFF : UI4X_COLOR_PIXEL_OFF )
+#define COLOR_LCD_BG ( ui4x_config.black_lcd ? UI4X_COLOR_BLACK_LCD_BG : UI4X_COLOR_LCD_BG )
+#define COLOR_PIXEL_ON ( ui4x_config.black_lcd ? UI4X_COLOR_BLACK_PIXEL_ON : UI4X_COLOR_PIXEL_ON )
 
 #define PADDING_TOP ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? 48 : 65 )
 #define PADDING_SIDE 20
@@ -91,6 +92,8 @@
 
 #define OFFSET_X_KEYBOARD PADDING_SIDE
 #define OFFSET_Y_KEYBOARD ( PADDING_TOP + HEIGHT_DISPLAY + PADDING_BETWEEN_DISPLAY_AND_KEYBOARD )
+
+#define N_LEVELS_OF_GRAY ( ( ui4x_config.model == MODEL_50G ) ? 16 : 4 )
 
 /***********/
 /* typedef */
@@ -119,6 +122,8 @@ static annunciators_ui_t annunciators_ui[ NB_ANNUNCIATORS ] = {
     {.x = 196, .y = 4, .width = ann_busy_width,    .height = ann_busy_height,    .bits = ann_busy_bitmap   },
     {.x = 241, .y = 4, .width = ann_io_width,      .height = ann_io_height,      .bits = ann_io_bitmap     },
 };
+
+static color_t pixel_colors[ 16 ]; /* up to 16 shades */
 
 static int display_buffer_grayscale[ LCD_WIDTH * 80 ];
 static int last_annunciators = -1;
@@ -280,9 +285,9 @@ static void create_annunciators_textures( void )
 {
     for ( int i = 0; i < NB_ANNUNCIATORS; i++ ) {
         annunciators_textures[ i ].up = bitmap_to_texture( annunciators_ui[ i ].width, annunciators_ui[ i ].height,
-                                                           annunciators_ui[ i ].bits, UI4X_COLOR_ANNUNCIATOR, COLOR_PIXEL_OFF );
+                                                           annunciators_ui[ i ].bits, UI4X_COLOR_ANNUNCIATOR, COLOR_LCD_BG );
         annunciators_textures[ i ].down = bitmap_to_texture( annunciators_ui[ i ].width, annunciators_ui[ i ].height,
-                                                             annunciators_ui[ i ].bits, COLOR_PIXEL_OFF, COLOR_PIXEL_OFF );
+                                                             annunciators_ui[ i ].bits, COLOR_LCD_BG, COLOR_LCD_BG );
     }
 }
 
@@ -898,12 +903,12 @@ static void _draw_bezel_LCD( void )
                   OFFSET_Y_DISPLAY + HEIGHT_DISPLAY + 2 * BEZEL_WIDTH_DISPLAY - 2, UI4X_COLOR_UPPER_FACEPLATE );
 
     // simulate rounded lcd corners
-    __draw_line( OFFSET_X_DISPLAY - 1, OFFSET_Y_DISPLAY + 1, OFFSET_X_DISPLAY - 1, OFFSET_Y_DISPLAY + HEIGHT_DISPLAY - 2, COLOR_PIXEL_OFF );
-    __draw_line( OFFSET_X_DISPLAY + 1, OFFSET_Y_DISPLAY - 1, OFFSET_X_DISPLAY + WIDTH_DISPLAY - 2, OFFSET_Y_DISPLAY - 1, COLOR_PIXEL_OFF );
+    __draw_line( OFFSET_X_DISPLAY - 1, OFFSET_Y_DISPLAY + 1, OFFSET_X_DISPLAY - 1, OFFSET_Y_DISPLAY + HEIGHT_DISPLAY - 2, COLOR_LCD_BG );
+    __draw_line( OFFSET_X_DISPLAY + 1, OFFSET_Y_DISPLAY - 1, OFFSET_X_DISPLAY + WIDTH_DISPLAY - 2, OFFSET_Y_DISPLAY - 1, COLOR_LCD_BG );
     __draw_line( OFFSET_X_DISPLAY + 1, OFFSET_Y_DISPLAY + HEIGHT_DISPLAY, OFFSET_X_DISPLAY + WIDTH_DISPLAY - 2,
-                 OFFSET_Y_DISPLAY + HEIGHT_DISPLAY, COLOR_PIXEL_OFF );
+                 OFFSET_Y_DISPLAY + HEIGHT_DISPLAY, COLOR_LCD_BG );
     __draw_line( OFFSET_X_DISPLAY + WIDTH_DISPLAY, OFFSET_Y_DISPLAY + 1, OFFSET_X_DISPLAY + WIDTH_DISPLAY,
-                 OFFSET_Y_DISPLAY + HEIGHT_DISPLAY - 2, COLOR_PIXEL_OFF );
+                 OFFSET_Y_DISPLAY + HEIGHT_DISPLAY - 2, COLOR_LCD_BG );
 }
 
 static void _draw_background( int width, int height, int w_top, int h_top )
@@ -912,10 +917,7 @@ static void _draw_background( int width, int height, int w_top, int h_top )
     __draw_rect( 0, 0, width, height, UI4X_COLOR_UPPER_FACEPLATE );
 }
 
-static void _draw_background_LCD( void )
-{
-    __draw_rect( OFFSET_X_DISPLAY, OFFSET_Y_DISPLAY, WIDTH_DISPLAY, HEIGHT_DISPLAY, COLOR_PIXEL_OFF );
-}
+static void _draw_background_LCD( void ) { __draw_rect( OFFSET_X_DISPLAY, OFFSET_Y_DISPLAY, WIDTH_DISPLAY, HEIGHT_DISPLAY, COLOR_LCD_BG ); }
 
 // Show the hp key which is being pressed
 static void _show_key( int hpkey )
@@ -954,7 +956,7 @@ static void _draw_serial_devices_path( void )
         write_with_small_font(
             ( ( PADDING_SIDE * 1.5 ) + WIDTH_DISPLAY ) - SmallTextWidth( text, strlen( text ) ),
             ( ui4x_config.model == MODEL_49G ? PADDING_TOP - 12 : OFFSET_Y_KEYBOARD - ( PADDING_BETWEEN_DISPLAY_AND_KEYBOARD / 2 ) ), text,
-            COLOR_PIXEL_OFF, UI4X_COLOR_UPPER_FACEPLATE );
+            COLOR_LCD_BG, UI4X_COLOR_UPPER_FACEPLATE );
 }
 
 static int sdl_emulator_press_key( int hpkey )
@@ -1003,14 +1005,14 @@ static void sdl_update_annunciators( void )
     SDL_RenderPresent( renderer );
 }
 
-/* static int apply_contrast( int value, int contrast ) */
-/* { */
-/*     int max = 19; */
-/*     int min = 3; */
+static int apply_contrast( int value, int contrast )
+{
+    int max = 19;
+    int min = 3;
 
-/*     int contrasted = ( value / ( max - min ) ) * ( max - contrast ); */
-/*     return contrasted; */
-/* } */
+    int contrasted = ( value / ( max - min ) ) * ( max - contrast );
+    return contrasted;
+}
 
 static void setup_colors( void )
 {
@@ -1043,19 +1045,33 @@ static void setup_colors( void )
                 colors[ i ].g = ( colors[ i ].rgb >> 8 ) & 0xff;
                 colors[ i ].b = colors[ i ].rgb & 0xff;
             }
-            /* if ( i == COLOR_PIXEL_ON || i == COLOR_PIXEL_GREY_2 || i == COLOR_PIXEL_GREY_1 ) { */
-            /*     // COLOR_PIXEL_ON, COLOR_PIXEL_GREY_2 and COLOR_PIXEL_GREY_1 are */
-            /*     // computed based on COLOR_PIXEL_OFF and contrast */
-            /*     colors[ i ].r = apply_contrast( colors[ COLOR_PIXEL_OFF ].r, contrast ); */
-            /*     colors[ i ].g = apply_contrast( colors[ COLOR_PIXEL_OFF ].g, contrast ); */
+            if ( i == COLOR_PIXEL_ON ) {
+                // COLOR_PIXEL_ON is computed based on COLOR_LCD_BG and contrast
+                colors[ i ].r = apply_contrast( colors[ COLOR_LCD_BG ].r, contrast );
+                colors[ i ].g = apply_contrast( colors[ COLOR_LCD_BG ].g, contrast );
 
-            /*     if ( ui4x_config.black_lcd ) */
-            /*         colors[ i ].b = apply_contrast( colors[ COLOR_PIXEL_OFF ].b, contrast ); */
-            /*     else */
-            /*         colors[ i ].b = 128 - ( ( 19 - contrast ) * ( ( 128 - colors[ COLOR_PIXEL_OFF ].b ) / 16 ) ); */
-            /* } */
+                if ( ui4x_config.black_lcd )
+                    colors[ i ].b = apply_contrast( colors[ COLOR_LCD_BG ].b, contrast );
+                else
+                    colors[ i ].b = 128 - ( ( 19 - contrast ) * ( ( 128 - colors[ COLOR_LCD_BG ].b ) / 16 ) );
+            }
         }
     }
+
+    pixel_colors[ 0 ] = colors[ COLOR_LCD_BG ];
+    int contrast_value_for_shade;
+    for ( int i = 1; i < N_LEVELS_OF_GRAY; i++ ) {
+        contrast_value_for_shade = 3 + ( N_LEVELS_OF_GRAY == 16 ? i : i * 4 );
+        pixel_colors[ i ].a = 0xff;
+        pixel_colors[ i ].r = apply_contrast( colors[ COLOR_LCD_BG ].r, contrast_value_for_shade );
+        pixel_colors[ i ].g = apply_contrast( colors[ COLOR_LCD_BG ].g, contrast_value_for_shade );
+
+        if ( ui4x_config.black_lcd )
+            pixel_colors[ i ].b = apply_contrast( colors[ COLOR_LCD_BG ].b, contrast_value_for_shade );
+        else
+            pixel_colors[ i ].b = 128 - ( ( 19 - contrast_value_for_shade ) * ( ( 128 - colors[ COLOR_LCD_BG ].b ) / 16 ) );
+    }
+    pixel_colors[ N_LEVELS_OF_GRAY ] = colors[ COLOR_PIXEL_ON ];
 
     // re-create annunciators textures
     last_annunciators = -1;
@@ -1121,17 +1137,13 @@ void sdl_ui_refresh_lcd( void )
 
     SDL_SetRenderTarget( renderer, display_texture );
 
-    int n_levels_of_gray = ( ui4x_config.model == MODEL_50G ) ? 16 : 4;
-    int pixel, r, g, b, a;
+    int pxl_val;
     for ( int y = 0; y < LCD_HEIGHT; ++y ) {
         for ( int x = 0; x < LCD_WIDTH; ++x ) {
-            pixel = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ];
-            r = 0xff - ( pixel * ( colors[ COLOR_PIXEL_OFF ].r / n_levels_of_gray ) );
-            g = 0xff - ( pixel * ( colors[ COLOR_PIXEL_OFF ].g / n_levels_of_gray ) );
-            b = 0xff - ( pixel * ( colors[ COLOR_PIXEL_OFF ].b / n_levels_of_gray ) );
-            a = 0xff;
+            pxl_val = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ];
 
-            __draw_pixel_rgba( x, y, r, g, b, a );
+            __draw_pixel_rgba( x, y, pixel_colors[ pxl_val ].r, pixel_colors[ pxl_val ].g, pixel_colors[ pxl_val ].b,
+                               pixel_colors[ pxl_val ].a );
         }
     }
 

@@ -102,27 +102,6 @@ color_t colors_48gx[ NB_COLORS ] = {
      .gray_rgb = 0x4A,
      .rgb = 0x4A4A4A,
      },
-    /* UI4X_COLOR_PIXEL_OFF */
-    {
-     .a = 0xFF,
-     .mono_rgb = 0xFF,
-     .gray_rgb = 0xCD,
-     .rgb = 0x779988,
-     },
-    /* UI4X_COLOR_BLACK_PIXEL_OFF */
-    {
-     .a = 0xFF,
-     .mono_rgb = 0xFF,
-     .gray_rgb = 0xCD,
-     .rgb = 0xf5f5f5,
-     },
-    /* UI4X_COLOR_ANNUNCIATOR */
-    {
-     .a = 0xFF,
-     .mono_rgb = 0x0,
-     .gray_rgb = 0x14,
-     .rgb = 0x253d54,
-     },
     /* UI4X_COLOR_LABEL */
     {
      .a = 0xFF,
@@ -150,6 +129,41 @@ color_t colors_48gx[ NB_COLORS ] = {
      .mono_rgb = 0xFF,
      .gray_rgb = 0xA9,
      .rgb = 0x00FFCC,
+     },
+    /* UI4X_COLOR_ANNUNCIATOR */
+    {
+     .a = 0xFF,
+     .mono_rgb = 0x0,
+     .gray_rgb = 0x14,
+     .rgb = 0x253d54,
+     },
+    /* UI4X_COLOR_LCD_BG */
+    {
+     .a = 0xFF,
+     .mono_rgb = 0xFF,
+     .gray_rgb = 0xCD,
+     .rgb = 0x779988,
+     },
+    /* UI4X_COLOR_BLACK_LCD_BG */
+    {
+     .a = 0xFF,
+     .mono_rgb = 0xFF,
+     .gray_rgb = 0xCD,
+     .rgb = 0xf5f5f5,
+     },
+    /* UI4X_COLOR_PIXEL_ON */
+    {
+     .a = 0xFF,
+     .mono_rgb = 0x0,
+     .gray_rgb = 0x14,
+     .rgb = 0x253d54,
+     },
+    /* UI4X_COLOR_BLACK_PIXEL_ON */
+    {
+     .a = 0xFF,
+     .mono_rgb = 0x0,
+     .gray_rgb = 0x14,
+     .rgb = 0x151515,
      },
 };
 
