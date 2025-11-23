@@ -72,7 +72,9 @@
 #define COLORS                                                                                                                             \
     ( ui4x_config.model == MODEL_48GX                                                                                                      \
           ? colors_48gx                                                                                                                    \
-          : ( ui4x_config.model == MODEL_48SX ? colors_48sx : ( ui4x_config.model == MODEL_49G ? colors_49g : colors_50g ) ) )
+          : ( ui4x_config.model == MODEL_48SX                                                                                              \
+                  ? colors_48sx                                                                                                            \
+                  : ( ui4x_config.model == MODEL_49G ? colors_49g : ( ui4x_config.model == MODEL_40G ? colors_40g : colors_50g ) ) ) )
 
 #define COLOR_LCD_BG ( ui4x_config.black_lcd ? UI4X_COLOR_BLACK_LCD_BG : UI4X_COLOR_LCD_BG )
 #define COLOR_PIXEL_ON ( ui4x_config.black_lcd ? UI4X_COLOR_BLACK_PIXEL_ON : UI4X_COLOR_PIXEL_ON )
@@ -123,13 +125,13 @@ static annunciators_ui_t annunciators_ui[ NB_ANNUNCIATORS ] = {
     {.x = 241, .y = 4, .width = ann_io_width,      .height = ann_io_height,      .bits = ann_io_bitmap     },
 };
 
-static color_t pixel_colors[ 16 ]; /* up to 16 shades */
-
 static int display_buffer_grayscale[ LCD_WIDTH * 80 ];
 static int last_annunciators = -1;
 static int last_contrast = -1;
 
 static color_t colors[ NB_COLORS ];
+static color_t pixel_colors[ 16 ]; /* up to 16 shades */
+
 static on_off_sdl_textures_struct_t buttons_textures[ NB_HP4950_KEYS ];
 static on_off_sdl_textures_struct_t annunciators_textures[ NB_ANNUNCIATORS ];
 
@@ -570,50 +572,56 @@ static void _draw_header( void )
     // insert the HP Logo
     if ( ui4x_config.model == MODEL_48GX )
         x -= 6;
-    /* if ( ui4x_config.model == MODEL_49G ) */
-    /*     x += ( WIDTH_DISPLAY / 2 ) - ( hp_width / 2 ); */
 
     __draw_bitmap( x, 10, hp_width, hp_height, hp_bitmap, UI4X_COLOR_HP_LOGO, UI4X_COLOR_HP_LOGO_BG );
 
-    if ( ui4x_config.model == MODEL_49G )
-        write_with_big_font( WIDTH_DISPLAY - PADDING_SIDE, 10, "HP 49GX", UI4X_COLOR_HP_LOGO, UI4X_COLOR_UPPER_FACEPLATE );
+    switch ( ui4x_config.model ) {
+        case MODEL_49G:
+            write_with_big_font( WIDTH_DISPLAY - PADDING_SIDE, 10, "HP 49G", UI4X_COLOR_HP_LOGO, UI4X_COLOR_UPPER_FACEPLATE );
+            break;
 
-    if ( ui4x_config.model == MODEL_50G )
-        write_with_big_font( WIDTH_DISPLAY - PADDING_SIDE, 10, "HP 50G", UI4X_COLOR_HP_LOGO, UI4X_COLOR_UPPER_FACEPLATE );
+        case MODEL_50G:
+            write_with_big_font( WIDTH_DISPLAY - PADDING_SIDE, 10, "HP 50G", UI4X_COLOR_HP_LOGO, UI4X_COLOR_UPPER_FACEPLATE );
+            break;
 
-    // write the name of it
-    if ( ui4x_config.model == MODEL_48GX ) {
-        x = OFFSET_X_DISPLAY + WIDTH_DISPLAY - gx_128K_ram_width + gx_128K_ram_x_hot + 2;
-        y = 10 + gx_128K_ram_y_hot;
-        __draw_bitmap( x, y, gx_128K_ram_width, gx_128K_ram_height, gx_128K_ram_bitmap, UI4X_COLOR_48GX_128K_RAM,
-                       UI4X_COLOR_UPPER_FACEPLATE );
+        case MODEL_48GX:
+            x = OFFSET_X_DISPLAY + WIDTH_DISPLAY - gx_128K_ram_width + gx_128K_ram_x_hot + 2;
+            y = 10 + gx_128K_ram_y_hot;
+            __draw_bitmap( x, y, gx_128K_ram_width, gx_128K_ram_height, gx_128K_ram_bitmap, UI4X_COLOR_48GX_128K_RAM,
+                           UI4X_COLOR_UPPER_FACEPLATE );
 
-        x = OFFSET_X_DISPLAY + hp_width;
-        y = hp_height + 8 - hp48gx_height;
-        __draw_bitmap( x, y, hp48gx_width, hp48gx_height, hp48gx_bitmap, UI4X_COLOR_HP_LOGO, UI4X_COLOR_UPPER_FACEPLATE );
+            x = OFFSET_X_DISPLAY + hp_width;
+            y = hp_height + 8 - hp48gx_height;
+            __draw_bitmap( x, y, hp48gx_width, hp48gx_height, hp48gx_bitmap, UI4X_COLOR_HP_LOGO, UI4X_COLOR_UPPER_FACEPLATE );
 
-        x = OFFSET_X_DISPLAY + WIDTH_DISPLAY - gx_128K_ram_width + gx_green_x_hot + 2;
-        y = 10 + gx_green_y_hot;
-        __draw_bitmap( x, y, gx_green_width, gx_green_height, gx_green_bitmap, UI4X_COLOR_RIGHTSHIFT, UI4X_COLOR_UPPER_FACEPLATE );
+            x = OFFSET_X_DISPLAY + WIDTH_DISPLAY - gx_128K_ram_width + gx_green_x_hot + 2;
+            y = 10 + gx_green_y_hot;
+            __draw_bitmap( x, y, gx_green_width, gx_green_height, gx_green_bitmap, UI4X_COLOR_RIGHTSHIFT, UI4X_COLOR_UPPER_FACEPLATE );
 
-        x = OFFSET_X_DISPLAY + WIDTH_DISPLAY - gx_128K_ram_width + gx_silver_x_hot + 2;
-        y = 10 + gx_silver_y_hot;
-        __draw_bitmap( x, y, gx_silver_width, gx_silver_height, gx_silver_bitmap, UI4X_COLOR_HP_LOGO,
-                       UI4X_COLOR_LABEL ); // Background transparent: draw only silver line
-    }
-    if ( ui4x_config.model == MODEL_48SX ) {
-        __draw_line( OFFSET_X_DISPLAY, 9, OFFSET_X_DISPLAY + hp_width - 1, 9, UI4X_COLOR_FRAME );
-        __draw_line( OFFSET_X_DISPLAY - 1, 10, OFFSET_X_DISPLAY - 1, 10 + hp_height - 1, UI4X_COLOR_FRAME );
-        __draw_line( OFFSET_X_DISPLAY, 10 + hp_height, OFFSET_X_DISPLAY + hp_width - 1, 10 + hp_height, UI4X_COLOR_FRAME );
-        __draw_line( OFFSET_X_DISPLAY + hp_width, 10, OFFSET_X_DISPLAY + hp_width, 10 + hp_height - 1, UI4X_COLOR_FRAME );
+            x = OFFSET_X_DISPLAY + WIDTH_DISPLAY - gx_128K_ram_width + gx_silver_x_hot + 2;
+            y = 10 + gx_silver_y_hot;
+            __draw_bitmap( x, y, gx_silver_width, gx_silver_height, gx_silver_bitmap, UI4X_COLOR_HP_LOGO,
+                           UI4X_COLOR_LABEL ); // Background transparent: draw only silver line
+            break;
 
-        x = OFFSET_X_DISPLAY;
-        y = PADDING_TOP - BEZEL_WIDTH_DISPLAY - hp48sx_height - 3;
-        __draw_bitmap( x, y, hp48sx_width, hp48sx_height, hp48sx_bitmap, UI4X_COLOR_HP_LOGO, UI4X_COLOR_UPPER_FACEPLATE );
+        case MODEL_48SX:
+            __draw_line( OFFSET_X_DISPLAY, 9, OFFSET_X_DISPLAY + hp_width - 1, 9, UI4X_COLOR_FRAME );
+            __draw_line( OFFSET_X_DISPLAY - 1, 10, OFFSET_X_DISPLAY - 1, 10 + hp_height - 1, UI4X_COLOR_FRAME );
+            __draw_line( OFFSET_X_DISPLAY, 10 + hp_height, OFFSET_X_DISPLAY + hp_width - 1, 10 + hp_height, UI4X_COLOR_FRAME );
+            __draw_line( OFFSET_X_DISPLAY + hp_width, 10, OFFSET_X_DISPLAY + hp_width, 10 + hp_height - 1, UI4X_COLOR_FRAME );
 
-        x = OFFSET_X_DISPLAY + WIDTH_DISPLAY - 1 - science_width;
-        y = PADDING_TOP - BEZEL_WIDTH_DISPLAY - science_height - 4;
-        __draw_bitmap( x, y, science_width, science_height, science_bitmap, UI4X_COLOR_HP_LOGO, UI4X_COLOR_UPPER_FACEPLATE );
+            x = OFFSET_X_DISPLAY;
+            y = PADDING_TOP - BEZEL_WIDTH_DISPLAY - hp48sx_height - 3;
+            __draw_bitmap( x, y, hp48sx_width, hp48sx_height, hp48sx_bitmap, UI4X_COLOR_HP_LOGO, UI4X_COLOR_UPPER_FACEPLATE );
+
+            x = OFFSET_X_DISPLAY + WIDTH_DISPLAY - 1 - science_width;
+            y = PADDING_TOP - BEZEL_WIDTH_DISPLAY - science_height - 4;
+            __draw_bitmap( x, y, science_width, science_height, science_bitmap, UI4X_COLOR_HP_LOGO, UI4X_COLOR_UPPER_FACEPLATE );
+            break;
+
+        case MODEL_40G:
+            write_with_big_font( WIDTH_DISPLAY - PADDING_SIDE, 10, "HP 40G", UI4X_COLOR_HP_LOGO, UI4X_COLOR_UPPER_FACEPLATE );
+            break;
     }
 }
 

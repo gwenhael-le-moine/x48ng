@@ -56,32 +56,30 @@ int main( int argc, char** argv )
     init_emulator( &config );
 
     /* (G)UI */
-    ui4x_config_t config_ui = {
-        .model = config.model,
-        .shiftless = config.shiftless,
-        .black_lcd = config.black_lcd,
+    ui4x_config_t config_ui = { .model = config.model,
+                                .shiftless = config.shiftless,
+                                .black_lcd = config.black_lcd,
 
-        .frontend = config.frontend,
+                                .frontend = config.frontend,
 
-        .mono = config.mono,
-        .gray = config.gray,
+                                .mono = config.mono,
+                                .gray = config.gray,
 
-        .chromeless = config.chromeless,
-        .fullscreen = config.fullscreen,
-        .zoom = config.scale,
+                                .chromeless = config.chromeless,
+                                .fullscreen = config.fullscreen,
+                                .zoom = config.scale,
 
-        .tiny = config.tiny,
-        .small = config.small,
+                                .tiny = config.tiny,
+                                .small = config.small,
 
-        .verbose = config.verbose,
+                                .verbose = config.verbose,
 
-        .name = config.progname,
-        .progname = config.progname,
-        .wire_name = config.wire_name,
-        .ir_name = config.ir_name,
+                                .name = config.progname,
+                                .progname = config.progname,
+                                .wire_name = config.wire_name,
+                                .ir_name = config.ir_name,
 
-        .style_filename = NULL /* FIXME */
-    };
+                                .style_filename = ( char* )( config.model == MODEL_48GX ? "style-48gx.css" : "style-48sx.css" ) };
 
     ui4x_emulator_api_t emulator_api = { .press_key = press_key,
                                          .release_key = release_key,

@@ -10,7 +10,10 @@
 #  define BUTTONS                                                                                                                          \
       ( ui4x_config.model == MODEL_48GX                                                                                                    \
             ? buttons_48gx                                                                                                                 \
-            : ( ui4x_config.model == MODEL_48SX ? buttons_48sx : ( ui4x_config.model == MODEL_49G ? buttons_49g : buttons_50g ) ) )
+            : ( ui4x_config.model == MODEL_48SX                                                                                            \
+                    ? buttons_48sx                                                                                                         \
+                    : ( ui4x_config.model == MODEL_49G ? buttons_49g                                                                       \
+                                                       : ( ui4x_config.model == MODEL_40G ? buttons_40g : buttons_50g ) ) ) )
 
 #  define NB_KEYS ( ui4x_config.model == MODEL_48GX || ui4x_config.model == MODEL_48SX ? NB_HP48_KEYS : NB_HP4950_KEYS )
 
@@ -150,11 +153,13 @@ extern letter_t big_font[ 128 ];
 extern color_t colors_48sx[ NB_COLORS ];
 extern color_t colors_48gx[ NB_COLORS ];
 extern color_t colors_49g[ NB_COLORS ];
+extern color_t colors_40g[ NB_COLORS ];
 extern color_t colors_50g[ NB_COLORS ];
 
 extern button_t buttons_48sx[ NB_HP48_KEYS ];
 extern button_t buttons_48gx[ NB_HP48_KEYS ];
 extern button_t buttons_49g[ NB_HP4950_KEYS ];
+extern button_t buttons_40g[ NB_HP4950_KEYS ];
 extern button_t buttons_50g[ NB_HP4950_KEYS ];
 
 extern char* ui_annunciators[ NB_ANNUNCIATORS ];

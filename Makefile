@@ -129,7 +129,7 @@ EXTRA_WARNING_CFLAGS := -Wunused-function \
 	$(call cc-option,-Wunused-variable)
 endif
 
-override CFLAGS := -std=c11 \
+override CFLAGS := -std=gnu2x \
 	-Wall -Wextra -Wpedantic \
 	-Wformat=2 -Wshadow \
 	-Wwrite-strings -Wstrict-prototypes -Wold-style-definition \

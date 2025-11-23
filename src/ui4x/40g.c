@@ -1,9 +1,8 @@
 #include <stddef.h>
 
-#include "bitmaps_misc.h"
 #include "inner.h"
 
-color_t colors_50g[ NB_COLORS ] = {
+color_t colors_40g[ NB_COLORS ] = {
     /* UI4X_COLOR_HP_LOGO */
     {
      .a = 0xff,
@@ -132,10 +131,10 @@ color_t colors_50g[ NB_COLORS ] = {
     },
     /* UI4X_COLOR_ANNUNCIATOR */
     {
-     .a = 0xff,
-     .mono_rgb = 0x00,
+     .a = 0xFF,
+     .mono_rgb = 0x0,
      .gray_rgb = 0x14,
-     .rgb = 0x151515, /* #151515 */
+     .rgb = 0x253d54, /* #253d54 */
     },
     /* UI4X_COLOR_LCD_BG */
     {
@@ -171,7 +170,7 @@ color_t colors_50g[ NB_COLORS ] = {
 #define KB_COLUMN_WIDTH_6_KEYS 50
 #define KB_COLUMN_WIDTH_5_KEYS 60
 
-button_t buttons_50g[ NB_HP4950_KEYS ] = {
+button_t buttons_40g[ NB_HP4950_KEYS ] = {
     {.x = 0,
      .y = 0,
      .w = 36,
@@ -557,11 +556,11 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .left_sdl = "PRG",
      .highlight = false,
      .right_sdl = "CHARS",
-     .label_sdl = "EVAL",
+     .label_sdl = "CAT",
      /*  */
       .css_class = "function",
      .css_id = "EVAL",
-     .label = "EVAL",
+     .label = "CAT",
      .letter = "N",
      .left = "PRG",
      .right = "CHARS",
@@ -578,15 +577,15 @@ button_t buttons_50g[ NB_HP4950_KEYS ] = {
      .label_graphic = quote_bitmap,
      .left_sdl = "MTRW",
      .highlight = false,
-     .right_sdl = "EQW",
-     .label_sdl = "'",
+     .right_sdl = "'",
+     .label_sdl = "EQW",
      /*  */
       .css_class = "function",
      .css_id = "QUOTE",
-     .label = "'",
+     .label = "EQW",
      .letter = "O",
      .left = "MTRW",
-     .right = "EQW",
+     .right = "'",
      .below = NULL,
      .hpkey = HP4950_KEY_O         },
 

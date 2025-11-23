@@ -9,162 +9,162 @@ color_t colors_48gx[ NB_COLORS ] = {
      .a = 0xFF,
      .mono_rgb = 0xFF,
      .gray_rgb = 0xB0,
-     .rgb = 0xB0B0B8,
-     },
+     .rgb = 0xB0B0B8,                                              /* #B0B0B8 */
+    },
     /* UI4X_COLOR_HP_LOGO_BG */
     {
      .a = 0xFF,
      .mono_rgb = 0x0,
      .gray_rgb = 0x68,
-     .rgb = 0x68686E,
-     },
+     .rgb = 0x68686E,                                             /* #68686E */
+    },
     /* UI4X_COLOR_48GX_128K_RAM */
     {
      .a = 0xFF,
      .mono_rgb = 0xFF,
      .gray_rgb = 0xF0,
-     .rgb = 0xF0F0F0,
-     },
+     .rgb = 0xF0F0F0,                                                             /* #F0F0F0 */
+    },
     /* UI4X_COLOR_FRAME */
     {
      .a = 0xFF,
      .mono_rgb = 0xFF,
      .gray_rgb = 0x0,
-     .rgb = 0x000000,
-     },
+     .rgb = 0x000000,                                              /* #000000 */
+    },
     /* UI4X_COLOR_UPPER_FACEPLATE_EDGE_TOP */
     {
      .a = 0xFF,
      .mono_rgb = 0x0,
      .gray_rgb = 0x80,
-     .rgb = 0x80808A,
-     },
+     .rgb = 0x80808A,                                              /* #80808A */
+    },
     /* UI4X_COLOR_UPPER_FACEPLATE */
     {
      .a = 0xFF,
      .mono_rgb = 0x0,
      .gray_rgb = 0x68,
-     .rgb = 0x68686E,
-     },
+     .rgb = 0x68686E,                                                             /* #68686E */
+    },
     /* UI4X_COLOR_UPPER_FACEPLATE_EDGE_BOTTOM */
     {
      .a = 0xFF,
      .mono_rgb = 0x0,
      .gray_rgb = 0x54,
-     .rgb = 0x54545A,
-     },
+     .rgb = 0x54545A,                                              /* #54545A */
+    },
     /* UI4X_COLOR_FACEPLATE_EDGE_TOP */
     {
      .a = 0xFF,
      .mono_rgb = 0x0,
      .gray_rgb = 0x58,
-     .rgb = 0x585858,
-     },
+     .rgb = 0x585858,                                              /* #585858 */
+    },
     /* UI4X_COLOR_FACEPLATE */
     {
      .a = 0xFF,
      .mono_rgb = 0x0,
      .gray_rgb = 0x4A,
-     .rgb = 0x4A4A4A,
-     },
+     .rgb = 0x4A4A4A,                                                             /* #4A4A4A */
+    },
     /* UI4X_COLOR_FACEPLATE_EDGE_BOTTOM */
     {
      .a = 0xFF,
      .mono_rgb = 0x0,
      .gray_rgb = 0x40,
-     .rgb = 0x404040,
-     },
+     .rgb = 0x404040,                                              /* #404040 */
+    },
     /* UI4X_COLOR_KEYPAD_HIGHLIGHT */
     {
      .a = 0xFF,
      .mono_rgb = 0x0,
      .gray_rgb = 0x68,
-     .rgb = 0x68686E,
-     },
+     .rgb = 0x68686E,                                             /* #68686E */
+    },
     /* UI4X_COLOR_BUTTON_EDGE_TOP */
     {
      .a = 0xFF,
      .mono_rgb = 0x0,
      .gray_rgb = 0x68,
-     .rgb = 0x686868,
-     },
+     .rgb = 0x686868,                                                             /* #686868 */
+    },
     /* UI4X_COLOR_BUTTON */
     {
      .a = 0xFF,
      .mono_rgb = 0x0,
      .gray_rgb = 0x58,
-     .rgb = 0x585858,
-     },
+     .rgb = 0x585858, /* #585858 */
+    },
     /* UI4X_COLOR_BUTTON_EDGE_BOTTOM */
     {
      .a = 0xFF,
      .mono_rgb = 0x0,
      .gray_rgb = 0x4A,
-     .rgb = 0x4A4A4A,
-     },
+     .rgb = 0x4A4A4A, /* #4A4A4A */
+    },
     /* UI4X_COLOR_LABEL */
     {
      .a = 0xFF,
      .mono_rgb = 0xFF,
      .gray_rgb = 0xFF,
-     .rgb = 0xFFFFFF,
-     },
+     .rgb = 0xFFFFFF, /* #FFFFFF */
+    },
     /* UI4X_COLOR_ALPHA */
     {
      .a = 0xFF,
      .mono_rgb = 0xFF,
      .gray_rgb = 0xFF,
-     .rgb = 0xFFFFFF,
-     },
+     .rgb = 0xFFFFFF, /* #FFFFFF */
+    },
     /* UI4X_COLOR_LEFTSHIFT */
     {
      .a = 0xFF,
      .mono_rgb = 0xFF,
      .gray_rgb = 0xDC,
-     .rgb = 0xFFBAFF,
-     },
+     .rgb = 0xFFBAFF, /* #FFBAFF */
+    },
     /* UI4X_COLOR_RIGHTSHIFT */
     {
      .a = 0xFF,
      .mono_rgb = 0xFF,
      .gray_rgb = 0xA9,
-     .rgb = 0x00FFCC,
-     },
+     .rgb = 0x00FFCC, /* #00FFCC */
+    },
     /* UI4X_COLOR_ANNUNCIATOR */
     {
      .a = 0xFF,
      .mono_rgb = 0x0,
      .gray_rgb = 0x14,
-     .rgb = 0x253d54,
-     },
+     .rgb = 0x253d54, /* #253d54 */
+    },
     /* UI4X_COLOR_LCD_BG */
     {
      .a = 0xFF,
      .mono_rgb = 0xFF,
      .gray_rgb = 0xCD,
-     .rgb = 0x779988,
-     },
+     .rgb = 0x779988, /* #779988 */
+    },
     /* UI4X_COLOR_BLACK_LCD_BG */
     {
      .a = 0xFF,
      .mono_rgb = 0xFF,
      .gray_rgb = 0xCD,
-     .rgb = 0xf5f5f5,
-     },
+     .rgb = 0xf5f5f5, /* #f5f5f5 */
+    },
     /* UI4X_COLOR_PIXEL_ON */
     {
      .a = 0xFF,
      .mono_rgb = 0x0,
      .gray_rgb = 0x14,
-     .rgb = 0x253d54,
-     },
+     .rgb = 0x253d54, /* #253d54 */
+    },
     /* UI4X_COLOR_BLACK_PIXEL_ON */
     {
      .a = 0xFF,
      .mono_rgb = 0x0,
      .gray_rgb = 0x14,
-     .rgb = 0x151515,
-     },
+     .rgb = 0x151515, /* #151515 */
+    },
 };
 
 #define KB_LINE_HEIGHT 50
