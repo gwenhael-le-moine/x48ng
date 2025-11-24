@@ -69,16 +69,6 @@
 #include "api.h"
 #include "inner.h"
 
-#define COLORS                                                                                                                             \
-    ( ui4x_config.model == MODEL_48GX                                                                                                      \
-          ? colors_48gx                                                                                                                    \
-          : ( ui4x_config.model == MODEL_48SX                                                                                              \
-                  ? colors_48sx                                                                                                            \
-                  : ( ui4x_config.model == MODEL_49G ? colors_49g : ( ui4x_config.model == MODEL_40G ? colors_40g : colors_50g ) ) ) )
-
-#define COLOR_LCD_BG ( ui4x_config.black_lcd ? UI4X_COLOR_BLACK_LCD_BG : UI4X_COLOR_LCD_BG )
-#define COLOR_PIXEL_ON ( ui4x_config.black_lcd ? UI4X_COLOR_BLACK_PIXEL_ON : UI4X_COLOR_PIXEL_ON )
-
 #define PADDING_TOP ( ( ui4x_config.model == MODEL_49G || ui4x_config.model == MODEL_50G ) ? 48 : 65 )
 #define PADDING_SIDE 20
 #define PADDING_BOTTOM 25
@@ -94,8 +84,6 @@
 
 #define OFFSET_X_KEYBOARD PADDING_SIDE
 #define OFFSET_Y_KEYBOARD ( PADDING_TOP + HEIGHT_DISPLAY + PADDING_BETWEEN_DISPLAY_AND_KEYBOARD )
-
-#define N_LEVELS_OF_GRAY ( ( ui4x_config.model == MODEL_50G ) ? 16 : 4 )
 
 /***********/
 /* typedef */

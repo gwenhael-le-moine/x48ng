@@ -11,43 +11,43 @@
 #define LCD_BOTTOM LCD_OFFSET_Y + ( LCD_HEIGHT / ( ui4x_config.tiny ? 4 : ( ui4x_config.small ? 2 : 1 ) ) )
 #define LCD_RIGHT LCD_OFFSET_X + ( LCD_WIDTH / ( ui4x_config.small || ui4x_config.tiny ? 2 : 1 ) ) + 1
 
-/* typedef enum { */
-/*     LCD_COLOR_BG = 30, */
-/*     LCD_COLOR_FG_0x1, */
-/*     LCD_COLOR_FG_0x2, */
-/*     LCD_COLOR_FG_0x3, */
-/*     LCD_COLOR_FG_0x4, */
-/*     LCD_COLOR_FG_0x5, */
-/*     LCD_COLOR_FG_0x6, */
-/*     LCD_COLOR_FG_0x7, */
-/*     LCD_COLOR_FG_0x8, */
-/*     LCD_COLOR_FG_0x9, */
-/*     LCD_COLOR_FG_0xA, */
-/*     LCD_COLOR_FG_0xB, */
-/*     LCD_COLOR_FG_0xC, */
-/*     LCD_COLOR_FG_0xD, */
-/*     LCD_COLOR_FG_0xE, */
-/*     LCD_COLOR_FG_0xF */
-/* } nc_color_t; */
+typedef enum {
+    LCD_COLOR_BG = 30,
+    LCD_COLOR_FG_0x1,
+    LCD_COLOR_FG_0x2,
+    LCD_COLOR_FG_0x3,
+    LCD_COLOR_FG_0x4,
+    LCD_COLOR_FG_0x5,
+    LCD_COLOR_FG_0x6,
+    LCD_COLOR_FG_0x7,
+    LCD_COLOR_FG_0x8,
+    LCD_COLOR_FG_0x9,
+    LCD_COLOR_FG_0xA,
+    LCD_COLOR_FG_0xB,
+    LCD_COLOR_FG_0xC,
+    LCD_COLOR_FG_0xD,
+    LCD_COLOR_FG_0xE,
+    LCD_COLOR_FG_0xF
+} nc_color_t;
 
-/* typedef enum { */
-/*     LCD_LCD_BG = 60, */
-/*     LCD_PIXEL_ON_0x1, */
-/*     LCD_PIXEL_ON_0x2, */
-/*     LCD_PIXEL_ON_0x3, */
-/*     LCD_PIXEL_ON_0x4, */
-/*     LCD_PIXEL_ON_0x5, */
-/*     LCD_PIXEL_ON_0x6, */
-/*     LCD_PIXEL_ON_0x7, */
-/*     LCD_PIXEL_ON_0x8, */
-/*     LCD_PIXEL_ON_0x9, */
-/*     LCD_PIXEL_ON_0xA, */
-/*     LCD_PIXEL_ON_0xB, */
-/*     LCD_PIXEL_ON_0xC, */
-/*     LCD_PIXEL_ON_0xD, */
-/*     LCD_PIXEL_ON_0xE, */
-/*     LCD_PIXEL_ON_0xF */
-/* } nc_color_pair_t; */
+typedef enum {
+    LCD_BG = 60,
+    LCD_PIXEL_ON_0x1,
+    LCD_PIXEL_ON_0x2,
+    LCD_PIXEL_ON_0x3,
+    LCD_PIXEL_ON_0x4,
+    LCD_PIXEL_ON_0x5,
+    LCD_PIXEL_ON_0x6,
+    LCD_PIXEL_ON_0x7,
+    LCD_PIXEL_ON_0x8,
+    LCD_PIXEL_ON_0x9,
+    LCD_PIXEL_ON_0xA,
+    LCD_PIXEL_ON_0xB,
+    LCD_PIXEL_ON_0xC,
+    LCD_PIXEL_ON_0xD,
+    LCD_PIXEL_ON_0xE,
+    LCD_PIXEL_ON_0xF
+} nc_color_pair_t;
 
 /*************/
 /* variables */
@@ -63,7 +63,7 @@ static WINDOW* help_window;
 /****************************/
 /* functions implementation */
 /****************************/
-static inline wchar_t eight_bits_to_braille_char( bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7, bool b8 )
+static inline wchar_t eight_pixels_to_braille_char( bool b1, bool b2, bool b3, bool b4, bool b5, bool b6, bool b7, bool b8 )
 {
     /*********/
     /* b1 b4 */
@@ -100,15 +100,10 @@ static inline void ncurses_draw_lcd_tiny( void )
     int step_y = 4;
     bool last_column = false;
 
-    wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
     wchar_t pixels;
-
-    /* if ( !ui4x_config.mono && has_colors() ) */
-    /*     attron( COLOR_PAIR( COLOR_RED ) ); */
+    cchar_t cpixels;
 
     for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
-        wcscpy( line, L"" );
-
         for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
             last_column = x == ( LCD_WIDTH - 1 );
 
@@ -126,17 +121,16 @@ static inline void ncurses_draw_lcd_tiny( void )
                 b8 = display_buffer_grayscale[ ( ( y + 3 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
             }
 
-            pixels = eight_bits_to_braille_char( b1, b2, b3, b4, b5, b6, b7, b8 );
-            wcsncat( line, &pixels, 1 );
-        }
-        mvwaddwstr( lcd_window, LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
-    }
+            pixels = eight_pixels_to_braille_char( b1, b2, b3, b4, b5, b6, b7, b8 );
 
-    /* if ( !ui4x_config.mono && has_colors() ) */
-    /*     attroff( COLOR_PAIR( COLOR_RED ) ); */
+            setcchar( &cpixels, &pixels, A_COLOR, LCD_BG, NULL );
+
+            mvwadd_wch( lcd_window, LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X + ( x / step_x ), &cpixels );
+        }
+    }
 }
 
-static inline wchar_t four_bits_to_quadrant_char( bool top_left, bool top_right, bool bottom_left, bool bottom_right )
+static inline wchar_t four_pixels_to_quadrant_char( bool top_left, bool top_right, bool bottom_left, bool bottom_right )
 {
     if ( top_left ) {
         if ( top_right ) {
@@ -172,15 +166,10 @@ static inline void ncurses_draw_lcd_small( void )
     int step_y = 2;
     bool last_column = false;
 
-    wchar_t line[ 66 ]; /* ( LCD_WIDTH / step_x ) + 1 */
     wchar_t pixels;
-
-    /* if ( !ui4x_config.mono && has_colors() ) */
-    /*     attron( COLOR_PAIR( COLOR_RED ) ); */
+    cchar_t cpixels;
 
     for ( int y = 0; y < LCD_HEIGHT; y += step_y ) {
-        wcscpy( line, L"" );
-
         for ( int x = 0; x < LCD_WIDTH; x += step_x ) {
             last_column = x == ( LCD_WIDTH - 1 );
 
@@ -194,62 +183,87 @@ static inline void ncurses_draw_lcd_small( void )
                 bottom_right = display_buffer_grayscale[ ( ( y + 1 ) * LCD_WIDTH ) + x + 1 ] > 0 ? 1 : 0;
             }
 
-            pixels = four_bits_to_quadrant_char( top_left, top_right, bottom_left, bottom_right );
-            wcsncat( line, &pixels, 1 );
-        }
-        mvwaddwstr( lcd_window, LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X, line );
-    }
+            pixels = four_pixels_to_quadrant_char( top_left, top_right, bottom_left, bottom_right );
 
-    /* if ( !ui4x_config.mono && has_colors() ) */
-    /*     attroff( COLOR_PAIR( COLOR_RED ) ); */
+            setcchar( &cpixels, &pixels, A_COLOR, LCD_BG, NULL );
+
+            mvwadd_wch( lcd_window, LCD_OFFSET_Y + ( y / step_y ), LCD_OFFSET_X + ( x / step_x ), &cpixels );
+        }
+    }
+}
+
+static inline wchar_t pixel_to_char( int pixel )
+{
+    /* switch ( pixel ) { */
+    /*     case 0xf: */
+    /*         return 'F'; */
+    /*         break; */
+    /*     case 0xe: */
+    /*         return 'E'; */
+    /*         break; */
+    /*     case 0xd: */
+    /*         return 'D'; */
+    /*         break; */
+    /*     case 0xc: */
+    /*         return 'C'; */
+    /*         break; */
+    /*     case 0xb: */
+    /*         return 'B'; */
+    /*         break; */
+    /*     case 0xa: */
+    /*         return 'A'; */
+    /*         break; */
+    /*     case 9: */
+    /*         return '9'; */
+    /*         break; */
+    /*     case 8: */
+    /*         return '8'; */
+    /*         break; */
+    /*     case 7: */
+    /*         return '7'; */
+    /*         break; */
+    /*     case 6: */
+    /*         return '6'; */
+    /*         break; */
+    /*     case 5: */
+    /*         return '5'; */
+    /*         break; */
+    /*     case 4: */
+    /*         return '4'; */
+    /*         break; */
+    /*     case 3: */
+    /*         return '3'; */
+    /*         break; */
+    /*     case 2: */
+    /*         return '2'; */
+    /*         break; */
+    /*     case 1: */
+    /*         return '1'; */
+    /*         break; */
+    /*     case 0: */
+    /*         return '0'; */
+    /*         break; */
+    /* } */
+
+    return ui4x_config.mono ? ( pixel > 0 ? L'█' : ' ' ) : ' ';
 }
 
 static inline void ncurses_draw_lcd_fullsize( void )
 {
     int val;
-    /* int color = COLOR_RED; */
     wchar_t pixel;
-
-    wchar_t line[ LCD_WIDTH ];
-
-    /* if ( !ui4x_config.mono && has_colors() ) */
-    /*     attron( COLOR_PAIR( color ) ); */
+    cchar_t cpixel;
 
     for ( int y = 0; y < LCD_HEIGHT; y++ ) {
-        wcscpy( line, L"" );
         for ( int x = 0; x < LCD_WIDTH; x++ ) {
             val = display_buffer_grayscale[ ( y * LCD_WIDTH ) + x ];
-            if ( ui4x_config.model == MODEL_50G )
-                val /= 3;
-            else if ( val == 3 )
-                val = 4;
+            pixel = pixel_to_char( val );
 
-            switch ( val ) {
-                case 0:
-                    pixel = L' ';
-                    break;
-                case 1:
-                    pixel = L'░';
-                    break;
-                case 2:
-                    pixel = L'▒';
-                    break;
-                case 3:
-                    pixel = L'▓';
-                    break;
-                case 4:
-                default:
-                    pixel = L'█';
-                    break;
-            }
+            setcchar( &cpixel, &pixel, ui4x_config.mono ? 0 : A_COLOR, LCD_BG + val, NULL );
 
-            wcsncat( line, &pixel, 1 );
+            mvwadd_wch( lcd_window, LCD_OFFSET_Y + y, LCD_OFFSET_X + x, &cpixel );
         }
-        mvwaddwstr( lcd_window, LCD_OFFSET_Y + y, LCD_OFFSET_X, line );
     }
-
-    /* if ( !ui4x_config.mono && has_colors() ) */
-    /*     attroff( COLOR_PAIR( color ) ); */
 }
 
 static void toggle_help_window( void )
@@ -559,18 +573,36 @@ void ncurses_init( void )
     noecho();
     nonl(); /* tell curses not to do NL->CR/NL on output */
 
-    /* if ( !ui4x_config.mono && has_colors() ) { */
-    /*     start_color(); */
+    if ( !ui4x_config.mono && has_colors() ) {
+        start_color();
 
-    /*     int step = 1000 / 15; */
-    /*     int rgb = 0; */
-    /*     for ( int i = 0; i < 16; i++ ) { */
-    /*         rgb = ( i * step ); */
-    /*         init_color( LCD_COLOR_BG + i, 0, rgb, 0 ); */
+        int bg_r = ( 1000 / 255 ) * ( ( COLORS[ COLOR_LCD_BG ].rgb >> 16 ) & 0xff );
+        int bg_g = ( 1000 / 255 ) * ( ( COLORS[ COLOR_LCD_BG ].rgb >> 8 ) & 0xff );
+        int bg_b = ( 1000 / 255 ) * ( COLORS[ COLOR_LCD_BG ].rgb & 0xff );
 
-    /*         init_pair( LCD_LCD_BG + i, LCD_COLOR_BG + i, COLOR_BLACK ); */
-    /*     } */
-    /* } */
+        init_color( LCD_COLOR_BG, bg_r, bg_g, bg_b );
+        init_pair( LCD_BG, COLOR_BLACK, LCD_COLOR_BG );
+
+        int pixel_on_r = ( 1000 / 255 ) * ( ( COLORS[ COLOR_PIXEL_ON ].rgb >> 16 ) & 0xff );
+        int pixel_on_g = ( 1000 / 255 ) * ( ( COLORS[ COLOR_PIXEL_ON ].rgb >> 8 ) & 0xff );
+        int pixel_on_b = ( 1000 / 255 ) * ( COLORS[ COLOR_PIXEL_ON ].rgb & 0xff );
+
+        init_color( LCD_COLOR_BG + N_LEVELS_OF_GRAY, pixel_on_r, pixel_on_g, pixel_on_b );
+        init_pair( LCD_BG + N_LEVELS_OF_GRAY, COLOR_BLACK, LCD_COLOR_BG + N_LEVELS_OF_GRAY );
+
+        int step_r = ( bg_r - pixel_on_r ) / N_LEVELS_OF_GRAY;
+        int step_g = ( bg_g - pixel_on_g ) / N_LEVELS_OF_GRAY;
+        int step_b = ( bg_b - pixel_on_b ) / N_LEVELS_OF_GRAY;
+        int r, g, b;
+        for ( int i = 1; i < N_LEVELS_OF_GRAY - 1; i++ ) {
+            r = step_r * ( N_LEVELS_OF_GRAY - i );
+            g = step_g * ( N_LEVELS_OF_GRAY - i );
+            b = step_b * ( N_LEVELS_OF_GRAY - i );
+            init_color( LCD_COLOR_BG + i, r, g, b );
+
+            init_pair( LCD_BG + i, COLOR_BLACK, LCD_COLOR_BG + i );
+        }
+    }
 
     lcd_window = newwin( LCD_BOTTOM + 1, LCD_RIGHT + 1, 0, 0 );
     refresh();

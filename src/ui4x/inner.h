@@ -7,6 +7,17 @@
 
 #  define LCD_HEIGHT ( ui4x_config.model == MODEL_50G ? 80 : 64 )
 
+#  define COLORS                                                                                                                           \
+      ( ui4x_config.model == MODEL_48GX                                                                                                    \
+            ? colors_48gx                                                                                                                  \
+            : ( ui4x_config.model == MODEL_48SX                                                                                            \
+                    ? colors_48sx                                                                                                          \
+                    : ( ui4x_config.model == MODEL_49G ? colors_49g : ( ui4x_config.model == MODEL_40G ? colors_40g : colors_50g ) ) ) )
+
+#  define COLOR_LCD_BG ( ui4x_config.black_lcd ? UI4X_COLOR_BLACK_LCD_BG : UI4X_COLOR_LCD_BG )
+#  define COLOR_PIXEL_ON ( ui4x_config.black_lcd ? UI4X_COLOR_BLACK_PIXEL_ON : UI4X_COLOR_PIXEL_ON )
+#  define N_LEVELS_OF_GRAY ( ( ui4x_config.model == MODEL_50G ) ? 16 : 4 )
+
 #  define BUTTONS                                                                                                                          \
       ( ui4x_config.model == MODEL_48GX                                                                                                    \
             ? buttons_48gx                                                                                                                 \
