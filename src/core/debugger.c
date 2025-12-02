@@ -16,7 +16,7 @@
 #include "romio.h"
 #include "timers.h"
 
-#include "ui4x/api.h"
+#include "ui4x/src/api.h"
 
 #define MAX_ARGS 16
 

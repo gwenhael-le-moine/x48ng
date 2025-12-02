@@ -11,7 +11,7 @@
 #include "serial.h"
 #include "timers.h"
 
-#include "ui4x/api.h"
+#include "ui4x/src/api.h"
 
 /* #define P_FIELD 0  /\* unused? *\/ */
 /* #define WP_FIELD 1 /\* unused? *\/ */

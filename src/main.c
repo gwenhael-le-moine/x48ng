@@ -15,7 +15,7 @@
 #include "core/init.h"
 #include "core/timers.h"
 
-#include "ui4x/api.h"
+#include "ui4x/src/api.h"
 
 #include "emulator_api.h"
 #include "options.h"

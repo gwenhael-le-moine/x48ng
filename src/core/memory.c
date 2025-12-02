@@ -10,7 +10,7 @@
 #include "options.h"
 #include "romio.h"
 #include "types.h"
-#include "ui4x/api.h"
+#include "ui4x/src/api.h"
 
 #define MCTL_MMIO_SX 0
 #define MCTL_SysRAM_SX 1

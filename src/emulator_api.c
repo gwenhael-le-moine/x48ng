@@ -9,7 +9,7 @@
 #include "core/init.h"
 #include "core/memory.h"
 
-#include "ui4x/api.h"
+#include "ui4x/src/api.h"
 
 #define KEYBOARD keyboard48
 

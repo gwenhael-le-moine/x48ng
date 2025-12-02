@@ -46,22 +46,22 @@ NCURSES_LIBS = $(shell "$(PKG_CONFIG)" --libs ncursesw)
 ifeq ($(WITH_SDL), yes)
 	SDL_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags sdl3) -DHAS_SDL=1
 	SDL_LIBS = $(shell "$(PKG_CONFIG)" --libs sdl3)
-	SDL_SRC = src/ui4x/sdl.c
-	SDL_HEADERS = src/ui4x/sdl.h
+	SDL_SRC = src/ui4x/src/sdl.c
+	SDL_HEADERS = src/ui4x/src/sdl.h
 endif
 
 ifeq ($(WITH_SDL2), yes)
 	SDL_CFLAGS = $(shell "$(PKG_CONFIG)" --cflags sdl2) -DHAS_SDL=1 -DHAS_SDL2=1
 	SDL_LIBS = $(shell "$(PKG_CONFIG)" --libs sdl2)
-	SDL_SRC = src/ui4x/sdl.c
-	SDL_HEADERS = src/ui4x/sdl.h
+	SDL_SRC = src/ui4x/src/sdl.c
+	SDL_HEADERS = src/ui4x/src/sdl.h
 endif
 
 ifeq ($(WITH_GTK), yes)
 	GTK_CFLAGS = -DHAS_GTK=1 $(shell "$(PKG_CONFIG)" --cflags gtk4)
 	GTK_LIBS = $(shell "$(PKG_CONFIG)" --libs gtk4)
-	GTK_SRC = src/ui4x/gtk.c
-	GTK_HEADERS = src/ui4x/gtk.h
+	GTK_SRC = src/ui4x/src/gtk.c
+	GTK_HEADERS = src/ui4x/src/gtk.h
 endif
 
 LIBS = -lm \
@@ -82,12 +82,12 @@ HEADERS = src/options.h \
 	src/core/registers.h \
 	src/core/timers.h \
 	src/core/serial.h \
-	src/ui4x/api.h \
-	src/ui4x/fonts.h \
-	src/ui4x/bitmaps_misc.h \
-	src/ui4x/api.h \
-	src/ui4x/inner.h \
-	src/ui4x/ncurses.h \
+	src/ui4x/src/api.h \
+	src/ui4x/src/fonts.h \
+	src/ui4x/src/bitmaps_misc.h \
+	src/ui4x/src/api.h \
+	src/ui4x/src/inner.h \
+	src/ui4x/src/ncurses.h \
 	$(SDL_HEADERS) \
 	$(GTK_HEADERS)
 
@@ -103,15 +103,15 @@ SRC = src/options.c \
 	src/core/timers.c \
 	src/core/serial.c \
 	src/emulator_api.c \
-	src/ui4x/48gx.c \
-	src/ui4x/48sx.c \
-	src/ui4x/49g.c \
-	src/ui4x/40g.c \
-	src/ui4x/50g.c \
-	src/ui4x/api.c \
-	src/ui4x/fonts.c \
-	src/ui4x/bitmaps_misc.c \
-	src/ui4x/ncurses.c \
+	src/ui4x/src/48gx.c \
+	src/ui4x/src/48sx.c \
+	src/ui4x/src/49g.c \
+	src/ui4x/src/50g.c \
+	src/ui4x/src/40g.c \
+	src/ui4x/src/api.c \
+	src/ui4x/src/fonts.c \
+	src/ui4x/src/bitmaps_misc.c \
+	src/ui4x/src/ncurses.c \
 	$(SDL_SRC) \
 	$(GTK_SRC)
 OBJS = $(SRC:.c=.o)
@@ -198,7 +198,7 @@ compile_commands.json: mrproper
 
 # Formatting
 pretty-code:
-	clang-format -i src/*.c src/*.h src/legacy_tools/*.c src/ui4x/*.c src/ui4x/*.h
+	clang-format -i src/*.c src/*.h src/legacy_tools/*.c src/ui4x/src/*.c src/ui4x/src/*.h
 
 # Installing
 get-roms:
@@ -215,6 +215,7 @@ install: all dist/config.lua
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/share/x48ng
 	install -c -m 644 dist/hplogo.png $(DESTDIR)$(PREFIX)/share/x48ng/hplogo.png
 	cp -R dist/ROMs/ $(DESTDIR)$(PREFIX)/share/x48ng/
+	cp src/ui4x/*.css "$(DESTDIR)$(PREFIX)/share/x48ng/"
 
 	install -m 755 -d -- $(DESTDIR)$(PREFIX)/libexec
 	install -c -m 755 dist/x48ng-dump2rom $(DESTDIR)$(PREFIX)/libexec/x48ng-dump2rom

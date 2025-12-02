@@ -13,6 +13,8 @@
 #include <lauxlib.h>
 #include <lua.h>
 
+#include <glib.h>
+
 #include "options.h"
 
 static config_t __config = {
@@ -47,6 +49,8 @@ static config_t __config = {
     .chromeless = false,
     .fullscreen = false,
     .scale = 1.0,
+
+    .style_filename = NULL,
 };
 
 char* configDir = ( char* )"x48ng";
@@ -208,10 +212,27 @@ static inline void normalize_filenames( void )
     normalize_filename( port2FileName, normalized_port2_path );
 }
 
+/* static char* make_filename_absolute( char* filename ) */
+/* { */
+/*     char* full_path = g_build_filename( filename, NULL ); */
+/*     if ( !g_file_test( full_path, G_FILE_TEST_EXISTS ) ) */
+/*         full_path = g_build_filename( __config.datadir, filename, NULL ); */
+/*     if ( !g_file_test( full_path, G_FILE_TEST_EXISTS ) ) */
+/*         full_path = g_build_filename( GLOBAL_DATADIR, filename, NULL ); */
+/*     if ( !g_file_test( full_path, G_FILE_TEST_EXISTS ) ) */
+/*         full_path = g_build_filename( __config.progpath, filename, NULL ); */
+
+/*     return full_path; */
+/* } */
+
 config_t* config_init( int argc, char* argv[] )
 {
     int option_index;
     int c = '?';
+
+    char* style_filename = NULL;
+    char* clopt_style_filename = NULL;
+    char* clopt_name = NULL;
 
     char* clopt_configDir = NULL;
     char* clopt_romFileName = NULL;
@@ -237,7 +258,7 @@ config_t* config_init( int argc, char* argv[] )
     int clopt_inhibit_shutdown = -1;
     int clopt_black_lcd = -1;
 
-    const char* optstring = "c:hvVtsirT";
+    const char* optstring = "c:hvVtsirTn:s:";
     struct option long_options[] = {
         {"help",             no_argument,       NULL,                             'h'         },
         {"version",          no_argument,       NULL,                             'v'         },
@@ -282,6 +303,10 @@ config_t* config_init( int argc, char* argv[] )
         {"leave-shift-keys", no_argument,       &clopt_shiftless,                 true        }, /* DEPRECATED */
         {"shiftless",        no_argument,       &clopt_shiftless,                 true        },
         {"inhibit-shutdown", no_argument,       &clopt_inhibit_shutdown,          true        },
+
+        {"style",            required_argument, NULL,                             's'         },
+
+        {"name",             required_argument, NULL,                             'n'         },
 
         {0,                  0,                 0,                                0           }
     };

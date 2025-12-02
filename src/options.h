@@ -3,11 +3,12 @@
 
 #  include <stdbool.h>
 
-#  include "ui4x/api.h"
+#  include "ui4x/src/api.h"
 
 typedef struct {
     /* duplicating ui4x_config_t here so that config_init can return one big struct */
     char* progname;
+    char* progpath;
 
     ui4x_model_t model;
     bool shiftless;
@@ -29,6 +30,8 @@ typedef struct {
 
     char* wire_name;
     char* ir_name;
+
+    char* style_filename;
 
     bool verbose;
 

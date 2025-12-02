@@ -1,7 +1,7 @@
 #ifndef _MEMORY_H
 #  define _MEMORY_H 1
 
-#  include "../ui4x/api.h"
+#  include "../ui4x/src/api.h"
 
 #  include "types.h"
 

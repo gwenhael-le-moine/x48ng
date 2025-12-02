@@ -1,0 +1,128 @@
+@import "style-common.css";
+
+/* :root { */
+/*     --color-faceplate: #272727; */
+/*     --color-border: #000000; */
+/*     --color-display: #dcdcdc; */
+/*     --color-border-display: #012321; */
+
+/*     --color-key-enter: #088080; */
+/*     --color-key-menu: #a9a9a9; */
+/*     --color-key-function: #696969; */
+/*     --color-key-arrow: #e0e0e0; */
+/*     --color-key-alpha: #67c184; */
+/*     --color-key-shift-left: #82b1ff; */
+/*     --color-key-shift-right: #ff8a80; */
+/*     --color-key-core: #3f3f3f; */
+/*     --color-key-number: #3f3f3f; */
+
+/*     --color-label-key-light: #ffffff; */
+/*     --color-label-key-dark: #3f3f3f; */
+/*     --color-label-below: #ffdead; */
+/* } */
+
+@define-color color-faceplate #272727;
+@define-color color-border #000000;
+@define-color color-display #dcdcdc;
+@define-color color-border-display #012321;
+
+@define-color color-key-enter #065b5b;
+@define-color color-key-menu #a9a9a9;
+@define-color color-key-function #595959;
+@define-color color-key-arrow #e0e0e0;
+@define-color color-key-alpha #6ec489;
+@define-color color-key-shift-left #85b4ff;
+@define-color color-key-shift-right #ff988f;
+@define-color color-key-core #3f3f3f;
+@define-color color-key-number #3f3f3f;
+
+@define-color color-label-key-light #ffffff;
+@define-color color-label-key-dark #3f3f3f;
+@define-color color-label-below #ffdead;
+
+window {
+    /* background-color: var( --color-faceplate ); */
+    background-color: @color-faceplate;
+}
+
+#display-container {
+    /* border-color: var( --color-border-display ); */
+    border-color: @color-border-display;
+    /* background-color: var( --color-display ); */
+    background-color: @color-display;
+}
+
+#window-container,
+.keyboard-container,
+#high-keyboard-container > .row-container {
+    /* border-color: var( --color-border ); */
+    border-color: @color-border;
+}
+
+.key.enter {
+    /* background-color: var( --color-key-enter ); */
+    background-color: @color-key-enter;
+}
+.key.menu {
+    /* background-color: var( --color-key-menu ); */
+    background-color: @color-key-menu;
+}
+.key.function {
+    /* background-color: var( --color-key-function ); */
+    background-color: @color-key-function;
+}
+.key.arrow {
+    /* background-color: var( --color-key-arrow ); */
+    background-color: @color-key-arrow;
+}
+.key.alpha {
+    /* background-color: var( --color-key-alpha ); */
+    background-color: @color-key-alpha;
+}
+.key.shift-left {
+    /* background-color: var( --color-key-shift-left ); */
+    background-color: @color-key-shift-left;
+}
+.key.shift-right {
+    /* background-color: var( --color-key-shift-right ); */
+    background-color: @color-key-shift-right;
+}
+.key.core {
+    /* background-color: var( --color-key-core ); */
+    background-color: @color-key-core;
+}
+
+.key.core-number {
+    /* background-color: var( --color-key-number ); */
+    background-color: @color-key-number;
+}
+
+.annunciator,
+.key.alpha .label-key,
+.key.arrow .label-key,
+.key.menu .label-key,
+.key.shift-left .label-key,
+.key.shift-right .label-key {
+    /* color: var( --color-label-key-dark ); */
+    color: @color-label-key-dark;
+}
+.label-key {
+    /* color: var( --color-label-key-light ); */
+    color: @color-label-key-light;
+}
+.label-left {
+    /* color: var( --color-key-shift-left ); */
+    color: @color-key-shift-left;
+}
+.label-right {
+    /* color: var( --color-key-shift-right ); */
+    color: @color-key-shift-right;
+}
+.label-below {
+    /* color: var( --color-label-below ); */
+    color: @color-label-below;
+}
+.label-letter {
+    /* color: var( --color-key-alpha ); */
+    color: @color-key-alpha;
+}
