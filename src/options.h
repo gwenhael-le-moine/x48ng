@@ -5,35 +5,49 @@
 
 #  include "ui4x/src/api.h"
 
+#  ifndef VERSION_MAJOR
+#    define VERSION_MAJOR 0
+#  endif
+#  ifndef VERSION_MINOR
+#    define VERSION_MINOR 0
+#  endif
+#  ifndef PATCHLEVEL
+#    define PATCHLEVEL 0
+#  endif
+
 typedef struct {
     /* duplicating ui4x_config_t here so that config_init can return one big struct */
-    char* progname;
-    char* progpath;
-
     ui4x_model_t model;
     bool shiftless;
-    bool big_screen;
     bool black_lcd;
+    bool newrpl_keyboard;
 
     ui4x_frontend_t frontend;
     bool mono;
     bool gray;
 
-    /* sdl */
     bool chromeless;
     bool fullscreen;
-    double scale;
 
-    /* tui */
     bool tiny;
     bool small;
 
+    bool verbose;
+
+    double zoom;
+    bool netbook;
+    int netbook_pivot_line;
+
+    char* name;
+    char* progname;
+    char* progpath;
     char* wire_name;
     char* ir_name;
 
+    char* datadir;
     char* style_filename;
 
-    bool verbose;
+    char* sd_dir;
 
     /* options below are specific to x48ng */
     bool print_config;

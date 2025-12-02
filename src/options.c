@@ -18,9 +18,45 @@
 #include "options.h"
 
 static config_t __config = {
-    .progname = ( char* )"x48ng",
+    .model = MODEL_48GX,
+    .shiftless = false,
+    .black_lcd = false,
+    .newrpl_keyboard = false, /* hardcoded */
+
+#if defined( HAS_SDL )
+    .frontend = FRONTEND_SDL,
+#elif defined( HAS_GTK )
+    .frontend = FRONTEND_GTK,
+#else
+    .frontend = FRONTEND_NCURSES,
+#endif
+    .mono = false,
+    .gray = false,
+
+    .chromeless = false,
+    .fullscreen = false,
+
+    .tiny = false,
+    .small = false,
 
     .verbose = false,
+
+    .zoom = 1.0,
+    .netbook = false,
+    .netbook_pivot_line = 3,
+
+    .name = NULL,
+    .progname = ( char* )"x48ng",
+    .progpath = NULL,
+    .wire_name = NULL,
+    .ir_name = NULL,
+
+    .datadir = ( char* )".",
+    .style_filename = NULL,
+
+    .sd_dir = NULL,
+
+    /* options below are specific to x48ng */
     .print_config = false,
     .useTerminal = false,
     .useSerial = false,
@@ -29,28 +65,6 @@ static config_t __config = {
     .resetOnStartup = false,
 
     .serialLine = NULL,
-
-    .frontend = FRONTEND_NCURSES,
-
-    .shiftless = false,
-    .inhibit_shutdown = false,
-
-    .mono = false,
-    .gray = false,
-
-    .big_screen = false,
-    .black_lcd = false,
-
-    /* tui */
-    .small = false,
-    .tiny = false,
-
-    /* sdl */
-    .chromeless = false,
-    .fullscreen = false,
-    .scale = 1.0,
-
-    .style_filename = NULL,
 };
 
 char* configDir = ( char* )"x48ng";
@@ -249,7 +263,7 @@ config_t* config_init( int argc, char* argv[] )
     int clopt_throttle = -1;
     int clopt_chromeless = -1;
     int clopt_fullscreen = -1;
-    double clopt_scale = -1.0;
+    double clopt_zoom = -1.0;
     int clopt_mono = -1;
     int clopt_gray = -1;
     int clopt_small = -1;
@@ -257,6 +271,7 @@ config_t* config_init( int argc, char* argv[] )
     int clopt_shiftless = -1;
     int clopt_inhibit_shutdown = -1;
     int clopt_black_lcd = -1;
+    int clopt_netbook = -1;
 
     const char* optstring = "c:hvVtsirTn:s:";
     struct option long_options[] = {
@@ -289,8 +304,10 @@ config_t* config_init( int argc, char* argv[] )
         {"no-chrome",        no_argument,       &clopt_chromeless,                true        }, /* DEPRECATED */
         {"chromeless",       no_argument,       &clopt_chromeless,                true        },
         {"fullscreen",       no_argument,       &clopt_fullscreen,                true        },
-        {"scale",            required_argument, NULL,                             7110        },
+        {"zoom",             required_argument, NULL,                             7110        },
+        {"scale",            required_argument, NULL,                             7110        }, /* DEPRECATED */
         {"black-lcd",        no_argument,       &clopt_black_lcd,                 true        },
+        {"netbook",          no_argument,       &clopt_netbook,                   true        },
 
         {"tui",              no_argument,       NULL,                             9100        },
         {"tui-small",        no_argument,       NULL,                             9110        },
@@ -349,7 +366,7 @@ config_t* config_init( int argc, char* argv[] )
                             "false)\n"
                             "     --fullscreen         make the UI fullscreen "
                             "(default: false)\n"
-                            "     --scale=<number>     make the UI scale <number> times "
+                            "     --zoom=<number>      make the UI scale <number> times "
                             "(default: 1.0)\n"
                             "     --mono               make the UI monochrome (default: "
                             "false)\n"
@@ -396,7 +413,7 @@ config_t* config_init( int argc, char* argv[] )
                 clopt_serialLine = optarg;
                 break;
             case 7110:
-                clopt_scale = atof( optarg );
+                clopt_zoom = atof( optarg );
                 break;
             case 9100:
                 clopt_frontend = FRONTEND_NCURSES;
@@ -537,14 +554,21 @@ config_t* config_init( int argc, char* argv[] )
     lua_getglobal( config_lua_values, "leave_shift_keys" );
     __config.shiftless = lua_toboolean( config_lua_values, -1 );
 
+    lua_getglobal( config_lua_values, "netbook" );
+    __config.netbook = lua_toboolean( config_lua_values, -1 );
+
     lua_getglobal( config_lua_values, "chromeless" );
     __config.chromeless = lua_toboolean( config_lua_values, -1 );
 
     lua_getglobal( config_lua_values, "fullscreen" );
     __config.fullscreen = lua_toboolean( config_lua_values, -1 );
 
+    lua_getglobal( config_lua_values, "zoom" );
+    __config.zoom = luaL_optnumber( config_lua_values, -1, 1.0 );
+
+    /* DEPRECATED */
     lua_getglobal( config_lua_values, "scale" );
-    __config.scale = luaL_optnumber( config_lua_values, -1, 1.0 );
+    __config.zoom = luaL_optnumber( config_lua_values, -1, 1.0 );
 
     lua_getglobal( config_lua_values, "mono" );
     __config.mono = lua_toboolean( config_lua_values, -1 );
@@ -593,10 +617,12 @@ config_t* config_init( int argc, char* argv[] )
         __config.frontend = clopt_frontend;
     if ( clopt_chromeless != -1 )
         __config.chromeless = clopt_chromeless;
+    if ( clopt_netbook != -1 )
+        __config.netbook = clopt_netbook == true;
     if ( clopt_fullscreen != -1 )
         __config.fullscreen = clopt_fullscreen;
-    if ( clopt_scale > 0.0 )
-        __config.scale = clopt_scale;
+    if ( clopt_zoom > 0.0 )
+        __config.zoom = clopt_zoom;
     if ( clopt_mono != -1 )
         __config.mono = clopt_mono;
     if ( clopt_gray != -1 )
@@ -663,9 +689,10 @@ config_t* config_init( int argc, char* argv[] )
                 break;
         }
         fprintf( stdout, "\" -- possible values: \"sdl\" \"tui\", \"tui-small\", \"tui-tiny\"\n" );
+        fprintf( stdout, "netbook = %s\n", __config.netbook ? "true" : "false" );
         fprintf( stdout, "chromeless = %s\n", __config.chromeless ? "true" : "false" );
         fprintf( stdout, "fullscreen = %s\n", __config.fullscreen ? "true" : "false" );
-        fprintf( stdout, "scale = %f -- applies only to sdl2\n", __config.scale );
+        fprintf( stdout, "zoom = %f -- applies only to sdl2\n", __config.zoom );
         fprintf( stdout, "mono = %s\n", __config.mono ? "true" : "false" );
         fprintf( stdout, "gray = %s\n", __config.gray ? "true" : "false" );
         fprintf( stdout, "black_lcd = %s\n", __config.black_lcd ? "true" : "false" );
@@ -684,8 +711,6 @@ config_t* config_init( int argc, char* argv[] )
         fprintf( stderr, "normalized_port1_path = %s\n", normalized_port1_path );
         fprintf( stderr, "normalized_port2_path = %s\n", normalized_port2_path );
     }
-
-    // return ( optind );
 
     return &__config;
 }
