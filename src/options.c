@@ -51,7 +51,7 @@ static config_t __config = {
     .wire_name = NULL,
     .ir_name = NULL,
 
-    .datadir = ( char* )".",
+    .datadir = NULL,
     .style_filename = NULL,
 
     .sd_dir = NULL,
