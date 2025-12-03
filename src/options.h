@@ -54,7 +54,7 @@ typedef struct {
     bool useSerial;
     bool useDebugger;
     bool throttle;
-    bool resetOnStartup;
+    bool reset;
     bool inhibit_shutdown;
 
     char* serialLine;

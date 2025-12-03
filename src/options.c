@@ -61,7 +61,7 @@ static config_t __config = {
     .useSerial = false,
     .useDebugger = false,
     .throttle = false,
-    .resetOnStartup = false,
+    .reset = false,
 
     .serialLine = NULL,
 };
@@ -282,7 +282,7 @@ config_t* config_init( int argc, char* argv[] )
         {"print-config",     no_argument,       &print_config,                    true        },
 
         {"throttle",         no_argument,       &clopt_throttle,                  true        },
-        {"reset",            no_argument,       ( int* )&__config.resetOnStartup, true        },
+        {"reset",            no_argument,       ( int* )&__config.reset, true        },
 
         {"config",           required_argument, NULL,                             'c'         },
         {"config-dir",       required_argument, NULL,                             1000        },
@@ -447,7 +447,7 @@ config_t* config_init( int argc, char* argv[] )
                 clopt_useSerial = true;
                 break;
             case 'r':
-                __config.resetOnStartup = true;
+                __config.reset = true;
                 break;
             case 'T':
                 clopt_throttle = true;
