@@ -4070,7 +4070,7 @@ int debug( void )
     /*
      * do we want to debug ???
      */
-    if ( !config.useDebugger ) {
+    if ( !config.enable_debugger ) {
         if ( enter_debugger & ILLEGAL_INSTRUCTION ) {
             if ( config.verbose )
                 fprintf( stderr, "reset (illegal instruction at 0x%.5lX)\n", saturn.pc );

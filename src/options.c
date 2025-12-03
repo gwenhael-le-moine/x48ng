@@ -57,13 +57,13 @@ static config_t __config = {
     .sd_dir = NULL,
 
     /* options below are specific to x48ng */
-    .useTerminal = false,
-    .useSerial = false,
-    .useDebugger = false,
+    .enable_wire = false,
+    .enable_ir = false,
+    .enable_debugger = false,
     .throttle = false,
     .reset = false,
 
-    .serialLine = NULL,
+    .ir_serial_device = NULL,
 };
 
 char* configDir = ( char* )"x48ng";
@@ -255,12 +255,12 @@ config_t* config_init( int argc, char* argv[] )
     char* clopt_stateFileName = NULL;
     char* clopt_port1FileName = NULL;
     char* clopt_port2FileName = NULL;
-    char* clopt_serialLine = NULL;
+    char* clopt_ir_serial_device = NULL;
     int clopt_frontend = -1;
     int clopt_verbose = -1;
-    int clopt_useTerminal = -1;
-    int clopt_useSerial = -1;
-    int clopt_useDebugger = -1;
+    int clopt_enable_wire = -1;
+    int clopt_enable_ir = -1;
+    int clopt_enable_debugger = -1;
     int clopt_throttle = -1;
     int clopt_chromeless = -1;
     int clopt_fullscreen = -1;
@@ -276,57 +276,57 @@ config_t* config_init( int argc, char* argv[] )
 
     const char* optstring = "c:hvVtsirTn:s:";
     struct option long_options[] = {
-        {"help",             no_argument,       NULL,                             'h'         },
-        {"version",          no_argument,       NULL,                             'v'         },
-        {"verbose",          no_argument,       &clopt_verbose,                   true        },
-        {"print-config",     no_argument,       &print_config,                    true        },
+        {"help",             no_argument,       NULL,                    'h'         },
+        {"version",          no_argument,       NULL,                    'v'         },
+        {"verbose",          no_argument,       &clopt_verbose,          true        },
+        {"print-config",     no_argument,       &print_config,           true        },
 
-        {"throttle",         no_argument,       &clopt_throttle,                  true        },
+        {"throttle",         no_argument,       &clopt_throttle,         true        },
         {"reset",            no_argument,       ( int* )&__config.reset, true        },
 
-        {"config",           required_argument, NULL,                             'c'         },
-        {"config-dir",       required_argument, NULL,                             1000        },
-        {"rom",              required_argument, NULL,                             1010        },
-        {"ram",              required_argument, NULL,                             1011        },
-        {"state",            required_argument, NULL,                             1012        },
-        {"port1",            required_argument, NULL,                             1013        },
-        {"port2",            required_argument, NULL,                             1014        },
+        {"config",           required_argument, NULL,                    'c'         },
+        {"config-dir",       required_argument, NULL,                    1000        },
+        {"rom",              required_argument, NULL,                    1010        },
+        {"ram",              required_argument, NULL,                    1011        },
+        {"state",            required_argument, NULL,                    1012        },
+        {"port1",            required_argument, NULL,                    1013        },
+        {"port2",            required_argument, NULL,                    1014        },
 
-        {"serial-line",      required_argument, NULL,                             1015        },
+        {"serial-line",      required_argument, NULL,                    1015        },
 
-        {"terminal",         no_argument,       &clopt_useTerminal,               true        },
-        {"serial",           no_argument,       &clopt_useSerial,                 true        },
+        {"terminal",         no_argument,       &clopt_enable_wire,      true        },
+        {"serial",           no_argument,       &clopt_enable_ir,        true        },
 
-        {"debug",            no_argument,       &clopt_useDebugger,               true        },
+        {"debug",            no_argument,       &clopt_enable_debugger,  true        },
 
-        {"sdl2",             no_argument,       &clopt_frontend,                  FRONTEND_SDL}, /* DEPRECATED */
-        {"sdl",              no_argument,       &clopt_frontend,                  FRONTEND_SDL},
-        {"gtk",              no_argument,       &clopt_frontend,                  FRONTEND_GTK},
-        {"no-chrome",        no_argument,       &clopt_chromeless,                true        }, /* DEPRECATED */
-        {"chromeless",       no_argument,       &clopt_chromeless,                true        },
-        {"fullscreen",       no_argument,       &clopt_fullscreen,                true        },
-        {"zoom",             required_argument, NULL,                             7110        },
-        {"scale",            required_argument, NULL,                             7110        }, /* DEPRECATED */
-        {"black-lcd",        no_argument,       &clopt_black_lcd,                 true        },
-        {"netbook",          no_argument,       &clopt_netbook,                   true        },
+        {"sdl2",             no_argument,       &clopt_frontend,         FRONTEND_SDL}, /* DEPRECATED */
+        {"sdl",              no_argument,       &clopt_frontend,         FRONTEND_SDL},
+        {"gtk",              no_argument,       &clopt_frontend,         FRONTEND_GTK},
+        {"no-chrome",        no_argument,       &clopt_chromeless,       true        }, /* DEPRECATED */
+        {"chromeless",       no_argument,       &clopt_chromeless,       true        },
+        {"fullscreen",       no_argument,       &clopt_fullscreen,       true        },
+        {"zoom",             required_argument, NULL,                    7110        },
+        {"scale",            required_argument, NULL,                    7110        }, /* DEPRECATED */
+        {"black-lcd",        no_argument,       &clopt_black_lcd,        true        },
+        {"netbook",          no_argument,       &clopt_netbook,          true        },
 
-        {"tui",              no_argument,       NULL,                             9100        },
-        {"tui-small",        no_argument,       NULL,                             9110        },
-        {"tui-tiny",         no_argument,       NULL,                             9120        },
-        {"small",            no_argument,       NULL,                             9109        }, /* DEPRECATED */
-        {"tiny",             no_argument,       NULL,                             9119        }, /* DEPRECATED */
+        {"tui",              no_argument,       NULL,                    9100        },
+        {"tui-small",        no_argument,       NULL,                    9110        },
+        {"tui-tiny",         no_argument,       NULL,                    9120        },
+        {"small",            no_argument,       NULL,                    9109        }, /* DEPRECATED */
+        {"tiny",             no_argument,       NULL,                    9119        }, /* DEPRECATED */
 
-        {"mono",             no_argument,       &clopt_mono,                      true        },
-        {"gray",             no_argument,       &clopt_gray,                      true        },
-        {"leave-shift-keys", no_argument,       &clopt_shiftless,                 true        }, /* DEPRECATED */
-        {"shiftless",        no_argument,       &clopt_shiftless,                 true        },
-        {"inhibit-shutdown", no_argument,       &clopt_inhibit_shutdown,          true        },
+        {"mono",             no_argument,       &clopt_mono,             true        },
+        {"gray",             no_argument,       &clopt_gray,             true        },
+        {"leave-shift-keys", no_argument,       &clopt_shiftless,        true        }, /* DEPRECATED */
+        {"shiftless",        no_argument,       &clopt_shiftless,        true        },
+        {"inhibit-shutdown", no_argument,       &clopt_inhibit_shutdown, true        },
 
-        {"style",            required_argument, NULL,                             's'         },
+        {"style",            required_argument, NULL,                    's'         },
 
-        {"name",             required_argument, NULL,                             'n'         },
+        {"name",             required_argument, NULL,                    'n'         },
 
-        {0,                  0,                 0,                                0           }
+        {0,                  0,                 0,                       0           }
     };
 
     const char* help_text = "usage: %s [options]\n"
@@ -382,7 +382,7 @@ config_t* config_init( int argc, char* argv[] )
 
         switch ( c ) {
             case 'h':
-                fprintf( stderr, help_text, __config.progname, __config.serialLine );
+                fprintf( stderr, help_text, __config.progname, __config.ir_serial_device );
                 exit( 0 );
                 break;
             case 'v':
@@ -411,7 +411,7 @@ config_t* config_init( int argc, char* argv[] )
                 clopt_port2FileName = optarg;
                 break;
             case 1015:
-                clopt_serialLine = optarg;
+                clopt_ir_serial_device = optarg;
                 break;
             case 7110:
                 clopt_zoom = atof( optarg );
@@ -441,10 +441,10 @@ config_t* config_init( int argc, char* argv[] )
                 clopt_verbose = true;
                 break;
             case 't':
-                clopt_useTerminal = true;
+                clopt_enable_wire = true;
                 break;
             case 's':
-                clopt_useSerial = true;
+                clopt_enable_ir = true;
                 break;
             case 'r':
                 __config.reset = true;
@@ -504,16 +504,16 @@ config_t* config_init( int argc, char* argv[] )
     port2FileName = ( char* )luaL_optstring( config_lua_values, -1, "port2" );
 
     lua_getglobal( config_lua_values, "serial_line" );
-    __config.serialLine = ( char* )luaL_optstring( config_lua_values, -1, "/dev/ttyS0" );
+    __config.ir_serial_device = ( char* )luaL_optstring( config_lua_values, -1, "/dev/ttyS0" );
 
     lua_getglobal( config_lua_values, "pseudo_terminal" );
-    __config.useTerminal = lua_toboolean( config_lua_values, -1 );
+    __config.enable_wire = lua_toboolean( config_lua_values, -1 );
 
     lua_getglobal( config_lua_values, "serial" );
-    __config.useSerial = lua_toboolean( config_lua_values, -1 );
+    __config.enable_ir = lua_toboolean( config_lua_values, -1 );
 
     lua_getglobal( config_lua_values, "debugger" );
-    __config.useDebugger = lua_toboolean( config_lua_values, -1 );
+    __config.enable_debugger = lua_toboolean( config_lua_values, -1 );
 
     lua_getglobal( config_lua_values, "throttle" );
     __config.throttle = lua_toboolean( config_lua_values, -1 );
@@ -601,19 +601,19 @@ config_t* config_init( int argc, char* argv[] )
         port1FileName = strdup( clopt_port1FileName );
     if ( clopt_port2FileName != NULL )
         port2FileName = strdup( clopt_port2FileName );
-    if ( clopt_serialLine != NULL )
-        __config.serialLine = strdup( clopt_serialLine );
+    if ( clopt_ir_serial_device != NULL )
+        __config.ir_serial_device = strdup( clopt_ir_serial_device );
 
     if ( clopt_verbose != -1 )
         __config.verbose = clopt_verbose;
-    if ( clopt_useTerminal != -1 )
-        __config.useTerminal = clopt_useTerminal;
-    if ( clopt_useSerial != -1 )
-        __config.useSerial = clopt_useSerial;
+    if ( clopt_enable_wire != -1 )
+        __config.enable_wire = clopt_enable_wire;
+    if ( clopt_enable_ir != -1 )
+        __config.enable_ir = clopt_enable_ir;
     if ( clopt_throttle != -1 )
         __config.throttle = clopt_throttle;
-    if ( clopt_useDebugger != -1 )
-        __config.useDebugger = clopt_useDebugger;
+    if ( clopt_enable_debugger != -1 )
+        __config.enable_debugger = clopt_enable_debugger;
     if ( clopt_frontend != -1 )
         __config.frontend = clopt_frontend;
     if ( clopt_chromeless != -1 )
@@ -661,12 +661,12 @@ config_t* config_init( int argc, char* argv[] )
         fprintf( stdout, "port1 = \"%s\"\n", port1FileName );
         fprintf( stdout, "port2 = \"%s\"\n", port2FileName );
         fprintf( stdout, "\n" );
-        fprintf( stdout, "pseudo_terminal = %s\n", __config.useTerminal ? "true" : "false" );
-        fprintf( stdout, "serial = %s\n", __config.useSerial ? "true" : "false" );
-        fprintf( stdout, "serial_line = \"%s\"\n", __config.serialLine );
+        fprintf( stdout, "pseudo_terminal = %s\n", __config.enable_wire ? "true" : "false" );
+        fprintf( stdout, "serial = %s\n", __config.enable_ir ? "true" : "false" );
+        fprintf( stdout, "serial_line = \"%s\"\n", __config.ir_serial_device );
         fprintf( stdout, "\n" );
         fprintf( stdout, "verbose = %s\n", __config.verbose ? "true" : "false" );
-        fprintf( stdout, "debugger = %s\n", __config.useDebugger ? "true" : "false" );
+        fprintf( stdout, "debugger = %s\n", __config.enable_debugger ? "true" : "false" );
         fprintf( stdout, "throttle = %s\n", __config.throttle ? "true" : "false" );
         fprintf( stdout, "\n" );
         fprintf( stdout, "--------------------\n" );

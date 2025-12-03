@@ -9,7 +9,7 @@
 #include <sys/time.h>
 
 #include "emulate.h"
-#include "options.h" /* config.verbose, config.useTerminal, config.useSerial */
+#include "options.h" /* config.verbose, config.enable_wire, config.enable_ir */
 #include "serial.h"
 
 static int wire_fd;
@@ -39,7 +39,7 @@ int init_serial( void )
 
     wire_fd = -1;
     ttyp = -1;
-    if ( config.useTerminal ) {
+    if ( config.enable_wire ) {
         /* Unix98 PTY (Preferred) */
         if ( ( wire_fd = open( "/dev/ptmx", O_RDWR | O_NONBLOCK, 0666 ) ) >= 0 ) {
             grantpt( wire_fd );
@@ -112,8 +112,8 @@ int init_serial( void )
     }
 
     ir_fd = -1;
-    if ( config.useSerial ) {
-        sprintf( tty_dev_name, "%s", config.serialLine );
+    if ( config.enable_ir ) {
+        sprintf( tty_dev_name, "%s", config.ir_serial_device );
         if ( ( ir_fd = open( tty_dev_name, O_RDWR | O_NDELAY ) ) >= 0 ) {
             if ( config.verbose )
                 printf( "IR connection on %s\n", tty_dev_name );

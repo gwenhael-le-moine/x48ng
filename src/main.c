@@ -196,7 +196,7 @@ int main( int argc, char** argv )
         do {
             step_instruction();
 
-            if ( config.useDebugger && ( exec_flags & EXEC_BKPT ) && check_breakpoint( BP_EXEC, saturn.pc ) ) {
+            if ( config.enable_debugger && ( exec_flags & EXEC_BKPT ) && check_breakpoint( BP_EXEC, saturn.pc ) ) {
                 enter_debugger |= BREAKPOINT_HIT;
                 break;
             }

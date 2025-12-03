@@ -50,14 +50,14 @@ typedef struct {
     char* sd_dir;
 
     /* options below are specific to x48ng */
-    bool useTerminal;
-    bool useSerial;
-    bool useDebugger;
+    bool enable_wire;
+    bool enable_ir;
+    bool enable_debugger;
     bool throttle;
     bool reset;
     bool inhibit_shutdown;
 
-    char* serialLine;
+    char* ir_serial_device;
 } config_t;
 extern config_t config;
 
