@@ -50,7 +50,6 @@ typedef struct {
     char* sd_dir;
 
     /* options below are specific to x48ng */
-    bool print_config;
     bool useTerminal;
     bool useSerial;
     bool useDebugger;

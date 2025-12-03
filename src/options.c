@@ -57,7 +57,6 @@ static config_t __config = {
     .sd_dir = NULL,
 
     /* options below are specific to x48ng */
-    .print_config = false,
     .useTerminal = false,
     .useSerial = false,
     .useDebugger = false,
@@ -244,6 +243,8 @@ config_t* config_init( int argc, char* argv[] )
     int option_index;
     int c = '?';
 
+    int print_config = false;
+
     char* style_filename = NULL;
     char* clopt_style_filename = NULL;
     char* clopt_name = NULL;
@@ -278,7 +279,7 @@ config_t* config_init( int argc, char* argv[] )
         {"help",             no_argument,       NULL,                             'h'         },
         {"version",          no_argument,       NULL,                             'v'         },
         {"verbose",          no_argument,       &clopt_verbose,                   true        },
-        {"print-config",     no_argument,       ( int* )&__config.print_config,   true        },
+        {"print-config",     no_argument,       &print_config,                    true        },
 
         {"throttle",         no_argument,       &clopt_throttle,                  true        },
         {"reset",            no_argument,       ( int* )&__config.resetOnStartup, true        },
@@ -481,7 +482,7 @@ config_t* config_init( int argc, char* argv[] )
 
         fprintf( stderr, "You can solve this by running `mkdir -p %s && %s --print-config >> %s`\n\n", normalized_config_path,
                  __config.progname, normalized_config_file );
-        __config.print_config = true;
+        print_config = true;
     }
 
     lua_getglobal( config_lua_values, "config_dir" );
@@ -645,8 +646,8 @@ config_t* config_init( int argc, char* argv[] )
 
     normalize_filenames();
 
-    __config.print_config |= __config.verbose;
-    if ( __config.print_config ) {
+    print_config |= __config.verbose;
+    if ( print_config ) {
         fprintf( stdout, "--------------------------------------------------------------------------------\n" );
         fprintf( stdout, "-- Configuration file for x48ng\n" );
         fprintf( stdout, "-- This is a comment\n" );
