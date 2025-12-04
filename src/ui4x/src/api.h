@@ -199,6 +199,7 @@ typedef struct ui4x_emulator_api_t {
 
 extern int ui_get_lcd_height( void );
 extern int ui_get_nb_keys( void );
+extern int ui_get_n_levels_of_gray( void );
 
 extern void ui_handle_pending_inputs( void );
 extern void ui_refresh_output( void );

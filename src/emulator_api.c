@@ -165,6 +165,8 @@ void get_lcd_buffer( int* target )
     int x, y;
     Nibble v;
 
+    ( void )memset( target, 0, LCD_WIDTH * ui_get_lcd_height() );
+
     /* Scan active display rows */
     for ( y = 0; y <= display.lines /* mod_status.hdw.lcd_vlc */; y++ ) {
         /* Scan columns */

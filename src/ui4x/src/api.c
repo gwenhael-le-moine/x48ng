@@ -126,6 +126,8 @@ int ui_get_lcd_height( void ) { return LCD_HEIGHT; }
 
 int ui_get_nb_keys( void ) { return NB_KEYS; }
 
+int ui_get_n_levels_of_gray( void ) { return N_LEVELS_OF_GRAY; }
+
 void ui_handle_pending_inputs( void )
 {
     switch ( ui4x_config.frontend ) {

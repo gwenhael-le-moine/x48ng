@@ -192,61 +192,7 @@ static inline void ncurses_draw_lcd_small( void )
     }
 }
 
-static inline wchar_t pixel_to_char( int pixel )
-{
-    /* switch ( pixel ) { */
-    /*     case 0xf: */
-    /*         return 'F'; */
-    /*         break; */
-    /*     case 0xe: */
-    /*         return 'E'; */
-    /*         break; */
-    /*     case 0xd: */
-    /*         return 'D'; */
-    /*         break; */
-    /*     case 0xc: */
-    /*         return 'C'; */
-    /*         break; */
-    /*     case 0xb: */
-    /*         return 'B'; */
-    /*         break; */
-    /*     case 0xa: */
-    /*         return 'A'; */
-    /*         break; */
-    /*     case 9: */
-    /*         return '9'; */
-    /*         break; */
-    /*     case 8: */
-    /*         return '8'; */
-    /*         break; */
-    /*     case 7: */
-    /*         return '7'; */
-    /*         break; */
-    /*     case 6: */
-    /*         return '6'; */
-    /*         break; */
-    /*     case 5: */
-    /*         return '5'; */
-    /*         break; */
-    /*     case 4: */
-    /*         return '4'; */
-    /*         break; */
-    /*     case 3: */
-    /*         return '3'; */
-    /*         break; */
-    /*     case 2: */
-    /*         return '2'; */
-    /*         break; */
-    /*     case 1: */
-    /*         return '1'; */
-    /*         break; */
-    /*     case 0: */
-    /*         return '0'; */
-    /*         break; */
-    /* } */
-
-    return ui4x_config.mono ? ( pixel > 0 ? L'█' : ' ' ) : ' ';
-}
+static inline wchar_t pixel_to_char( int pixel ) { return ui4x_config.mono ? ( pixel > 0 ? L'█' : ' ' ) : ' '; }
 
 static inline void ncurses_draw_lcd_fullsize( void )
 {
