@@ -423,7 +423,7 @@ static int sdlkey_to_hpkey( SDL_Keycode k )
             return UI4X_KEY_MULTIPLY;
         case SDLK_SLASH:
         case SDLK_KP_DIVIDE:
-            return UI4X_KEY_Z;
+            return UI4X_KEY_DIVIDE;
         case SDLK_F5:
         case SDLK_ESCAPE:
             return UI4X_KEY_ON;
