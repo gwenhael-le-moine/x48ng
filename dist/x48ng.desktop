@@ -1,9 +1,0 @@
-[Desktop Entry]
-Encoding=UTF-8
-Version=1.0
-Type=Application
-Terminal=false
-Exec=@PREFIX@/bin/x48ng-launcher
-Name=x48ng
-Icon=@PREFIX@/share/x48ng/hplogo.png
-Categories=Utility;
